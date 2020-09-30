@@ -45,4 +45,7 @@ public interface FfdcLoggingModule {
     void ffdcErrorExit(String detail, int code);
 
     boolean ffdcClearLogs(String detail);
+
+    boolean ffdcFlushShutdown();
+
 }

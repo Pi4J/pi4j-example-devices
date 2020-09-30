@@ -1,2 +1,10 @@
 /.idea/
 /target/
+*.html
+type*
+*.js
+resources/*
+jquery/*
+element-list
+stylesheet.css
+*.zip
