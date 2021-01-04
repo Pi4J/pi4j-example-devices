@@ -6,7 +6,7 @@
  *  *   * **********************************************************************
  *  *   * ORGANIZATION  :  Pi4J
  *  *   * PROJECT       :  Pi4J :: EXTENSION
- *  *   * FILENAME      :  FfdcLoggingSystem.java
+ *  *   * FILENAME      :  SetProperties.java
  *  *   *
  *  *   * This file is part of the Pi4J project. More information about
  *  *   * this project can be found here:  https://pi4j.com/
@@ -32,21 +32,38 @@
  *
  */
 
-package com.pi4j.devices.base_util.ffdc;
+package com.pi4j.devices.appConfig;
+
 /**
- * FfdcLoggingModule
- * Interface declarations for custom logging, the implementing class
- * can add any desired details.
- *
- * */
-public interface FfdcLoggingSystem {
-    void printLoadedPlatforms();
+ * <h1>SetProperties</h1>
+ * <p>
+ * Single class that calls set_properties on the various classes within the appConfig package
+ * </p>
+ */
+public class SetProperties {
 
-    void printDefaultPlatform();
+    /**
+     * main
+     * <p>
+     * Classes within  the appConfig package have their set_properties method called.
+     * <p>
+     * PreCond: None
+     * </p>
+     *
+     * <p>
+     * PostCond:  Each file created and data written.
+     * </p>
+     */
+    public static void main(String[] args) {
+        ChipNameMap cMap = new ChipNameMap();
+        cMap.set_properties();
 
-    void printProviders();
+        GpioToApp gMap = new GpioToApp();
+        gMap.set_properties();
 
-    void printRegistry();
+        PiPinMap piMap = new PiPinMap();
+        piMap.set_properties();
 
+    }
 
 }

@@ -6,7 +6,7 @@
  *  *   * **********************************************************************
  *  *   * ORGANIZATION  :  Pi4J
  *  *   * PROJECT       :  Pi4J :: EXTENSION
- *  *   * FILENAME      :  BasicI2cDevice.java
+ *  *   * FILENAME      :  MutableI2cDevice.java
  *  *   *
  *  *   * This file is part of the Pi4J project. More information about
  *  *   * this project can be found here:  https://pi4j.com/
@@ -34,8 +34,9 @@
 
 package com.pi4j.devices.base_i2c;
 
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
+
 import com.pi4j.context.Context;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.exception.Pi4JException;
 import com.pi4j.io.exception.IOReadException;
 import com.pi4j.io.i2c.I2C;
@@ -45,15 +46,15 @@ import com.pi4j.util.Console;
 import java.io.IOException;
 
 /**
- * BasicI2cDevice creates and uses i2cDeviceConfig for read and write operations.This class adds
- * one level to the read and write in order to create additional log entries to assist in debug.
+ * MutableI2cDevice creates and uses i2cDeviceConfig for read and write operations.This class adds one
+ * level to the read and write in order to create additional log entries to assist in debug.
  */
-public class BasicI2cDevice {
 
+public class MutableI2cDevice {
     /**
      * I2C device CTOR
      * <p>
-     * PreCond: BasicI2cDevice CTOR called with valid parameters
+     * PreCond: MutableI2cDevice CTOR called with valid parameters
      * <ul>
      *     <li>Instantiated Context class
      *     <li> Instantiated FFDC class
@@ -62,34 +63,47 @@ public class BasicI2cDevice {
      *     <li> Instantiated Console class
      * </ul>
      * <p>
+     *     This class will not create and intitialize the i2cDeviceConfig during creation.
+     *     Rather the user can reset the bus 'number' and device 'address' and then call the
+     *     method reinit();
+     * </p>
+     * <p>
      * PostCond:  Class Read and write methods are now accessable
      */
-    public BasicI2cDevice(Context pi4j, FfdcUtil ffdc, int bus_num, int address, Console console) {
+    public MutableI2cDevice(Context pi4j, FfdcUtil ffdc, Console console) {
         this.ffdc = ffdc;
-        this.bus_num = bus_num;
-        this.address = address;
+        this.bus_num = 0xff;
+        this.address = 0xff;
         this.console = console;
         this.pi4j = pi4j;
-        String details = String.format("BasicI2cDevice ctor bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
+        String details = String.format("MutableI2cDevice ctor bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
         this.ffdc.ffdcDebugEntry(details);
-        this.init();
+        this.ffdc.ffdcDebugEntry("MutableI2cDevice, requires call to reinit()");
     }
 
     /**
-     * I2C device init,
+     * I2C device reinit
      * <p>
-     * PreCond: BasicI2cDevice CTOR called with valid parameters
+     * This class was created without the bus or address state being set. At this time the application can call reinit
+     * amd set the bus and address value, AND an i2c config object is created and assigned to an i2c device.
+     * </p>
+     * <p>
+     * PreCond: MutableI2cDevice CTOR called with valid parameters
+     * </p>
      * <p>
      * PostCond:  Class Read and write methods are now accessable
+     * </p>
      */
-    private void init() {
+    protected void reinit(String id, String name, int bus, int address) {
+        String detail = String.format("MutableI2cDevice renit  bus %s   address %s  ", String.format("0X%02x: ", bus), String.format("0X%02x: ", address));
+        this.ffdc.ffdcMethodEntry(detail);
         try {
-            String id = String.format("0X%02x: ", this.bus_num);
-            String name = String.format("0X%02x: ", this.address);
+            this.bus_num = bus;
+            this.address = address;
             this.i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
                     .bus(this.bus_num)
                     .device(this.address)
-                    .id(id+" "+name)
+                    .id(id)
                     .name(name)
                     .provider("pigpio-i2c")
                     .build();
@@ -102,11 +116,11 @@ public class BasicI2cDevice {
         try {
             this.i2cDevice = this.pi4j.create(this.i2cDeviceConfig);
         } catch (Exception e) {
-            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
             String details = String.format("device create failed bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
             this.ffdc.ffdcErrorExit(details, 104);
             //e.printStackTrace();
         }
+        this.ffdc.ffdcMethodExit(detail);
     }
 
     /**
@@ -121,7 +135,7 @@ public class BasicI2cDevice {
      */
     protected int readRegister(int offset) {
         int reg = 0;
-        this.ffdc.ffdcMethodEntry("readRegister : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("readRegister : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ", this.bus_num) + "  device address:  " + String.format("0X%02x: ", this.address));
         try {
             reg = this.i2cDevice.readRegister(offset);
         } catch (IOException e) {
@@ -140,13 +154,12 @@ public class BasicI2cDevice {
      * @param offset Device register
      *
      *               <p>
-     *               PostCond:  Register contents returned if successful, else
-     *               exception will surface
+     *               PostCond:  Register contents returned if successful, else exception will surface
      *
      * @throws IOException, IOReadException
      */
     protected byte readRegisterByte(int offset) throws IOException, IOReadException {
-        this.ffdc.ffdcMethodEntry("readRegisterBye : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("readRegisterBye : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ", this.bus_num) + "  device address:  " + String.format("0X%02x: ", this.address));
         byte reg = 0;
         reg = this.i2cDevice.readRegisterByte(offset);
         this.ffdc.ffdcMethodExit("readRegisterByte data :" + String.format("0X%02x: ", reg));
@@ -154,15 +167,13 @@ public class BasicI2cDevice {
     }
 
 
-
-
     /**
      * I2C device access,read device register presently referenced in device control register.
      *
      *
      * <p>
-     * Note: Repeated call to this same device instance will return the data determined by the
-     * device auto-increment characteristic.
+     * Note: Repeated call to this same device instance will return the data determined by the device auto-increment
+     * characteristic.
      * <p>
      * PreCond: BasicI2cDevice instance initialized.  See CTOR
      *
@@ -170,7 +181,7 @@ public class BasicI2cDevice {
      * PostCond:  Register contents returned if successful, else negative value
      */
     protected int read() {
-        this.ffdc.ffdcMethodEntry("read  bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("read  bus : " + String.format("0X%02x: ", this.bus_num) + "  device address:  " + String.format("0X%02x: ", this.address));
         int reg = 0;
         try {
             reg = this.i2cDevice.read();
@@ -182,13 +193,14 @@ public class BasicI2cDevice {
         this.ffdc.ffdcMethodExit("read data:" + String.format("0X%02x: ", reg));
         return (reg);
     }
+
     /**
      * I2C device access,read device register presently referenced in device control register.
      *
      *
      * <p>
-     * Note: Repeated call to this same device instance will return the data determined by the
-     * device auto-increment characteristic.
+     * Note: Repeated call to this same device instance will return the data determined by the device auto-increment
+     * characteristic.
      * <p>
      * PreCond: BasicI2cDevice instance initialized.  See CTOR
      *
@@ -198,7 +210,7 @@ public class BasicI2cDevice {
      * @throws IOException
      */
     protected byte readByte() throws IOException {
-        this.ffdc.ffdcMethodEntry("readByte bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("readByte bus : " + String.format("0X%02x: ", this.bus_num) + "  device address:  " + String.format("0X%02x: ", this.address));
         byte reg = 0;
         reg = this.i2cDevice.readByte();
         this.ffdc.ffdcDebugEntry("readByte  data :" + String.format("0X%02x: ", reg));
@@ -210,14 +222,17 @@ public class BasicI2cDevice {
      * I2C device access, write data to device register presently referenced in device control register.
      * <p>
      * PreCond: BasicI2cDevice instance initialized.  See CTOR
+     * </p>
+     * <p>
      *
      * @param data Register updated with byte data
-     *
+     *             </p>
      *             <p>
      *             PostCond:  0 returned if successful, else non-zero
+     *             </p>
      */
     protected int write(byte data) {
-        this.ffdc.ffdcMethodEntry("write : data " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("write : data " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ", this.bus_num) + "  device address:  " + String.format("0X%02x: ", this.address));
         int rval = 0;
         try {
             rval = this.i2cDevice.write(data);
@@ -231,20 +246,20 @@ public class BasicI2cDevice {
         this.ffdc.ffdcMethodExit("write rval :" + String.format("0X%02x: ", rval));
         return (rval);
     }
+
     /**
-     * I2C device access, write data to device register to set offset, then write
-     * data byte.
+     * I2C device access, write data to device register to set offset, then write data byte.
      * <p>
      * PreCond: BasicI2cDevice instance initialized.  See CTOR
      *
      * @param offset Device Register address
-     * @param data Register updated with byte data
+     * @param data   Register updated with byte data
      *
-     *             <p>
-     *             PostCond:  0 returned if successful, else non-zero
+     *               <p>
+     *               PostCond:  0 returned if successful, else non-zero
      */
     protected int writeByte(int offset, byte data) {
-        this.ffdc.ffdcMethodEntry("writeByte : offset  " + String.format("0X%02x: ", offset) + " data : " + String.format("0X%02x: ",data )  + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("writeByte : offset  " + String.format("0X%02x: ", offset) + " data : " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ", this.bus_num) + "  device address:  " + String.format("0X%02x: ", this.address));
         int rval = 0;
         try {
             rval = this.i2cDevice.writeRegister(offset, data);
@@ -331,3 +346,4 @@ public class BasicI2cDevice {
 
 
 }
+

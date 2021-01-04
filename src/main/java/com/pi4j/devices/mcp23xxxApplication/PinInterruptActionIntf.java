@@ -6,7 +6,7 @@
  *  *   * **********************************************************************
  *  *   * ORGANIZATION  :  Pi4J
  *  *   * PROJECT       :  Pi4J :: EXTENSION
- *  *   * FILENAME      :  FfdcLoggingSystem.java
+ *  *   * FILENAME      :  PinInterruptActionIntf.java
  *  *   *
  *  *   * This file is part of the Pi4J project. More information about
  *  *   * this project can be found here:  https://pi4j.com/
@@ -32,21 +32,26 @@
  *
  */
 
-package com.pi4j.devices.base_util.ffdc;
+package com.pi4j.devices.mcp23xxxApplication;
+
+import com.pi4j.io.gpio.digital.DigitalState;
+
 /**
- * FfdcLoggingModule
- * Interface declarations for custom logging, the implementing class
- * can add any desired details.
+ * PinInterruptActionIntf
  *
- * */
-public interface FfdcLoggingSystem {
-    void printLoadedPlatforms();
+ * Implementing class can take whatever action/steps htey want
 
-    void printDefaultPlatform();
-
-    void printProviders();
-
-    void printRegistry();
+ * Class implementing this interface are each specific to the device that
+ * created the interrupt
+ */
+public interface PinInterruptActionIntf {
+    /**
+     *   interruptAction
+     *
+     * @param pinNumber  MCP23008 or MCP23017 pin that caused the chip interrupt
+     * @param pinState  DigitalState
+     */
+    void interruptAction(int pinNumber, DigitalState pinState);
 
 
 }
