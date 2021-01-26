@@ -6,7 +6,7 @@
  *  *   * **********************************************************************
  *  *   * ORGANIZATION  :  Pi4J
  *  *   * PROJECT       :  Pi4J :: EXTENSION
- *  *   * FILENAME      :  FfdcLoggingSystem.java
+ *  *   * FILENAME      :  GpioPinCfgData.java
  *  *   *
  *  *   * This file is part of the Pi4J project. More information about
  *  *   * this project can be found here:  https://pi4j.com/
@@ -32,21 +32,47 @@
  *
  */
 
-package com.pi4j.devices.base_util.ffdc;
+package com.pi4j.devices.base_util.gpio;
+
+
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalInput;
+
+import com.pi4j.io.gpio.digital.PullResistance;
+
+import com.pi4j.io.gpio.digital.DigitalState;
+
 /**
- * FfdcLoggingModule
- * Interface declarations for custom logging, the implementing class
- * can add any desired details.
- *
- * */
-public interface FfdcLoggingSystem {
-    void printLoadedPlatforms();
+ * GpioPinCfgData
+ * <p>
+ *     Definitions used by the gpio package
+ * </p>
+ */
 
-    void printDefaultPlatform();
-
-    void printProviders();
-
-    void printRegistry();
+public class GpioPinCfgData {
 
 
+    public enum Direction {
+        in, out, none
+    }
+
+
+    public GpioPinCfgData(int number, Direction direction, DigitalOutput output, DigitalInput input) {
+
+        this.number = number;
+        this.output = output;
+        this.input = input;
+        this.direction = direction;
+    }
+
+
+    Direction direction;
+    public int number;
+    public DigitalOutput output;
+    public DigitalInput input;
 }
+
+
+
+
+

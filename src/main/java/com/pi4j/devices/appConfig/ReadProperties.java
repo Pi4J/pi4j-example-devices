@@ -6,7 +6,7 @@
  *  *   * **********************************************************************
  *  *   * ORGANIZATION  :  Pi4J
  *  *   * PROJECT       :  Pi4J :: EXTENSION
- *  *   * FILENAME      :  FfdcLoggingSystem.java
+ *  *   * FILENAME      :  ReadProperties.java
  *  *   *
  *  *   * This file is part of the Pi4J project. More information about
  *  *   * this project can be found here:  https://pi4j.com/
@@ -32,21 +32,50 @@
  *
  */
 
-package com.pi4j.devices.base_util.ffdc;
+package com.pi4j.devices.appConfig;
+
 /**
- * FfdcLoggingModule
- * Interface declarations for custom logging, the implementing class
- * can add any desired details.
+ * <h1>ReadProperties</h1>
+ *   <p>
+ *       Single class that calls read_properties on the various
+ *       classes within the appConfig package
+ *   </p>
  *
- * */
-public interface FfdcLoggingSystem {
-    void printLoadedPlatforms();
+ *
+ */
+public class ReadProperties {
 
-    void printDefaultPlatform();
+    /**
+     * main
+     *
+     * Classes within  the appConfig package have their read_properties method called.
+     * <p>
+     * PreCond: None
+     * </p>
+     *
+     * <p>
+     * PostCond:  Each file read and printed to the screen.
+     *</p>
+     *
+     * */
+    public static void main(String[] args) {
 
-    void printProviders();
+        ChipNameMap cMap = new ChipNameMap();
+        String chips = cMap.read_properties();
 
-    void printRegistry();
+        GpioToApp gMap = new GpioToApp();
+        String pins = gMap.read_properties();
 
+        PiPinMap piMap = new PiPinMap();
+        String pi = piMap.read_properties();
 
-}
+        System.out.println(" chip map : " + chips);
+
+        //////////////////////////
+        System.out.println(" pin map : " + pins);
+
+        //////////////////////////
+        System.out.println(" pi map : " + pi);
+    }
+
+  }

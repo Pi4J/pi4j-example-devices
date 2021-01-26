@@ -1,30 +1,33 @@
 /*
  *
- * -
- *  * #%L
- *  * **********************************************************************
- *  * ORGANIZATION  :  Pi4J
- *  * PROJECT       :  Pi4J :: EXTENSION
- *  * FILENAME      :  I2cSimpleRead
  *  *
- *  * This file is part of the Pi4J project. More information about
- *  * this project can be found here:  https://pi4j.com/
- *  * **********************************************************************
- *  * %%
- *  * Copyright (C) 2012 - 2020 Pi4J
- *  * %%
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
+ *  * -
+ *  *   * #%L
+ *  *   * **********************************************************************
+ *  *   * ORGANIZATION  :  Pi4J
+ *  *   * PROJECT       :  Pi4J :: EXTENSION
+ *  *   * FILENAME      :  I2cSimpleRead.java
+ *  *   *
+ *  *   * This file is part of the Pi4J project. More information about
+ *  *   * this project can be found here:  https://pi4j.com/
+ *  *   * **********************************************************************
+ *    * %%
+ *  *   * Copyright (C) 2012 - 2021 Pi4J
+ *     * %%
+ *    * Licensed under the Apache License, Version 2.0 (the "License");
+ *    * you may not use this file except in compliance with the License.
+ *    * You may obtain a copy of the License at
+ *    *
+ *    *      http://www.apache.org/licenses/LICENSE-2.0
+ *    *
+ *    * Unless required by applicable law or agreed to in writing, software
+ *    * distributed under the License is distributed on an "AS IS" BASIS,
+ *    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    * See the License for the specific language governing permissions and
+ *    * limitations under the License.
+ *    * #L%
  *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *  * #L%
  *
  *
  */
@@ -34,8 +37,11 @@ package com.pi4j.devices.base_i2c;
 
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.Pi4J;
+import com.pi4j.io.exception.IOReadException;
 import com.pi4j.util.Console;
 import com.pi4j.context.*;
+
+import java.io.IOException;
 
 /**
  * I2cSimpleRead class.Capable of accessing an i2c device to read and display num_bytes of data in
@@ -76,8 +82,10 @@ public class I2cSimpleRead extends BasicI2cDevice {
      *
      * <p>
      * PostCond:  Register contents displayed
+     *
+     * @throws IOException, IOReadException
      */
-    public void dumpRegs() { // Here we will create I/O interfaces for a (GPIO) digital output
+    public void dumpRegs() throws IOException, IOReadException { // Here we will create I/O interfaces for a (GPIO) digital output
         // and input pin. Since no specific 'provider' is defined, Pi4J will
         // use the default `DigitalOutputProvider` for the current default platform.
         this.ffdc.ffdcMethodEntry(this.getMethodName());
@@ -85,8 +93,7 @@ public class I2cSimpleRead extends BasicI2cDevice {
         var details = "     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
         details = details + String.format("%02x: ", 0);
         for (int i = 0; i < this.numBytes; i++) {
-            int data = 0;
-            data = this.readRegister(i);
+            byte data = this.readRegisterByte(i);
             details = details + String.format("%02x ", data) + " ";
             if ((i > 0) && ((i + 1) % 16) == 0) {
                 details = details + "\n";
