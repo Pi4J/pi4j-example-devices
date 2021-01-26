@@ -139,6 +139,12 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         return (true);
     }
 
+    @Override
+    public boolean ffdcFlushShutdown() {
+        LogManager.shutdown();
+        return(true);
+    }
+
 
     @Override
     public void printLoadedPlatforms() {

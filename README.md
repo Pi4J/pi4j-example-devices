@@ -48,6 +48,9 @@ application with parameters that reset the chip and then enables bus 2.
  parameter -b 0x01 value assumes the chip is connected to raspberry I2C bus 1,
  and the chip is operating at default address -a 0x70.
 
+If you are debugging a problemL:  Execute your code with the -f parm 0. After
+your execution the log file /tmp/logs/com.pi4j.devices.tca9548.Tca9548.log
+will contain its maximum detail, this can be used to debug your error.
 
 Classes:
 com.pi4j.devices.base_i2c.BasicI2cDevice  Simple layer between TCA9548 and the

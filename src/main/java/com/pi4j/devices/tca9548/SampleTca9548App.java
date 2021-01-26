@@ -34,9 +34,12 @@ package com.pi4j.devices.tca9548;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
+import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
 
 import com.pi4j.devices.tca9548.Tca9548;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 /**
  * SampleTca9548App
@@ -166,6 +169,21 @@ public class SampleTca9548App {
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, ffdcControlLevel, Tca9548.class);
         var tcaMux = new Tca9548(pi4j, ffdc, bus_num, address, console);
 
+        // Prior to running methods, set up control-c handler
+        Signal.handle(new Signal("INT"), new SignalHandler() {
+            public void handle(Signal sig) {
+                System.out.println("Performing ctl-C shutdown");
+                ffdc.ffdcFlushShutdown(); // push all logs to the file
+                try {
+                    pi4j.shutdown();
+                } catch (LifecycleException e) {
+                    e.printStackTrace();
+                }
+                Thread.dumpStack();
+                System.exit(2);
+            }
+        });
+
         // Based upon parms the user supplied, call Tca9548 methods
         if (showUsage) {
             SampleTca9548App.usage();
@@ -208,6 +226,8 @@ public class SampleTca9548App {
         if (displayRegs) {
             tcaMux.displayBusEnable();
         }
+
+        ffdc.ffdcFlushShutdown(); // push all logs to the file
 
         // Shutdown Pi4J
         pi4j.shutdown();
