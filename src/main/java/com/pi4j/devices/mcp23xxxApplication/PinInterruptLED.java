@@ -152,7 +152,7 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
                         BaseGpioInOut gpio = new BaseGpioInOut(this.pi4j, this.ffdc, this.pinDict);
                         int pinNum = Character.getNumericValue(ledGpio.charAt(3)); // diox
                         if(ledGpio.length() == 5) {  // dioxx
-                                pinNum = pinNum * 10;
+                            pinNum = pinNum * 10;
                             pinNum += Character.getNumericValue(ledGpio.charAt(4));
                         }
                         int intPin = pinNum;
@@ -203,9 +203,9 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
             int chipAddress = Integer.parseInt(chipDetail.get("address").substring(2), 16);
             if (action.equals("hilow")) {
                 try {
-                    this.mcpObj.drive_pin(pinNum, true);
+                    this.mcpObj.drivePin(pinNum, true);
                     Thread.sleep(3000);
-                    this.mcpObj.drive_pin(pinNum, false);
+                    this.mcpObj.drivePin(pinNum, false);
                 } catch (InterruptedException | IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -213,9 +213,9 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
             } else if (action.equals("reflect")) {
                 try {
                     if (pinState == DigitalState.HIGH) {
-                        this.mcpObj.drive_pin(pinNum, true);
+                        this.mcpObj.drivePin(pinNum, true);
                     } else {
-                        this.mcpObj.drive_pin(pinNum, false);
+                        this.mcpObj.drivePin(pinNum, false);
                     }
                 } catch (InterruptedException | IOException e) {
                     // TODO Auto-generated catch block

@@ -68,7 +68,7 @@ import java.util.Properties;
 
 
         /**
-         * set_properties
+         * setProperties
          * <p>
          * PreCond: GpioToApp instance initialized.
          *
@@ -76,7 +76,7 @@ import java.util.Properties;
          * PostCond:  File config_pin_map.properties contains the class data pin_map
          *
          * */
-        public void set_properties() {
+        public void setProperties() {
             Properties prop = new Properties();
             OutputStream output = null;
             String fName = "config_pin_map.properties";
@@ -147,7 +147,7 @@ import java.util.Properties;
         }
 
         /**
-         * read_properties
+         * readProperties
          * <p>
          * PreCond: GpioToApp instance initialized.   set_properties was called.
          *
@@ -158,7 +158,7 @@ import java.util.Properties;
          * @return String containing value for key pin_map
          *
          * */
-        public String read_properties() {
+        public String readProperties() {
             Properties prop = new Properties();
             InputStream input = null;
             String rval = "";
@@ -185,41 +185,6 @@ import java.util.Properties;
 
         }
 
-
-        //  Test only
-        public static void main(String[] args) {
-
-            Properties prop = new Properties();
-            InputStream input = null;
-
-            try {
-
-                input = new FileInputStream("config_23017.properties");
-
-                // load a properties file
-                prop.load(input);
-
-                // get the property value and print it out
-                System.out.println(prop.getProperty("database"));
-                System.out.println(prop.getProperty("dbuser"));
-                System.out.println(prop.getProperty("dbpassword"));
-
-                System.out.println(prop.getProperty("pin_map"));
-                System.out.println(prop.getProperty("chip_map"));
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } finally {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }
 
     }
 

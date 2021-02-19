@@ -3,8 +3,7 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: Mcp23008
 
 ## DISCLAIMER :: EXPERIMENTAL VERSION 2 
 
-### This repository is a first device specific support project for the MCP23008 and MCP23017
-
+### This repository is a first device specific support project for the MCP23008 
 ### !! NOT READY FOR PRODUCTION USE !!
 
 Project by Tom Aarts
@@ -21,7 +20,7 @@ Java classes to access the MCP23008 GPIO controller as an application.
 Supported functions.
     1. reset chip
     2. Configure any/all pins (all configurations options)
-    3. Supports logging facilities inplemented by log4_v2
+    3. Supports logging facilities implemented by log4_v2
     
     Example does not use the MCp23008 interrupt capability. 
     To view/use code that confogures and uses the chip interrupt,
@@ -107,24 +106,24 @@ cd target/classes
 
 
 2.  Reset MCP23008
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008   -b 0x1 -a 0x20   -r 3          -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
+  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App   -b 0x1 -a 0x20   -r 3          -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
  
 
  
 3.  Configure pins of MCP23008, do reset first
  
  All pins
-   sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008  -b 0x1 -a 0x20  -r 3       -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
+   sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App  -b 0x1 -a 0x20  -r 3       -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
 
 
 4. Drive MCP23008 pin0 Red Led hi low
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008   -b 0x1 -a 0x20   -d 0 -o ON  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"  -f 1
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008   -b 0x1 -a 0x20   -d 0 -o OFF   -f 1
+  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App   -b 0x1 -a 0x20   -d 0 -o ON  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"  -f 1
+  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App   -b 0x1 -a 0x20   -d 0 -o OFF   -f 1
 
 
 5. Read MCP23008 pin4
   Read 4
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008  -b 0x1 -a 0x20   -r 4  -m "{{'pin4':{'dir':'in','pull':'down'}}}"     -f 1
+  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App  -b 0x1 -a 0x20   -r 4  -m "{{'pin4':{'dir':'in','pull':'down'}}}"     -f 1
  This will set pin4 high or low
 python
 import RPi.GPIO as GPIO

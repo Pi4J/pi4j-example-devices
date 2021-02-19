@@ -64,20 +64,20 @@ public class Mcp23xxxAppProcessParms {
      *   processMain
      * @param pi4j  Context
      * @param args  Arguments passed in by application caller.
-     * @param bank_capable  Whether this chip CAN be banked. MCP23008 can't, the
+     * @param bankCapable  Whether this chip CAN be banked. MCP23008 can't, the
      *                      MCP23017 can. This determines the chip register mapping
      * @param dioPinData    Chip Pin data
      * @param generalConsole Console
      * @return  Mcp23xxx Parms instance whose state contains the details pass
      * in by application caller.
      */
-    public static Mcp23xxxParms processMain(Context pi4j,String[] args,boolean bank_capable, HashMap<Integer, GpioPinCfgData> dioPinData , Console generalConsole) {
+    public static Mcp23xxxParms processMain(Context pi4j,String[] args,boolean bankCapable, HashMap<Integer, GpioPinCfgData> dioPinData , Console generalConsole) {
         var console = generalConsole;
         Mcp23xxxParms parmsObj = new Mcp23xxxParms(console);
         parmsObj.pi4j = pi4j;
-        parmsObj.ffdcControlLevel = 6;
-        parmsObj.bank_capable = bank_capable;
-        parmsObj.up_down = "on"; //  presently handlers canot be removed, so not an option
+        parmsObj.ffdcControlLevel = 2;  // log info,starting point, likely user set a value option -f
+        parmsObj.bankCapable = bankCapable;
+        parmsObj.upDown = "on"; //  presently handlers cannot be removed, so not an option
         console.print("entered processMain   \n");
         boolean badParm = false;
         boolean dumpRegs = false;
@@ -94,88 +94,83 @@ public class Mcp23xxxAppProcessParms {
                 parmsObj.dumpRegs = true;
              }  else if (o.contentEquals("-b")) { // bus
                 String a = args[i + 1];
-                parmsObj.bus_num = Integer.parseInt(a.substring(2), 16);
+                parmsObj.busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
             }  else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
                 i++;
                 parmsObj.address = Integer.parseInt(a.substring(2), 16);
-                // display_main.address = Integer.parseInt(a, 16);
             } else if (o.contentEquals("-h")) {
                 parmsObj.usage();
                 System.exit(0);
-            } /*
-             * else if (o.contentEquals("-b")) { String a = args[i + 1];
-             * parmsObj.bus_num = Integer.parseInt(a.substring(2), 16);
-             * haveBus = true; i++; }
-             */else if (o.contentEquals("-i")) {
-                parmsObj.monitor_intrp = true;
-                parmsObj.off_on = args[i + 1];
+            } else if (o.contentEquals("-i")) {
+                parmsObj.monitorIntrp = true;
+                parmsObj.offOn = args[i + 1];
                 i++;
             }  else if (o.contentEquals("-g")) {
                 String a = args[i + 1];
-                parmsObj.gpio_num = Integer.parseInt(a);
+                parmsObj.gpioNum = Integer.parseInt(a);
                 i++;
             } else if (o.contentEquals("-x")) {
                 String a = args[i + 1];
-                parmsObj.do_reset = true;
-                parmsObj.gpio_reset = Integer.parseInt(a);
+                parmsObj.doReset = true;
+                parmsObj.gpioReset = Integer.parseInt(a);
                 i++;
             } else if (o.contentEquals("-d")) {
                 String a = args[i + 1];
                 i++;
                 // TODO needs work
                 parmsObj.pin = Integer.parseInt(a);
-                if ((parmsObj.bank_capable) && (parmsObj.pin > 15)) {
+                if ((parmsObj.bankCapable) && (parmsObj.pin > 15)) {
                     badParmDetail = ("Pin too large, MAX of 15");
                     badParm = true;
-                } else if ((parmsObj.bank_capable == false) && (parmsObj.pin > 7)) {
+                } else if ((parmsObj.bankCapable == false) && (parmsObj.pin > 7)) {
                     badParmDetail = ("Pin too large, MAX of 7 ");
                     badParm = true;
                 } else {
-                    parmsObj.set_pin = true;
+                    parmsObj.setPin = true;
                 }
             } /*
-             * Note, it si assumed the calling program is using the appConfig
+             * Note, it is assumed the calling program is using the appConfig
              *     package for resolving the chip bus and address, so these two
              *     options are not accepted.
              * else if (o.contentEquals("-a")) { String a = args[i + 1];
              * i++; parmsObj.address = Integer.parseInt(a.substring(2), 16);
-             * haveAddress = true; // display_main.address =
+             * haveAddress = true; // displayMain.address =
              * Integer.parseInt(a, 16); }
              */else if (o.contentEquals("-z")) {
-                parmsObj.has_full_keyed_data = true;
-                parmsObj.full_keyed_data = args[i + 1];
+                parmsObj.hasFullKeyedData = true;
+                parmsObj.fullKeyedData = args[i + 1];
                 i++;
             } else if (o.contentEquals("-m")) {
-                parmsObj.has_full_pin_keyed_data = true;
-                parmsObj.full_pin_keyed_data = args[i + 1];
+                parmsObj.hasFullPinKeyedData = true;
+                parmsObj.fullPinKeyedData = args[i + 1];
                 i++;
             } else if (o.contentEquals("-k")) {
-                parmsObj.has_IOCON_keyed_data = true;
-                parmsObj.IOCON_keyed_data = args[i + 1];
+                parmsObj.hasIOCONKeyedData = true;
+                parmsObj.IOCONKeyedData = args[i + 1];
                 i++;
             }  else if (o.contentEquals("-r")) {
                 String a = args[i + 1];
                 i++;
                 // needs work
                 parmsObj.pin = Integer.parseInt(a);
-                if ((parmsObj.bank_capable) && (parmsObj.pin > 15)) {
+                if ((parmsObj.bankCapable) && (parmsObj.pin > 15)) {
                     badParmDetail = ("Pin too large, MAX of 15");
                     badParm = true;
-                } else if ((parmsObj.bank_capable == false) && (parmsObj.pin > 7)) {
+                } else if ((parmsObj.bankCapable == false) && (parmsObj.pin > 7)) {
                     badParmDetail = ("Pin too large, MAX of 7");
                     badParm = true;
                 } else {
-                    parmsObj.read_pin = true;
+                    parmsObj.readPin = true;
                 }
             } else if (o.contentEquals("-o")) {
                 String a = args[i + 1];
                 i++;
                 if (a.contentEquals("ON")) {
-                    parmsObj.pin_on = true;
+                    parmsObj.pinOn = true;
                 } else if (a.contentEquals("OFF")) {
-                    parmsObj.pin_on = false;
+                    parmsObj.pinOn = false;
                 } else {
                     badParmDetail = ("Invalid parm : " + a);
                     badParm = true;
@@ -185,17 +180,13 @@ public class Mcp23xxxAppProcessParms {
                 i++;
                 parmsObj.priChipName = a;
                 console.print("   -c : " + parmsObj.priChipName);
-                // display_main.address = Integer.parseInt(a, 16);
             } else if (o.contentEquals("-p")) { // primary pin
                 String a = args[i + 1]; // chip name/
                 i++;
                 parmsObj.pinName = a;
                 console.print("-p : " + parmsObj.pinName);
-                // display_main.address = Integer.parseInt(a, 16);
             } else if (o.contentEquals("-q")) { // mainChip
                 parmsObj.mainChip = args[i + 1];
-
-                // >>>tcaObj.bus_num = Integer.parseInt(a.substring(2), 16);
                 i++;
             } else {
                 console.print("Invalid parm : " + o  + "  ");

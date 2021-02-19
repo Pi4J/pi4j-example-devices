@@ -45,7 +45,7 @@ public class SetProperties {
     /**
      * main
      * <p>
-     * Classes within  the appConfig package have their set_properties method called.
+     * Classes within  the appConfig package have their setProperties method called.
      * <p>
      * PreCond: None
      * </p>
@@ -56,13 +56,13 @@ public class SetProperties {
      */
     public static void main(String[] args) {
         ChipNameMap cMap = new ChipNameMap();
-        cMap.set_properties();
+        cMap.setProperties();
 
         GpioToApp gMap = new GpioToApp();
-        gMap.set_properties();
+        gMap.setProperties();
 
         PiPinMap piMap = new PiPinMap();
-        piMap.set_properties();
+        piMap.setProperties();
 
     }
 

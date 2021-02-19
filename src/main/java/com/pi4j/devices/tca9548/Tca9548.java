@@ -69,14 +69,14 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
      *     <li>Instantiated Context class
      *     <li> Instantiated FFDC class
      *     <li> Number of existing/functional Pi i2c bus
-     *     <li> Address of i2c device connected to the bus identified by bus_num
+     *     <li> Address of i2c device connected to the bus identified by busNum
      *     <li> Instantiated Console class
      * </ul>
      * <p>
      * PostCond:  Class methods are now accessable
      */
-    public Tca9548(Context pi4j, FfdcUtil ffdc, int bus_num, int address, Console console) {
-        super(pi4j, ffdc, bus_num, address, console);
+    public Tca9548(Context pi4j, FfdcUtil ffdc, int busNum, int address, Console console) {
+        super(pi4j, ffdc, busNum, address, console);
         init();
     }
 
@@ -94,25 +94,25 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
 
 
     /**
-     * disableBus.Disable path of bus 'disable_bus_num' through switch.
+     * disableBus.Disable path of bus 'disableBusNum' through switch.
      * <p>
      * PreCond: Tca9548 instance initialized.  See CTOR
      *
-     * @param disable_bus_num Bus to disable
+     * @param disableBusNum Bus to disable
      *                        <p>
      *                        PostCond:  If successful return true, else false.
      *                        </p>
      *                        <p>
-     *                        Note: register contents for disable_bus_number are effected, all other register
+     *                        Note: register contents for disableBusNumber are effected, all other register
      *                        contents are NOT modified.
      *                        </p>
      */
-    public boolean disableBus(int disable_bus_num) {
+    public boolean disableBus(int disableBusNum) {
         // TODO Auto-generated method stub
         boolean rval = true;
         byte reg;
         reg = 0;
-        this.ffdc.ffdcMethodEntry(this.getMethodName() + "  bus number: " + disable_bus_num);
+        this.ffdc.ffdcMethodEntry(this.getMethodName() + "  bus number: " + disableBusNum);
 
         try {
             reg =  this.readByte();
@@ -121,7 +121,7 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
             rval = false;
         }
 
-        int busBits = this.cfgData.getByteMask(disable_bus_num);
+        int busBits = this.cfgData.getByteMask(disableBusNum);
         if (busBits == -1) {
             this.ffdc.ffdcConfigWarningEntry("bus number not mapped to a byte mask");
             rval = false;
@@ -151,26 +151,26 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
     }
 
     /**
-     * enableBus.Enable path of bus 'enable_bus_num' through switch.
+     * enableBus.Enable path of bus 'enableBusNum' through switch.
      * <p>
      * PreCond: Tca9548 instance initialized.  See CTOR
      *
-     * @param enable_bus_num Bus to enable
+     * @param enableBusNum Bus to enable
      *                       </p>
      *
      *                       <p>
      *                       PostCond:  If successful return true, else false.
      *                       </p>
      *                       <p>
-     *                       Note: register contents for enable_bus_number are effected, all other register
+     *                       Note: register contents for enableBusNumber are effected, all other register
      *                       contents are NOT modified.
      *                       </p>
      */
-    public boolean enableBus(int enable_bus_num) {
+    public boolean enableBus(int enableBusNum) {
         byte reg = 0;
         int rcode = 0;
         boolean rval = true;
-        this.ffdc.ffdcMethodEntry(this.getMethodName() + "  bus number: " + enable_bus_num);
+        this.ffdc.ffdcMethodEntry(this.getMethodName() + "  bus number: " + enableBusNum);
 
         try {
             reg = this.readByte();
@@ -178,7 +178,7 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
             rval = false;
         }
 
-        int busBits = this.cfgData.getByteMask(enable_bus_num);
+        int busBits = this.cfgData.getByteMask(enableBusNum);
         if (busBits == -1) {
             this.ffdc.ffdcConfigWarningEntry("bus number not mapped to a byte mask");
             rval = false;
@@ -208,7 +208,7 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
         boolean worked = true;
 
         this.ffdc.ffdcMethodEntry(this.getMethodName());
-        String pin_name = "      Bus7   Bus6  Bus5   Bus4   Bus3   Bus2   Bus1   Bus0";
+        String pinName = "      Bus7   Bus6  Bus5   Bus4   Bus3   Bus2   Bus1   Bus0";
 
         try {
             reg = this.readByte();
@@ -221,7 +221,7 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
 
             val = reg;
             regAstr = regAstr.concat("tca9548 bus enable register  \n");
-            regAstr = regAstr.concat(pin_name + "\n");
+            regAstr = regAstr.concat(pinName + "\n");
             regAstr = regAstr.concat("      " + ((val & 0x80) >> 7) + "      " + ((val & 0x40) >> 6) + "     "
                     + ((val & 0x20) >> 5) + "      " + ((val & 0x10) >> 4) + "      " + ((val & 0x08) >> 3) + "      "
                     + ((val & 0x04) >> 2) + "      " + ((val & 0x02) >> 1) + "      " + ((val & 0x01)) + "\n");

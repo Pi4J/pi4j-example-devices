@@ -48,7 +48,7 @@ public class ReadProperties {
     /**
      * main
      *
-     * Classes within  the appConfig package have their read_properties method called.
+     * Classes within  the appConfig package have their readProperties method called.
      * <p>
      * PreCond: None
      * </p>
@@ -61,13 +61,13 @@ public class ReadProperties {
     public static void main(String[] args) {
 
         ChipNameMap cMap = new ChipNameMap();
-        String chips = cMap.read_properties();
+        String chips = cMap.readProperties();
 
         GpioToApp gMap = new GpioToApp();
-        String pins = gMap.read_properties();
+        String pins = gMap.readProperties();
 
         PiPinMap piMap = new PiPinMap();
-        String pi = piMap.read_properties();
+        String pi = piMap.readProperties();
 
         System.out.println(" chip map : " + chips);
 

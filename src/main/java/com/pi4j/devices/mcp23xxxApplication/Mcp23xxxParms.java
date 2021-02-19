@@ -60,41 +60,40 @@ public class Mcp23xxxParms {
     public String mainChip;
     public int ffdcControlLevel;
     public boolean dumpRegs;
-    public boolean read_pin;
-    public boolean pin_on;
-    public boolean set_pin;
-    public String full_keyed_data;
-    public String full_pin_keyed_data;
-    public boolean has_full_keyed_data;
-    public boolean has_full_pin_keyed_data;
+    public boolean readPin;
+    public boolean pinOn;
+    public boolean setPin;
+    public String fullKeyedData;
+    public String fullPinKeyedData;
+    public boolean hasFullKeyedData;
+    public boolean hasFullPinKeyedData;
 
-    public boolean has_IOCON_keyed_data;
-    public String IOCON_keyed_data;
+    public boolean hasIOCONKeyedData;
+    public String IOCONKeyedData;
 
     public String priChipName;
     public String pinName;
-    public int priChipBus_num;
+    public int priChipBusNum;
     public int priChipAddress;
 
-    public boolean do_reset;
-    public int bus_num;
+    public boolean doReset;
+    public int busNum;
     public int address;
 
-    public byte config_info;
+    public byte configInfo;
     public byte intfA;
     public byte intfB;
-    public int gpio_num;
-    public String off_on;
-    public String up_down;
-    //public boolean has_up_down;
-    public int intrpt_count;
+    public int gpioNum;
+    public String offOn;
+    public String upDown;
+    public int intrptCount;
     public boolean tmpFileUse;
-    public int gpio_reset;
+    public int gpioReset;
     public boolean banked;
-    public boolean bank_capable;
+    public boolean bankCapable;
 
     public Context pi4j;
-    public boolean monitor_intrp;
+    public boolean monitorIntrp;
     public int pin;
 
 

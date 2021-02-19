@@ -39,18 +39,15 @@ import com.pi4j.devices.appConfig.AppConfigUtilities;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
 import com.pi4j.devices.base_util.mapUtil.MapUtil;
-import com.pi4j.devices.mcp23xxxApplication.Mcp23008PinMonitor;
-import com.pi4j.devices.mcp23xxxApplication.Mcp23xxxAppProcessParms;
 import com.pi4j.devices.mcp23xxxApplication.Mcp23xxxParms;
 import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
 import com.pi4j.devices.mcp23xxxCommon.McpBase;
 
 import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.Pi4J;
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
+
 import java.util.HashMap;
-import com.pi4j.context.Context;
-import com.pi4j.devices.base_i2c.BasicI2cDevice;
+
 import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
 import com.pi4j.exception.LifecycleException;
 import com.pi4j.io.exception.IOException;
@@ -91,124 +88,6 @@ public class Mcp23008 extends McpBase {
         return (regAddr);
     }
 
-    /**
-     * <p>
-     *     Invoke various methods on MCP23008 instance
-     * </p>
-     * @param args       user params
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        var console = new Console();
-        Context pi4j =  Pi4J.newAutoContext();
-
-        console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008");
-
-        HashMap<Integer, GpioPinCfgData> dioPinData = new HashMap<Integer, GpioPinCfgData>();
-
-        Mcp23xxxParms parmsObj = Mcp23xxxUtil.processMain(pi4j,args,false, dioPinData, console);
-
-        FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel , Mcp23008.class);
-
-        ffdc.ffdcDebugEntry("mcp23008 : Arg processing completed...\n");
-
-
-        Mcp23008 mcpObj = new Mcp23008(parmsObj.pi4j, parmsObj, ffdc,  dioPinData, console);
-
-        BaseGpioInOut gpio = new BaseGpioInOut(parmsObj.pi4j, mcpObj.ffdc, mcpObj.dioPinData);
-        mcpObj.gpio = gpio;
-
-        AppConfigUtilities cfgU = null; // The config utils will not be used in this example
-        mcpObj.cfgU = cfgU;
-
-        mcpObj.mapUtils = new MapUtil(mcpObj.ffdc, mcpObj.gpio);
-
-
-
-        mcpObj.cfgData = new McpConfigData(ffdc);
-
-       Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc,  parmsObj.bus_num, parmsObj.address, mcpObj.cfgData, mcpObj, console);
-
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                ffdc.ffdcFlushShutdown(); // push all logs to the file
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
-
-        if (parmsObj.has_full_keyed_data) { // -g
-            HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.full_keyed_data);
-            mcpObj.cfgData.replaceMap(outerMap);
-            gpio.createGpioInstance(mcpObj.cfgData.getFullMap());
-        }
-
-        if (parmsObj.do_reset) {
-            mcpObj.reset_chip();
-        }
-
-        // do this before pin data as this will set 'banked', needed for correct
-        // addressing
-        if (parmsObj.has_IOCON_keyed_data) { // -k
-            HashMap<String, HashMap<String, String>> mMap;
-            mMap = mcpObj.mapUtils.createFullMap(parmsObj.IOCON_keyed_data);
-            mcpObj.cfgData.replaceMap(mMap);
-            mcpUtil.process_keyed_data();
-        }
-
-        if (parmsObj.has_full_pin_keyed_data) { // -m
-            HashMap<String, HashMap<String, String>> mMap;
-            mMap = mcpObj.mapUtils.createFullMap(parmsObj.full_pin_keyed_data);
-            mcpObj.cfgData.replaceMap(mMap);
-            mcpUtil.process_keyed_data();
-        }
-
-        System.out.println("Chip register configurations completed");
-
-        mcpObj.reinit("Mcp23008", "Mcp23008",parmsObj.bus_num, parmsObj.address);
-
-        if (parmsObj.dumpRegs) {
-            mcpObj.dump_regs();
-            System.exit(0);
-        }
-
-
-        if (parmsObj.set_pin) {
-            try {
-                mcpObj.drive_pin(parmsObj.pin, parmsObj.pin_on);
-            } catch (InterruptedException | IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-
-
-        if (parmsObj.read_pin) {
-            try {
-                mcpObj.read_input(parmsObj.pin);
-            } catch (InterruptedException | IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-
-
-        mcpObj.ffdc.ffdcDebugEntry("program ending normal");
-         //
-        ffdc.ffdcFlushShutdown(); // push all logs to the file
-
-        // Shutdown Pi4J
-        pi4j.shutdown();
-    }
 
 
 }

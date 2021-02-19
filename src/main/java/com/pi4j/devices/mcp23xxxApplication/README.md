@@ -33,7 +33,7 @@ Supported functions.
     2. Configure any/all pins (all configurations options)
     3. Monitor any specific pin for input interrupts. These interrupts 
        will call the event handler on the event class associated with the pin
-    4. Supports logging facilities inplemented by log4_v2
+    4. Supports logging facilities implemented by log4_v2
     
 The classes are implemented using the Pi4j_V2 requirements of September 1 2020.
 
@@ -150,7 +150,7 @@ property files
   sudo java -cp ../distribution/*:.:   com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor -x 13 -q 9548#1  -g 27   -r 3  -p pin0 -c 23008#1        -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"
 
 
-5. Drive MCP23008 pin0 hi low
+5. Drive MCP23008 pin0 hi low  Red LED on/off
  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -d 0 -o ON -p pin0 -c 23008#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"
  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -d 0 -o OFF -p pin0 -c 23008#1  
 
@@ -175,6 +175,7 @@ GPIO.output( 16 , GPIO.HIGH)
     i2cdump -y 1 0x20     This will clear existing interrupts in the chip
  
 8. Trip interrupt  GPIO16->p4   (in separate terminal console)
+pin0 Red LED will reflect state of pin4 when it interrupts
 python
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
@@ -183,7 +184,7 @@ GPIO.output(16,GPIO.LOW)
 GPIO.output( 16 , GPIO.HIGH)
 
 
-// pin0 will reflect state of pin4 when it interrupts
+// pin0 Red LED will reflect state of pin4 when it interrupts
   + "{'pin4':{'appName':'input','action':'reflect','chipName':'23008#1','pin':'pin0','pinChip':'23008#1'}} } },"
  
  // pin0 drivenHi then drivenLow when pin4 interrupts
@@ -270,6 +271,7 @@ _______________________           -   0x70              -
      In another terminal
  i2cdump -y 1 0x22     This will clear existing interrupts in the chip
  
+ Yellow LED will flash on/off once each interrupt
 Trip interrupt  GPIO12->p4
 python
 import RPi.GPIO as GPIO
@@ -285,7 +287,7 @@ GPIO.output( 12 , GPIO.HIGH)
      In another terminal
   i2cdump -y 1 0x22     This will clear existing interruupts in the chip
  
- Trip interrupt  GPIO18->p15
+ Trip interrupt  GPIO18->p15     Red LED reflects level of pin 15
 python
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
@@ -294,12 +296,12 @@ GPIO.output(18,GPIO.LOW)
 GPIO.output( 18 , GPIO.HIGH)
  
  
-Drive pin0 hi low
+Drive pin0 hi low     Red LED
 
  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 0 -o ON -p pin0 -c 23017#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"
  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 0 -o OFF -p pin0 -c 23017#1  
 
-Drive pin14 hi low
+Drive pin14 hi low     Yellow LED
 
  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 14 -o ON -p pin0 -c 23017#1  -m   "{{'pin14':{'dir':'out','int_ena':'no'}}}"
  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 14 -o OFF -p pin0 -c 23017#1  

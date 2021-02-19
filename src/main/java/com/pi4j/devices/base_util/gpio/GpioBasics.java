@@ -77,7 +77,7 @@ public interface GpioBasics {
      *      PostCond:  Pin driven and restored to initial state
      *      </p>
      */
-    default void reset_chip(int resetGpio, Context pi4j, int delay, boolean bar, FfdcUtil ffdc) {
+    default void resetChip(int resetGpio, Context pi4j, int delay, boolean bar, FfdcUtil ffdc) {
         var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("resetPin")
                 .name("Chip reset")

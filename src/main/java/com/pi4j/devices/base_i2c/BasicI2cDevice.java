@@ -64,13 +64,13 @@ public class BasicI2cDevice {
      * <p>
      * PostCond:  Class Read and write methods are now accessable
      */
-    public BasicI2cDevice(Context pi4j, FfdcUtil ffdc, int bus_num, int address, Console console) {
+    public BasicI2cDevice(Context pi4j, FfdcUtil ffdc, int busNum, int address, Console console) {
         this.ffdc = ffdc;
-        this.bus_num = bus_num;
+        this.busNum = busNum;
         this.address = address;
         this.console = console;
         this.pi4j = pi4j;
-        String details = String.format("BasicI2cDevice ctor bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
+        String details = String.format("BasicI2cDevice ctor bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
         this.ffdc.ffdcDebugEntry(details);
         this.init();
     }
@@ -84,17 +84,17 @@ public class BasicI2cDevice {
      */
     private void init() {
         try {
-            String id = String.format("0X%02x: ", this.bus_num);
+            String id = String.format("0X%02x: ", this.busNum);
             String name = String.format("0X%02x: ", this.address);
             this.i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                    .bus(this.bus_num)
+                    .bus(this.busNum)
                     .device(this.address)
                     .id(id+" "+name)
                     .name(name)
                     .provider("pigpio-i2c")
                     .build();
         } catch (Pi4JException e) {
-            String details = String.format("new config create failed bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
+            String details = String.format("new config create failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
             this.ffdc.ffdcErrorEntry(details);
             this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
             this.ffdc.ffdcErrorExit("i2C NEW CONFIG failed", 105);
@@ -103,7 +103,7 @@ public class BasicI2cDevice {
             this.i2cDevice = this.pi4j.create(this.i2cDeviceConfig);
         } catch (Exception e) {
             this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            String details = String.format("device create failed bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
+            String details = String.format("device create failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
             this.ffdc.ffdcErrorExit(details, 104);
             //e.printStackTrace();
         }
@@ -121,7 +121,7 @@ public class BasicI2cDevice {
      */
     protected int readRegister(int offset) {
         int reg = 0;
-        this.ffdc.ffdcMethodEntry("readRegister : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("readRegister : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         try {
             reg = this.i2cDevice.readRegister(offset);
         } catch (IOException e) {
@@ -146,7 +146,7 @@ public class BasicI2cDevice {
      * @throws IOException, IOReadException
      */
     protected byte readRegisterByte(int offset) throws IOException, IOReadException {
-        this.ffdc.ffdcMethodEntry("readRegisterBye : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("readRegisterBye : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         byte reg = 0;
         reg = this.i2cDevice.readRegisterByte(offset);
         this.ffdc.ffdcMethodExit("readRegisterByte data :" + String.format("0X%02x: ", reg));
@@ -170,7 +170,7 @@ public class BasicI2cDevice {
      * PostCond:  Register contents returned if successful, else negative value
      */
     protected int read() {
-        this.ffdc.ffdcMethodEntry("read  bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("read  bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         int reg = 0;
         try {
             reg = this.i2cDevice.read();
@@ -198,7 +198,7 @@ public class BasicI2cDevice {
      * @throws IOException
      */
     protected byte readByte() throws IOException {
-        this.ffdc.ffdcMethodEntry("readByte bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("readByte bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         byte reg = 0;
         reg = this.i2cDevice.readByte();
         this.ffdc.ffdcDebugEntry("readByte  data :" + String.format("0X%02x: ", reg));
@@ -217,14 +217,14 @@ public class BasicI2cDevice {
      *             PostCond:  0 returned if successful, else non-zero
      */
     protected int write(byte data) {
-        this.ffdc.ffdcMethodEntry("write : data " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("write : data " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         int rval = 0;
         try {
             rval = this.i2cDevice.write(data);
             this.ffdc.ffdcDebugEntry("write :" + String.format("0X%02x: ", data));
         } catch (IOException e) {
             this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            String details = String.format("write failed bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
+            String details = String.format("write failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
             this.ffdc.ffdcErrorEntry(details);
             rval = 1;
         }
@@ -244,14 +244,14 @@ public class BasicI2cDevice {
      *             PostCond:  0 returned if successful, else non-zero
      */
     protected int writeByte(int offset, byte data) {
-        this.ffdc.ffdcMethodEntry("writeByte : offset  " + String.format("0X%02x: ", offset) + " data : " + String.format("0X%02x: ",data )  + " bus : " + String.format("0X%02x: ",this.bus_num ) + "  device address:  " + String.format("0X%02x: ",this.address));
+        this.ffdc.ffdcMethodEntry("writeByte : offset  " + String.format("0X%02x: ", offset) + " data : " + String.format("0X%02x: ",data )  + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         int rval = 0;
         try {
             rval = this.i2cDevice.writeRegister(offset, data);
             this.ffdc.ffdcDebugEntry("writeByte :" + String.format("0X%02x: ", data));
         } catch (IOException e) {
             this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            String details = String.format("write failed bus %s   address %s  ", String.format("0X%02x: ", this.bus_num), String.format("0X%02x: ", this.address));
+            String details = String.format("write failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
             this.ffdc.ffdcErrorEntry(details);
             rval = 1;
         }
@@ -322,7 +322,7 @@ public class BasicI2cDevice {
 
 
     protected FfdcUtil ffdc;
-    protected int bus_num;
+    protected int busNum;
     protected int address;
     protected Console console;
     protected Context pi4j;

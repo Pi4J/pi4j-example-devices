@@ -41,10 +41,8 @@ import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
 import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.devices.base_util.mapUtil.MapUtil;
 import com.pi4j.devices.mcp23xxxApplication.Mcp23xxxParms;
-import com.pi4j.io.exception.IOException;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.context.Context;
-import com.pi4j.devices.base_i2c.BasicI2cDevice;
 import com.pi4j.util.Console;
 import java.util.HashMap;
 
@@ -66,45 +64,45 @@ public class McpBase extends MutableI2cDevice  {
     /**
      *  CTOR
      * @param parmsObj   Contains the many options supplied to the main functions
-     * @param bank_capable   If true a MCP23017 chip, else a MCP23008 chip
+     * @param bankCapable   If true a MCP23017 chip, else a MCP23008 chip
      * @param dioPinData    MCP chip pin  configuration objects
      * @param pi4j          Context
      * @param ffdc           Logging
      * @param console          Console
      */
-    public McpBase(Mcp23xxxParms parmsObj, boolean bank_capable, HashMap<Integer, GpioPinCfgData> dioPinData, Context pi4j, FfdcUtil ffdc, Console console) {
+    public McpBase(Mcp23xxxParms parmsObj, boolean bankCapable, HashMap<Integer, GpioPinCfgData> dioPinData, Context pi4j, FfdcUtil ffdc, Console console) {
         super(pi4j, ffdc,  console);
         this.parmsObj = parmsObj;
         // copy all parmsObj attributes into the MCPxxxx Base class.
         this.priChipName = parmsObj.priChipName;
         this.pin = parmsObj.pin;
-        this.do_reset = parmsObj.do_reset;
-        this.pin_on = parmsObj.pin_on;
-        this.read_pin = parmsObj.read_pin;
-        this.set_pin = parmsObj.set_pin;
-        this.has_full_keyed_data = parmsObj.has_full_keyed_data;
-        this.monitor_intrp = parmsObj.monitor_intrp;
-        this.has_full_pin_keyed_data = parmsObj.has_full_pin_keyed_data;
-        this.gpio_num = parmsObj.gpio_num;
-        this.has_up_down = false;
-        this.intrpt_count = parmsObj.intrpt_count;
+        this.doReset = parmsObj.doReset;
+        this.pinOn = parmsObj.pinOn;
+        this.readPin = parmsObj.readPin;
+        this.setPin = parmsObj.setPin;
+        this.hasFullKeyedData = parmsObj.hasFullKeyedData;
+        this.monitorIntrp = parmsObj.monitorIntrp;
+        this.hasFullPinKeyedData = parmsObj.hasFullPinKeyedData;
+        this.gpioNum = parmsObj.gpioNum;
+        this.hasUpDown = false;
+        this.intrptCount = parmsObj.intrptCount;
         this.ffdc = ffdc;
         this.banked = false; // always false to lock in register address scheme
-        this.bank_capable = bank_capable;
+        this.bankCapable = bankCapable;
         this.intfA = parmsObj.intfA;
         this.intfB = parmsObj.intfB;
         this.dioPinData = dioPinData;
-        this.full_keyed_data = parmsObj.full_keyed_data;
-        this.full_pin_keyed_data = parmsObj.full_pin_keyed_data;
-        this.has_IOCON_keyed_data = parmsObj.has_IOCON_keyed_data;
-        this.IOCON_keyed_data = parmsObj.IOCON_keyed_data;
+        this.fullKeyedData = parmsObj.fullKeyedData;
+        this.fullPinKeyedData = parmsObj.fullPinKeyedData;
+        this.hasIOCONKeyedData = parmsObj.hasIOCONKeyedData;
+        this.IOCONKeyedData = parmsObj.IOCONKeyedData;
         this.pinName = parmsObj.pinName;
-        this.priChipBus_num = parmsObj.priChipBus_num;
+        this.priChipBusNum = parmsObj.priChipBusNum;
         this.priChipAddress = parmsObj.priChipAddress;
-        this.config_info = parmsObj.config_info;
-        this.off_on = parmsObj.off_on;
-        this.up_down = parmsObj.up_down;
-        this.gpio_reset = parmsObj.gpio_reset;
+        this.configInfo = parmsObj.configInfo;
+        this.offOn = parmsObj.offOn;
+        this.upDown = parmsObj.upDown;
+        this.gpioReset = parmsObj.gpioReset;
 
     }
 
@@ -116,7 +114,7 @@ public class McpBase extends MutableI2cDevice  {
      * </p>
      */
     public byte[] getAddrMapFirst8() {
-        byte regAddr[] = {};
+        byte[] regAddr = {};
         return (regAddr);
     }
 
@@ -128,24 +126,24 @@ public class McpBase extends MutableI2cDevice  {
      * </p>
      */
     public byte[] getAddrMapSecond8() {
-        byte regAddr[] = {};
+        byte[] regAddr = {};
         return (regAddr);
     }
 
     /**
      * PrettyPrint register values
      */
-    public void dump_regs() {
+    public void dumpRegs() {
         this.ffdc.ffdcMethodEntry("dump_regs ");
 
-        String reg_name[] = { "_IODIR  ", "_IPOL   ", "_GPINTE ", "_DEFVAL ", "_INTCON ", "_IOCON  ", "_GPPU   ",
+        String regName[] = { "_IODIR  ", "_IPOL   ", "_GPINTE ", "_DEFVAL ", "_INTCON ", "_IOCON  ", "_GPPU   ",
                 "_INTF   ", "_INTCAP ", "_GPIO   ", "_OLAT   " };
         byte regAddr[] = this.getAddrMapFirst8();
         this.ffdc.ffdcDebugEntry("this.getAddrMapFirst8() function returned     " + this.getAddrMapFirst8());
 
-        String reg_nameB[] = { "_IODIRB ", "_IPOLB  ", "_GPINTEB", "_DEFVALB", "_INTCONB", "_IOCON  ", "_GPPUB  ",
+        String regNameB[] = { "_IODIRB ", "_IPOLB  ", "_GPINTEB", "_DEFVALB", "_INTCONB", "_IOCON  ", "_GPPUB  ",
                 "_INTFB  ", "_INTCAPB", "_GPIOB  ", "_OLATB  " };
-        String[][] pin_name = { { "IO7    IO6    IO5    IO4    IO3    IO2    IO1    IO0" },
+        String[][] pinName = { { "IO7    IO6    IO5    IO4    IO3    IO2    IO1    IO0" },
                 { "IP7    IP6    IP5    IP4    IP3    IP2    IP1    IP0   " },
                 { "GPINT7 GPINT6 GPINT5 GPINT4 GPINT3 GPINT2 GPINT1 GPINT0  " },
                 { "DEF7   DEF6   DEF5   DEF4   DEF3   DEF2   DEF1   DEF0    " },
@@ -162,22 +160,22 @@ public class McpBase extends MutableI2cDevice  {
         String regAstr = "";
         int reg ;
 
-        for (int i = 0; i < reg_name.length; i++) {
+        for (int i = 0; i < regName.length; i++) {
             // this.ffdc.ffdcDebugEntry(" regAddr " + regAddr[i]);
             // System.out.println(" regAddr " + regAddr[i]);
 
             reg = this.readRegister(regAddr[i]);
-            regAstr = regAstr.concat("\n   Reg " + reg_name[i] + " offset ("+ i + ")  data: "  +   String.format("0x%02X", reg) + "\n");
+            regAstr = regAstr.concat("\n   Reg " + regName[i] + " offset ("+ i + ")  data: "  +   String.format("0x%02X", reg) + "\n");
             int val =  reg;
             // System.out.println("pin7 pin6 pin5 pin4 pin3 pin2 pin1 pin0");
-            regAstr = regAstr.concat(pin_name[i][0] + "\n");
+            regAstr = regAstr.concat(pinName[i][0] + "\n");
             regAstr = regAstr.concat(" " + ((val & 0x80) >> 7) + "      " + ((val & 0x40) >> 6) + "      "
                     + ((val & 0x20) >> 5) + "      " + ((val & 0x10) >> 4) + "      " + ((val & 0x08) >> 3) + "      "
                     + ((val & 0x04) >> 2) + "      " + ((val & 0x02) >> 1) + "      " + ((val & 0x01)) + "\n");
         }
         this.ffdc.ffdcDebugEntry(regAstr);
         //System.out.println(regAstr);
-        if (this.bank_capable) {
+        if (this.bankCapable) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -186,16 +184,16 @@ public class McpBase extends MutableI2cDevice  {
             String regBstr = "";
             int regB;
 
-            for (int i = 0; i < reg_nameB.length; i++) {
+            for (int i = 0; i < regNameB.length; i++) {
                 // this.ffdc.ffdcDebugEntry(" regAddrB " + regAddrB[i]);
                 // System.out.println(" regAddrB " + regAddrB[i]);
 
                 regB = this.readRegister(regAddrB[i]);
-                regBstr = regBstr.concat("\n   RegB " + reg_nameB[i] + " offset ("+ i + ")  data: "  +   String.format("0x%02X", regB) + "\n");
+                regBstr = regBstr.concat("\n   RegB " + regNameB[i] + " offset ("+ i + ")  data: "  +   String.format("0x%02X", regB) + "\n");
                 int val =  regB;
                 // System.out.println("pin7 pin6 pin5 pin4 pin3 pin2 pin1
                 // pin0");
-                regBstr = regBstr.concat(pin_name[i][0] + "\n");
+                regBstr = regBstr.concat(pinName[i][0] + "\n");
                 regBstr = regBstr.concat(" " + ((val & 0x80) >> 7) + "      " + ((val & 0x40) >> 6) + "      "
                         + ((val & 0x20) >> 5) + "      " + ((val & 0x10) >> 4) + "      " + ((val & 0x08) >> 3)
                         + "      " + ((val & 0x04) >> 2) + "      " + ((val & 0x02) >> 1) + "      " + ((val & 0x01))
@@ -205,7 +203,7 @@ public class McpBase extends MutableI2cDevice  {
             //System.out.println(regBstr);
         }
 
-        this.ffdc.ffdcMethodExit("dump_regs");
+        this.ffdc.ffdcMethodExit("dumpRegs");
     }
 
     public void pgmSleep(int mills) {
@@ -214,21 +212,18 @@ public class McpBase extends MutableI2cDevice  {
         this.ffdc.ffdcMethodExit("pgmSleep");
     }
 
-    public void reset_chip() {
-        this.ffdc.ffdcMethodEntry("reset_chip ");
-        this.gpio.reset_chip(this.gpio_reset,this.pi4j,5000,true, this.ffdc);
-        this.ffdc.ffdcMethodExit("reset_chip");
+    public void resetChip() {
+        this.ffdc.ffdcMethodEntry("resetChip ");
+        this.gpio.resetChip(this.gpioReset,this.pi4j,5000,true, this.ffdc);
+        this.ffdc.ffdcMethodExit("resetChip");
     }
 
     /**
      *
      * @param pin         MCP pin to drive
-     * @param pin_on       If true drive HIGH, else drive LOW
-     * @throws InterruptedException
-     * @throws IOException
+     * @param pinOn       If true drive HIGH, else drive LOW
      */
-    public void drive_pin(int pin, boolean pin_on)
-            throws InterruptedException, IOException {
+    public void drivePin(int pin, boolean pinOn){
         // get the regs and make sure the desired pin is configed as output. Log
         // error if not
         int configed;
@@ -250,7 +245,7 @@ public class McpBase extends MutableI2cDevice  {
             thisOffsetOLA = second8[this.cfgData._OLATB];
         }
 
-        this.ffdc.ffdcMethodEntry("drive_pin  pin" + String.format("0x%02X", pin) + " pin_on : " + pin_on);
+        this.ffdc.ffdcMethodEntry("drivePin  pin" + String.format("0x%02X", pin) + " pinOn : " + pinOn);
 
         configed = this.readRegister(thisOffsetIOD);
 
@@ -260,7 +255,7 @@ public class McpBase extends MutableI2cDevice  {
         }
         reg = this.readRegister( thisOffsetGPI);
         // System.out.println("read GPI " + String.format("0x%02X", reg[0]));
-        if (pin_on) {
+        if (pinOn) {
             Integer integerObject = ((1 << absPin));
             b = integerObject.byteValue();
             reg = (byte)(reg | b);
@@ -277,7 +272,7 @@ public class McpBase extends MutableI2cDevice  {
 
         // OLAT
         reg = this.readRegister( thisOffsetOLA);
-        if (pin_on) {
+        if (pinOn) {
             Integer integerObject = ((1 << absPin));
             b = integerObject.byteValue();
             reg =  (reg | b);
@@ -290,7 +285,7 @@ public class McpBase extends MutableI2cDevice  {
 
         this.writeByte(thisOffsetOLA, (byte) reg);
 
-        this.ffdc.ffdcMethodExit("drive_pin");
+        this.ffdc.ffdcMethodExit("drivePin");
     }
 
     /**
@@ -299,15 +294,11 @@ public class McpBase extends MutableI2cDevice  {
      *               <p>
      *                Pin read and detail logged.
      *               </p>
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    public void read_input(int pin)
-            throws InterruptedException, IOException {
+      */
+    public void readInput(int pin){
         // # get the regs and make sure the desired pin is configed as input.
         // Log error if not
         int configed;
-        int b;
         int reg;
         int absPin = pin; // if in second bank must subtract 8
         byte first8[] = this.getAddrMapFirst8();
@@ -321,7 +312,7 @@ public class McpBase extends MutableI2cDevice  {
             thisOffsetGPI = second8[this.cfgData._GPIOB];
         }
 
-        this.ffdc.ffdcMethodEntry(" read_input  pin " + String.format("0x%02X", pin));
+        this.ffdc.ffdcMethodEntry(" readInput  pin " + String.format("0x%02X", pin));
 
         configed = this.readRegister(thisOffsetIOD);
         // System.out.println("configed from _IODIR : " +
@@ -344,13 +335,13 @@ public class McpBase extends MutableI2cDevice  {
             System.out.println("Pin" + pin + " High");
             this.ffdc.ffdcDebugEntry("Pin" + pin + " High");
         }
-        this.ffdc.ffdcMethodExit(" read_input");
+        this.ffdc.ffdcMethodExit(" readInput");
     }
 
 
     /**
      *
-     * @param on_off   Enable listener if true, else (at present disable not possible)
+     * @param onOff   Enable listener if true, else (at present disable not possible)
      * @param gpioPin  Pi GPIO to apply the listener
      * These listen to pi DIO interrupts. If on occurs this pgm handler is
      *  called. The handler then
@@ -359,19 +350,19 @@ public class McpBase extends MutableI2cDevice  {
      *                 <P>
      *                 PreCond:  BaseGpioInOut contains a relevant GpioPinCfgData.
      *                 This data supplied by the program user must include gpioPin
-     *                 as Input and the needed pull_down value
+     *                 as Input and the needed pullDown value
      *                 </P>
      */
-    public void addListener(String on_off,int gpioPin) {
+    public void addListener(String onOff,int gpioPin) {
         // find BCM number for this pin
-        this.ffdc.ffdcMethodEntry(" addListener on_off : " + on_off + "  pin" + gpioPin);
+        this.ffdc.ffdcMethodEntry(" addListener onOff : " + onOff + "  pin" + gpioPin);
         int intPin = gpioPin;
-        if (on_off.equals("on")) {
+        if (onOff.equals("on")) {
             this.gpio.getCfgData(intPin).input.addListener((DigitalStateChangeListener) new McpBaseIntrpListener(this));
-        } else if (on_off.equals("off")) {
+        } else if (onOff.equals("off")) {
             ; // cannot remove handler (yet)
         } else {
-            this.ffdc.ffdcErrorExit("addListener: invalid on_off", 521);
+            this.ffdc.ffdcErrorExit("addListener: invalid onOff", 521);
         }
         this.ffdc.ffdcMethodExit(" addListener ");
     }
@@ -391,14 +382,14 @@ public class McpBase extends MutableI2cDevice  {
      *
      * @param event     DigitalStateChangeEvent
      */
-    public void intrp_happened(DigitalStateChangeEvent event) {
-        // System.out.println("intrp_happened");
+    public void intrpHappened(DigitalStateChangeEvent event) {
+        // System.out.println("intrpHappened");
         this.ffdc.ffdcMethodEntry(
-                " intrp_happened : GPIO PIN STATE CHANGE: " + event.state());// figure
+                " intrpHappened : GPIO PIN STATE CHANGE: " + event.state());// figure
         // out, which, pins // interrupted
         int reg;
         boolean foundIntrBit = false;
-        int pin_num = 0;
+        int pinNum = 0;
         int testVal = 0;
         DigitalState effectedPinState = DigitalState.HIGH;
         if (this.pin < 8) {
@@ -408,13 +399,13 @@ public class McpBase extends MutableI2cDevice  {
             // find the bit (pin) that interrupted this time.
             testVal = reg;
             testVal = testVal & 0xff;
-            pin_num = 0;
+            pinNum = 0;
             this.ffdc.ffdcDebugEntry("A reg INTF " + String.format("0x%02X", reg));
 
             this.ffdc.ffdcDebugEntry("Pin 0 - 7, inspect _INTCAP ");
             for (int c = 0; c < 8; c++) {
                 if ((testVal >> c) == 1) {
-                    pin_num = c;
+                    pinNum = c;
                     foundIntrBit = true;
                     // get pin state for c + *. Set effectedPinState
                     reg =  this.readRegister( first8[this.cfgData._INTCAP]);
@@ -425,12 +416,12 @@ public class McpBase extends MutableI2cDevice  {
                     } else {
                         effectedPinState = DigitalState.LOW;
                     }
-                    this.ffdc.ffdcDebugEntry("A reg interrupt on pin_num :" + pin_num);
+                    this.ffdc.ffdcDebugEntry("A reg interrupt on pin_Nm :" + pinNum);
                     break;
                 }
             }
         } else {
-            if ((foundIntrBit == false) && (this.pin > 7)) { // search B bank
+            if (this.pin > 7) { // search B bank
                 this.ffdc.ffdcDebugEntry("Pin 8 - 15, inspect _INTCAPB ");
                 byte second8[] = this.getAddrMapSecond8();
 
@@ -438,11 +429,11 @@ public class McpBase extends MutableI2cDevice  {
                 // find the bit (pin) that interrupted this time.
                 testVal = reg;
                 testVal = testVal & 0xff;
-                pin_num = 0;
+                pinNum = 0;
                 this.ffdc.ffdcDebugEntry("B reg " + String.format("0x%02X", reg));
                 for (int c = 0; c < 8; c++) {
                     if ((testVal >> c) == 1) {
-                        pin_num = c + 8;
+                        pinNum = c + 8;
                         foundIntrBit = true;
                         // get pin state for c + *. Set effectedPinState
                         reg = this.readRegister(second8[this.cfgData._INTCAPB]);
@@ -453,7 +444,7 @@ public class McpBase extends MutableI2cDevice  {
                         } else {
                             effectedPinState = DigitalState.LOW;
                         }
-                        this.ffdc.ffdcDebugEntry("B reg interrupt on  pin_num : " + pin_num);
+                        this.ffdc.ffdcDebugEntry("B reg interrupt on  pinNum : " + pinNum);
                         break;
                     }
                 }
@@ -465,26 +456,26 @@ public class McpBase extends MutableI2cDevice  {
             this.ffdc.ffdcDebugEntry("Bit not found in _INTF(B) ");
         } else {
 
-            String[] pin_list = { "pin0", "pin1", "pin2", "pin3", "pin4", "pin5", "pin6", "pin7", "pin8", "pin9",
+            String[] pinList = { "pin0", "pin1", "pin2", "pin3", "pin4", "pin5", "pin6", "pin7", "pin8", "pin9",
                     "pin10", "pin11", "pin12", "pin13", "pin14", "pin15" };
             if (event.state() == DigitalState.LOW) {
-                this.ffdc.ffdcDebugEntry("    McpBase  GPIO " + pin_num + " LOW, chip pin: " + pin_list[pin_num]
+                this.ffdc.ffdcDebugEntry("    McpBase  GPIO " + pinNum + " LOW, chip pin: " + pinList[pinNum]
                         + " State: " + effectedPinState);
             } else {
-                this.ffdc.ffdcDebugEntry("    McpBase  GPIO " + pin_num + " HIGH, chip pin: " + pin_list[pin_num]
+                this.ffdc.ffdcDebugEntry("    McpBase  GPIO " + pinNum + " HIGH, chip pin: " + pinList[pinNum]
                         + " State: " + effectedPinState);
             }
-            if (this.pin == pin_num) {
-                this.processPinInterrupt(pin_num, effectedPinState, this.ffdc);
+            if (this.pin == pinNum) {
+                this.processPinInterrupt(pinNum, effectedPinState, this.ffdc);
             } else {
                 this.ffdc.ffdcDebugEntry(
-                        "    McpBase  effected pin: " + pin_num + " is not our monitored pin: " + this.pin);
+                        "    McpBase  effected pin: " + pinNum + " is not our monitored pin: " + this.pin);
             }
-            this.intrpt_count++;
+            this.intrptCount++;
             this.ffdc.ffdcDebugEntry(
-                    "Interrupt occured " + "  interrupt count : " + String.format("0x%02X", this.intrpt_count));
+                    "Interrupt occured " + "  interrupt count : " + String.format("0x%02X", this.intrptCount));
         }
-        this.ffdc.ffdcMethodExit(" intrp_happened");
+        this.ffdc.ffdcMethodExit(" intrpHappened");
     }
 
     /**
@@ -535,38 +526,37 @@ public class McpBase extends MutableI2cDevice  {
 
     }
 
-    boolean read_pin;
-    boolean pin_on;
-    boolean set_pin;
-    String full_keyed_data;
-    String full_pin_keyed_data;
-    boolean has_full_keyed_data;
-    boolean has_full_pin_keyed_data;
+    boolean readPin;
+    boolean pinOn;
+    boolean setPin;
+    String fullKeyedData;
+    String fullPinKeyedData;
+    boolean hasFullKeyedData;
+    boolean hasFullPinKeyedData;
 
-    boolean has_IOCON_keyed_data;
-    String IOCON_keyed_data;
+    boolean hasIOCONKeyedData;
+    String IOCONKeyedData;
 
     public String priChipName;
     String pinName;
-    int priChipBus_num;
+    int priChipBusNum;
     int priChipAddress;
 
-    boolean do_reset;
+    boolean doReset;
 
-    byte config_info;
+    byte configInfo;
     byte intfA;
     byte intfB;
-    int gpio_num;
-    String off_on;
-    String up_down;
-    boolean has_up_down;
-    int intrpt_count;
-    boolean tmpFileUse;
-    int gpio_reset;
+    int gpioNum;
+    String offOn;
+    String upDown;
+    boolean hasUpDown;
+    int intrptCount;
+    int gpioReset;
     boolean banked;
-    boolean bank_capable;
+    boolean bankCapable;
 
-    public boolean monitor_intrp;
+    public boolean monitorIntrp;
     public int pin;
     public HashMap<Integer, GpioPinCfgData> dioPinData;
     public McpConfigData cfgData;
@@ -596,13 +586,13 @@ public class McpBase extends MutableI2cDevice  {
         @Override
         public void onDigitalStateChange(DigitalStateChangeEvent event) {
             // display pin state on console
-            // ystem.out.println(" Matrix -->Utility : GPIO PIN STATE CHANGE: "
+            // system.out.println(" Matrix -->Utility : GPIO PIN STATE CHANGE: "
             // + event.getPin() + " = " + event.getState());
 
             if (event.state() == DigitalState.LOW) {
                 // System.out.println("Pin went low");
 
-                this.chip.intrp_happened(event);
+                this.chip.intrpHappened(event);
             }
         }
          McpBase chip;
