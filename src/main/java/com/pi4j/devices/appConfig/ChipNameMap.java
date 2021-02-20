@@ -63,7 +63,7 @@ import java.util.Properties;
 */
  public class ChipNameMap {
     /**
-     * set_properties
+     * setProperties
      * <p>
      * PreCond: ChipNameMap instance initialized.
      *
@@ -72,7 +72,7 @@ import java.util.Properties;
      *
      * */
 
-    public void set_properties() {
+    public void setProperties() {
             Properties prop = new Properties();
             OutputStream output = null;
             String fName = "config_chipMap.properties";
@@ -134,7 +134,7 @@ import java.util.Properties;
         }
 
     /**
-     * read_properties
+     * readProperties
      * <p>
      * PreCond: ChipNameMap instance initialized.   set_properties was called.
      *
@@ -145,7 +145,7 @@ import java.util.Properties;
      * @return String containing value for key chip_map
      *
      * */
-    public String read_properties() {
+    public String readProperties() {
             Properties prop = new Properties();
             InputStream input = null;
             String rval = "";

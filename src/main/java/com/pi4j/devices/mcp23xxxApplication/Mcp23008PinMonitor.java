@@ -46,7 +46,6 @@ package com.pi4j.devices.mcp23xxxApplication;
         import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
         import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
         import com.pi4j.exception.LifecycleException;
-        import com.pi4j.io.exception.IOException;
         import com.pi4j.io.gpio.digital.DigitalState;
         import com.pi4j.util.Console;
 
@@ -170,21 +169,11 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         HashMap<Integer, GpioPinCfgData> dioPinData = new HashMap<Integer, GpioPinCfgData>();
 
 
-        // mcpObj.monitor_intrp = true;
-
-
         Mcp23xxxParms parmsObj = Mcp23xxxAppProcessParms.processMain(pi4j,args,false, dioPinData, console);
 
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel , Mcp23008PinMonitor.class);
-      // String ss = String.format("0x%04X", address);
-        // System.out.println(String.format("0x%08X", 234));
 
-
-         ffdc.ffdcDebugEntry("mcp23008 : Arg processing completed...\n");
-
-
-        // mcpObj.i2cDevice.setFfdcObj(mcpObj.ffdc)
-
+        ffdc.ffdcDebugEntry("mcp23008PinMonitor : Arg processing completed...\n");
 
         Mcp23008PinMonitor mcpObj = new Mcp23008PinMonitor(parmsObj.pi4j, parmsObj, ffdc,  dioPinData, console);
 
@@ -205,14 +194,14 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
             String chipBus = chipDetails.get("busNum");
             String chipAddr = chipDetails.get("address");
             parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
-            parmsObj.bus_num = Integer.parseInt(chipBus.substring(2), 16);
+            parmsObj.busNum = Integer.parseInt(chipBus.substring(2), 16);
        }
         HashMap<String, String> priChipDetails = cfgU.getChipMapRec(parmsObj.priChipName);
         if (chipDetails != null) {
             String chipBus = priChipDetails.get("busNum");
             String chipAddr = priChipDetails.get("address");
             parmsObj.priChipAddress = Integer.parseInt(chipAddr.substring(2), 16);
-            parmsObj.priChipBus_num = Integer.parseInt(chipBus.substring(2), 16);
+            parmsObj.priChipBusNum = Integer.parseInt(chipBus.substring(2), 16);
            // TODO parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
         }
 
@@ -231,14 +220,14 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         mcpObj.installInterruptHandler();
 
 
-        // set bus_num and address based on mcpObj.priChipName
+        // set busNum and address based on mcpObj.priChipName
 
         // the bus is that of the main chip. The one connected to the Pi i2c
         // bus. The priChipBus may be some other
         // value if the prichipName is behind a mux.
         // If behind mux that was accounted for in the above call
         // cfgU.enableGpioPath
-        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc,  parmsObj.bus_num, parmsObj.priChipAddress, mcpObj.cfgData, mcpObj, console);
+        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc,  parmsObj.busNum, parmsObj.priChipAddress, mcpObj.cfgData, mcpObj, console);
 
         // Prior to running methods, set up control-c handler
         Signal.handle(new Signal("INT"), new SignalHandler() {
@@ -255,73 +244,62 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
             }
         });
 
-        if (parmsObj.has_full_keyed_data) { // -g
-            HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.full_keyed_data);
+        if (parmsObj.hasFullKeyedData) { // -g
+            HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.fullKeyedData);
             mcpObj.cfgData.replaceMap(outerMap);
-            // mcpObj.cfgData.replaceMap(outerMap);
-            // create GPIO Pi pins
-            // mcpObj.configUtils.DumpGpiosConfig(mcpObj.cfgData);
             gpio.createGpioInstance(mcpObj.cfgData.getFullMap());
         }
 
-        if (parmsObj.do_reset) {
-            mcpObj.reset_chip();
-            // mcpObj.dump_regs();
+        if (parmsObj.doReset) {
+            mcpObj.resetChip();
+            // mcpObj.dumpRegs();
         }
 
         // do this before pin data as this will set 'banked', needed for correct
         // addressing
-        if (parmsObj.has_IOCON_keyed_data) { // -k
+        if (parmsObj.hasIOCONKeyedData) { // -k
             HashMap<String, HashMap<String, String>> mMap;
-            mMap = mcpObj.mapUtils.createFullMap(parmsObj.IOCON_keyed_data);
+            mMap = mcpObj.mapUtils.createFullMap(parmsObj.IOCONKeyedData);
             mcpObj.cfgData.replaceMap(mMap);
-            mcpUtil.process_keyed_data();
+            mcpUtil.processKeyedData();
         }
 
-        if (parmsObj.has_full_pin_keyed_data) { // -m
+        if (parmsObj.hasFullPinKeyedData) { // -m
             HashMap<String, HashMap<String, String>> mMap;
-            mMap = mcpObj.mapUtils.createFullMap(parmsObj.full_pin_keyed_data);
+            mMap = mcpObj.mapUtils.createFullMap(parmsObj.fullPinKeyedData);
             mcpObj.cfgData.replaceMap(mMap);
-            mcpUtil.process_keyed_data();
+            mcpUtil.processKeyedData();
         }
 
         System.out.println("Chip register configurations completed");
-        mcpObj.reinit(parmsObj.priChipName, parmsObj.pinName,parmsObj.bus_num, parmsObj.priChipAddress);
+        mcpObj.reinit(parmsObj.priChipName, parmsObj.pinName,parmsObj.busNum, parmsObj.priChipAddress);
 
         if (parmsObj.dumpRegs) {
-            mcpObj.dump_regs();
+            mcpObj.dumpRegs();
             System.exit(0);
         }
 
        // mcpObj.cfgData.DumpGpiosConfig();
 
-        if (parmsObj.set_pin) {
-            try {
-                mcpObj.drive_pin(parmsObj.pin, parmsObj.pin_on);
-            } catch (InterruptedException | IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        if (parmsObj.setPin) {
+            mcpObj.drivePin(parmsObj.pin, parmsObj.pinOn);
+
         }
 
 
 
-        if (parmsObj.read_pin) {
-            try {
-                mcpObj.read_input(parmsObj.pin);
-            } catch (InterruptedException | IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        if (parmsObj.readPin) {
+            mcpObj.readInput(parmsObj.pin);
         }
-        if (parmsObj.monitor_intrp) {
+
+        if (parmsObj.monitorIntrp) {
             // spin and handle any interrupt that happens
-            if ((parmsObj.gpio_num == 0xff) ) { // || (parmsObj.has_up_down == false)
+            if ((parmsObj.gpioNum == 0xff) ) { // || (parmsObj.hasUpDown == false)
                 mcpObj.ffdc.ffdcConfigWarningEntry("Option -i requires -g ");
                 mcpObj.ffdc.ffdcDebugEntry("Spin so any Monitors can execute");
                 mcpObj.ffdc.ffdcErrorExit("invalid parms supplied", 550);
             } else {
-                mcpObj.addListener(parmsObj.off_on,  parmsObj.gpio_num);
+                mcpObj.addListener(parmsObj.offOn,  parmsObj.gpioNum);
                 while (true) {
                     try {
                         Thread.sleep(2000, 0);
@@ -333,10 +311,6 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
             }
         }
 
-        // mcpObj.dump_regs(); // comment out or interrupt details may get
-        // cleared for usage in interrupt procerssing
-        // cfgU.displayEnableReg(mcpObj.bus_num, mainChip);
-        // cfgU.runCli();
 
         mcpObj.ffdc.ffdcDebugEntry("program ending normal");
         // TODO

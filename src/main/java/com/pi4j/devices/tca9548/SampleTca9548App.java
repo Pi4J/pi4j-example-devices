@@ -103,7 +103,7 @@ public class SampleTca9548App {
 
         // declare and initialize attributes (state) used within the app
         int ffdcControlLevel = 0;
-        int bus_num = 0x1;
+        int busNum = 0x1;
         int address = 0x29;
         boolean displayRegs = false;
         boolean enableBus = false;
@@ -132,19 +132,17 @@ public class SampleTca9548App {
                 showUsage = true;
             } else if (o.contentEquals("-b")) { // bus
                 String a = args[i + 1];
-                bus_num = Integer.parseInt(a.substring(2), 16);
+                busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
             } else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-                // display_main.address = Integer.parseInt(a, 16);
-            } else if (o.contentEquals("-r")) { // gpio numberdevice address
+            } else if (o.contentEquals("-r")) { // gpio number
                 String a = args[i + 1];
                 i++;
                 resetGpio = Integer.parseInt(a.substring(2), 16);
                 resetChip = true;
-                // display_main.address = Integer.parseInt(a, 16);
             } else if (o.contentEquals("-s")) {
                 showCfg = true;
             } else if (o.contentEquals("-e")) { // enable bus
@@ -152,15 +150,12 @@ public class SampleTca9548App {
                 i++;
                 enableBus = true;
                 muxBusNumber = Integer.parseInt(a.substring(2), 16);
-                // display_main.address = Integer.parseInt(a, 16);
-            } else if (o.contentEquals("-d")) { // device address
+            } else if (o.contentEquals("-d")) {  // delete bus
                 String a = args[i + 1];
                 i++;
                 disableBus = true;
                 muxBusNumber = Integer.parseInt(a.substring(2), 16);
-                // display_main.address = Integer.parseInt(a, 16);
-            } else if (o.contentEquals("-l")) { // device address
-                // display_main.address = Integer.parseInt(a, 16);
+            } else if (o.contentEquals("-l")) {
                 displayRegs = true;
             } else {
                 showUsage = true;
@@ -170,7 +165,7 @@ public class SampleTca9548App {
 
         // Now use the class state to instantiate the FFDC utility class and the Tca9548 class
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, ffdcControlLevel, Tca9548.class);
-        var tcaMux = new Tca9548(pi4j, ffdc, bus_num, address, console);
+        var tcaMux = new Tca9548(pi4j, ffdc, busNum, address, console);
 
         // Prior to running methods, set up control-c handler
         Signal.handle(new Signal("INT"), new SignalHandler() {

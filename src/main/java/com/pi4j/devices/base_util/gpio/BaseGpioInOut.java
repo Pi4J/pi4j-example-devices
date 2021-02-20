@@ -140,9 +140,6 @@ public class BaseGpioInOut  implements GpioBasics {
      * Debug usage, dump pinDict
      */
     public void dumpHashMap() {
-        // Getting an iterator
-        Iterator hmIterator = this.pinDict.entrySet().iterator();
-
         // Iterate through the hashmap
         // and add some bonus marks for every student
         this.ffdc.ffdcDebugEntry("HashMap pin data   this.pinDict : " + this.pinDict + "\n\n");
@@ -584,26 +581,26 @@ public class BaseGpioInOut  implements GpioBasics {
      * public static void main(String[] args) throws IOException,
      * InterruptedException, PlatformAlreadyAssignedException,
      * UnsupportedBusNumberException { System.out.println("test gpios out");
-     * GpioOut gpio_out = new GpioOut("red Led", RaspiBcmPin.GPIO_24,
-     * PinState.LOW); System.out.println("high"); gpio_out.drivePinHigh();
+     * GpioOut gpioOut = new GpioOut("red Led", RaspiBcmPin.GPIO_24,
+     * PinState.LOW); System.out.println("high"); gpioOut.drivePinHigh();
      *
-     * Thread.sleep(3000); System.out.println("low"); gpio_out.drivePinLow();
+     * Thread.sleep(3000); System.out.println("low"); gpioOut.drivePinLow();
      *
-     * Thread.sleep(3000); System.out.println("toggle"); gpio_out.togglePin();
+     * Thread.sleep(3000); System.out.println("toggle"); gpioOut.togglePin();
      *
-     * Thread.sleep(3000); System.out.println("toggle"); gpio_out.togglePin();
+     * Thread.sleep(3000); System.out.println("toggle"); gpioOut.togglePin();
      *
-     * Thread.sleep(3000); System.out.println("pulse"); gpio_out.pulse(1000);
+     * Thread.sleep(3000); System.out.println("pulse"); gpioOut.pulse(1000);
      *
-     * System.out.println("start input pin GPIO22"); GpioIn gpio_in = new
+     * System.out.println("start input pin GPIO22"); GpioIn gpioIn = new
      * GpioIn("pin22", RaspiBcmPin.GPIO_22, PinPullResistance.PULL_UP);
-     * System.out.println("pin 22 state " + gpio_in.readPin());
+     * System.out.println("pin 22 state " + gpioIn.readPin());
      * System.out.println("ground pin 22"); Thread.sleep(8000);
-     * System.out.println("After grounding pin 22 state " + gpio_in.readPin());
+     * System.out.println("After grounding pin 22 state " + gpioIn.readPin());
      *
      * System.out.println("Remove pin 22"); Thread.sleep(8000);
      * System.out.println("After lifting ground of pin 22 state " +
-     * gpio_in.readPin());
+     * gpioIn.readPin());
      *
      * System.out.println("Done"); // gpio.pulse(1000, true); // set second
      * argument to 'true' use a // blocking call

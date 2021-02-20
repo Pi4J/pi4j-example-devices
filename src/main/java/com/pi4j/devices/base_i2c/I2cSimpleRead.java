@@ -65,8 +65,8 @@ public class I2cSimpleRead extends BasicI2cDevice {
      * <p>
      * PostCond:  Class Read method are now accessable
      */
-    public I2cSimpleRead(Context pi4j, FfdcUtil ffdc, int bus_num, int address, int numBytes, Console console) {
-        super(pi4j, ffdc, bus_num, address, console);
+    public I2cSimpleRead(Context pi4j, FfdcUtil ffdc, int busNum, int address, int numBytes, Console console) {
+        super(pi4j, ffdc, busNum, address, console);
         this.numBytes = numBytes;
 
     }
@@ -147,9 +147,9 @@ public class I2cSimpleRead extends BasicI2cDevice {
         Context pi4j = Pi4J.newAutoContext();
 
         int ffdcControlLevel = 0;
-        int bus_num = 0x1;
+        int busNum = 0x1;
         int address = 0x29;
-        int num_bytes = 0x10;
+        int numBytes = 0x10;
 
         boolean setFfdcLvl = false;
         boolean showCfg = false;
@@ -166,11 +166,11 @@ public class I2cSimpleRead extends BasicI2cDevice {
                 showUsage = true;
             } else if (o.contentEquals("-b")) { // bus
                 String a = args[i + 1];
-                bus_num = Integer.parseInt(a.substring(2), 16);
+                busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
             } else if (o.contentEquals("-n")) { // bus
                 String a = args[i + 1];
-                num_bytes = Integer.parseInt(a.substring(2), 16);
+                numBytes = Integer.parseInt(a.substring(2), 16);
                 i++;
             } else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
@@ -189,7 +189,7 @@ public class I2cSimpleRead extends BasicI2cDevice {
 
 
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, ffdcControlLevel, I2cSimpleRead.class);
-        var simpClass = new I2cSimpleRead(pi4j, ffdc, bus_num, address, num_bytes, console);
+        var simpClass = new I2cSimpleRead(pi4j, ffdc, busNum, address, numBytes, console);
 
         if (showUsage) {
             simpClass.usage();

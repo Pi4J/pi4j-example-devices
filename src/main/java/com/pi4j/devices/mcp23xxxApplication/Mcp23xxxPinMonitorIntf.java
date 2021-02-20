@@ -45,16 +45,16 @@ public interface Mcp23xxxPinMonitorIntf {
       *  drivePin
       * @param pin  pin number, its data and device object contained
       *             in the pinDict
-      * @param pin_on  Whether to drive pin high (true) or low (false),
+      * @param pinOn  Whether to drive pin high (true) or low (false),
       * @throws InterruptedException
       * @throws IOException
       */
-     default void drive_pin(int pin, boolean pin_on)
+     default void drivePin(int pin, boolean pinOn)
             throws InterruptedException, IOException{} ;
 
 
      /**
-      * read_input
+      * readInput
       *  <p>
       *      Used to log the pin state and print the state to the screen.
       *  </p>
@@ -67,7 +67,7 @@ public interface Mcp23xxxPinMonitorIntf {
       * @throws InterruptedException
       * @throws IOException
       */
-     default void read_input(int pin)
+     default void readInput(int pin)
             throws InterruptedException, IOException{} ;
 
 

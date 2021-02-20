@@ -39,7 +39,7 @@ import com.pi4j.io.gpio.digital.DigitalState;
 /**
  * PinInterruptActionIntf
  *
- * Implementing class can take whatever action/steps htey want
+ * Implementing class can take whatever action/steps they want
 
  * Class implementing this interface are each specific to the device that
  * created the interrupt
