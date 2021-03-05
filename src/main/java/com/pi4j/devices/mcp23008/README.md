@@ -47,8 +47,8 @@ directly on the Pi bus, the the value would be -q 23008#1
 -m MCP23xxx pin configuration
 
 
-    1. mvn clean install
-    2. cd target/classes/
+    1. mvn clean package
+    2. cd target/distribution
     3. Execute command to set configuration data  (will not be used by example)
     4. Execute command to reset Mcp23008
     5. Execute command to perform desired MCP23008 operation
@@ -96,34 +96,39 @@ _______________________               |
  
 
 
+NOTE !!!!!
+Using the $@ in the module call alows variable number of arguments. But, agruments wrapped by " " cannot
+contain spaces. So as you can see the -m and -z values wrapped by " " contain no spaces..
 
-cd target/classes
 
 
-1. Set pin and chip configuration property files   (not used by example)
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/SetProperties
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/ReadProperties
+
+
+1. Set pin and chip configuration
+property files
+  sudo ./runAppPropertySet.sh
+  sudo ./runAppPropertyRead.sh
 
 
 2.  Reset MCP23008
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App   -b 0x1 -a 0x20   -r 3          -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
+  sudo ./runMcp23008.sh   -b 0x1 -a 0x20   -r 3          -z "{{'gpio27':{'name':'InterruptDetect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip','dir':'out','int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
  
 
  
 3.  Configure pins of MCP23008, do reset first
  
  All pins
-   sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App  -b 0x1 -a 0x20  -r 3       -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
+   sudo ./runMcp23008.sh   -b 0x1 -a 0x20  -r 3       -z "{{'gpio27':{'name':'InterruptDetect','dir':'in','pull':'up'}},{'gpio13':{'name':'ResetChip','dir':'out','int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 1
 
 
 4. Drive MCP23008 pin0 Red Led hi low
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App   -b 0x1 -a 0x20   -d 0 -o ON  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"  -f 1
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App   -b 0x1 -a 0x20   -d 0 -o OFF   -f 1
+  sudo ./runMcp23008.sh    -b 0x1 -a 0x20   -d 0 -o ON  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"  -f 1
+  sudo ./runMcp23008.sh    -b 0x1 -a 0x20   -d 0 -o OFF   -f 1
 
 
 5. Read MCP23008 pin4
   Read 4
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23008/Mcp23008App  -b 0x1 -a 0x20   -r 4  -m "{{'pin4':{'dir':'in','pull':'down'}}}"     -f 1
+  sudo ./runMcp23008.sh    -b 0x1 -a 0x20   -r 4  -m "{{'pin4':{'dir':'in','pull':'down'}}}"     -f 1
  This will set pin4 high or low
 python
 import RPi.GPIO as GPIO

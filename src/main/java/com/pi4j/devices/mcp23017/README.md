@@ -50,8 +50,8 @@ directly on the Pi bus, the the value would be -q 23008#1
 -z Pi gpio configuration
 -m MCP23xxx pin configuration
 
-    1. mvn clean install
-    2. cd target/classes/
+    1. mvn clean package
+    2. cd target/distribution
     3. Execute command to set configuration data  (will not be used by example)
     4. Execute command to reset Mcp23017
     5. Execute command to perform desired MCP23017 operation
@@ -104,29 +104,35 @@ _______________________                 |
  
 
  
-1. Set configuration property files  (not used by example)
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/SetProperties
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/ReadProperties
+ NOTE !!!!!
+ Using the $@ in the module call alows variable number of arguments. But, agruments wrapped by " " cannot
+ contain spaces. So as you can see the -m and -z values wrapped by " " contain no spaces..
 
 
-3.  Reset MCP23017
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App   -b 0x01 -a 0x22   -r 4   -z "{{'gpio23':{'name':'InterruptA detect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptB detect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 1
+1. Set pin and chip configuration
+property files
+  sudo ./runAppPropertySet.sh
+  sudo ./runAppPropertyRead.sh
+
+
+2.  Reset MCP23017
+ sudo ./runMcp23017.sh    -b 0x01 -a 0x22   -r 4   -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDdetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 1
  
  
 
-4. Drive pin0 hi low.  Drives Red LED.
+3. Drive pin0 hi low.  Drives Red LED.
 
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App   -b 0x01 -a 0x22    -d 0 -o ON   -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"   -f 1
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App   -b 0x01 -a 0x22    -d 0 -o OFF   -f 1
+ sudo ./runMcp23017.sh    -b 0x01 -a 0x22    -d 0 -o ON   -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"   -f 1
+ sudo ./runMcp23017.sh   -b 0x01 -a 0x22    -d 0 -o OFF   -f 1
 
-5. Drive pin14 hi low.   Drives Yellow LED.
+4. Drive pin14 hi low.   Drives Yellow LED.
 
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App   -b 0x01 -a 0x22    -d 14 -o ON    -m   "{{'pin14':{'dir':'out','int_ena':'no'}}}"  -f 1
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App   -b 0x01 -a 0x22    -d 14 -o OFF   -f 1
+ sudo ./runMcp23017.sh   -b 0x01 -a 0x22    -d 14 -o ON    -m   "{{'pin14':{'dir':'out','int_ena':'no'}}}"  -f 1
+ sudo ./runMcp23017.sh   -b 0x01 -a 0x22    -d 14 -o OFF   -f 1
 
-6. Read pin4
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App  -b 0x01 -a 0x22   -r 4      -z "{{'gpio23':{'name':'InterruptA detect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptB detect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 1
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App  -b 0x01 -a 0x22   -r 4  -f 1   
+5. Read pin4
+sudo ./runMcp23017.sh    -b 0x01 -a 0x22   -r 4      -z "{{'gpio23':{'name':'InterruptADdetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 1
+sudo ./runMcp23017.sh    -b 0x01 -a 0x22   -r 4  -f 1   
 
 In separate terminal, alter pin4
 python
@@ -138,9 +144,9 @@ GPIO.output( 12 , GPIO.HIGH)
 
 
 
-7. Read pin 15
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App -b 0x01 -a 0x22   -r 15     -z "{{'gpio23':{'name':'InterruptA detect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptB detect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 1
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23017/Mcp23017App -b 0x01 -a 0x22   -r 15   -f 1
+6. Read pin 15
+ sudo ./runMcp23017.sh   -b 0x01 -a 0x22   -r 15     -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 1
+ sudo ./runMcp23017.sh   -b 0x01 -a 0x22   -r 15   -f 1
 
 
 In separate terminal, alter pin15

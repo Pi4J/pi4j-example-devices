@@ -33,9 +33,10 @@ In the projects base directory execute the following. Note: this project is not
 listed in the parent pom file, therefore mvn (maven) commands in the parent
 path will not read this pom file.
 
-    1. mvn clean install
-    2. cd target/distribution/
-    3. sudo ./run.sh
+    1. mvn clean package
+    2. cd target/distribution
+    3. sudo ./runTca9548.sh   -b 0x01 -a 0x70  -f 1   -l  -e 0x2  -r 0x6
+
     
 Dependent upon the -f parameter value logging details will be stored in
 /tmp/logs/com.pi4j.devices.tca9548.Tca9548.log
