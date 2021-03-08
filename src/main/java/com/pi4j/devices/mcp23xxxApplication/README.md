@@ -61,8 +61,8 @@ directly on the Pi bus, the the value would be -q 23008#1
 
 
 
-    1. mvn clean install
-    2. cd target/classes
+    1. mvn clean package
+    2. cd target/distribution
     3. Execute command to set configuration data
     4. Execute command to reset TCA9548 I2C switch
     5. Execute command to perform desired MCP23008 operation
@@ -127,38 +127,41 @@ _______________________           -   0x70              -
 
 
 
+NOTE !!!!!
+Using the $@ in the module call alows variable number of arguments. But, agruments wrapped by " " cannot
+contain spaces. So as you can see the -m and -z values wrapped by " " contain no spaces..
 
-
+sudo ./runAppPropertySet.sh 
 
 1. Set pin and chip configuration
 property files
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/SetProperties
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/ReadProperties
+  sudo ./runAppPropertySet.sh
+  sudo ./runAppPropertyRead.sh
 
 
 2. Reset TCA9548 mux
-   sudo java -cp ../distribution/*:.:  com.pi4j.devices.tca9548.SampleTca9548App -b 0x01 -a 0x70  -f 1   -l    -r 0x6
+   sudo ./runTca9548.sh  -b 0x01 -a 0x70  -f 1   -l    -r 0x6
  
 3.  Reset MCP23008
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1   -r 3  -p pin0 -c 23008#1        -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 0
+  sudo ./runMcp23008PinMonitor.sh  -q 9548#1   -r 3  -p pin0 -c 23008#1        -z "{{'gpio27':{'name':'InterruptDetect','dir':'in','pull':up'}},{'gpio13':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 0
  
 
  
 4.  Configure pins of MCP23008
  
  All pins
-  sudo java -cp ../distribution/*:.:   com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor -x 13 -q 9548#1  -g 27   -r 3  -p pin0 -c 23008#1        -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':up'}},{'gpio13':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"
+  sudo ./runMcp23008PinMonitor.sh   -x 13 -q 9548#1  -g 27   -r 3  -p pin0 -c 23008#1      -f 1  -z "{{'gpio27':{'name':'InterruptDetect','dir':'in','pull':up'}},{'gpio13':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin4':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"
 
 
 5. Drive MCP23008 pin0 hi low  Red LED on/off
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -d 0 -o ON -p pin0 -c 23008#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -d 0 -o OFF -p pin0 -c 23008#1  
+ sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -d 0 -o ON -p pin0 -c 23008#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"   -f 1
+ sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -d 0 -o OFF -p pin0 -c 23008#1   -f 1
 
 
 
 6. Read MCP23008 pin4
   Read 4
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -r 4  -p pin0 -c 23008#1   -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'down','default':'0','do_compare':'no','int_ena':'yes','act':'low'}}}"   -x 13  -f 2
+  sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -r 4  -p pin0 -c 23008#1   -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'down','default':'0','do_compare':'no','int_ena':'yes','act':'low'}}}"   -x 13  -f 2
  This will set pin4 high or low
 python
 import RPi.GPIO as GPIO
@@ -169,7 +172,7 @@ GPIO.output( 16 , GPIO.HIGH)
 
  
 7.   Monitor pin 4   (does chip reset)
-    sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1   -r 4  -p pin0 -c 23008#1  -g 27 -i on  -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':up'}},{'gpio22':{'name':'LED-gpio ','dir':'out,'int_ena':'no', 'initial':low'}}}"  -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'down','default':'0','do_compare':'no','int_ena':'yes','act':'low'}}}" -x 13  -f 2
+    sudo ./runMcp23008PinMonitor.sh    -q 9548#1   -r 4  -p pin0 -c 23008#1  -g 27 -i on  -z "{{'gpio27':{'name':'InterruptDetect','dir':'in','pull':up'}},{'gpio22':{'name':'LED-gpio','dir':'out,'int_ena':'no','initial':low'}}}"  -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'down','default':'0','do_compare':'no','int_ena':'yes','act':'low'}}}" -x 13  -f 2
     
       In another terminal
     i2cdump -y 1 0x20     This will clear existing interrupts in the chip
@@ -182,7 +185,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT) 
 GPIO.output(16,GPIO.LOW)
 GPIO.output( 16 , GPIO.HIGH)
-
+GPIO.output(16,GPIO.LOW)
 
 // pin0 Red LED will reflect state of pin4 when it interrupts
   + "{'pin4':{'appName':'input','action':'reflect','chipName':'23008#1','pin':'pin0','pinChip':'23008#1'}} } },"
@@ -201,11 +204,11 @@ GPIO.output( 16 , GPIO.HIGH)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 The current usage of PIGPIO prevents the following test. A single application can access the pigpio libraries at one time
 Monitor pin 3
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -r 3  -p pin0 -c 23008#1  -g 27 -i on  -z "{{'gpio27':{'name':'Interrupt detect','dir':'in','pull':up'}}}"  -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}}}"
+  sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -r 3  -p pin0 -c 23008#1  -g 27 -i on  -z "{{'gpio27':{'name':'InterruptDetect','dir':'in','pull':up'}}}"  -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin3':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}}}"
  
  Trip interrupt p7->p3
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -d 7 -o ON -p pin0 -c 23008#1  -m   "{{'pin7':{'dir':'out','int_ena':'no'}}}"
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23008PinMonitor  -q 9548#1    -d 7 -o OFF -p pin0 -c 23008#1  
+  sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -d 7 -o ON -p pin0 -c 23008#1  -m   "{{'pin7':{'dir':'out','int_ena':'no'}}}"
+  sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -d 7 -o OFF -p pin0 -c 23008#1  
   
   
 
@@ -250,24 +253,29 @@ _______________________           -   0x70              -
   | |___________________> Drive GPIO > | |        LEDs 
   |_____________________> Drive GPIO >___|
  
+NOTE !!!!!
+Using the $@ in the module call alows variable number of arguments. But, agruments wrapped by " " cannot
+contain spaces. So as you can see the -m and -z values wrapped by " " contain no spaces..
 
  
-1. Set configuration property files
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/SetProperties
-  sudo java -cp ../distribution/*:.:  com/pi4j/devices/appConfig/ReadProperties
-
-2. Reset TCA9548 I2C switch
-  sudo java -cp ../distribution/*:.:  com.pi4j.devices.tca9548.SampleTca9548App -b 0x01 -a 0x70  -f 1   -l    -r 0x6
+1. Set pin and chip configuration
+   property files
+     sudo ./runAppPropertySet.sh
+     sudo ./runAppPropertyRead.sh
+   
+   
+2. Reset TCA9548 mux
+      sudo ./runTca9548.sh -b 0x01 -a 0x70  -f 1   -l    -r 0x6
  
 3.  Reset MCP23017
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1   -r 4  -p pin0 -c 23017#1        -z "{{'gpio23':{'name':'InterruptA detect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptB detect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
+  sudo ./runMcp23017PinMonitor.sh    -q 9548#1   -r 4  -p pin0 -c 23017#1        -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'1','do_compare':'yes','int_ena':'yes','act':'low'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
  
    
  Configure pins of MCP23017
  
- All pins
+
  Listen A side
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1  -g 23  -i on -r 4  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptA detect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptB detect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
+   sudo ./runMcp23017PinMonitor.sh   -q 9548#1  -g 23  -i on -r 4  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
      In another terminal
  i2cdump -y 1 0x22     This will clear existing interrupts in the chip
  
@@ -279,11 +287,11 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(12, GPIO.OUT) 
 GPIO.output(12,GPIO.LOW)
 GPIO.output( 12 , GPIO.HIGH)
-   
+GPIO.output(12,GPIO.LOW)  
    
    
  Listen B side
-  sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor -q 9548#1  -g 21 -i on  -r 15  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptA detect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptB detect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip ','dir':'out,'int_ena':'no', 'initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
+   sudo ./runMcp23017PinMonitor.sh  -q 9548#1  -g 21 -i on  -r 15  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
      In another terminal
   i2cdump -y 1 0x22     This will clear existing interruupts in the chip
  
@@ -294,17 +302,17 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT) 
 GPIO.output(18,GPIO.LOW)
 GPIO.output( 18 , GPIO.HIGH)
- 
+ GPIO.output(18,GPIO.LOW)
  
 Drive pin0 hi low     Red LED
 
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 0 -o ON -p pin0 -c 23017#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 0 -o OFF -p pin0 -c 23017#1  
+  sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 0 -o ON -p pin0 -c 23017#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"
+  sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 0 -o OFF -p pin0 -c 23017#1  
 
 Drive pin14 hi low     Yellow LED
 
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 14 -o ON -p pin0 -c 23017#1  -m   "{{'pin14':{'dir':'out','int_ena':'no'}}}"
- sudo java -cp ../distribution/*:.:     com/pi4j/devices/mcp23xxxApplication/Mcp23017PinMonitor  -q 9548#1    -d 14 -o OFF -p pin0 -c 23017#1  
+ sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 14 -o ON -p pin0 -c 23017#1  -m   "{{'pin14':{'dir':'out','int_ena':'no'}}}"
+ sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 14 -o OFF -p pin0 -c 23017#1  
 
 
 

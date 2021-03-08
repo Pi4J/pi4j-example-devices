@@ -46,20 +46,14 @@ package com.pi4j.devices.appConfig;
 public class ReadProperties {
 
     /**
-     * main
-     *
-     * Classes within  the appConfig package have their readProperties method called.
-     * <p>
-     * PreCond: None
-     * </p>
-     *
-     * <p>
-     * PostCond:  Each file read and printed to the screen.
-     *</p>
-     *
-     * */
-    public static void main(String[] args) {
+     * CTOR
+     */
+    public ReadProperties(){}
 
+    /**
+     * Work   Print the values in all three properties.
+     */
+    public void work(){
         ChipNameMap cMap = new ChipNameMap();
         String chips = cMap.readProperties();
 
@@ -76,6 +70,26 @@ public class ReadProperties {
 
         //////////////////////////
         System.out.println(" pi map : " + pi);
+
+
     }
+    /**
+     * main
+     *
+     * Classes within  the appConfig package have their readProperties method called.
+     * <p>
+     * PreCond: None
+     * </p>
+     *
+     * <p>
+     * PostCond:  Each file read and printed to the screen.
+     *</p>
+     *
+     * */
+    public static void main(String[] args) {
+
+        ReadProperties read = new ReadProperties();
+        read.work();
+        }
 
   }

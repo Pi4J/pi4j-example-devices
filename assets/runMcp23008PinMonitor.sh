@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+
 #
 # /*
 #  *
@@ -7,7 +7,7 @@
 #  *   * **********************************************************************
 #  *   * ORGANIZATION  :  Pi4J
 #  *   * PROJECT       :  Pi4J :: EXTENSION
-#  *   * FILENAME      :  run.sh
+#  *   * FILENAME      :  runMcp23008PinMonitor.sh
 #  *   *
 #  *   * This file is part of the Pi4J project. More information about
 #  *   * this project can be found here:  https://pi4j.com/
@@ -33,7 +33,7 @@
 #
 #
 
-cd ../classes
-java -cp ../distribution/*:.:   com.pi4j.devices.tca9548.SampleTca9548App -b 0x01 -a 0x70  -f 1   -l  -e 0x2  -r 0x6
-$@
+
+#!/usr/bin/env bash
+java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.mcp23xxxApplication.Mcp23008PinMonitor  $@
 

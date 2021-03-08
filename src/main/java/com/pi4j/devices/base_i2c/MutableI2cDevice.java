@@ -136,12 +136,7 @@ public class MutableI2cDevice {
     protected int readRegister(int offset) {
         int reg = 0;
         this.ffdc.ffdcMethodEntry("readRegister : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ", this.busNum) + "  device address:  " + String.format("0X%02x: ", this.address));
-        try {
-            reg = this.i2cDevice.readRegister(offset);
-        } catch (IOException e) {
-            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            reg = -1;
-        }
+        reg = this.i2cDevice.readRegister(offset);
         this.ffdc.ffdcMethodExit("readRegister  data :" + String.format("0X%02x: ", reg));
         return (reg);
     }
@@ -183,13 +178,8 @@ public class MutableI2cDevice {
     protected int read() {
         this.ffdc.ffdcMethodEntry("read  bus : " + String.format("0X%02x: ", this.busNum) + "  device address:  " + String.format("0X%02x: ", this.address));
         int reg = 0;
-        try {
-            reg = this.i2cDevice.read();
-            this.ffdc.ffdcDebugEntry("read :" + String.format("0X%02x: ", reg));
-        } catch (IOException e) {
-            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            reg = -1;
-        }
+        reg = this.i2cDevice.read();
+        this.ffdc.ffdcDebugEntry("read :" + String.format("0X%02x: ", reg));
         this.ffdc.ffdcMethodExit("read data:" + String.format("0X%02x: ", reg));
         return (reg);
     }
@@ -234,15 +224,8 @@ public class MutableI2cDevice {
     protected int write(byte data) {
         this.ffdc.ffdcMethodEntry("write : data " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ", this.busNum) + "  device address:  " + String.format("0X%02x: ", this.address));
         int rval = 0;
-        try {
-            rval = this.i2cDevice.write(data);
-            this.ffdc.ffdcDebugEntry("write :" + String.format("0X%02x: ", data));
-        } catch (IOException e) {
-            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            String details = String.format("write failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
-            this.ffdc.ffdcErrorEntry(details);
-            rval = 1;
-        }
+        rval = this.i2cDevice.write(data);
+        this.ffdc.ffdcDebugEntry("write :" + String.format("0X%02x: ", data));
         this.ffdc.ffdcMethodExit("write rval :" + String.format("0X%02x: ", rval));
         return (rval);
     }
@@ -261,15 +244,8 @@ public class MutableI2cDevice {
     protected int writeByte(int offset, byte data) {
         this.ffdc.ffdcMethodEntry("writeByte : offset  " + String.format("0X%02x: ", offset) + " data : " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ", this.busNum) + "  device address:  " + String.format("0X%02x: ", this.address));
         int rval = 0;
-        try {
-            rval = this.i2cDevice.writeRegister(offset, data);
-            this.ffdc.ffdcDebugEntry("writeByte :" + String.format("0X%02x: ", data));
-        } catch (IOException e) {
-            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
-            String details = String.format("write failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
-            this.ffdc.ffdcErrorEntry(details);
-            rval = 1;
-        }
+        rval = this.i2cDevice.writeRegister(offset, data);
+        this.ffdc.ffdcDebugEntry("writeByte :" + String.format("0X%02x: ", data));
         this.ffdc.ffdcMethodExit("writeByte rval :" + String.format("0X%02x: ", rval));
         return (rval);
     }
