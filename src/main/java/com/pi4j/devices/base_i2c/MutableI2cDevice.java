@@ -63,7 +63,7 @@ public class MutableI2cDevice {
      *     <li> Instantiated Console class
      * </ul>
      * <p>
-     *     This class will not create and intitialize the i2cDeviceConfig during creation.
+     *    This class will not create and intitialize the i2cDeviceConfig during creation.
      *     Rather the user can reset the bus 'number' and device 'address' and then call the
      *     method reinit();
      * </p>

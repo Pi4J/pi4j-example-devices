@@ -117,7 +117,7 @@ public class BasicI2cDevice {
      * @param offset Device register
      *
      *               <p>
-     *               PostCond:  Register contents returned if successful, else negative value
+     *         PostCond:  Register contents returned if successful, else negative value
      */
     protected int readRegister(int offset) {
         int reg = 0;
