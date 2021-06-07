@@ -14,6 +14,8 @@ module com.pi4j.devices.multi{
     requires java.logging;
     requires jdk.unsupported;
 
+    exports com.pi4j.plugin.microchip.mcp23008;
+    exports com.pi4j.plugin.microchip.mcp23008.provider.gpio.digital;
 
 
     uses com.pi4j.extension.Extension;
@@ -25,5 +27,8 @@ module com.pi4j.devices.multi{
     opens com.pi4j.devices.mcp23017 to com.pi4j;
     opens com.pi4j.devices.mcp23xxxApplication to com.pi4j;
     opens com.pi4j.devices.appConfig to com.pi4j;
+
+    provides com.pi4j.extension.Plugin
+            with com.pi4j.plugin.microchip.mcp23008.MicrochipMcp23008Plugin;
 
 }

@@ -54,7 +54,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.8.1</maven-jar-plugin.version>
         <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
         <maven-bundle-plugin.version>4.2.1</maven-bundle-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
@@ -70,6 +70,19 @@
 
     <!-- DEPENDENCY REPOSITORIES -->
     <repositories>
+        <repository>
+            <id>src-snapshots-repo</id>
+            <name>SRC Maven Repository</name>
+            <!-- my comment-->
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <!-- url>file:/home/pi/Pi4j_v2/Pi4J_V2_base/pi4j-core/target</url -->
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>oss-snapshots-repo</id>
             <name>Sonatype OSS Maven Repository</name>
@@ -97,6 +110,7 @@
         <!-- include Pi4J Core -->
         <dependency>
             <groupId>com.pi4j</groupId>
+            <!--artifactId>pi4j-coreTA</artifactId-->
             <artifactId>pi4j-core</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
@@ -230,7 +244,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
+                <!--version>3.8.1</version-->
                 <configuration>
                     <outputDirectory>${project.build.directory}/distribution</outputDirectory>
                 </configuration>
