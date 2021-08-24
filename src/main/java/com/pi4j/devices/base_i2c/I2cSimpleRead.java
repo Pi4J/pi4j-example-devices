@@ -35,11 +35,11 @@
 package com.pi4j.devices.base_i2c;
 
 
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.io.exception.IOReadException;
 import com.pi4j.util.Console;
-import com.pi4j.context.*;
 
 import java.io.IOException;
 
@@ -65,14 +65,14 @@ public class I2cSimpleRead extends BasicI2cDevice {
      * <p>
      * PostCond:  Class Read method are now accessable
      */
-    public I2cSimpleRead(Context pi4j, FfdcUtil ffdc, int busNum, int address, int numBytes, Console console) {
+    public I2cSimpleRead(Context pi4j, FfdcUtil ffdc, int busNum, int address, boolean writeRestart, int deviceOffset, int numBytes, Console console) {
         super(pi4j, ffdc, busNum, address, console);
         this.numBytes = numBytes;
+        this.writeRestart = writeRestart;
+        this.deviceOffset = deviceOffset;
 
     }
 
-
-    int numBytes = 0;
 
     /**
      * dumpRegs,dump/display num_bytes of an i2c device.
@@ -81,7 +81,7 @@ public class I2cSimpleRead extends BasicI2cDevice {
      * PreCond: I2cSimpleRead instance initialized.  See CTOR
      *
      * <p>
-     * PostCond:  Register contents displayed
+     * PostCond:  Register(s) contents displayed
      *
      * @throws IOException, IOReadException
      */
@@ -90,20 +90,38 @@ public class I2cSimpleRead extends BasicI2cDevice {
         // use the default `DigitalOutputProvider` for the current default platform.
         this.ffdc.ffdcMethodEntry(this.getMethodName());
 
-        var details = "     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
+        var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
         details = details + String.format("%02x: ", 0);
-        for (int i = 0; i < this.numBytes; i++) {
-            byte data = this.readRegisterByte(i);
-            details = details + String.format("%02x ", data) + " ";
-            if ((i > 0) && ((i + 1) % 16) == 0) {
-                details = details + "\n";
-                details = details + String.format("%02x: ", i + 1);
+        byte[] buffer = new byte[this.numBytes];
+        if (this.writeRestart == false) {
+            this.ffdc.ffdcDebugEntry("Read chip from its present offset");
+            for (int i = 0; i < this.numBytes; i++) {
+                byte data = this.readRegisterByte(i);
+                details = details + String.format("%02x ", data) + " ";
+                if ((i > 0) && ((i + 1) % 16) == 0) {
+                    details = details + "\n";
+                    details = details + String.format("%02x: ", i + 1);
+                }
+            }
+        } else {
+            this.ffdc.ffdcDebugEntry("Read chip from specific offset");
+            this.readRegister(this.deviceOffset, buffer, 0, this.numBytes);
+            for (int i = 0; i < this.numBytes; i++) {
+                details = details + String.format("%02x ", buffer[i]) + " ";
+                if ((i > 0) && ((i + 1) % 16) == 0) {
+                    details = details + "\n";
+                    details = details + String.format("%02x: ", i + 1);
+                }
             }
         }
-
         console.println(details);
         this.ffdc.ffdcMethodExit(this.getMethodName());
     }
+    int numBytes = 0;
+    int deviceOffset;
+    boolean writeRestart = false;
+
+
 
     /**
      * Description of parms passed to class main
@@ -113,7 +131,8 @@ public class I2cSimpleRead extends BasicI2cDevice {
      */
     protected void usage() {
         System.out.println(
-                "options   -h 'help', -b bus, -a address," + "-n  number of bytes  -f ffdc_lvl -s sysCfg  " +
+                "options   -h 'help', -b bus, -a address," +
+                        " -r deviceRegister, -n  number of bytes  -f ffdc_lvl -s sysCfg  " +
                         "1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   ");
     }
 
@@ -150,6 +169,8 @@ public class I2cSimpleRead extends BasicI2cDevice {
         int busNum = 0x1;
         int address = 0x29;
         int numBytes = 0x10;
+        int offset = 0;
+        boolean writeRestart = false;
 
         boolean setFfdcLvl = false;
         boolean showCfg = false;
@@ -172,6 +193,11 @@ public class I2cSimpleRead extends BasicI2cDevice {
                 String a = args[i + 1];
                 numBytes = Integer.parseInt(a.substring(2), 16);
                 i++;
+            } else if (o.contentEquals("-r")) { // bus
+                String a = args[i + 1];
+                offset = Integer.parseInt(a.substring(2), 16);
+                writeRestart = true;
+                i++;
             } else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
                 i++;
@@ -189,7 +215,7 @@ public class I2cSimpleRead extends BasicI2cDevice {
 
 
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, ffdcControlLevel, I2cSimpleRead.class);
-        var simpClass = new I2cSimpleRead(pi4j, ffdc, busNum, address, numBytes, console);
+        var simpClass = new I2cSimpleRead(pi4j, ffdc, busNum, address, writeRestart, offset, numBytes, console);
 
         if (showUsage) {
             simpClass.usage();

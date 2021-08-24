@@ -207,6 +207,8 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        Thread.dumpStack();
+        this.pi4j.shutdown();
         System.exit(code);
     }
 

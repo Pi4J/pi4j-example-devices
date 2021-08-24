@@ -25,5 +25,6 @@ module com.pi4j.devices.multi{
     opens com.pi4j.devices.mcp23017 to com.pi4j;
     opens com.pi4j.devices.mcp23xxxApplication to com.pi4j;
     opens com.pi4j.devices.appConfig to com.pi4j;
+    opens com.pi4j.devices.base_i2c to com.pi4j;
 
 }

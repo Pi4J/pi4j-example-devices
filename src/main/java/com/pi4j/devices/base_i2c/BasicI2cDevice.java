@@ -43,6 +43,7 @@ import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * BasicI2cDevice creates and uses i2cDeviceConfig for read and write operations.This class adds
@@ -195,6 +196,35 @@ public class BasicI2cDevice {
         return (reg);
     }
 
+    /**
+     *
+     * @param register  offset into device
+     * @param buffer    storage to contain contents read
+     * @param bufferOffset    offset in buffer to place read data
+     * @param length    lentgh of data to read
+     * @return          number bytes read else negative number
+     */
+    protected  int readRegister(int register, byte[] buffer, int bufferOffset, int length){
+        this.ffdc.ffdcMethodEntry("readRegister bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address)
+                + "  register:  " + String.format("0X%02x: ",bufferOffset)+ "  length:  " + String.format("0X%02x: ",length));
+        int rc = 0;
+
+        //  StandardCharsets.UTF_8,
+        rc = this.i2cDevice.readRegister(register, buffer, bufferOffset, length);
+        var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
+        details = details + String.format("%02x: ", 0);
+        for (int i = 0; i < rc; i++) {
+            details = details + String.format("%02x ", buffer[i]) + " ";
+            if ((i > 0) && ((i + 1) % 16) == 0) {
+                details = details + "\n";
+                details = details + String.format("%02x: ", i + 1);
+            }
+        }
+
+        this.ffdc.ffdcDebugEntry("readRegister  data :" + details
+                + "  rc: " + "\n" + String.format("0X%02x: ",rc));
+        return(rc);
+        }
 
     /**
      * I2C device access, write data to device register presently referenced in device control register.

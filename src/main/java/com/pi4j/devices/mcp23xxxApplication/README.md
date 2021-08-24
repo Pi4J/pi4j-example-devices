@@ -306,7 +306,7 @@ GPIO.output( 18 , GPIO.HIGH)
  
 Drive pin0 hi low     Red LED
 
-  sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 0 -o ON -p pin0 -c 23017#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"
+  sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 0 -o ON -p pin0 -c 23017#1  -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"  
   sudo ./runMcp23017PinMonitor.sh   -q 9548#1    -d 0 -o OFF -p pin0 -c 23017#1  
 
 Drive pin14 hi low     Yellow LED
