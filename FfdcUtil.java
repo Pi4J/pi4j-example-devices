@@ -304,6 +304,7 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
 
             ctx.updateLoggers(conf);
         } else {
+            this.console.print("Invalid FFDC level");
             rval = false;
         }
         return (rval);
