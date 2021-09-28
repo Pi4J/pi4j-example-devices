@@ -1,19 +1,20 @@
 /*
  *
- *  *
- *  * -
- *  *   * #%L
- *  *   * **********************************************************************
- *  *   * ORGANIZATION  :  Pi4J
- *  *   * PROJECT       :  Pi4J :: EXTENSION
- *  *   * FILENAME      :  Mcp23008PinMonitor.java
- *  *   *
- *  *   * This file is part of the Pi4J project. More information about
- *  *   * this project can be found here:  https://pi4j.com/
- *  *   * **********************************************************************
- *    * %%
- *  *   * Copyright (C) 2012 - 2021 Pi4J
+ *
+ *   *
+ *   * -
+ *   *   * #%L
+ *     * **********************************************************************
+ *     * ORGANIZATION  :  Pi4J
+ *     * PROJECT       :  Pi4J :: EXTENSION
+ *     * FILENAME      :  Mcp23xxxPinMonitorIntf.java
+ *     *
+ *     * This file is part of the Pi4J project. More information about
+ *     * this project can be found here:  https://pi4j.com/
+ *     * **********************************************************************
  *     * %%
+ *     * Copyright (C) 2012 - 2021 Pi4J
+ *    * %%
  *    * Licensed under the Apache License, Version 2.0 (the "License");
  *    * you may not use this file except in compliance with the License.
  *    * You may obtain a copy of the License at
@@ -30,54 +31,59 @@
  *  *
  *
  *
+ *
+ *
+ *
  */
 
 package com.pi4j.devices.mcp23xxxApplication;
 
-        import com.pi4j.Pi4J;
-        import com.pi4j.devices.appConfig.AppConfigUtilities;
-        import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
-        import com.pi4j.devices.base_util.mapUtil.MapUtil;
-        import com.pi4j.devices.mcp23008.Mcp23008;
 
-        import com.pi4j.context.Context;
-        import com.pi4j.devices.base_util.ffdc.FfdcUtil;
-        import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
-        import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
-        import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
-        import com.pi4j.exception.LifecycleException;
-        import com.pi4j.io.gpio.digital.DigitalState;
-        import com.pi4j.util.Console;
+import com.pi4j.Pi4J;
+import com.pi4j.devices.appConfig.AppConfigUtilities;
+import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
+import com.pi4j.devices.base_util.mapUtil.MapUtil;
+import com.pi4j.devices.mcp23008.Mcp23008;
 
-        import java.util.HashMap;
+import com.pi4j.context.Context;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
+import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
+import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
+import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
+import com.pi4j.exception.LifecycleException;
+import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.util.Console;
+
+import java.util.HashMap;
 
 
-        import sun.misc.Signal;
-        import sun.misc.SignalHandler;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 /**
  * Mcp23008PinMonitor
  *
  * <p>
- *     Read users parameters, control configuring the MCP23008 chip,
- *     reading and writing to pin, and more importantly monitor for
- *     changes on a specific input pin using the MCP23008 Interrupt
- *     line.
+ * Read users parameters, control configuring the MCP23008 chip,
+ * reading and writing to pin, and more importantly monitor for
+ * changes on a specific input pin using the MCP23008 Interrupt
+ * line.
  * </p>
  */
-public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIntf{
+public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIntf {
     /**
-     *   CTOR
-     * @param pi4j  contect
-     * @param parms  users command line parameters
-     * @param ffdc    loging
-     * @param dioPinData  chip pin configuration
-     * @param console  Console
+     * CTOR
+     *
+     * @param pi4j       contect
+     * @param parms      users command line parameters
+     * @param ffdc       loging
+     * @param dioPinData chip pin configuration
+     * @param console    Console
      */
-    public Mcp23008PinMonitor(Context pi4j, Mcp23xxxParms parms , FfdcUtil ffdc,
+    public Mcp23008PinMonitor(Context pi4j, Mcp23xxxParms parms, FfdcUtil ffdc,
                               HashMap<Integer, GpioPinCfgData> dioPinData, Console console) {
 
-        super(pi4j,parms,ffdc, dioPinData, console);
+        super(pi4j, parms, ffdc, dioPinData, console);
         this.jumpTable = new PinInterruptActionIntf[8];
         // TODO Auto-generated constructor stub
     }
@@ -85,9 +91,9 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
 
     /**
      * <p>
-     *     Using the listener interface available on Pi GPios,assign an
-     *     interruptAction to each pin.  The interrupt action for this example are
-     *     subblasses of this packages PinInterruptBase.
+     * Using the listener interface available on Pi GPios,assign an
+     * interruptAction to each pin.  The interrupt action for this example are
+     * subblasses of this packages PinInterruptBase.
      * </p>
      */
     public void installInterruptHandler() {
@@ -123,14 +129,15 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
     }
 
     /**
-     *<p>
-     *     For this piNum, call interruptAction on the interruptAction instance
-     *     contained in the jumpTable
-     *</p>
-     * @param pinNum     MVP pin causing the interrupt
-     * @param pinState   Pi Gpio pin state detected
-     * @param ffdc       logging
-     * @return  true if interrupt processed, false if failed
+     * <p>
+     * For this piNum, call interruptAction on the interruptAction instance
+     * contained in the jumpTable
+     * </p>
+     *
+     * @param pinNum   MVP pin causing the interrupt
+     * @param pinState Pi Gpio pin state detected
+     * @param ffdc     logging
+     * @return true if interrupt processed, false if failed
      */
     public boolean processPinInterrupt(int pinNum, DigitalState pinState, FfdcUtil ffdc) {
         boolean rval = false;
@@ -149,19 +156,20 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
     }
 
     /**
-     *  main
-     *  <p>
-     *      Command line access to the MCP23008 application code.
-     *      First process the users input, then call various methods
-     *      based upon the users parms.
-     *  </p>
-     * @param args   Users command line arguments
+     * main
+     * <p>
+     * Command line access to the MCP23008 application code.
+     * First process the users input, then call various methods
+     * based upon the users parms.
+     * </p>
+     *
+     * @param args Users command line arguments
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         // TODO Auto-generated method stub
         var console = new Console();
-        Context pi4j =  Pi4J.newAutoContext();
+        Context pi4j = Pi4J.newAutoContext();
 
         // Print program title/header
         console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008PinMonitor");
@@ -169,13 +177,13 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         HashMap<Integer, GpioPinCfgData> dioPinData = new HashMap<Integer, GpioPinCfgData>();
 
 
-        Mcp23xxxParms parmsObj = Mcp23xxxAppProcessParms.processMain(pi4j,args,false, dioPinData, console);
+        Mcp23xxxParms parmsObj = Mcp23xxxAppProcessParms.processMain(pi4j, args, false, dioPinData, console);
 
-        FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel , Mcp23008PinMonitor.class);
+        FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel, Mcp23008PinMonitor.class);
 
         ffdc.ffdcDebugEntry("mcp23008PinMonitor : Arg processing completed...\n");
 
-        Mcp23008PinMonitor mcpObj = new Mcp23008PinMonitor(parmsObj.pi4j, parmsObj, ffdc,  dioPinData, console);
+        Mcp23008PinMonitor mcpObj = new Mcp23008PinMonitor(parmsObj.pi4j, parmsObj, ffdc, dioPinData, console);
 
         BaseGpioInOut gpio = new BaseGpioInOut(parmsObj.pi4j, mcpObj.ffdc, mcpObj.dioPinData);
         mcpObj.gpio = gpio;
@@ -185,7 +193,7 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
 
         mcpObj.mapUtils = new MapUtil(mcpObj.ffdc, mcpObj.gpio);
 
-              // the bus is that of the main chip. The one connected to the Pi i2c
+        // the bus is that of the main chip. The one connected to the Pi i2c
         // bus. The priChipBus may be some other
         // value if the prichipName is behind a mux.
         // If behind mux that was accounted for in the call enableGpioPath
@@ -195,21 +203,20 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
             String chipAddr = chipDetails.get("address");
             parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
             parmsObj.busNum = Integer.parseInt(chipBus.substring(2), 16);
-       }
+        }
         HashMap<String, String> priChipDetails = cfgU.getChipMapRec(parmsObj.priChipName);
         if (chipDetails != null) {
             String chipBus = priChipDetails.get("busNum");
             String chipAddr = priChipDetails.get("address");
             parmsObj.priChipAddress = Integer.parseInt(chipAddr.substring(2), 16);
             parmsObj.priChipBusNum = Integer.parseInt(chipBus.substring(2), 16);
-           // TODO parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
+            // TODO parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
         }
 
         mcpObj.cfgData = new McpConfigData(ffdc);
 
 
-
-            // this
+        // this
         System.out.println("Args to enable " + parmsObj.pinName + "   " + parmsObj.priChipName);
         boolean returned = cfgU.enableGpioPath(parmsObj.pinName, parmsObj.priChipName); // path
         // to
@@ -227,7 +234,7 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         // value if the prichipName is behind a mux.
         // If behind mux that was accounted for in the above call
         // cfgU.enableGpioPath
-        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc,  parmsObj.busNum, parmsObj.priChipAddress, mcpObj.cfgData, mcpObj, console);
+        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc, parmsObj.busNum, parmsObj.priChipAddress, mcpObj.cfgData, mcpObj, console);
 
         // Prior to running methods, set up control-c handler
         Signal.handle(new Signal("INT"), new SignalHandler() {
@@ -272,20 +279,19 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         }
 
         System.out.println("Chip register configurations completed");
-        mcpObj.reinit(parmsObj.priChipName, parmsObj.pinName,parmsObj.busNum, parmsObj.priChipAddress);
+        mcpObj.reinit(parmsObj.priChipName, parmsObj.pinName, parmsObj.busNum, parmsObj.priChipAddress);
 
         if (parmsObj.dumpRegs) {
             mcpObj.dumpRegs();
             System.exit(0);
         }
 
-       // mcpObj.cfgData.DumpGpiosConfig();
+        // mcpObj.cfgData.DumpGpiosConfig();
 
         if (parmsObj.setPin) {
             mcpObj.drivePin(parmsObj.pin, parmsObj.pinOn);
 
         }
-
 
 
         if (parmsObj.readPin) {
@@ -294,12 +300,12 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
 
         if (parmsObj.monitorIntrp) {
             // spin and handle any interrupt that happens
-            if ((parmsObj.gpioNum == 0xff) ) { // || (parmsObj.hasUpDown == false)
+            if ((parmsObj.gpioNum == 0xff)) { // || (parmsObj.hasUpDown == false)
                 mcpObj.ffdc.ffdcConfigWarningEntry("Option -i requires -g ");
                 mcpObj.ffdc.ffdcDebugEntry("Spin so any Monitors can execute");
                 mcpObj.ffdc.ffdcErrorExit("invalid parms supplied", 550);
             } else {
-                mcpObj.addListener(parmsObj.offOn,  parmsObj.gpioNum);
+                mcpObj.addListener(parmsObj.offOn, parmsObj.gpioNum);
                 while (true) {
                     try {
                         Thread.sleep(2000, 0);
@@ -322,10 +328,6 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         // Shutdown Pi4J
         pi4j.shutdown();
     }
-
-
-
-
 
 
 }

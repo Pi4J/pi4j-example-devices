@@ -124,6 +124,7 @@ public class BasicI2cDevice {
         int reg = 0;
         this.ffdc.ffdcMethodEntry("readRegister : offset " + String.format("0X%02x: ", offset) + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         reg = this.i2cDevice.readRegister(offset);
+        this.examineReturnRead(reg);
         this.ffdc.ffdcMethodExit("readRegister  data :" + String.format("0X%02x: ", reg));
         return (reg);
     }
@@ -169,6 +170,7 @@ public class BasicI2cDevice {
         this.ffdc.ffdcMethodEntry("read  bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         int reg = 0;
         reg = this.i2cDevice.read();
+        this.examineReturnRead(reg);
         this.ffdc.ffdcDebugEntry("read :" + String.format("0X%02x: ", reg));
         this.ffdc.ffdcMethodExit("read data:" + String.format("0X%02x: ", reg));
         return (reg);
@@ -201,7 +203,7 @@ public class BasicI2cDevice {
      * @param register  offset into device
      * @param buffer    storage to contain contents read
      * @param bufferOffset    offset in buffer to place read data
-     * @param length    lentgh of data to read
+     * @param length    length of data to read
      * @return          number bytes read else negative number
      */
     protected  int readRegister(int register, byte[] buffer, int bufferOffset, int length){
@@ -211,6 +213,7 @@ public class BasicI2cDevice {
 
         //  StandardCharsets.UTF_8,
         rc = this.i2cDevice.readRegister(register, buffer, bufferOffset, length);
+        this.examineReturnRead(rc);
         var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
         details = details + String.format("%02x: ", 0);
         for (int i = 0; i < rc; i++) {
@@ -240,6 +243,7 @@ public class BasicI2cDevice {
         this.ffdc.ffdcMethodEntry("write : data " + String.format("0X%02x: ", data) + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         int rval = 0;
         rval = this.i2cDevice.write(data);
+        this.examineReturnWrite(rval);
         this.ffdc.ffdcDebugEntry("write :" + String.format("0X%02x: ", data));
         this.ffdc.ffdcMethodExit("write rval :" + String.format("0X%02x: ", rval));
         return (rval);
@@ -260,6 +264,7 @@ public class BasicI2cDevice {
         this.ffdc.ffdcMethodEntry("writeByte : offset  " + String.format("0X%02x: ", offset) + " data : " + String.format("0X%02x: ",data )  + " bus : " + String.format("0X%02x: ",this.busNum) + "  device address:  " + String.format("0X%02x: ",this.address));
         int rval = 0;
         rval = this.i2cDevice.writeRegister(offset, data);
+        this.examineReturnWrite(rval);
         this.ffdc.ffdcDebugEntry("writeByte :" + String.format("0X%02x: ", data));
         this.ffdc.ffdcMethodExit("writeByte rval :" + String.format("0X%02x: ", rval));
         return (rval);

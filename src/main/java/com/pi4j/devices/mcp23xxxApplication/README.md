@@ -7,7 +7,7 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: Mcp23xxPinMonitor
 
 ### !! NOT READY FOR PRODUCTION USE !!
 
-Project by Tom Aarts
+Project by  Tom Aarts
 
 ==========================================================================
 

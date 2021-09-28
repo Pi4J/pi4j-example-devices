@@ -57,34 +57,35 @@ import java.util.HashMap;
  * Mcp23017PinMonitor
  *
  * <p>
- *     Read users parameters, control configuring the MCP23017 chip,
- *     reading and writing to pin, and more importantly monitor for
- *     changes on a specific input pin using the MCP23017 Interrupt
- *     line.
+ * Read users parameters, control configuring the MCP23017 chip,
+ * reading and writing to pin, and more importantly monitor for
+ * changes on a specific input pin using the MCP23017 Interrupt
+ * line.
  * </p>
  */
-public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorIntf{
+public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIntf {
     /**
-     *   CTOR
-     * @param pi4j  contect
-     * @param parms  users command line parameters
-     * @param ffdc    loging
-     * @param dioPinData  chip pin configuration
-     * @param console  Console
+     * CTOR
+     *
+     * @param pi4j       contect
+     * @param parms      users command line parameters
+     * @param ffdc       loging
+     * @param dioPinData chip pin configuration
+     * @param console    Console
      */
-    public Mcp23017PinMonitor(Context pi4j, Mcp23xxxParms parms ,FfdcUtil ffdc,
+    public Mcp23017PinMonitor(Context pi4j, Mcp23xxxParms parms, FfdcUtil ffdc,
                               HashMap<Integer, GpioPinCfgData> dioPinData, Console console) {
 
-        super(pi4j,parms,ffdc, dioPinData, console);
+        super(pi4j, parms, ffdc, dioPinData, console);
         this.jumpTable = new PinInterruptActionIntf[16];
         // TODO Auto-generated constructor stub
     }
 
     /**
      * <p>
-     *     Using the listener interface available on Pi GPios,assign an
-     *     interruptAction to each pin.  The interrupt action for this example are
-     *     subblasses of this packages PinInterruptBase.
+     * Using the listener interface available on Pi GPios,assign an
+     * interruptAction to each pin.  The interrupt action for this example are
+     * subblasses of this packages PinInterruptBase.
      * </p>
      */
     public void installInterruptHandler() {
@@ -92,7 +93,7 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
         this.ffdc.ffdcMethodEntry("installInterruptHandler");
 
         for (int i = 0; i < 7; i++) {
-            System.out.println("");
+            System.out.println();
             PinInterruptDefault dummy = new PinInterruptDefault(this.pi4j, this.pin, this.ffdc, this,
                     this.dioPinData, this.cfgU, this.priChipName);
             this.jumpTable[i] = new PinInterruptActionIntf() {
@@ -117,7 +118,7 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
 
         // 8 - 15
         for (int i = 8; i < 16; i++) {
-            System.out.println("");
+            System.out.println();
             PinInterruptDefault dummy = new PinInterruptDefault(this.pi4j, this.pin, this.ffdc, this,
                     this.dioPinData, cfgU, this.priChipName);
             this.jumpTable[i] = new PinInterruptActionIntf() {
@@ -139,14 +140,15 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
     }
 
     /**
-     *<p>
-     *     For this piNum, call interruptAction on the interruptAction instance
-     *     contained in the jumpTable
-     *</p>
-     * @param pinNum     MVP pin causing the interrupt
-     * @param pinState   Pi Gpio pin state detected
-     * @param ffdc       logging
-     * @return  true if interrupt processed, false if failed
+     * <p>
+     * For this piNum, call interruptAction on the interruptAction instance
+     * contained in the jumpTable
+     * </p>
+     *
+     * @param pinNum   MVP pin causing the interrupt
+     * @param pinState Pi Gpio pin state detected
+     * @param ffdc     logging
+     * @return true if interrupt processed, false if failed
      */
     public boolean processPinInterrupt(int pinNum, DigitalState pinState, FfdcUtil ffdc) {
         boolean rval = true;
@@ -166,13 +168,14 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
 
 
     /**
-     *  main
-     *  <p>
-     *      Command line access to the MCP23017 application code.
-     *      First process the users input, then call various methods
-     *      based upon the users parms.
-     *  </p>
-     * @param args   Users command line arguments
+     * main
+     * <p>
+     * Command line access to the MCP23017 application code.
+     * First process the users input, then call various methods
+     * based upon the users parms.
+     * </p>
+     *
+     * @param args Users command line arguments
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
@@ -193,7 +196,7 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
         ffdc.ffdcDebugEntry("mcp23017PinMonitor : Arg processing completed...\n" +
                 "");
 
-        Mcp23017PinMonitor mcpObj = new Mcp23017PinMonitor(parmsObj.pi4j, parmsObj, ffdc,  dioPinData, console);
+        Mcp23017PinMonitor mcpObj = new Mcp23017PinMonitor(parmsObj.pi4j, parmsObj, ffdc, dioPinData, console);
 
         BaseGpioInOut gpio = new BaseGpioInOut(parmsObj.pi4j, mcpObj.ffdc, mcpObj.dioPinData);
         mcpObj.gpio = gpio;
@@ -222,7 +225,7 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
             String chipAddr = priChipDetails.get("address");
             parmsObj.priChipAddress = Integer.parseInt(chipAddr.substring(2), 16);
             parmsObj.priChipBusNum = Integer.parseInt(chipBus.substring(2), 16);
-          // TODO  parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
+            // TODO  parmsObj.address = Integer.parseInt(chipAddr.substring(2), 16);
         }
 
         mcpObj.cfgData = new McpConfigData(ffdc);
@@ -294,14 +297,14 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
         }
 
         System.out.println("Chip register configurations completed");
-        mcpObj.reinit(parmsObj.priChipName, parmsObj.pinName,parmsObj.busNum, parmsObj.priChipAddress);
+        mcpObj.reinit(parmsObj.priChipName, parmsObj.pinName, parmsObj.busNum, parmsObj.priChipAddress);
 
         if (parmsObj.dumpRegs) {
             mcpObj.dumpRegs();
             System.exit(0);
         }
 
-       // mcpObj.cfgData.DumpGpiosConfig();
+        // mcpObj.cfgData.DumpGpiosConfig();
 
         if (parmsObj.setPin) {
             mcpObj.drivePin(parmsObj.pin, parmsObj.pinOn);
@@ -313,12 +316,12 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
         }
         if (parmsObj.monitorIntrp) {
             // spin and handle any interrupt that happens
-            if ((parmsObj.gpioNum == 0xff) ) { // || (parmsObj.hasUpDown == false)
+            if ((parmsObj.gpioNum == 0xff)) { // || (parmsObj.hasUpDown == false)
                 mcpObj.ffdc.ffdcConfigWarningEntry("Option -i requires -g ");
                 mcpObj.ffdc.ffdcDebugEntry("Spin so any Monitors can execute");
                 mcpObj.ffdc.ffdcErrorExit("invalid parms supplied", 550);
             } else {
-                mcpObj.addListener(parmsObj.offOn,  parmsObj.gpioNum);
+                mcpObj.addListener(parmsObj.offOn, parmsObj.gpioNum);
                 while (true) {
                     try {
                         Thread.sleep(2000, 0);
@@ -343,9 +346,6 @@ public class Mcp23017PinMonitor extends Mcp23017  implements Mcp23xxxPinMonitorI
 
 
     }
-
-
-
 
 
 }
