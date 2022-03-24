@@ -24,3 +24,8 @@ src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md
 
 TCA9548 Bus enable/disable
 src/main/java/com/pi4j/devices/tca9548/README.md
+
+
+VL53L0X TimeOfFlight device
+src/main/java/com/pi4j/devices/vl53L0X/README.md
+
