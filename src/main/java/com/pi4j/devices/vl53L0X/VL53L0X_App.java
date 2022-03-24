@@ -70,7 +70,7 @@ public class VL53L0X_App {
 
         final Console console = new Console();
         console.print("==============================================================");
-        console.print("startup  VL53L0X_App");
+        console.print("startup  VL53L0X_App ");
         console.print("==============================================================");
 
 

@@ -35,7 +35,7 @@ package com.pi4j.devices.vl53L0X;
  */
 
 public class Vl53L0X_Declares {
-
+        //  Register offsets and values
         static int _SYSRANGE_START = 0x00;
         static int _SYSTEM_THRESH_HIGH = 0x0C;
         static int _SYSTEM_THRESH_LOW = 0x0E;

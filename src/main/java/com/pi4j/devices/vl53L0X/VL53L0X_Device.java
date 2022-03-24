@@ -63,7 +63,7 @@ public class VL53L0X_Device {
     I2C createI2cDevice(int bus, int address, int timeout) {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
-        this.logger.info("Enter: createI2cDevice VL53L0X_TOF  " + id + " " + name);
+        this.logger.info("Enter: createI2cDevice VL53L0X_TOF" + id + "" + name);
         I2C rval = null;
         var i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
                 .bus(bus)
@@ -73,7 +73,7 @@ public class VL53L0X_Device {
                 .provider("linuxfs-i2c")
                 .build();
         rval = this.pi4j.create(i2cDeviceConfig);
-        this.logger.info("Exit: createI2cDevice VL53L0X_TOF  " + id + " " + name);
+        this.logger.info("Exit: createI2cDevice VL53L0X_TOF" + id + "" + name);
         return (rval);
 
     }

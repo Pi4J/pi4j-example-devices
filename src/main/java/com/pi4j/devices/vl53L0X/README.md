@@ -40,7 +40,7 @@ parms: -b hex value bus
        -r  reset integer value GPIO --> XSHUT    
        -x hex value existing address prior to reset
        -t trace 
-                trace values : "trace", "debug", "info", "warn", "error" or "off"  Default "info"
+                 trace values : "trace", "debug", "info", "warn", "error" or "off"  Default "info"
 
 
 

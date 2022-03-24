@@ -35,7 +35,7 @@
 
 
 
-
+# See README for details
 
 
 #!/usr/bin/env bash
