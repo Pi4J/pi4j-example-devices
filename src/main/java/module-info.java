@@ -13,7 +13,7 @@ module com.pi4j.devices.multi{
 
     requires java.logging;
     requires jdk.unsupported;
-
+    requires com.pi4j.plugin.linuxfs;
 
 
     uses com.pi4j.extension.Extension;
@@ -26,5 +26,5 @@ module com.pi4j.devices.multi{
     opens com.pi4j.devices.mcp23xxxApplication to com.pi4j;
     opens com.pi4j.devices.appConfig to com.pi4j;
     opens com.pi4j.devices.base_i2c to com.pi4j;
-
+    opens com.pi4j.devices.vl53L0X to com.pi4j;
 }
