@@ -29,3 +29,8 @@ src/main/java/com/pi4j/devices/tca9548/README.md
 VL53L0X TimeOfFlight device
 src/main/java/com/pi4j/devices/vl53L0X/README.md
 
+
+BMP280  Temperature and Pressure Sensor
+src/main/java/com/pi4j/devices/bmp280/README.md
+
+
