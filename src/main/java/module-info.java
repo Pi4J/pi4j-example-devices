@@ -28,4 +28,7 @@ module com.pi4j.devices.multi{
     opens com.pi4j.devices.base_i2c to com.pi4j;
     // new TOF chip
     opens com.pi4j.devices.vl53L0X to com.pi4j;
+    // allow access to classes in the following namespaces for Pi4J annotation processing
+    opens com.pi4j.devices.bmp280  to com.pi4j;
+
 }
