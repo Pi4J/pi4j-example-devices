@@ -135,7 +135,7 @@ sudo ./runMcp23017.sh    -b 0x01 -a 0x22   -r 4      -z "{{'gpio23':{'name':'Int
 sudo ./runMcp23017.sh    -b 0x01 -a 0x22   -r 4  -f 1   
 
 In separate terminal, alter pin4
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(12, GPIO.OUT) 
@@ -150,7 +150,7 @@ GPIO.output( 12 , GPIO.HIGH)
 
 
 In separate terminal, alter pin15
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT) 

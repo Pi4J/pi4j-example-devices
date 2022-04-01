@@ -115,6 +115,7 @@ public class I2cSimpleRead extends BasicI2cDevice {
             }
         }
         console.println(details);
+        this.ffdc.ffdcDebugEntry(details);
         this.ffdc.ffdcMethodExit(this.getMethodName());
     }
     int numBytes = 0;
@@ -131,9 +132,9 @@ public class I2cSimpleRead extends BasicI2cDevice {
      */
     protected void usage() {
         System.out.println(
-                "options   -h 'help', -b bus, -a address," +
-                        " -r deviceRegister, -n  number of bytes  -f ffdc_lvl -s sysCfg  " +
-                        "1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   ");
+                "options   -h 'help', -b bus, -a address, \n" +
+                        " -r deviceRegister, -n  number of bytes  -f ffdc_lvl -s sysCfg   \n" +
+                        "-f :0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   ");
     }
 
     /**
