@@ -29,6 +29,7 @@ available.
 The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2 documentation. Consult
 that logger class documentation to understand its various logging options.
 
+
 Build execution:
     1. mvn clean package
     2. cd target/distribution

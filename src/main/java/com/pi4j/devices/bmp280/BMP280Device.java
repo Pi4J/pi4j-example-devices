@@ -34,9 +34,7 @@ package com.pi4j.devices.bmp280;
 
 import com.pi4j.context.Context;
 
-import com.pi4j.devices.vl53L0X.VL53L0X_Device;
-import com.pi4j.exception.InitializeException;
-import com.pi4j.exception.ShutdownException;
+
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
@@ -53,8 +51,9 @@ import org.slf4j.LoggerFactory;
  */
 
 /**
- * Implementation os Sensor interface, using I2C communication.
+ * Implementation of BMP280  Temperature/Pressure Sensor, using I2C communication.
  * Note:  For I2C operation CSB pin must be connected to 3.3 V.
+ *
  */
 public class BMP280Device implements BMP280Interface {
 
@@ -111,9 +110,12 @@ public class BMP280Device implements BMP280Interface {
     protected int address = BMP280Declares.DEFAULT_ADDRESS;
 
 
-
-
-
+    /**
+     *
+     * @param console  Context instance used accross application
+     * @param bus    Pi bus
+     * @param address  Device address
+     */
     public BMP280Device(Context pi4j, Console console, int bus, int address ) {
         super();
         this.pi4j = pi4j;
@@ -382,7 +384,6 @@ public class BMP280Device implements BMP280Interface {
     /**
      * @return Pressure in millBar
      */
-    // MilliBars
     public double pressureMb() {
         this.logger.trace("enter: pressureMb");
         double[] rval = this.readBMP280();
@@ -394,8 +395,6 @@ public class BMP280Device implements BMP280Interface {
     /**
      * @return Pressure in inches mercury
      */
-
-    //inches of mercury
     public double pressureIn() {
         this.logger.trace("enter: pressureIn");
         double[] rval = this.readBMP280();
@@ -423,7 +422,9 @@ public class BMP280Device implements BMP280Interface {
 
 
     /**
-     * Reset the BMP280, validate the chips ID.
+     * Do required init/validation.
+     *      Reset the BMP280, validate the chips ID.
+     *      ID failure will force a program exit.
      */
     public void initSensor() {
         this.logger.trace("enter: initSensor");
@@ -438,17 +439,15 @@ public class BMP280Device implements BMP280Interface {
     }
 
 
-
+    /**
+     *
+     * @return  The  device I2cConfig object
+     */
     public I2CConfig config() {
 
         this.logger.trace("enter: config");
         this.logger.trace("exit: config  "  + this.config.toString());
         return this.config;
     }
-
-
-
-
-
 
 }

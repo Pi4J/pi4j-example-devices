@@ -521,13 +521,14 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
     }
 
     public static void usage() {
-        System.out.println("options   -h 'help', -d drive-pin with -o ON/OFF, "
-                + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r)"
-                + "   -b bus     -a address "
-                + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\""
-                + "-c primary chip     -p primary pin"
-                + "-z  gpios config dict     -q mainChip"
-                + "-x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs ");
+        System.out.println("options   -h 'help', -d drive-pin with -o ON/OFF, \n"
+                + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r) \n"
+                + "   -b bus     -a address  \n"
+                + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\" \n"
+                + "-c primary chip     -p primary pin \n"
+                + "-z  gpios config dict     -q mainChip \n"
+                + "-x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs \n"
+                + "ffdc_lvl 0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF    ");
     }
 
 }

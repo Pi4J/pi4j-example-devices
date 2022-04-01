@@ -74,7 +74,7 @@ directly on the Pi bus, the the value would be -q 23008#1
 Note: If you prefer less or more logging detail, edit run23008App.sh changing the -f parameter VALUE
 See com.pi4j.devices.base_util.ffdc.FfdcUtil.java
    
-ependent upon the -f parameter value logging details will be stored in
+Dependent upon the -f parameter value logging details will be stored in
 /tmp/logs/com.pi4j.devices.mcp23xxxApplication.Mcp23008PinMonitor.log
 
   
@@ -163,7 +163,7 @@ property files
   Read 4
   sudo ./runMcp23008PinMonitor.sh    -q 9548#1    -r 4  -p pin0 -c 23008#1   -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'down','default':'0','do_compare':'no','int_ena':'yes','act':'low'}}}"   -x 13  -f 2
  This will set pin4 high or low
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT) 
@@ -179,7 +179,7 @@ GPIO.output( 16 , GPIO.HIGH)
  
 8. Trip interrupt  GPIO16->p4   (in separate terminal console)
 pin0 Red LED will reflect state of pin4 when it interrupts
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT) 
@@ -281,7 +281,7 @@ contain spaces. So as you can see the -m and -z values wrapped by " " contain no
  
  Yellow LED will flash on/off once each interrupt
 Trip interrupt  GPIO12->p4
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(12, GPIO.OUT) 
@@ -296,7 +296,7 @@ GPIO.output(12,GPIO.LOW)
   i2cdump -y 1 0x22     This will clear existing interruupts in the chip
  
  Trip interrupt  GPIO18->p15     Red LED reflects level of pin 15
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT) 

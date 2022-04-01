@@ -31,6 +31,9 @@ package com.pi4j.devices.bmp280;/*
  *
  */
 
+/**
+ * Register address, values and masks
+ */
 public class BMP280Declares {
 
     /**

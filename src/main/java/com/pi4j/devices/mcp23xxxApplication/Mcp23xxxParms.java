@@ -99,12 +99,13 @@ public class Mcp23xxxParms {
 
     // , -b bus, -a address
     public void usage() {
-        System.out.println("options   -h 'help', -d drive-pin with -o ON/OFF, "
-                + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r)"
-                + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\""
-                + "-c primary chip     -p primary pin"
-                + "-z  gpios config dict    -i interript monitor on/off -q mainChip"
-                + "-g gpio,   -x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs ");
+        System.out.println("options   -h 'help', -d drive-pin with -o ON/OFF, \n"
+                + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r) \n"
+                + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\"\n"
+                + "-c primary chip     -p primary pin \n"
+                + "-z  gpios config dict    -i interript monitor on/off -q mainChip \n"
+                + "-g gpio,   -x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs  \n"
+                + "     ffdc_lvl 0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF  \n");
     }
 
 }

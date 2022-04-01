@@ -130,7 +130,7 @@ property files
   Read 4
   sudo ./runMcp23008.sh    -b 0x1 -a 0x20   -r 4  -m "{{'pin4':{'dir':'in','pull':'down'}}}"     -f 1
  This will set pin4 high or low
-python
+python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT) 

@@ -34,15 +34,16 @@
 
 package com.pi4j.devices.base_util.ffdc;
 
-import com.pi4j.devices.base_util.PrintInfo;
 import com.pi4j.context.Context;
+import com.pi4j.devices.base_util.PrintInfo;
+import com.pi4j.util.Console;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import com.pi4j.util.Console;
-import org.apache.logging.log4j.Logger;
+
 
 
 /**
@@ -69,10 +70,10 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      * <ul>
      *     <li> Instantiated Console class
      *     <li>Instantiated Context class
-     *     <li> Vaule used in logging determination
-     *     <li> Class owning the loged data. Significant as this is
+     *     <li> Value used in logging determination
+     *     <li> Class owning the logged data. Significant as this is
      *     log4j2.properties file, and must match
-     * </ul>
+     * +    * </ul>
      * <p>
      * PostCond:  Class methods are now accessable, logging object instantiated.
      */
@@ -81,36 +82,49 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         this.console = console;
         this.pi4j = pi4j;
         this.ffdc = ffdcControlLevel;
-        this.owner =  owner;
+        this.owner = owner;
         this.init();
     }
 
+
+
     /**
      * init
-     * Uses log4j v2  assumes location of the log4j2.properties configuration file
-     * is on classpath
      */
+    /* public enum Level {
+        ERROR(40, "ERROR"),
+        WARN(30, "WARN"),
+        INFO(20, "INFO"),
+        DEBUG(10, "DEBUG"),
+        TRACE(0, "TRACE");
+       */
     private void init() {
+        //  this.logger = LogManager.getLogger(owner);
+        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
+        //  must fully qualify logger as others exist and the slf4 code will use the first it
+        //  encounters if using the defaultLogLevel
         this.logger = LogManager.getLogger(owner);
         this.setLevel(this.ffdc);
+
+
     }
 
     Console console = null;
     Context pi4j;
     int ffdc;
     Logger logger = null;
-    Class owner ;
+    Class owner;
 
 
     /**
      * ffdcMethodEntry
      * <p>
-     * @param detail to log
-     * </p>
-     *               <p>
-     * PostCondition  &gt;&gt;&gt;&gt;  Entered : prepended to detail
-     *           </p>
      *
+     * @param detail to log
+     *               </p>
+     *               <p>
+     *               PostCondition  &gt;&gt;&gt;&gt;  Entered : prepended to detail
+     *               </p>
      */
     @Override
     public boolean ffdcMethodEntry(String detail) {
@@ -121,12 +135,12 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     /**
      * ffdcMethodExit
      * <p>
-     * @param detail to log
-     * </p>
-     *               <p>
-     * PostCondition  &lt;&lt;&lt;&lt;  Exit : prepended to detail
-     *           </p>
      *
+     * @param detail to log
+     *               </p>
+     *               <p>
+     *               PostCondition  &lt;&lt;&lt;&lt;  Exit : prepended to detail
+     *               </p>
      */
     @Override
     public boolean ffdcMethodExit(String detail) {
@@ -137,12 +151,12 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     /**
      * ffdcConfigWarningEntry
      * <p>
-     * @param detail to log
-     * </p>
-     *               <p>
-     * PostCondition  ......  Warning :' prepended to detail
-     *           </p>
      *
+     * @param detail to log
+     *               </p>
+     *               <p>
+     *               PostCondition  ......  Warning :' prepended to detail
+     *               </p>
      */
     @Override
     public boolean ffdcConfigWarningEntry(String detail) {
@@ -153,12 +167,12 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     /**
      * ffdcDebugEntry
      * <p>
-     * @param detail to log
-     * </p>
-     *               <p>
-     * PostCondition  'Info :' prepended to detail
-     *           </p>
      *
+     * @param detail to log
+     *               </p>
+     *               <p>
+     *               PostCondition  'Info :' prepended to detail
+     *               </p>
      */
     @Override
     public boolean ffdcDebugEntry(String detail) {
@@ -169,12 +183,12 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     /**
      * ffdcErrorEntry
      * <p>
-     * @param detail to log
-     * </p>
-     *               <p>
-     * PostCondition  '??????  ERROR :' prepended to detail
-     *           </p>
      *
+     * @param detail to log
+     *               </p>
+     *               <p>
+     *               PostCondition  '??????  ERROR :' prepended to detail
+     *               </p>
      */
     @Override
     public boolean ffdcErrorEntry(String detail) {
@@ -195,11 +209,11 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      *
      */
     /**
-      ffdcErrorExit,
+     * ffdcErrorExit,
      */
     @Override
     public void ffdcErrorExit(String detail, int code) {
-        this.logger.fatal("Fatal exit :" + detail + "\n  ");
+        this.logger.error("Error exit :" + detail + "\n  ");
         this.ffdcFlushShutdown();
         this.console.print("error exit " + code);
         try {
@@ -216,14 +230,14 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     /**
      * ffdcClearLogs
      * <p>
-     * @param detail to log
-     * </p>
-     *               <p>
-     * PostCondition  logs cleared
-     *           </p>
      *
+     * @param detail to log
+     *               </p>
+     *               <p>
+     *               PostCondition  logs cleared
+     *               </p>
      */
-     public boolean ffdcClearLogs(String detail) {
+    public boolean ffdcClearLogs(String detail) {
         // TODO
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration conf = ctx.getConfiguration();
@@ -234,16 +248,111 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     }
 
     /**
+     * setLevel. Allow user to modify the log level in use by the application
+     * <p>
+     * To be compatible with the slf4 facade on their subset levels will be mapped to log4j
+     * "trace", "debug", "info", "warn", "error" or "off").
+     *
+     * @param val new logging level
+     *            Allowable values
+     *            <ul>
+     *            <li> 0 TRACE
+     *            <li> 1 DEBUG
+     *            <li> 2 INFO
+     *            <li> 3 WARN
+     *            <li> 4 ERROR
+     *            <li> 5 ERROR
+     *            <li> 6 OFF
+     *            </ul>
+     * @return if level 0-6 return true, else false
+     */
+    public boolean setLevel(int val) {
+        boolean rval = true;
+        if ((val >= 0) && (val < 7)) {
+            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+            Configuration conf = ctx.getConfiguration();
+            if (conf.getLoggerConfig(this.owner.getName()) != null) {
+                LoggerConfig loggerConfig = conf.getLoggerConfig(this.owner.getName());
+                loggerConfig.setLevel(this.mapIntToLevel(val));
+            } else {
+                LoggerConfig loggerConfig = new LoggerConfig(this.owner.getName(), this.mapIntToLevel(val), true);
+                conf.addLogger(this.owner.getName(), loggerConfig);
+            }
+            ctx.updateLoggers(conf);
+        } else {
+            this.console.print("Invalid FFDC level");
+            rval = false;
+        }
+        return (rval);
+    }
+
+    /**
+     * -     *   mapIntToLevel
+     * To be compatible with the slf4 facade on their subset levels will be mapped to log4j
+     * "trace", "debug", "info", "warn", "error" or "off").
+     *
+     * @param newLevel new logging level
+     *                 Allowable values
+     *                 <ul>
+     *                 <li> 0 TRACE
+     *                 <li> 1 DEBUG
+     *                 <li> 2 INFO
+     *                 <li> 3 WARN
+     *                 <li> 4 ERROR
+     *                 <li> 5 ERROR
+     *                 <li> 6 OFF
+     *                 </ul>
+     * @param newLevel
+     * @return Simple int converted to Log4j value
+     */
+    private Level mapIntToLevel(int newLevel) {
+        Level rval = Level.ERROR;
+        switch (newLevel) {
+            case 0: {
+                rval = Level.TRACE;
+                break;
+            }
+            case 1: {
+                rval = Level.DEBUG;
+                break;
+            }
+            case 2: {
+                rval = Level.INFO;
+                break;
+            }
+            case 3: {
+                rval = Level.WARN;
+                break;
+            }
+            case 4: {
+                rval = Level.ERROR;
+                break;
+            }
+            case 5: {
+                rval = Level.ERROR;
+                break;
+            }
+            case 6: {
+                rval = Level.OFF;
+                break;
+            }
+            default: {
+                this.ffdcConfigWarningEntry("invalid parm : " + newLevel);
+            }
+        }
+        return (rval);
+    }
+
+
+    /**
      * ffdcFlushShutdown
-     *
+     * <p>
      * PostCondition  Log manager shut down, records flushed to file.
-     *
-     *
      */
     @Override
     public boolean ffdcFlushShutdown() {
         LogManager.shutdown();
-        return(true);
+        return (true);
     }
 
 
@@ -266,93 +375,6 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     public void printRegistry() {
         PrintInfo.printRegistry(this.console, this.pi4j);
     }
-
-
-    /**
-     * setLevel. Allow user to modify the log level in use by the application
-     *
-     * @param val new logging level
-     *            Allowable values
-     *            <ul>
-     *            <li> 0 ALL/TRACE
-     *            <li> 1 DEBUG
-     *            <li> 2 INFO
-     *            <li> 3 WARN
-     *            <li> 4 ERROR
-     *            <li> 5 FATAL
-     *            <li> 6 OFF
-     *            </ul>
-     * @return if level 0-6 return true, else false
-     */
-    //0 ALL < TRACE < 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < OFF  public final static int OFF_INT = Integer.MAX_VALUE;
-    public boolean setLevel(int val) {
-        boolean rval = true;
-        if ((val >= 0) && (val < 7)) {
-            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            Configuration conf = ctx.getConfiguration();
-
-            //LoggerContext ctx1 = (LoggerContext)LogManager.getContext(false);
-            //AbstractConfiguration configuration = (AbstractConfiguration) ctx.getConfiguration();
-
-            if (conf.getLoggerConfig(this.owner.getName()) != null) {
-                LoggerConfig loggerConfig = conf.getLoggerConfig(this.owner.getName());
-                loggerConfig.setLevel(this.mapIntToLevel(val));
-            } else {
-                LoggerConfig loggerConfig = new LoggerConfig(this.owner.getName(), this.mapIntToLevel(val), true);
-                conf.addLogger(this.owner.getName(), loggerConfig);
-            }
-
-            ctx.updateLoggers(conf);
-        } else {
-            this.console.print("Invalid FFDC level");
-            rval = false;
-        }
-        return (rval);
-    }
-
-    /**
-     *   mapIntToLevel
-     * @param newLevel
-     * @return Simple int converted to Log4j value
-     */
-    private Level mapIntToLevel(int newLevel) {
-        Level rval = Level.ERROR;
-        switch (newLevel) {
-            case 0: {
-                rval = Level.ALL;
-                break;
-            }case 1: {
-                rval = Level.DEBUG;
-                break;
-            }
-            case 2: {
-                rval = Level.INFO;
-                break;
-            }
-            case 3: {
-                rval = Level.WARN;
-                break;
-            }
-            case 4: {
-                rval = Level.ERROR;
-                break;
-            }
-            case 5: {
-                rval = Level.FATAL;
-                break;
-            }
-            case 6: {
-                rval = Level.OFF;
-                break;
-            }
-            default: {
-                this.ffdcConfigWarningEntry("invalid parm : " + newLevel);
-            }
-        }
-        return (rval);
-    }
-
-
 
 
     private void initLogger() {
