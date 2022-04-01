@@ -111,7 +111,7 @@ public class BMP280I2cExample {
 
 
 
-        String helpString = " parms: -b hex value bus    -a hex value address  -t trace " +
+        String helpString = " parms: -b hex value bus    -a hex value address  -t trace \n " +
                 " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -150,7 +150,7 @@ public class BMP280I2cExample {
         System.setProperty("org.slf4j.simpleLogger.log.com.pi4j.devices.bmp280.BMP280Device", traceLevel);
 
 
-        var bmpDev = new BMP280Device(pi4j, console,  BMP280_I2C_BUS, BMP280_I2C_ADDRESS);
+        var bmpDev = new BMP280Device(pi4j, console,  busNum, address);
             bmpDev.initSensor();
             console.println("  Dev I2C detail    " +bmpDev.i2cDetail());
             console.println("  Setup ----------------------------------------------------------");

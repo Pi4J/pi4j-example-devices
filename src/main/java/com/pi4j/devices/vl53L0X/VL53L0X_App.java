@@ -43,6 +43,10 @@ import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
+
+/**
+ * Configure and repeatedly access the TOF chip, displaying the measured distance.
+ */
 public class VL53L0X_App {
 
     public static void main(String[] args) {
@@ -81,8 +85,9 @@ public class VL53L0X_App {
         boolean existingSet = false;
         boolean doReset = false;
         int gpioReset = 0;
-        String helpString = " parms: -b hex value bus    -a hex value address  -t trace  -r  reset integer value GPIO  -x hex value existing address prior to reset" +
-                " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
+        String helpString = " parms: -b hex value bus    -a hex value address  -t trace   \n" +
+                "    -r  reset integer value GPIO  -x hex value existing address prior to reset  \n" +
+                "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -138,10 +143,10 @@ public class VL53L0X_App {
         // doRest assume we are changing the device address. No matter, the reset will set the chip to
         // default address 0x29.
         if(doReset){
-            vl53Existing = new VL53L0X_Device(pi4j, busNum, existingAddress, 0);
+            vl53Existing = new VL53L0X_Device(pi4j, busNum, existingAddress);
             vl53Existing.setNewAddress(gpioReset,address,console, existingAddress);
         }else {
-            vl53Existing = new VL53L0X_Device(pi4j, busNum, address, 0);
+            vl53Existing = new VL53L0X_Device(pi4j, busNum, address);
         }
         int x = 0;
         while (x == 0) {

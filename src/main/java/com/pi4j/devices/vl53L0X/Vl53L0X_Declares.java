@@ -34,6 +34,9 @@ package com.pi4j.devices.vl53L0X;
  *
  */
 
+/**
+ * Register address, and register values and masks
+ */
 public class Vl53L0X_Declares {
         //  Register offsets and values
         static int _SYSRANGE_START = 0x00;
