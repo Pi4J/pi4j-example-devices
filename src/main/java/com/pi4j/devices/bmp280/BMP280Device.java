@@ -35,6 +35,7 @@ package com.pi4j.devices.bmp280;
 import com.pi4j.context.Context;
 
 
+import com.pi4j.devices.vl53L0X.VL53L0X_Device;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
@@ -95,6 +96,7 @@ public class BMP280Device implements BMP280Interface {
 
 
     private final Logger logger;
+    private final String traceLevel;
 
 
     // local/internal I2C reference for communication with hardware chip
@@ -116,12 +118,18 @@ public class BMP280Device implements BMP280Interface {
      * @param bus    Pi bus
      * @param address  Device address
      */
-    public BMP280Device(Context pi4j, Console console, int bus, int address ) {
+    public BMP280Device(Context pi4j, Console console, int bus, int address, String traceLevel ) {
         super();
         this.pi4j = pi4j;
         this.address = address;
         this.busNum = bus;
         this.console = console;
+        this.traceLevel = traceLevel;
+        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
+        //  must fully qualify logger as others exist and the slf4 code will use the first it
+        //  encounters if using the defaultLogLevel
+        System.setProperty("org.slf4j.simpleLogger.log."+ BMP280Device.class.getName(), this.traceLevel);
+
         this.logger = LoggerFactory.getLogger(BMP280Device.class);
         this.createI2cDevice(); // will set start this.i2c
     }

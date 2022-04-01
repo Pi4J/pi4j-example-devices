@@ -144,13 +144,8 @@ public class BMP280I2cExample {
             }
         }
 
-        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
-        //  must fully qualify logger as others exist and the slf4 code will use the first it
-        //  encounters if using the defaultLogLevel
-        System.setProperty("org.slf4j.simpleLogger.log.com.pi4j.devices.bmp280.BMP280Device", traceLevel);
 
-
-        var bmpDev = new BMP280Device(pi4j, console,  busNum, address);
+        var bmpDev = new BMP280Device(pi4j, console,  busNum, address, traceLevel);
             bmpDev.initSensor();
             console.println("  Dev I2C detail    " +bmpDev.i2cDetail());
             console.println("  Setup ----------------------------------------------------------");

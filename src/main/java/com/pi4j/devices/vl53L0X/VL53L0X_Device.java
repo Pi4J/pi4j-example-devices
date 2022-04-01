@@ -57,17 +57,26 @@ import org.slf4j.LoggerFactory;
 
 public class VL53L0X_Device {
 
+
     /**
      *
      * @param pi4j  instantiated Context
      * @param bus       pi bus number
      * @param address   devices address
+     * @param traceLevel    "trace", "debug", "info", "warn", "error" or "off"
      */
-    public VL53L0X_Device(Context pi4j, int bus, int address) {
+    public VL53L0X_Device(Context pi4j, int bus, int address, String traceLevel) {
         super();
         this.bus = bus;
         this.address = address;
         this.pi4j = pi4j;
+        this.traceLevel = traceLevel;
+        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
+        //  must fully qualify logger as others exist and the slf4 code will use the first it
+        //  encounters if using the defaultLogLevel
+        System.setProperty("org.slf4j.simpleLogger.log."+ VL53L0X_Device.class.getName(), this.traceLevel);
+
+
         this.logger = LoggerFactory.getLogger(VL53L0X_Device.class);
         this.device = this.createI2cDevice(bus, address);
         this.init(bus, address);
@@ -253,7 +262,7 @@ public class VL53L0X_Device {
         //Use 0x29 POR value so we need to recreate I2C device with expected POR value
         // unless it was the existing address and he device already exists
         if (existingAddress != Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS) {
-            vl53Temp = new VL53L0X_Device(this.pi4j, this.bus, Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS);
+            vl53Temp = new VL53L0X_Device(this.pi4j, this.bus, Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS, this.traceLevel);
             vl53Temp.device.writeRegister(Vl53L0X_Declares._I2C_SLAVE_DEVICE_ADDRESS, newAddress);
         } else {  // use the existing device
             this.init(this.bus, Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS);
@@ -787,6 +796,7 @@ public class VL53L0X_Device {
     private long io_timeout_s;
     private int measurement_timing_budget_us;
     private final Logger logger;
+    private final String traceLevel;
 
     private int test;
 
