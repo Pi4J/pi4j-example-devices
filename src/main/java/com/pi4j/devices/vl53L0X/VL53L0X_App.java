@@ -85,10 +85,12 @@ public class VL53L0X_App {
         boolean existingSet = false;
         boolean doReset = false;
         int gpioReset = 0;
+
         String helpString = " parms: -b hex value bus    -a hex value address  -t trace   \n " +
                 "  -r  reset integer value GPIO  -x hex value address prior to reset  \n " +
                 "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
                 " or \"off\"  Default \"info\"";
+
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -144,6 +146,7 @@ public class VL53L0X_App {
             vl53Existing.setNewAddress(gpioReset,address,console, existingAddress);
         }else {
             vl53Existing = new VL53L0X_Device(pi4j, busNum, address, traceLevel);
+
         }
         int x = 0;
         while (x == 0) {

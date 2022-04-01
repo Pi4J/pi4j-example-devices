@@ -145,7 +145,8 @@ public class BMP280I2cExample {
         }
 
 
-        var bmpDev = new BMP280Device(pi4j, console,  busNum, address, traceLevel);
+
+            var bmpDev = new BMP280Device(pi4j, console,  busNum, address, traceLevel);
             bmpDev.initSensor();
             console.println("  Dev I2C detail    " +bmpDev.i2cDetail());
             console.println("  Setup ----------------------------------------------------------");

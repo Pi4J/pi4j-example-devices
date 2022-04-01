@@ -35,7 +35,6 @@ package com.pi4j.devices.bmp280;
 import com.pi4j.context.Context;
 
 
-import com.pi4j.devices.vl53L0X.VL53L0X_Device;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
@@ -118,6 +117,7 @@ public class BMP280Device implements BMP280Interface {
      * @param bus    Pi bus
      * @param address  Device address
      */
+
     public BMP280Device(Context pi4j, Console console, int bus, int address, String traceLevel ) {
         super();
         this.pi4j = pi4j;
