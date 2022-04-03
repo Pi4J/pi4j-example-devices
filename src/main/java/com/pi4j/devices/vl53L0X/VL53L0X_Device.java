@@ -262,6 +262,7 @@ public class VL53L0X_Device {
         I2C tempI2c = null;
         //Use 0x29 POR value so we need to recreate I2C device with expected POR value
         // unless it was the existing address and he device already exists
+         // IF we reuse the  original device, we must reset its I2C state to the final instance
         if (existingAddress != Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS) {
             vl53Temp = new VL53L0X_Device(this.pi4j, this.bus, Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS, this.traceLevel);
             vl53Temp.device.writeRegister(Vl53L0X_Declares._I2C_SLAVE_DEVICE_ADDRESS, newAddress);
