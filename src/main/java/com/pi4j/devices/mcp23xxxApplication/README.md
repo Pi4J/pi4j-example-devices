@@ -302,7 +302,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT) 
 GPIO.output(18,GPIO.LOW)
 GPIO.output( 18 , GPIO.HIGH)
- GPIO.output(18,GPIO.LOW)
+GPIO.output(18,GPIO.LOW)
  
 Drive pin0 hi low     Red LED
 

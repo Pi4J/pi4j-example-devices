@@ -16,6 +16,6 @@ Simple program to execute and I2C read at the specified bus -b,  address -a,
 
     1. mvn clean package
     2. cd target/distribution
-    3. sudo ./runSimpleRead.sh  -b 0x1 -a 0x22 -o offset -n 0x1
+    3. sudo ./runSimpleRead.sh  -b 0x1 -a 0x22 -r register -n 0x1
 
 
