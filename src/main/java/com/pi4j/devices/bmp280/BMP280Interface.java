@@ -36,49 +36,49 @@ package com.pi4j.devices.bmp280;
  *
  * @author Tom Aarts
  * @version $Id: $Id
- *
+ * <p>
  * This class permits the BMP280 device to create additional methods specific to the
  * BMP280 .
  */
 public interface BMP280Interface {
 
 
-
-        /**
-         * Perform any/all actions to reset the sensor
-         */
-        void resetSensor();
-
-
-        /**
-         * Perform any/all actions to initialize  the sensor
-         */
-        void initSensor();
-
-        /*** @return temperature in centigrade
-         */
-        double temperatureC();
-
-        /** @return temperature in fahrenheit
-         */
-        double temperatureF();
+    /**
+     * Perform any/all actions to reset the sensor
+     */
+    void resetSensor();
 
 
-        /**
-         * @return presure in Pa units
-         */
-        double pressurePa();
+    /**
+     * Perform any/all actions to initialize  the sensor
+     */
+    void initSensor();
 
-        /**
-         * @return pressure in Inches Mercury
-         */
-        double pressureIn();
+    /*** @return temperature in centigrade
+     */
+    double temperatureC();
 
-        /**
-         * @return pressure in millibar
-         */
-        double pressureMb();
+    /**
+     * @return temperature in fahrenheit
+     */
+    double temperatureF();
 
-    }
+
+    /**
+     * @return presure in Pa units
+     */
+    double pressurePa();
+
+    /**
+     * @return pressure in Inches Mercury
+     */
+    double pressureIn();
+
+    /**
+     * @return pressure in millibar
+     */
+    double pressureMb();
+
+}
 
 
