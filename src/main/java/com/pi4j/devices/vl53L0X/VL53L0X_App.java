@@ -37,8 +37,6 @@ package com.pi4j.devices.vl53L0X;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.exception.LifecycleException;
-import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
-import com.pi4j.plugin.pigpio.provider.gpio.digital.PiGpioDigitalOutputProvider;
 import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
@@ -102,13 +100,13 @@ public class VL53L0X_App {
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-            }else if (o.contentEquals("-t")) { // device address
+            } else if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
                 i++;
                 traceLevel = a;
-                if (a.contentEquals("trace")  |  a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
+                if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
                     console.println("Changing trace level to : " + traceLevel);
-                }else{
+                } else {
                     console.println("Changing trace level invalid  : " + traceLevel);
                     System.exit(40);
                 }
@@ -122,16 +120,16 @@ public class VL53L0X_App {
                 doReset = true;
                 gpioReset = Integer.parseInt(a);
                 i++;
-            }else if (o.contentEquals("-h")) {
+            } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
-            }else {
+            } else {
                 console.println("  !!! Invalid Parm " + args);
-                console.println(helpString );
+                console.println(helpString);
                 System.exit(42);
             }
         }
-        if ((doReset && ( existingSet == false)) || ((doReset == false) && ( existingSet))){
+        if ((doReset && (existingSet == false)) || ((doReset == false) && (existingSet))) {
             console.println("  !!! Invalid Parm combination, if either  -r or -x  is used, requires both");
             console.println(" parms: -b hex value bus    -a hex value address  -r  reset integer value GPIO  -x hex value existing address prior to reset ");
             System.exit(43);
@@ -141,10 +139,10 @@ public class VL53L0X_App {
         VL53L0X_Device vl53Existing = null;
         // doRest assume we are changing the device address. No matter, the reset will set the chip to
         // default address 0x29.
-        if(doReset){
+        if (doReset) {
             vl53Existing = new VL53L0X_Device(pi4j, busNum, existingAddress, traceLevel);
-            vl53Existing.setNewAddress(gpioReset,address,console, existingAddress);
-        }else {
+            vl53Existing.setNewAddress(gpioReset, address, console, existingAddress);
+        } else {
             vl53Existing = new VL53L0X_Device(pi4j, busNum, address, traceLevel);
 
         }

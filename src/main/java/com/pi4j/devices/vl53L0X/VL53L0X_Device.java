@@ -46,25 +46,22 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a VL530L0X TimeOfFlight device.
- *
+ * <p>
  * * Also, there is no real Datasheet for this device, the HW company will not
- *  *   make it public available.  This code was written using a HW Company
- *  provided python code.  The Python was converted to Java.  Some Python code
- *  has no direct match in Java, to validate a possible effect comparisons of a
- *  chip accessed  with existing Python was compared to Java with no marked difference.
+ * *   make it public available.  This code was written using a HW Company
+ * provided python code.  The Python was converted to Java.  Some Python code
+ * has no direct match in Java, to validate a possible effect comparisons of a
+ * chip accessed  with existing Python was compared to Java with no marked difference.
  */
-
 
 
 public class VL53L0X_Device {
 
     /**
-     *
-     * @param pi4j  instantiated Context
-     * @param bus       pi bus number
-     * @param address   devices address
-
-     * @param traceLevel    "trace", "debug", "info", "warn", "error" or "off"
+     * @param pi4j       instantiated Context
+     * @param bus        pi bus number
+     * @param address    devices address
+     * @param traceLevel "trace", "debug", "info", "warn", "error" or "off"
      */
     public VL53L0X_Device(Context pi4j, int bus, int address, String traceLevel) {
         super();
@@ -75,7 +72,7 @@ public class VL53L0X_Device {
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
         //  encounters if using the defaultLogLevel
-        System.setProperty("org.slf4j.simpleLogger.log."+ VL53L0X_Device.class.getName(), this.traceLevel);
+        System.setProperty("org.slf4j.simpleLogger.log." + VL53L0X_Device.class.getName(), this.traceLevel);
 
 
         this.logger = LoggerFactory.getLogger(VL53L0X_Device.class);
@@ -85,10 +82,9 @@ public class VL53L0X_Device {
     }
 
     /**
-     *
-     * @param bus   Pi bus number
-     * @param address   device address
-     * @return   Instantiate I2C device
+     * @param bus     Pi bus number
+     * @param address device address
+     * @return Instantiate I2C device
      */
     I2C createI2cDevice(int bus, int address) {
         String id = String.format("0X%02x: ", bus);
@@ -109,14 +105,13 @@ public class VL53L0X_Device {
     }
 
     /**
-     *
      * @param bus     devices I2C Pi bus
-     * @param address   devices address
-     *                    Validate via registers that this is VL53L0X chip.
-     *                  Initialize the chip for TOF operations
+     * @param address devices address
+     *                Validate via registers that this is VL53L0X chip.
+     *                Initialize the chip for TOF operations
      */
     void init(int bus, int address) {
-        this.logger.info("Enter:init   bus  " + bus + "  address " + address );
+        this.logger.info("Enter:init   bus  " + bus + "  address " + address);
         this._BUFFER = new byte[3];
         // Check identification registers for expected values.
         // From section 3.2 of the datasheet.
@@ -223,7 +218,7 @@ public class VL53L0X_Device {
         this.perform_single_ref_calibration(0x00);
         // # "restore the previous Sequence Config"
         this.writeDevice8(Vl53L0X_Declares._SYSTEM_SEQUENCE_CONFIG, (byte) 0xE8);
-        this.logger.info("Exit: init  " );
+        this.logger.info("Exit: init  ");
 
     }
 
@@ -248,21 +243,20 @@ public class VL53L0X_Device {
 
 
     /**
-     *
-     * @param gpioReset  Pi gpio connected to the chip reset line
-     * @param newAddress    new device address value to be programmed into chip register
-     * @param console        Console for possible logging
-     * @param existingAddress  Address currently in use in the device
-     *                 At completion the chip was reset and reprogrammed to ACK the newAddress
+     * @param gpioReset       Pi gpio connected to the chip reset line
+     * @param newAddress      new device address value to be programmed into chip register
+     * @param console         Console for possible logging
+     * @param existingAddress Address currently in use in the device
+     *                        At completion the chip was reset and reprogrammed to ACK the newAddress
      */
-     public void setNewAddress(int gpioReset, int newAddress, Console console, int existingAddress) {
-        this.logger.trace("Enter: setNewAddress  gpio  " + gpioReset + " new address  " + newAddress  + " exsting address "  + existingAddress  );
+    public void setNewAddress(int gpioReset, int newAddress, Console console, int existingAddress) {
+        this.logger.trace("Enter: setNewAddress  gpio  " + gpioReset + " new address  " + newAddress + " exsting address " + existingAddress);
         this.resetChip(gpioReset, this.pi4j, 1000, true, DigitalState.HIGH, console);
         VL53L0X_Device vl53Temp = null;
         I2C tempI2c = null;
         //Use 0x29 POR value so we need to recreate I2C device with expected POR value
         // unless it was the existing address and he device already exists
-         // IF we reuse the  original device, we must reset its I2C state to the final instance
+        // IF we reuse the  original device, we must reset its I2C state to the final instance
         if (existingAddress != Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS) {
             vl53Temp = new VL53L0X_Device(this.pi4j, this.bus, Vl53L0X_Declares._VL53L0X_DEFAULT_ADDRESS, this.traceLevel);
             vl53Temp.device.writeRegister(Vl53L0X_Declares._I2C_SLAVE_DEVICE_ADDRESS, newAddress);
@@ -282,16 +276,15 @@ public class VL53L0X_Device {
     }
 
     /**
-     *
-     * @param resetGpio  Pi gpio connected to the chip reset line
-     * @param pi4j   instantiated COntext
-     * @param delay   time to delay between toggling the reset gpio
-     * @param bar     if true, chip reset pin is actice LOW
-     * @param initial GPIO state initially and at Pi shutdown
-     * @param console  Console
+     * @param resetGpio Pi gpio connected to the chip reset line
+     * @param pi4j      instantiated COntext
+     * @param delay     time to delay between toggling the reset gpio
+     * @param bar       if true, chip reset pin is actice LOW
+     * @param initial   GPIO state initially and at Pi shutdown
+     * @param console   Console
      */
     void resetChip(int resetGpio, Context pi4j, int delay, boolean bar, DigitalState initial, Console console) {
-        this.logger.trace("Enter: resetChip  gpio " + resetGpio  + "  delay " + delay + " UnderBar "  + bar   + " initial state  " + initial);
+        this.logger.trace("Enter: resetChip  gpio " + resetGpio + "  delay " + delay + " UnderBar " + bar + " initial state  " + initial);
         var resetConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("resetPin")
                 .name("Chip reset")
@@ -326,9 +319,8 @@ public class VL53L0X_Device {
 
 
     /**
-     *
-     * @param mSecs    Time to sleep this thread
-     * @param console   Console
+     * @param mSecs   Time to sleep this thread
+     * @param console Console
      */
     void sleepMS(int mSecs, Console console) {
         this.logger.trace("Enter: sleepMS   time  " + mSecs);
@@ -394,7 +386,7 @@ public class VL53L0X_Device {
             budget_us += final_range_us + 550;
         }
         this.measurement_timing_budget_us = budget_us;
-        this.logger.trace("Exit: get_measurement_timing_budget     ms "  + budget_us);
+        this.logger.trace("Exit: get_measurement_timing_budget     ms " + budget_us);
         return (budget_us);
     }
 
@@ -485,7 +477,7 @@ public class VL53L0X_Device {
     private int timeout_mclks_to_microseconds(int timeout_period_mclks, int vcsel_period_pclks) {
         this.logger.trace("Enter: timeout_mclks_to_microseconds  mclks   " + timeout_period_mclks + "  pclks " + vcsel_period_pclks);
         int macro_period_ns = Math.floorDiv(((2304 * (vcsel_period_pclks) * 1655) + 500), 1000);
-        this.logger.trace("Exit: timeout_mclks_to_microseconds   " +  (timeout_period_mclks * macro_period_ns) + Math.floorDiv(Math.floorDiv(macro_period_ns, 2), 1000));
+        this.logger.trace("Exit: timeout_mclks_to_microseconds   " + (timeout_period_mclks * macro_period_ns) + Math.floorDiv(Math.floorDiv(macro_period_ns, 2), 1000));
         return ((timeout_period_mclks * macro_period_ns) + Math.floorDiv(Math.floorDiv(macro_period_ns, 2), 1000));
     }
 
@@ -520,7 +512,7 @@ public class VL53L0X_Device {
         boolean pre_range = ((sequence_config >> 6) & 0x1) > 0;
         boolean final_range = ((sequence_config >> 7) & 0x1) > 0;
         StepEnable rval = new StepEnable(tcc, dss, msrc, pre_range, final_range);
-        this.logger.trace("Exit: get_sequence_step_enables  " + rval.toString()  );
+        this.logger.trace("Exit: get_sequence_step_enables  " + rval.toString());
         return (rval);
     }
 
@@ -553,7 +545,7 @@ public class VL53L0X_Device {
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void perform_single_ref_calibration(int vhv_init_byte) {
         // # based on VL53L0X_perform_single_ref_calibration() from ST API.
-        this.logger.trace("Enter: perform_single_ref_calibration   byte  "  + vhv_init_byte);
+        this.logger.trace("Enter: perform_single_ref_calibration   byte  " + vhv_init_byte);
         this.writeDevice8(Vl53L0X_Declares._SYSRANGE_START, (byte) (0x01 | vhv_init_byte & 0xFF));
         float start = System.nanoTime() / (float) 1000000;
         while ((this.readDevice8(Vl53L0X_Declares._RESULT_INTERRUPT_STATUS) & 0x07) == 0) {
@@ -569,48 +561,48 @@ public class VL53L0X_Device {
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int readDevice8() {
-        this.logger.trace("Enter: readDevice8 " );
+        this.logger.trace("Enter: readDevice8 ");
         int rval = 0;
         rval = ((this.device.read()) & 0xFF);
-        this.logger.trace("Exit: readDevice8 "   + rval );
+        this.logger.trace("Exit: readDevice8 " + rval);
         return (rval);
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int readDevice8(int address) {
-        this.logger.trace("Enter: readDevice8 address  "  + address );
+        this.logger.trace("Enter: readDevice8 address  " + address);
         int rval = 0;
         rval = (((byte) (this.device.readRegister(address))) & 0xFF);
-        this.logger.trace("Exit: readDevice8 "   + rval );
+        this.logger.trace("Exit: readDevice8 " + rval);
         return (rval);
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int readDevice16(int address) {
-        this.logger.trace("Enter: readDevice16 address  "  + address );
+        this.logger.trace("Enter: readDevice16 address  " + address);
         int rval = 0;
         rval = ((byte) this.device.readRegister(address) & 0xFF) << 8;
         rval = rval | ((byte) this.device.readRegister(address + 1) & 0xFF);
-        this.logger.trace("Exit: readDevice16 "   + rval );
+        this.logger.trace("Exit: readDevice16 " + rval);
         return (rval);
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void writeDevice8(int address) {
-        this.logger.trace("Execute: writeDevice8 address  "  + address );
+        this.logger.trace("Execute: writeDevice8 address  " + address);
         this.device.write((byte) address);
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void writeDevice8(int address, byte data) {
-        this.logger.trace("Execute: writeDevice8 address  "  + address  + "  data  "  + data);
+        this.logger.trace("Execute: writeDevice8 address  " + address + "  data  " + data);
         this.device.writeRegister(address, data);
 
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void writeDevice16(int address, int data) {
-        this.logger.trace("Execute: writeDevice16 address  "  + address  + "  data  "  + data);
+        this.logger.trace("Execute: writeDevice16 address  " + address + "  data  " + data);
         this.device.writeRegister(address, (byte) ((data & 0xff00) >> 8));
         this.device.writeRegister(address + 1, (byte) (data & 0xff));
 
@@ -634,7 +626,7 @@ public class VL53L0X_Device {
         // # Get reference SPAD count and type, returned as a 2-tuple of
         // # count and boolean is_aperture. Based on code from:
         // # https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
-        this.logger.trace("Enter: _get_spad_info  " );
+        this.logger.trace("Enter: _get_spad_info  ");
         int[][] pair = {{0x80, 0x01}, {0xFF, 0x01}, {0x00, 0x00}, {0xFF, 0x06}};
         for (int i = 0; i < pair.length; i++) {
             this.writeDevice8(pair[i][0], (byte) pair[i][1]);
@@ -670,24 +662,24 @@ public class VL53L0X_Device {
         for (int i = 0; i < pair4.length; i++) {
             this.writeDevice8(pair4[i][0], (byte) pair4[i][1]);
         }
-        this.logger.trace("Exit: _get_spad_info  count  " +  count + "is_aperture  "   + is_aperture);
+        this.logger.trace("Exit: _get_spad_info  count  " + count + "is_aperture  " + is_aperture);
 
         return (new SpadData(count, is_aperture));
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int decode_timeout(int val) {
-        this.logger.trace("Enter: decode_timeout   val  "  + val );
+        this.logger.trace("Enter: decode_timeout   val  " + val);
         int rval = 0;
         // # format: "(LSByte * 2^MSByte) + 1"
         rval = ((int) ((val & 0xFF) * Math.pow(2.0, ((val & 0xFF00) >> 8)) + 1)) & (0xff);
-        this.logger.trace("Exit: decode_timeout   rval  "  + rval );
+        this.logger.trace("Exit: decode_timeout   rval  " + rval);
         return rval;
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int encode_timeout(int timeout_mclks) {
-        this.logger.trace("Enter: encode_timeout   mclks  "  + timeout_mclks );
+        this.logger.trace("Enter: encode_timeout   mclks  " + timeout_mclks);
         // format: "(LSByte * 2^MSByte) + 1"
         timeout_mclks = timeout_mclks & 0xFFFF;
         int ls_byte = 0;
@@ -698,16 +690,16 @@ public class VL53L0X_Device {
                 ls_byte >>= 1;
                 ms_byte += 1;
             }
-            this.logger.trace("Exit: encode_timeout   mclks  "  + (((ms_byte << 8) | (ls_byte & 0xFF)) & 0xFFFF) );
+            this.logger.trace("Exit: encode_timeout   mclks  " + (((ms_byte << 8) | (ls_byte & 0xFF)) & 0xFFFF));
             return ((ms_byte << 8) | (ls_byte & 0xFF)) & 0xFFFF;
         }
-        this.logger.trace("Exit: encode_timeout   mclks  "  +  0 );   
+        this.logger.trace("Exit: encode_timeout   mclks  " + 0);
         return 0;
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int _timeout_mclks_to_microseconds(int timeout_period_mclks, int vcsel_period_pclks) {
-        this.logger.trace("Enter: _timeout_mclks_to_microseconds  " );
+        this.logger.trace("Enter: _timeout_mclks_to_microseconds  ");
         int macro_period_ns = Math.floorDiv(((2304 * (vcsel_period_pclks) * 1655) + 500), 1000);
         this.logger.trace("Exit: _timeout_mclks_to_microseconds  " + ((timeout_period_mclks * macro_period_ns) + (Math.floorDiv(Math.floorDiv(macro_period_ns, 2), 1000))));
         return ((timeout_period_mclks * macro_period_ns) + (Math.floorDiv(Math.floorDiv(macro_period_ns, 2), 1000)));
@@ -715,7 +707,7 @@ public class VL53L0X_Device {
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private int get_timeout_microseconds_to_mclks(int timeout_period_us, int vcsel_period_pclks) {
-        this.logger.trace("Enter: get_timeout_microseconds_to_mclks  " );
+        this.logger.trace("Enter: get_timeout_microseconds_to_mclks  ");
         int macro_period_ns = Math.floorDiv(((2304 * (vcsel_period_pclks) * 1655) + 500), 1000);
         this.logger.trace("Exit: get_timeout_microseconds_to_mclks  " + ((timeout_period_us * 1000) + Math.floorDiv(Math.floorDiv(macro_period_ns, 2), macro_period_ns)));
         return ((timeout_period_us * 1000) + Math.floorDiv(Math.floorDiv(macro_period_ns, 2), macro_period_ns));
@@ -723,11 +715,10 @@ public class VL53L0X_Device {
 
 
     /**
-     *
-      * @return    Distance in millimeters
-     *
-     *   Uses polling of the _RESULT_INTERRUPT_STATUS to determine the range data
-     *   has been calculated and its value can bre read from the chip.
+     * @return Distance in millimeters
+     * <p>
+     * Uses polling of the _RESULT_INTERRUPT_STATUS to determine the range data
+     * has been calculated and its value can bre read from the chip.
      */
     int range() {
         int range_mm = 0;
@@ -764,7 +755,7 @@ public class VL53L0X_Device {
         // # fractional ranging is not enabled
         range_mm = this.readDevice16(Vl53L0X_Declares._RESULT_RANGE_STATUS + 10);
         this.writeDevice8(Vl53L0X_Declares._SYSTEM_INTERRUPT_CLEAR, (byte) 0x01);
-        this.logger.trace("Exit range()  "  + range_mm);
+        this.logger.trace("Exit range()  " + range_mm);
         return (range_mm);
     }
 
@@ -774,15 +765,15 @@ public class VL53L0X_Device {
         this.logger.trace("Entered get_signal_rate_limit()");
         int val = this.readDevice16(Vl53L0X_Declares._FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT);
         // # Return value converted from 16-bit 9.7 fixed point to float.
-        this.logger.trace("exit range() : "  + (val / (1 << 7)));
+        this.logger.trace("exit range() : " + (val / (1 << 7)));
         return (val / (1 << 7));
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private  void set_signal_rate_limit(double val) {
+    private void set_signal_rate_limit(double val) {
         // assert (val > 0) && (511.99 > val);
         // # Convert to 16-bit 9.7 fixed point value from a float.
-        this.logger.trace("Entered set_signal_rate_limit()  val  "   +val);
+        this.logger.trace("Entered set_signal_rate_limit()  val  " + val);
         val = (val * (1 << 7));
         this.writeDevice16(Vl53L0X_Declares._FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT, (int) Math.round(val));
         this.logger.trace("Exit set_signal_rate_limit()");

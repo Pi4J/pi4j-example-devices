@@ -114,6 +114,4 @@ public class BMP280Declares {
     static int ctl_pressSamp1 = 0x04;   // oversample *1
 
 
-
-
 }

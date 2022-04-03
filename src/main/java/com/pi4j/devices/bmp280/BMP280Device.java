@@ -31,10 +31,7 @@ package com.pi4j.devices.bmp280;
  */
 
 
-
 import com.pi4j.context.Context;
-
-
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
@@ -53,11 +50,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of BMP280  Temperature/Pressure Sensor, using I2C communication.
  * Note:  For I2C operation CSB pin must be connected to 3.3 V.
- *
  */
 public class BMP280Device implements BMP280Interface {
 
- 
 
     /**
      * Constant <code>NAME="BMP280"</code>
@@ -101,7 +96,7 @@ public class BMP280Device implements BMP280Interface {
     // local/internal I2C reference for communication with hardware chip
     protected I2C i2c = null;
 
-   protected I2CConfig config = null;
+    protected I2CConfig config = null;
 
     protected Context pi4j = null;
 
@@ -112,13 +107,12 @@ public class BMP280Device implements BMP280Interface {
 
 
     /**
-     *
-     * @param console  Context instance used accross application
-     * @param bus    Pi bus
-     * @param address  Device address
+     * @param console Context instance used accross application
+     * @param bus     Pi bus
+     * @param address Device address
      */
 
-    public BMP280Device(Context pi4j, Console console, int bus, int address, String traceLevel ) {
+    public BMP280Device(Context pi4j, Console console, int bus, int address, String traceLevel) {
         super();
         this.pi4j = pi4j;
         this.address = address;
@@ -128,20 +122,20 @@ public class BMP280Device implements BMP280Interface {
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
         //  encounters if using the defaultLogLevel
-        System.setProperty("org.slf4j.simpleLogger.log."+ BMP280Device.class.getName(), this.traceLevel);
+        System.setProperty("org.slf4j.simpleLogger.log." + BMP280Device.class.getName(), this.traceLevel);
 
         this.logger = LoggerFactory.getLogger(BMP280Device.class);
         this.createI2cDevice(); // will set start this.i2c
     }
 
     /**
-     * @param device  Set i2c state
+     * @param device Set i2c state
      */
     public void setI2c(I2C device) {
         this.logger.info("Enter: setI2c  I2C device   " + device.toString());
         this.i2c = device;
         this.address = device.device();
-        this .busNum = device.bus();
+        this.busNum = device.bus();
         this.logger.info("exit: setI2c  ");
     }
 
@@ -149,11 +143,10 @@ public class BMP280Device implements BMP280Interface {
      * @return i2c state
      */
     public I2C getI2c() {
-        this.logger.info("Enter: GetI2c " );
+        this.logger.info("Enter: GetI2c ");
         this.logger.info("Exit: getI2c  I2C device   " + this.i2c);
         return (this.i2c);
     }
-
 
 
     /**
@@ -161,7 +154,7 @@ public class BMP280Device implements BMP280Interface {
      * a BMP280 device instance
      */
     private void createI2cDevice() {
-        this.logger.info("Enter:createI2cDevice   bus  " + this.busNum + "  address " + this.address );
+        this.logger.info("Enter:createI2cDevice   bus  " + this.busNum + "  address " + this.address);
 
         var address = this.address;
         var bus = this.busNum;
@@ -186,19 +179,19 @@ public class BMP280Device implements BMP280Interface {
      */
     public String i2cDetail() {
         this.logger.trace("enter: i2cDetail");
-        this.logger.trace("exit: i2cDetail  " + (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device()) );
+        this.logger.trace("exit: i2cDetail  " + (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device()));
         return (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device());
     }
 
 
     /**
      * @param read 8 bits data
-     * @return  unsigned value
+     * @return unsigned value
      */
     private int castOffSignByte(byte read) {
 
-        this.logger.trace("Enter: castOffSignByte byte "  + read );
-        this.logger.trace("Exit: castOffSignByte  "  + ((int) read & 0Xff) );
+        this.logger.trace("Enter: castOffSignByte byte " + read);
+        this.logger.trace("Exit: castOffSignByte  " + ((int) read & 0Xff));
         return ((int) read & 0Xff);
     }
 
@@ -207,7 +200,7 @@ public class BMP280Device implements BMP280Interface {
      * @return 16 bit signed
      */
     private int signedInt(byte[] read) {
-        this.logger.trace("Enter: signedInt byte[] "  + read.toString() );
+        this.logger.trace("Enter: signedInt byte[] " + read.toString());
         int temp = 0;
         temp = (read[0] & 0xff);
         temp += (((long) read[1]) << 8);
@@ -216,11 +209,11 @@ public class BMP280Device implements BMP280Interface {
     }
 
     /**
-     * @param read  16 bits of data  stored in 8 bit array
+     * @param read 16 bits of data  stored in 8 bit array
      * @return 64 bit unsigned value
      */
     private long castOffSignInt(byte[] read) {
-        this.logger.trace("Enter: castOffSignInt byte[] "  + read.toString() );
+        this.logger.trace("Enter: castOffSignInt byte[] " + read.toString());
         long temp = 0;
         temp = ((long) read[0] & 0xff);
         temp += (((long) read[1] & 0xff)) << 8;
@@ -230,18 +223,17 @@ public class BMP280Device implements BMP280Interface {
 
 
     /**
-     *
      * Reset BMP280 chip to remove any previous applications configuration details.
-     *
+     * <p>
      * Configure BMP280 for 1x oversamplimg and single measurement.
-     *
+     * <p>
      * Read and store all factory set conversion data.
      * Read measure registers 0xf7 - 0xFC in single read to ensure all the data pertains to
      * a single  measurement.
-     *
+     * <p>
      * Use conversion data and measure data to calculate temperature in C and pressure in Pa.
      *
-     * @return   double[2],  temperature in C and pressure in Pa
+     * @return double[2],  temperature in C and pressure in Pa
      */
     public double[] readBMP280() {
         this.logger.trace("enter: readBMP280");
@@ -353,7 +345,7 @@ public class BMP280Device implements BMP280Interface {
             P = P + (var1 + var2 + ((double) dig_p7)) / 16.0;
         }
         rval[1] = P;
-        this.logger.trace("exit: readBMP280  T "  + rval[0] + "  P " + rval[1] );
+        this.logger.trace("exit: readBMP280  T " + rval[0] + "  P " + rval[1]);
 
         return rval;   // “5123” equals 51.23 DegC.
     }
@@ -382,11 +374,11 @@ public class BMP280Device implements BMP280Interface {
     /**
      * @return Pressure in Pa units
      */
-   public double pressurePa() {
-       this.logger.trace("enter: pressurePa");
-       double[] rval = this.readBMP280();
-       this.logger.trace("exit: pressurePa  "  + rval[1]);
-       return rval[1];
+    public double pressurePa() {
+        this.logger.trace("enter: pressurePa");
+        double[] rval = this.readBMP280();
+        this.logger.trace("exit: pressurePa  " + rval[1]);
+        return rval[1];
     }
 
     /**
@@ -396,7 +388,7 @@ public class BMP280Device implements BMP280Interface {
         this.logger.trace("enter: pressureMb");
         double[] rval = this.readBMP280();
         double mbar = rval[1] / 100;
-        this.logger.trace("exit: pressureMb  "  + mbar);
+        this.logger.trace("exit: pressureMb  " + mbar);
         return (mbar);
     }
 
@@ -407,7 +399,7 @@ public class BMP280Device implements BMP280Interface {
         this.logger.trace("enter: pressureIn");
         double[] rval = this.readBMP280();
         double inches = (rval[1] / 3386);
-        this.logger.trace("exit: pressureIn  "  + inches);
+        this.logger.trace("exit: pressureIn  " + inches);
         return (inches);
     }
 
@@ -415,9 +407,9 @@ public class BMP280Device implements BMP280Interface {
      * Write the reset command to the BMP280, Sleep 100 ms
      * to allow the chip to complete the reset
      */
-     public void resetSensor() {
-         this.logger.trace("enter: resetSensor");
-         this.i2c.writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
+    public void resetSensor() {
+        this.logger.trace("enter: resetSensor");
+        this.i2c.writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
 
         // Next delay for 100 ms to provide chip time to perform reset
         try {
@@ -425,14 +417,14 @@ public class BMP280Device implements BMP280Interface {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-         this.logger.trace("exit: resetSensor");
-     }
+        this.logger.trace("exit: resetSensor");
+    }
 
 
     /**
      * Do required init/validation.
-     *      Reset the BMP280, validate the chips ID.
-     *      ID failure will force a program exit.
+     * Reset the BMP280, validate the chips ID.
+     * ID failure will force a program exit.
      */
     public void initSensor() {
         this.logger.trace("enter: initSensor");
@@ -448,13 +440,12 @@ public class BMP280Device implements BMP280Interface {
 
 
     /**
-     *
-     * @return  The  device I2cConfig object
+     * @return The  device I2cConfig object
      */
     public I2CConfig config() {
 
         this.logger.trace("enter: config");
-        this.logger.trace("exit: config  "  + this.config.toString());
+        this.logger.trace("exit: config  " + this.config.toString());
         return this.config;
     }
 
