@@ -55,14 +55,15 @@ import org.slf4j.LoggerFactory;
  */
 
 
-public class VL53L0X_Device {
 
+public class VL53L0X_Device {
 
     /**
      *
      * @param pi4j  instantiated Context
      * @param bus       pi bus number
      * @param address   devices address
+
      * @param traceLevel    "trace", "debug", "info", "warn", "error" or "off"
      */
     public VL53L0X_Device(Context pi4j, int bus, int address, String traceLevel) {
@@ -699,8 +700,8 @@ public class VL53L0X_Device {
             this.logger.trace("Exit: encode_timeout   mclks  "  + (((ms_byte << 8) | (ls_byte & 0xFF)) & 0xFFFF) );
             return ((ms_byte << 8) | (ls_byte & 0xFF)) & 0xFFFF;
         }
-        this.logger.trace("Exit: encode_timeout   mclks  "  +
-  0 );        return 0;
+        this.logger.trace("Exit: encode_timeout   mclks  "  +  0 );   
+        return 0;
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -777,7 +778,6 @@ public class VL53L0X_Device {
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     private  void set_signal_rate_limit(double val) {
         // assert (val > 0) && (511.99 > val);
         // # Convert to 16-bit 9.7 fixed point value from a float.
