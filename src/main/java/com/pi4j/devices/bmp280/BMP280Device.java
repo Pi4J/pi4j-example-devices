@@ -112,6 +112,12 @@ public class BMP280Device implements BMP280Interface {
      * @param address Device address
      */
 
+    /**
+     * @param console Context instance used accross application
+     * @param bus     Pi bus
+     * @param address Device address
+     * @param traceLevel for Logger
+     */
     public BMP280Device(Context pi4j, Console console, int bus, int address, String traceLevel) {
         super();
         this.pi4j = pi4j;
@@ -128,6 +134,23 @@ public class BMP280Device implements BMP280Interface {
         this.createI2cDevice(); // will set start this.i2c
     }
 
+
+    /**
+     * @param console Context instance used across application
+     * @param bus     Pi bus
+     * @param address Device address
+     * @param logger  Instantiated Logger
+     */
+    public BMP280Device(Context pi4j, Console console, int bus, int address, Logger logger) {
+        super();
+        this.pi4j = pi4j;
+        this.address = address;
+        this.busNum = bus;
+        this.console = console;
+        this.traceLevel = "info";  // we were passed the Logger to use
+        this.logger = logger;
+        this.createI2cDevice(); // will set start this.i2c
+    }
     /**
      * @param device Set i2c state
      */
