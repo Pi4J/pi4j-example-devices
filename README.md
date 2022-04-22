@@ -32,4 +32,10 @@ src/main/java/com/pi4j/devices/bmp280/README.md
 This package does not use any other code within my repo.  
 
 
+Is31fl3731 matrix controller
+src/main/java/com/pi4j/devices/is31Fl37Matrix/
+This package does not use any other code within my repo.  
+
+
+
 
