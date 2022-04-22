@@ -156,7 +156,6 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
      * PreCond: Tca9548 instance initialized.  See CTOR
      *
      * @param enableBusNum Bus to enable
-     *                       </p>
      *
      *                       <p>
      *                       PostCond:  If successful return true, else false.

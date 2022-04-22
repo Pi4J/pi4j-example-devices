@@ -34,6 +34,9 @@ package com.pi4j.devices.is31Fl37Matrix;/*
 
 import org.slf4j.Logger;
 
+/**
+ * Capable of translating ascii data of temperature or time-of-day into LED matrix frames
+ */
 public class DisplayLED {
 
  
@@ -95,8 +98,17 @@ public class DisplayLED {
          * [4],[[0,1],[0,2],[1,0],[2,0],[3,1],[3,2],[1,3],[
          * 2,3],[3,3],[3,4],[3,5],[3,6]] ], // 10 [ [1],[[0,2],[0,4]] ], ]
          */
-        int space_between_symbols = 0;
+        private int space_between_symbols = 0;
 
+    /**
+     *   Translate 'number' to its LED frame data and load into matrix controller shifted by plus_x columns
+     * @param number
+     * @param digit_count
+     * @param plus_x
+     * @param display_dev
+     * @param led_blink
+     * @return  matrix column offset for next number
+     */
         public int write_num(int number, int digit_count, int plus_x, Is31Fl37Matrix display_dev, int led_blink) {
             this.logger.trace("write_num");
 
@@ -115,6 +127,17 @@ public class DisplayLED {
 
         }
 
+    /**
+     *   Based on input data, create the LED patterns (frame) to display that data.  Then pass that data to the
+     *   matrix controller to perform the actual display
+     * @param pin_monitor    to toggle LEDs
+     * @param display_dev    matrix controller
+     * @param display_num    temperature value
+     * @param display_asc    time value
+     * @param led_blink      intensity
+     * @param loop_count     whether display value is shown more than once
+     * @param time_mode      Whether creating frames of temperature info ot time-of-day info
+     */
         public void create_led_pattern(ControlLeds pin_monitor, Is31Fl37Matrix display_dev, int display_num,
                                        char[] display_asc, int led_blink, Integer loop_count, boolean time_mode) {
             // if verbose:

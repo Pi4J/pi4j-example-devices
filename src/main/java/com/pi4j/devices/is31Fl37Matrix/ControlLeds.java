@@ -36,6 +36,9 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 
+/**
+ *  Controls the processing abd warning LEDs
+ */
 public class ControlLeds {
 
 
@@ -64,8 +67,13 @@ public class ControlLeds {
             return (true);
         }
 
-        public void flash_alarm_led(boolean enable, Is31Fl37Matrix matrix) {
-            this.logger.trace("flash_alarm_led  <enable> " + enable);
+    /**
+     *
+     * Warning LED will begin flashing. Process LED will be off.   LED matrix will have all leds energized
+     * @param matrix Is31Fl37Matrix
+     */
+        public void flash_alarm_led( Is31Fl37Matrix matrix) {
+            this.logger.trace("flash_alarm_led ");
             this.logger.error("WaitOnInterrupt failed");
 
             if(this.greenLED != null) {
@@ -92,7 +100,11 @@ public class ControlLeds {
 
         }
 
-        public void toggle_led(boolean active) {
+    /**
+     *
+     * @param active  True, processLED on, Warning LED off, else processLED off, Warning LED on
+     */
+    public void toggle_led(boolean active) {
             this.logger.trace("toggle_led  <state> " + active);
             if ((this.greenLED != null) && (this.redLED != null)) {
                 if (active) {
@@ -108,73 +120,32 @@ public class ControlLeds {
 
         }
 
-        private boolean waitIntpLoop() {
-            boolean is_done = false;
-            int counter = 0;
-            int MAX = 26000;
-            this.logger.trace("waitIntpLoop");
 
-            while (true) {
-              /*  if (this.gpio.readPin(RaspiBcmPin.GPIO_22) == PinState.LOW) {
-                    is_done = true;
-                    this.ffdc.addFfdcEntry("GPIO 22 is LOW");
-                    break;
-                }
-*/
-                try {
-                    Thread.sleep(2);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                counter++;
-                if (counter > MAX) {
-                    this.logger.error("wait_for_interupt: failed, exceeded MAX" + MAX);
-                    break;
-                }
-            }
-            this.logger.trace(
-                    "waitIntpLoop <completion> " + is_done + " counter " + String.format("0x%02X", counter));
-
-            return (is_done);
-        }
-
-      /*  public boolean waitIntrpJython() {
-            this.logger.trace("waitIntrpJython");
-
-            boolean answer = false;
-            waitIntrpHook intpObj = new waitIntrpHook();
-            answer = intpObj.jython_call_waitIntrp();
-            this.logger.trace("waitIntrpJython  <answer > " + answer);
-
-            return (answer);
-        }
-*/
-        // Used....
-        public InterruptDetails wait_for_interrupt() {
+    /**
+     *  Monitor the matrix controller interrupt to indicate the matrix has completed
+     *  displaying the previously loaded matrix data.
+     *
+     * @return   Class with success indicator and count of wait loops executed.
+     */
+    public InterruptDetails wait_for_interrupt() {
             this.logger.trace("wait_for_interrupt");
 
-            InterruptDetails rval = matrix.waitIntjLoop();
+           // InterruptDetails rval = matrix.waitIntjLoop();  // uses gpio addListener
+             InterruptDetails rval = matrix.waitIntpLoop(); // uses polling as pi-os 64bit misses short duration
+                                                            // signals.
 
-            // polling loop
-            // is_done = waitIntpLoop();
-            // skip jython
-            // is_done = waitIntrpJython();
-            this.logger.trace("wait_for_interrupt  <is_done> " + rval.getSuccessVal() + " counter :"
+             this.logger.trace("wait_for_interrupt  <is_done> " + rval.getSuccessVal() + " counter :"
                     + String.format("0x%02X", rval.getCounter()));
             return (rval);
         }
 
-       int red_led_pin;
-        int green_led_pin;
-        boolean pin22_low_seen = false;
-        Is31Fl37Matrix matrix;
+
+       private final Is31Fl37Matrix matrix;
     private final Context pi4j;
     private final Console console;
 
-    DigitalOutput redLED = null;
-    DigitalOutput greenLED = null;
+    private DigitalOutput redLED = null;    // considered the Warning LED
+    private DigitalOutput greenLED = null;    // considered the normal processing LED
 
 
     }

@@ -54,7 +54,7 @@ public class InterruptDetails {
 
 
         private boolean rval;
-        int counter;
+        private int counter;
 
     }
 
