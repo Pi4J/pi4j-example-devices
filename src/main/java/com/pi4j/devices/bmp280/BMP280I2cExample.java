@@ -47,7 +47,7 @@ public class BMP280I2cExample {
     private static final int BMP280_I2C_BUS = BMP280Declares.DEFAULT_BUS;
 
     /**
-     * Sample application using MCP23017 GPIO expansion chip.
+     * Sample application using BMP280 sensor chip.
      *
      * @param args an array of {@link java.lang.String} objects.
      *             Parms are not required. if 'any' parameter value is supplied,

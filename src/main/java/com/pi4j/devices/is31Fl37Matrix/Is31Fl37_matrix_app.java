@@ -53,20 +53,20 @@ public class Is31Fl37_matrix_app {
     private  DigitalOutput processGPIO;
     private  DigitalOutput warnGPIO;
     private Context pi4j = null;
-    public int address;
-    int bmp_address;
-    int bus_num;
-    int bmp_bus;
-    boolean verbose = false;
-    int loop_count = 0;
-    int repeat_count;
-    int led_blink = 0;
-    String traceLevel;
+    private int address;
+    private int bmp_address;
+    private int bus_num;
+    private int bmp_bus;
+    private boolean verbose = false;
+    private int loop_count = 0;
+    private int repeat_count;
+    private int led_blink = 0;
+    private String traceLevel;
     //mapUtils mapUtils;
     private Logger logger = null;
-    DigitalOutput resetPin = null;
-    DigitalInput monitorPin = null;
-    Console console;
+    private DigitalOutput resetPin = null;
+    private DigitalInput monitorPin = null;
+    private Console console;
 
     //GpioUtil gpioUtil;
 
@@ -160,22 +160,7 @@ public class Is31Fl37_matrix_app {
         final Console console = new Console();
         Context pi4j = Pi4J.newAutoContext();
 
-        // String ss = String.format("0x%04X", address);
-        // System.out.println(String.format("0x%08X", 234));
 
-        // GpioFactory.setDefaultProvider(new
-        // RaspiGpioProvider(RaspiPinNumberingScheme.BROADCOM_PIN_NUMBERING));
-        // final GpioController gpiof = GpioFactory.getInstance();
-
-        // final GpioPinDigitalOutput output =
-        // gpiof.provisionDigitalOutputPin(RaspiBcmPin.GPIO_22); //
-        // gpio.provisionDigitalOutputPin(number,
-        // name,
-        // value);
-        // output.high();
-        // output.blink(1000);
-
-        // Thread.sleep(8000);
 
         console.println("Is31fl37_matrix_app entered   :  ");
         String badParm = "";
@@ -351,6 +336,7 @@ public class Is31Fl37_matrix_app {
         }
 
         if(doReset){
+            console.println("Do chip reset");
             resetPin.low();
             Thread.sleep(600);
             resetPin.high();
@@ -373,11 +359,6 @@ public class Is31Fl37_matrix_app {
 
         console.println("Arg processing completed...");
 
-        /// ************************/
-        // BaseGpioInOut gpio = new BaseGpioInOut(display_app.ffdc,
-
-        // display_app.dioPinData, display_app.ffdc.logger);
-        // future // eChip = cfgU.enableChipPath(mainChip);
 
         try {
             Is31Fl37Matrix matrix = new Is31Fl37Matrix(display_app.bus_num, display_app.address,
@@ -393,13 +374,14 @@ public class Is31Fl37_matrix_app {
 
             int c = 0;
 
+            // if leg displays temperature/time count times then exists.
             if (display_app.repeat_count > 0) {
                 for (int i = 0; i < display_app.repeat_count; i++) {
                     // future // eChip = cfgU.enableChipPath(mainChip);
                     // cfgU.displayEnableReg(bus_num, mainChip);
                     // cfgU.runCli();
 
-                    display.process_bmp_data(pin_monitor, display_app.bus_num, display_app.address,
+                    display.process_bmp_data(pin_monitor,
                             display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
                     // Thread.sleep(2000);
 
@@ -408,10 +390,9 @@ public class Is31Fl37_matrix_app {
                         matrix.fill(0, (byte) 0, 0);
                     }
                     // future //eChip = cfgU.enableChipPath(mainChip);
-                    display.show_time(pin_monitor, display_app.bus_num, display_app.address, display_app.led_blink,
+                    display.show_time(pin_monitor, display_app.led_blink,
                             display_app.loop_count);
-                    // Thread.sleep(2000);
-                    // clear the matrix
+                   // clear the matrix
                     for (c = 0; c < 8; c++) {
                         matrix.fill(0, (byte) 0, 0);
                     }
@@ -421,10 +402,10 @@ public class Is31Fl37_matrix_app {
                 for (c = 0; c < 8; c++) {
                     matrix.fill(0, (byte) 0, 0);
                 }
-             } else {
+             } else {  // else leg continuously displays temperature/time
                 while (true) {
                     // future // eChip = cfgU.enableChipPath(mainChip);
-                    display.process_bmp_data(pin_monitor, display_app.bus_num, display_app.address,
+                    display.process_bmp_data(pin_monitor,
                             display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
                     Thread.sleep(2000);
                     // clear the matrix
@@ -432,7 +413,7 @@ public class Is31Fl37_matrix_app {
                         matrix.fill(0, (byte) 0, 0);
                     }
                     // future  //eChip = cfgU.enableChipPath(mainChip);
-                    display.show_time(pin_monitor, display_app.bus_num, display_app.address, display_app.led_blink,
+                    display.show_time(pin_monitor, display_app.led_blink,
                             display_app.loop_count);
                     Thread.sleep(2000);
                     // clear the matrix
@@ -445,7 +426,6 @@ public class Is31Fl37_matrix_app {
                  * (int i; i < 7; i++) { display.fill(1, false, 0); }
                  */
             }
-            matrix.dumpRegs();
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }

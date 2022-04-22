@@ -41,36 +41,36 @@ package com.pi4j.devices.is31Fl37Matrix;
 
 public class Is31Fl37Matrix {
 
-    int width = 16;
-    int height = 9;
-    int _MODE_REGISTER = 0x00;
-    int _FRAME_REGISTER = 0x01;
-    int _AUTOPLAY1_REGISTER = 0x02;
-    int _AUTOPLAY2_REGISTER = 0x03;
-    int _BLINK_REGISTER = 0x05;
-    int _AUDIOSYNC_REGISTER = 0x06;
-    int _FRAME_STATE_REGISTER = 0x07;
-    int _BREATH1_REGISTER = 0x08;
-    int _BREATH2_REGISTER = 0x09;
-    int _SHUTDOWN_REGISTER = 0x0a;
-    int _GAIN_REGISTER = 0x0b;
-    int _ADC_REGISTER = 0x0c;
+    private int width = 16;
+    private int height = 9;
+    private int _MODE_REGISTER = 0x00;
+    private int _FRAME_REGISTER = 0x01;
+    private int _AUTOPLAY1_REGISTER = 0x02;
+    private int _AUTOPLAY2_REGISTER = 0x03;
+    private int _BLINK_REGISTER = 0x05;
+    private int _AUDIOSYNC_REGISTER = 0x06;
+    private int _FRAME_STATE_REGISTER = 0x07;
+    private int _BREATH1_REGISTER = 0x08;
+    private int _BREATH2_REGISTER = 0x09;
+    private int _SHUTDOWN_REGISTER = 0x0a;
+    private int _GAIN_REGISTER = 0x0b;
+    private int _ADC_REGISTER = 0x0c;
 
-    int _CONFIG_BANK = 0x0b;
-    int _BANK_ADDRESS = 0xfd;
+    private int _CONFIG_BANK = 0x0b;
+    private int _BANK_ADDRESS = 0xfd;
 
-    int _PICTURE_MODE = 0x00;
-    int _AUTOPLAY_MODE = 0x08;
-    int _AUDIOPLAY_MODE = 0x18;
+    private int _PICTURE_MODE = 0x00;
+    private int _AUTOPLAY_MODE = 0x08;
+    private int _AUDIOPLAY_MODE = 0x18;
 
-    int _ENABLE_OFFSET = 0x00;
-    int _BLINK_OFFSET = 0x12;
-    int _COLOR_OFFSET = 0x24;
+    private int _ENABLE_OFFSET = 0x00;
+    private  int _BLINK_OFFSET = 0x12;
+    private int _COLOR_OFFSET = 0x24;
 
-    int _frame = 0;
+    private int _frame = 0;
 
-    boolean intrp_occured = false;
-    Logger logger;
+    private boolean intrp_occured = false;
+    private Logger logger;
 
     public Is31Fl37Matrix(Integer bus, Integer address, Integer bmp_address, Logger logger,
                           DigitalInput interruptPin, Context pi4j) {
@@ -92,7 +92,7 @@ public class Is31Fl37Matrix {
      * @param address device address
      * @return Instantiate I2C device
      */
-    I2C createI2cDevice(int bus, int address) {
+    private I2C createI2cDevice(int bus, int address) {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
         this.logger.trace("Enter: createI2cDevice VL53L0X_TOF" + id + "" + name);
@@ -164,10 +164,10 @@ public class Is31Fl37Matrix {
         // this.ffdc.logger);
 
 
-        this.dumpRegs();
+
+
         this.input.addListener(new MatrixGpioListener(this));
         this.logger.info("Added listener");
-        this.dumpRegs();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -185,6 +185,9 @@ public class Is31Fl37Matrix {
         return (true);
     }
 
+    /**
+     * Call from the Listener instance when the interrupt occurs.
+     */
     public void intrp_happened() {
         this.logger.info("intrp_happened");
 
@@ -193,6 +196,12 @@ public class Is31Fl37Matrix {
         this.logger.info("intrp_happened");
     }
 
+    /**
+     * Uses the Pi GPIO event listener pattern. When the interrupt occurs the listener class will set
+     * this.intrp_occured   true
+     * @return   Class containing completion success and loop count waiting for interrupt.
+     *
+     */
     public InterruptDetails waitIntjLoop() {
         this.logger.info("waitIntjLoop");
 
@@ -223,6 +232,43 @@ public class Is31Fl37Matrix {
         }
         this.logger.info(
                 "waitIntjLoop <is_done>  " + is_done + " counter : " + String.format("0x%02X", counter));
+        return (new InterruptDetails(is_done, counter));
+    }
+
+    /**
+     *  Ti avaoid a Pi4J_V2 GPIO interrupt bug, maually check the interrupt GPIO to determine if
+     *  the matrix controller signalled frame display completion via the INTB line
+     * @return   Class containing completion success and loop count waiting for interrupt.
+     */
+    public InterruptDetails waitIntpLoop() {
+        boolean is_done = false;
+        int counter = 0;
+        int MAX = 26000;
+        this.logger.trace("waitIntpLoop");
+
+        while (true) {
+                     if (this.input.isLow()) {
+                    is_done = true;
+                    this.logger.info(this.input.getDescription() + " is LOW");
+                    break;
+                }
+
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            counter++;
+            if (counter > MAX) {
+                this.logger.error("wait_for_interupt: failed, exceeded MAX" + MAX);
+                break;
+            }
+        }
+        this.logger.trace(
+                "waitIntpLoop <completion> " + is_done + " counter " + String.format("0x%02X", counter));
+
         return (new InterruptDetails(is_done, counter));
     }
 
@@ -330,10 +376,9 @@ public class Is31Fl37Matrix {
         this._register_write(this._CONFIG_BANK, this._MODE_REGISTER, mode);
         this.logger.trace("_mode");
 
-        return;
-    }
+     }
 
-    public int getInt(byte[] data, int index) {
+    private int getInt(byte[] data, int index) {
         // # return two bytes from data as a signed 16-bit valu
         this.logger.trace(
                 "getInt  <data> :" + String.format("0x%02X", data) + " index : " + String.format("0x%02X", index));
@@ -347,7 +392,7 @@ public class Is31Fl37Matrix {
         return ((int) (((data[index] << 16)) + ((data[index + 1] << 8)) + ((data[index + 2]) & 0xff)));
     }
 
-    public int blink_read() {
+    private int blink_read() {
         this.logger.trace("blink_read");
         int rtn = 0;
 
@@ -358,7 +403,7 @@ public class Is31Fl37Matrix {
         return (rtn);
     }
 
-    public int blink_write(int rate) {
+    int blink_write(int rate) {
         this.logger.trace("blink_write <rate> :" + String.format("0x%02X", rate));
         int rtn = 0;
         if (rate == 0) {
@@ -379,7 +424,7 @@ public class Is31Fl37Matrix {
         return (data[0]);
     }
 
-    public int _bank_write(int bank) {
+    private int _bank_write(int bank) {
         this.logger.trace("_bank_write <bank> :" + String.format("0x%02X", bank));
         byte[] data = new byte[1];
         data[0] = (byte) bank;
@@ -389,7 +434,7 @@ public class Is31Fl37Matrix {
         return (0);
     }
 
-    public void fill(int color, byte blink, int frame) {
+    void fill(int color, byte blink, int frame) {
         this.logger.trace("fill <color> :" + String.format("0x%02X", color) + " blink "
                 + String.format("0x%02X", blink) + " frame " + String.format("0x%02X", frame));
         if (frame == 42) {
@@ -420,14 +465,14 @@ public class Is31Fl37Matrix {
         this.logger.trace("fill");
     }
 
-    public int _pixel_addr(int x, int y) {
+    private int _pixel_addr(int x, int y) {
         this.logger.trace(
                 "_pixel_addr <x> " + String.format("0x%02X", x) + " <y> " + String.format("0x%02X", y));
         this.logger.trace("_pixel_addr <addr> : " + String.format("0x%02X", (x + y * 16)));
         return (x + y * 16);
     }
 
-    public int pixel(int x, int y, int color, int blink, int frame) {
+    int pixel(int x, int y, int color, int blink, int frame) {
         // System.out.println("pixels ");
         this.logger.trace("pixel <x> " + String.format("0x%02X", x) + " <y> " + String.format("0x%02X", y)
                 + " color " + String.format("0x%02X", color) + " blink " + String.format("0x%02X", blink) + " frame "
@@ -472,7 +517,7 @@ public class Is31Fl37Matrix {
         return (rtn);
     }
 
-    public byte[] _register_read(int bank, int register) {
+    private byte[] _register_read(int bank, int register) {
         this.logger.trace("_register_read <bank> : " + String.format("0x%02X", bank) + " register "
                 + String.format("0x%02X", register));
         // System.out.println("reg read " + bank + " " + register);
@@ -490,7 +535,7 @@ public class Is31Fl37Matrix {
 
     }
 
-    public void _register_write(int bank, int register, int value) {
+    private void _register_write(int bank, int register, int value) {
         this.logger.trace("_register_write <bank> : " + String.format("0x%02X", bank) + " register "
                 + String.format("0x%02X", register) + " value " + String.format("0x%02X", value));
 
@@ -510,13 +555,13 @@ public class Is31Fl37Matrix {
         return (rval);
     }
 
-    public void _mode_write(int mode) {
+    private void _mode_write(int mode) {
         this.logger.trace("_mode_write <mode> " + String.format("0x%02X", mode));
         this._register_write(this._CONFIG_BANK, this._MODE_REGISTER, mode);
         this.logger.trace("_mode_write ");
     }
 
-    public void autoplay(int delay, int loops, int frames) {
+    void autoplay(int delay, int loops, int frames) {
         this.logger.trace("autoplay  <delay> " + String.format("0x%02X", delay) + " loops "
                 + String.format("0x%02X", loops) + " frames" + String.format("0x%02X", frames));
         if (delay == 0) {
@@ -546,15 +591,15 @@ public class Is31Fl37Matrix {
 
     }
 
-    public int address;
-    int bmp_address;
-    int bus_num;
-    I2C device;
+    private int address;
+    private int bmp_address;
+    private int bus_num;
+    private I2C device;
     private DigitalInput input;
 
-    Context pi4j;
+    private Context pi4j;
 
-    public class MatrixGpioListener implements DigitalStateChangeListener {
+    private  class MatrixGpioListener implements DigitalStateChangeListener {
         ;
         public MatrixGpioListener(Is31Fl37Matrix chip) {
             this.chip = chip;
