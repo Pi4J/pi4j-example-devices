@@ -33,7 +33,7 @@ This package does not use any other code within my repo.
 
 
 Is31fl3731 matrix controller  
-src/main/java/com/pi4j/devices/is31Fl37Matrix/  
+src/main/java/com/pi4j/devices/is31Fl37Matrix/README.md     
 This package does not use any other code within my repo.    
 
 
