@@ -130,8 +130,8 @@ public class ControlLeds {
     public InterruptDetails wait_for_interrupt() {
             this.logger.trace("wait_for_interrupt");
 
-           // InterruptDetails rval = matrix.waitIntjLoop();  // uses gpio addListener
-             InterruptDetails rval = matrix.waitIntpLoop(); // uses polling as pi-os 64bit misses short duration
+            InterruptDetails rval = matrix.waitIntjLoop();  // uses gpio addListener
+           //  InterruptDetails rval = matrix.waitIntpLoop(); // uses polling of GPIO INTB
                                                             // signals.
 
              this.logger.trace("wait_for_interrupt  <is_done> " + rval.getSuccessVal() + " counter :"

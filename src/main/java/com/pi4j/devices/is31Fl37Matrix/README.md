@@ -42,6 +42,10 @@ x        I2C  -bmpB bus  -bmpA address  ------------------  BMP280
 
 Debug utilities
 
+The following was used in debugging missed interrupts from the INTB line.  Result
+was learning the V2 default debounce time is 10 ms, too great a value for this chips
+documented 7 ms interrupt duration.
+
 Java Monitor input GPIO pin 18 configured as an active low interrupt.  
 com.pi4j.devices.multi/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 18 -d DOWN 
 
@@ -57,18 +61,9 @@ python3 ./monitorGpio.py -p 25
 
 python3 monitorGpio2.py -p 25
 
-Pi-OS 64bit
-Monitor programs implemented in python3 process interrupts of 1 and 2 milliseconds.
 
-Monitor program implemented in java process interrupts of at least 10 milliseconds.
 
 The python3 program monitorGpio2.py uses the GPIO.add_event_detect function callback to more closely 
 operate same as the java monitor program's  event callback
 
-In either python3 create interrupt  implementation the required interrupt duration is ten times greater in for 
-the java monitor program than the python3 monitor program
 
-
-sudo /usr/lib/jvm/java-1.11.0-openjdk-armhf/bin/java -agentlib:jdwp=transport=dt_socket,address=5009,suspend=y,server=y -javaagent:/home/pi/Tools/Intellij/idea-IC-203.8084.24/plugins/java/lib/rt/debugger-agent.jar -Dfile.encoding=UTF-8 -classpath /home/pi/Tools/Intellij/idea-IC-203.8084.24/lib/idea_rt.jar -p /home/pi/Pi4J_V2/Pi4J_V2_Devices/target/classes:/home/pi/.m2/repository/org/slf4j/slf4j-simple/2.0.0-alpha0/slf4j-simple-2.0.0-alpha0.jar:/home/pi/.m2/repository/org/slf4j/slf4j-api/2.0.0-alpha0/slf4j-api-2.0.0-alpha0.jar:/home/pi/.m2/repository/com/pi4j/pi4j-core/2.2.0-SNAPSHOT/pi4j-core-2.2.0-20220207.070217-12.jar:/home/pi/.m2/repository/org/apache/logging/log4j/log4j-api/2.17.1/log4j-api-2.17.1.jar:/home/pi/.m2/repository/org/apache/logging/log4j/log4j-core/2.17.1/log4j-core-2.17.1.jar:/home/pi/.m2/repository/org/apache/logging/log4j/log4j-slf4j-impl/2.17.1/log4j-slf4j-impl-2.17.1.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-raspberrypi/2.2.0-SNAPSHOT/pi4j-plugin-raspberrypi-2.2.0-20220207.070318-12.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-pigpio/2.2.0-SNAPSHOT/pi4j-plugin-pigpio-2.2.0-20220207.070311-12.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-pigpio/2.2.0-SNAPSHOT/pi4j-library-pigpio-2.2.0-20220207.070247-12.jar:/home/pi/.m2/repository/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-linuxfs/2.2.0-SNAPSHOT/pi4j-plugin-linuxfs-2.2.0-20220207.070324-12.jar:/home/pi/.m2/repository/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-linuxfs/2.2.0-SNAPSHOT/pi4j-library-linuxfs-2.2.0-20220207.070255-12.jar -m com.pi4j.devices.multi/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 18 -d DOWN
-
-sudo /usr/lib/jvm/java-1.11.0-openjdk-armhf/bin/java -javaagent:/home/pi/Tools/Intellij/idea-IC-203.8084.24/lib/idea_rt.jar=39721:/home/pi/Tools/Intellij/idea-IC-203.8084.24/bin -Dfile.encoding=UTF-8 -p /home/pi/Pi4J_V2/Pi4J_V2_Devices/target/classes:/home/pi/.m2/repository/org/slf4j/slf4j-simple/2.0.0-alpha0/slf4j-simple-2.0.0-alpha0.jar:/home/pi/.m2/repository/org/slf4j/slf4j-api/2.0.0-alpha0/slf4j-api-2.0.0-alpha0.jar:/home/pi/.m2/repository/com/pi4j/pi4j-core/2.2.0-SNAPSHOT/pi4j-core-2.2.0-20220207.070217-12.jar:/home/pi/.m2/repository/org/apache/logging/log4j/log4j-api/2.17.1/log4j-api-2.17.1.jar:/home/pi/.m2/repository/org/apache/logging/log4j/log4j-core/2.17.1/log4j-core-2.17.1.jar:/home/pi/.m2/repository/org/apache/logging/log4j/log4j-slf4j-impl/2.17.1/log4j-slf4j-impl-2.17.1.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-raspberrypi/2.2.0-SNAPSHOT/pi4j-plugin-raspberrypi-2.2.0-20220207.070318-12.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-pigpio/2.2.0-SNAPSHOT/pi4j-plugin-pigpio-2.2.0-20220207.070311-12.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-pigpio/2.2.0-SNAPSHOT/pi4j-library-pigpio-2.2.0-20220207.070247-12.jar:/home/pi/.m2/repository/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-linuxfs/2.2.0-SNAPSHOT/pi4j-plugin-linuxfs-2.2.0-20220207.070324-12.jar:/home/pi/.m2/repository/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-linuxfs/2.2.0-SNAPSHOT/pi4j-library-linuxfs-2.2.0-20220207.070255-12.jar -m com.pi4j.devices.multi/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 18 -d DOWN
