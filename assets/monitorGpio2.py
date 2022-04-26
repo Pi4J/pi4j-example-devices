@@ -21,7 +21,7 @@ import time
 
 
 def changed(pin):
-    print("Pin Low startTime : ",  float(round(time.time() * 1000)))
+    print("Pin changed at Time : ",  float(round(time.time() * 1000)))
 
 def main(argv):
     GPIO.setmode(GPIO.BCM)

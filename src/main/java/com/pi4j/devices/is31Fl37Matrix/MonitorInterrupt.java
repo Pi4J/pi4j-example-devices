@@ -136,7 +136,7 @@ public class MonitorInterrupt {
         }*/
         // wait (block) for user to exit program using CTRL-C
         console.waitForExit();
-
+        monitorPin.shutdown(pi4j);
         // shutdown Pi4J
         console.println("ATTEMPTING TO SHUTDOWN/TERMINATE THIS PROGRAM");
         pi4j.shutdown();
@@ -147,13 +147,13 @@ public class MonitorInterrupt {
         Instant startInstant;
         Instant endInstant;
           public MatrixGpioListener() {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
+           /* Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     System.out.println("MatrixGpioListener: Performing ctl-C shutdown");
                     // Thread.dumpStack();
                 }
             });
-
+            */
         }
 
         @Override
@@ -167,8 +167,7 @@ public class MonitorInterrupt {
                 start = System.currentTimeMillis();
                 startInstant = Instant.now();
                 System.out.println("onDigitalStateChange Pin went low");
-            }
-            if (event.state() == DigitalState.HIGH) {
+            }else if (event.state() == DigitalState.HIGH) {
                 end = System.currentTimeMillis();
                 Instant endInstant = Instant.now();
                 System.out.println("onDigitalStateChange Pin went high");
@@ -176,9 +175,9 @@ public class MonitorInterrupt {
                 System.out.println("Elapsed time MS " + elapsedTime);
                 Duration timeElapsed = Duration.between(startInstant, endInstant);
                 System.out.println("timeElapsed time MS " + timeElapsed.toMillis());
-
+            }else{
+                System.out.println("Strange event state  " + event.state());
             }
-
         }
     }
 }

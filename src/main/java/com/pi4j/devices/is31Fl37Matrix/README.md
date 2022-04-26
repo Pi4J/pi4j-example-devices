@@ -66,3 +66,4 @@ python3 monitorGpio2.py -p 25
 The python3 program monitorGpio2.py uses the GPIO.add_event_detect function callback to more closely 
 operate same as the java monitor program's  event callback
 
+
