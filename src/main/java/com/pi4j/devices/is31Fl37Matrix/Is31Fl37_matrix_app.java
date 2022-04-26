@@ -278,6 +278,7 @@ public class Is31Fl37_matrix_app {
                 .name("MatrixInterrupt")
                 .address(monitorPinNum)
                 .pull(PullResistance.PULL_UP)
+                .debounce(4000L)
                 .provider("pigpio-digital-input");
         try {
             monitorPin = pi4j.create(ledConfigIntr);

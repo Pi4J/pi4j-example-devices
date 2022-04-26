@@ -42,6 +42,10 @@ x        I2C  -bmpB bus  -bmpA address  ------------------  BMP280
 
 Debug utilities
 
+The following was used in debugging missed interrupts from the INTB line.  Result
+was learning the V2 default debounce time is 10 ms, too great a value for this chips
+documented 7 ms interrupt duration.
+
 Java Monitor input GPIO pin 18 configured as an active low interrupt.  
 com.pi4j.devices.multi/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 18 -d DOWN 
 
@@ -57,12 +61,8 @@ python3 ./monitorGpio.py -p 25
 
 python3 monitorGpio2.py -p 25
 
-Pi-OS 64bit
-Monitor programs implemented in python3 process interrupts of 1 and 2 milliseconds.
 
-Monitor program implemented in java process interrupts of at least 10 milliseconds.
 
 The python3 program monitorGpio2.py uses the GPIO.add_event_detect function callback to more closely 
 operate same as the java monitor program's  event callback
 
-In either python3 monitor implementaiosn the required interrupt duration is ten times greater in java.
