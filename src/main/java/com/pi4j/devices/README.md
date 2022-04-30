@@ -13,24 +13,28 @@ Project by Tom Aarts
 The following lists the currently supported devices:
 
 
-MCP23008 drive and read chip GPIOs
+MCP23008 I2C:  drive and read chip GPIOs
 src/main/java/com/pi4j/devices/mcp23008/README.md
 
-MCP23017 drive and read chip GPIOs
+MCP23017 I2C:  drive and read chip GPIOs
 src/main/java/com/pi4j/devices/mcp23017/README.md
 
-MCP23008 and MCP23017 Pin monitoring (interrupt support)
+MCP23008 and MCP23017 I2C:  Pin monitoring (interrupt support)
 src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md
 
-TCA9548 Bus enable/disable
+TCA9548 I2C:  I2C Bus switch 
 src/main/java/com/pi4j/devices/tca9548/README.md
 
 
-VL53L0X TimeOfFlight device
+VL53L0X I2C:  TimeOfFlight device
 src/main/java/com/pi4j/devices/vl53L0X/README.md
 
 
-BMP280  Temperature and Pressure Sensor
+BMP280  I2C:  Temperature and Pressure Sensor
 src/main/java/com/pi4j/devices/bmp280/README.md
+
+MCP3008 SPI:  10bit A/D converter
+src/main/java/com/pi4j/devices/mcp3008/README.md
+
 
 

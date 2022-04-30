@@ -31,5 +31,6 @@ module com.pi4j.devices.multi{
     // allow access to classes in the following namespaces for Pi4J annotation processing
     opens com.pi4j.devices.bmp280  to com.pi4j;
     opens com.pi4j.devices.is31Fl37Matrix to com.pi4j;
+    opens com.pi4j.devices.mcp3008 to com.pi4j;
 
 }
