@@ -37,5 +37,7 @@ src/main/java/com/pi4j/devices/is31Fl37Matrix/README.md
 This package does not use any other code within my repo.    
 
 
-
+MCP3008 A/D 10bit converter   
+src/main/java/com/pi4j/devices/mcp3008/README.md     
+This package does not use any other code within my repo.    
 
