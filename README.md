@@ -18,7 +18,6 @@ src/main/java/com/pi4j/devices/mcp23017/README.md
 MCP23008 and MCP23017 Pin monitoring (interrupt support)  
 src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md
 
-
 VL53L0X TimeOfFlight device  
 src/main/java/com/pi4j/devices/vl53L0X/README.md  
 This package does not use any other code within my repo.
