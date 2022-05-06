@@ -39,5 +39,5 @@
 
 
 #!/usr/bin/env bash
-java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.vl53L0X.VL53L0X_App  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.vl53L0X.VL53L0X_App  $@
 
