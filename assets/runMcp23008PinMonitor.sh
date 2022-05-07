@@ -35,5 +35,5 @@
 
 
 #!/usr/bin/env bash
-java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.mcp23xxxApplication.Mcp23008PinMonitor  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.mcp23xxxApplication.Mcp23008PinMonitor  $@
 

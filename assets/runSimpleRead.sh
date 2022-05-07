@@ -35,6 +35,6 @@
 
 
 #!/usr/bin/env bash
-java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.base_i2c.I2cSimpleRead $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.base_i2c.I2cSimpleRead $@
 
 

@@ -35,5 +35,5 @@
 
 
 #!/usr/bin/env bash
-java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.mcp23017.Mcp23017App  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.mcp23017.Mcp23017App  $@
 

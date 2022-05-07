@@ -35,4 +35,4 @@
 
 
 #!/usr/bin/env bash
-java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.appConfig.ReadProperties  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.appConfig.ReadProperties  $@

@@ -1,4 +1,4 @@
-module com.pi4j.devices.multi{
+module com.pi4j.devices{
 
     // Pi4J MODULES
     requires com.pi4j;
@@ -19,18 +19,20 @@ module com.pi4j.devices.multi{
     uses com.pi4j.extension.Extension;
     uses com.pi4j.provider.Provider;
 
-    // allow access to classes in the following namespaces for Pi4J annotation processing
-    opens com.pi4j.devices.tca9548 to com.pi4j;
-    opens com.pi4j.devices.mcp23008 to com.pi4j;
-    opens com.pi4j.devices.mcp23017 to com.pi4j;
-    opens com.pi4j.devices.mcp23xxxApplication to com.pi4j;
-    opens com.pi4j.devices.appConfig to com.pi4j;
-    opens com.pi4j.devices.base_i2c to com.pi4j;
+    // allow access to these classes
+    exports com.pi4j.devices.tca9548;
+    exports com.pi4j.devices.mcp23008;
+    exports com.pi4j.devices.mcp23017;
+    exports com.pi4j.devices.mcp23xxxApplication;
+    exports com.pi4j.devices.appConfig;
+    exports com.pi4j.devices.base_i2c;
     // new TOF chip
-    opens com.pi4j.devices.vl53L0X to com.pi4j;
-    // allow access to classes in the following namespaces for Pi4J annotation processing
-    opens com.pi4j.devices.bmp280  to com.pi4j;
-    opens com.pi4j.devices.is31Fl37Matrix to com.pi4j;
-    opens com.pi4j.devices.mcp3008 to com.pi4j;
+    exports com.pi4j.devices.vl53L0X;
+
+    exports com.pi4j.devices.bmp280 ;
+    exports com.pi4j.devices.is31Fl37Matrix;
+    exports com.pi4j.devices.mcp3008;
+
+
 
 }
