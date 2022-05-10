@@ -58,7 +58,6 @@ public class SN74HC595 {
     private final byte registerData;
     private final String traceLevel;
     private Logger logger;
-
     int OEPinNum = 0xff;
     int STCPPinNum = 0xff;
     int SHCPPinNum = 0xff;
@@ -92,6 +91,7 @@ public class SN74HC595 {
         this.SHCPPinNum = shcpGpio;
         this.MRPinNum = mrGpio;
         this.DSPinNum = dsGpio;
+
         this.registerData = registerData;
         this.traceLevel = traceLevel;
         this.init();
@@ -203,6 +203,7 @@ public class SN74HC595 {
         String binaryString = Integer.toBinaryString(this.registerData & 0xff);
         String withLeadingZeros = String.format("%8s", binaryString).replace(' ', '0');
         this.logger.trace(">>> Enter: updateSN74  shift data  " + withLeadingZeros);
+
         // walk through the byte of shift data, LSB to MSB
         // Set the dataPin same as the shift bit. For each bit toggle the clockPin.
         // After all bits processed, Toggle latchPin
@@ -221,11 +222,13 @@ public class SN74HC595 {
             }
             this.clockPin.high();
             this.dataPin.low();
-          }
+;
+
+        }
         this.clockPin.low();
         this.latchPin.high();
 
-        this.logger.trace("<<< Exit: updateSN74");
+        this.logger.info("<<< Exit: updateSN74");
 
     }
 

@@ -45,12 +45,15 @@ import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
+<<<<<<< HEAD
 /**
  * Simple application to accumulate the prams to create a SN74HC595.  Primarily
  * this information is which Pi GPIOs will be used to control the SN74HC595.
  *
  * This app creates the Pi DigitalOutput objects and they are passed to the SN74HC595
  */
+=======
+>>>>>>> 85e2601d590884d4a1573a10d785b30e0c6987cc
 public class SN74HC595App {
 
     public static void main(String[] args) {
@@ -62,6 +65,7 @@ public class SN74HC595App {
         int SHCPPinNum = 0xff;
         int MRPinNum = 0xff;
         int DSPinNum = 0xff;
+
         byte registerData = 0;
 
 
@@ -108,6 +112,12 @@ public class SN74HC595App {
             } else if (o.contentEquals("-st")) {
                 String a = args[i + 1];
                 STCPPinNum = Integer.parseInt(a);
+                console.println("DS Pin  " + DSPinNum);
+                i++;
+            } else if (o.contentEquals("-st")) {
+                String a = args[i + 1];
+                STCPPinNum = Integer.parseInt(a);
+                console.println("STCP Pin  " + STCPPinNum);
                 i++;
             } else if (o.contentEquals("-sh")) {
                 String a = args[i + 1];
@@ -117,6 +127,13 @@ public class SN74HC595App {
                 String a = args[i + 1];
                 MRPinNum = Integer.parseInt(a);
                  i++;
+                console.println("SHCP Pin  " + SHCPPinNum);
+                i++;
+            } else if (o.contentEquals("-mr")) {
+                String a = args[i + 1];
+                MRPinNum = Integer.parseInt(a);
+                console.println("MR Pin  " + MRPinNum);
+                i++;
             } else if (o.contentEquals("-rd")) {
                 String a = args[i + 1];
                 i++;
@@ -142,7 +159,9 @@ public class SN74HC595App {
         }
 
 
+
         var snChip = new SN74HC595(pi4j, console, DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);
+
         snChip.updateSN74();
     }
 
