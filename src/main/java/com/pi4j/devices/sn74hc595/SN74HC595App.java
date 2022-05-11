@@ -39,21 +39,18 @@ package com.pi4j.devices.sn74hc595;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.exception.LifecycleException;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
-<<<<<<< HEAD
+
 /**
  * Simple application to accumulate the prams to create a SN74HC595.  Primarily
  * this information is which Pi GPIOs will be used to control the SN74HC595.
- *
+ * <p>
  * This app creates the Pi DigitalOutput objects and they are passed to the SN74HC595
  */
-=======
->>>>>>> 85e2601d590884d4a1573a10d785b30e0c6987cc
+
 public class SN74HC595App {
 
     public static void main(String[] args) {
@@ -89,7 +86,7 @@ public class SN74HC595App {
 
         final Console console = new Console();
         console.print("==============================================================");
-        console.print("startup  SN74HC595App ");
+        console.print("startup  SN74HC595App  ");
         console.print("==============================================================");
 
 
@@ -108,33 +105,20 @@ public class SN74HC595App {
             } else if (o.contentEquals("-ds")) {
                 String a = args[i + 1];
                 DSPinNum = Integer.parseInt(a);
-                 i++;
-            } else if (o.contentEquals("-st")) {
-                String a = args[i + 1];
-                STCPPinNum = Integer.parseInt(a);
-                console.println("DS Pin  " + DSPinNum);
                 i++;
             } else if (o.contentEquals("-st")) {
                 String a = args[i + 1];
                 STCPPinNum = Integer.parseInt(a);
-                console.println("STCP Pin  " + STCPPinNum);
                 i++;
             } else if (o.contentEquals("-sh")) {
                 String a = args[i + 1];
                 SHCPPinNum = Integer.parseInt(a);
-                 i++;
-            } else if (o.contentEquals("-mr")) {
-                String a = args[i + 1];
-                MRPinNum = Integer.parseInt(a);
-                 i++;
-                console.println("SHCP Pin  " + SHCPPinNum);
                 i++;
             } else if (o.contentEquals("-mr")) {
                 String a = args[i + 1];
                 MRPinNum = Integer.parseInt(a);
-                console.println("MR Pin  " + MRPinNum);
                 i++;
-            } else if (o.contentEquals("-rd")) {
+            }  else if (o.contentEquals("-rd")) {
                 String a = args[i + 1];
                 i++;
                 registerData = (byte) (Integer.parseInt(a.substring(2), 16) & 0xff);
@@ -157,7 +141,6 @@ public class SN74HC595App {
                 System.exit(42);
             }
         }
-
 
 
         var snChip = new SN74HC595(pi4j, console, DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);

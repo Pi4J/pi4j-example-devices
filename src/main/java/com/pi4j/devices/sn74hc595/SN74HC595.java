@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SN74HC595 8 Bit shift register. Serial device.  Uses GPIOs line manipulation to clock data into the device
+ *
  */
 public class SN74HC595 {
     private final Console console;
@@ -80,7 +81,7 @@ public class SN74HC595 {
      * @param mrGpio
      *
      * @param registerData   8 bita, each representing the intended state of the output lines.  QH------Qa
-     * @param traceLevel   slf4j log level
+     * @param traceLevel    slf4j log level
      */
     public SN74HC595(Context pi4j, Console console, int dsGpio, int oeGpio, int stcpGpio, int shcpGpio, int mrGpio, byte registerData, String traceLevel) {
         super();
@@ -91,7 +92,6 @@ public class SN74HC595 {
         this.SHCPPinNum = shcpGpio;
         this.MRPinNum = mrGpio;
         this.DSPinNum = dsGpio;
-
         this.registerData = registerData;
         this.traceLevel = traceLevel;
         this.init();
