@@ -37,3 +37,9 @@ MCP3008 A/D 10bit converter
 src/main/java/com/pi4j/devices/mcp3008/README.md     
 This package does not use any other code within my repo.    
 
+SN74HC595 8 Bit shift register  
+src/main/java/com/pi4j/devices/sn74hc595/README.md     
+This package does not use any other code within my repo.    
+
+
+
