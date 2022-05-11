@@ -39,11 +39,17 @@ package com.pi4j.devices.sn74hc595;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.exception.LifecycleException;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
+
+
+/**
+ * Simple application to accumulate the prams to create a SN74HC595.  Primarily
+ * this information is which Pi GPIOs will be used to control the SN74HC595.
+ * <p>
+ * This app creates the Pi DigitalOutput objects and they are passed to the SN74HC595
+ */
 
 public class SN74HC595App {
 
@@ -56,11 +62,7 @@ public class SN74HC595App {
         int SHCPPinNum = 0xff;
         int MRPinNum = 0xff;
         int DSPinNum = 0xff;
-        DigitalOutput oeGpio = null;
-        DigitalOutput stcpGpio = null;
-        DigitalOutput shcpGpio = null;
-        DigitalOutput mrGpio = null;
-        DigitalOutput dsGpio = null;
+
         byte registerData = 0;
 
 
@@ -84,7 +86,7 @@ public class SN74HC595App {
 
         final Console console = new Console();
         console.print("==============================================================");
-        console.print("startup  SN74HC595App ");
+        console.print("startup  SN74HC595App  ");
         console.print("==============================================================");
 
 
@@ -99,29 +101,24 @@ public class SN74HC595App {
             if (o.contentEquals("-oe")) {
                 String a = args[i + 1];
                 OEPinNum = Integer.parseInt(a);
-                console.println("OE Pin  " + OEPinNum);
                 i++;
             } else if (o.contentEquals("-ds")) {
                 String a = args[i + 1];
                 DSPinNum = Integer.parseInt(a);
-                console.println("DS Pin  " + DSPinNum);
                 i++;
             } else if (o.contentEquals("-st")) {
                 String a = args[i + 1];
                 STCPPinNum = Integer.parseInt(a);
-                console.println("STCP Pin  " + STCPPinNum);
                 i++;
             } else if (o.contentEquals("-sh")) {
                 String a = args[i + 1];
                 SHCPPinNum = Integer.parseInt(a);
-                console.println("SHCP Pin  " + SHCPPinNum);
                 i++;
             } else if (o.contentEquals("-mr")) {
                 String a = args[i + 1];
                 MRPinNum = Integer.parseInt(a);
-                console.println("MR Pin  " + MRPinNum);
                 i++;
-            } else if (o.contentEquals("-rd")) {
+            }  else if (o.contentEquals("-rd")) {
                 String a = args[i + 1];
                 i++;
                 registerData = (byte) (Integer.parseInt(a.substring(2), 16) & 0xff);
@@ -145,78 +142,9 @@ public class SN74HC595App {
             }
         }
 
-        var outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("OE_pin")
-                .name("Enable")
-                .address(OEPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
-        try {
-            oeGpio = pi4j.create(outputConfig1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut OE failed");
-            System.exit(201);
-        }
-        var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("STCP_pin")
-                .name("STCP")
-                .address(STCPPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
-        try {
-            stcpGpio = pi4j.create(outputConfig2);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut STCP failed");
-            System.exit(201);
-        }
-        var outputConfig3 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("SHCP_pin")
-                .name("SHCP")
-                .address(SHCPPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
-        try {
-            shcpGpio = pi4j.create(outputConfig3);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut SHCP failed");
-            System.exit(201);
-        }
-        var outputConfig4 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("MR_pin")
-                .name("MR")
-                .address(MRPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
-        try {
-            mrGpio = pi4j.create(outputConfig4);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut MR failed");
-            System.exit(201);
-        }
-        var outputConfig5 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("DS_pin")
-                .name("DS")
-                .address(DSPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
-        try {
-            dsGpio = pi4j.create(outputConfig5);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut MR failed");
-            System.exit(201);
-        }
 
-        var snChip = new SN74HC595(pi4j, console, dsGpio, oeGpio, stcpGpio, shcpGpio, mrGpio, registerData, traceLevel);
+        var snChip = new SN74HC595(pi4j, console, DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);
+
         snChip.updateSN74();
     }
 
