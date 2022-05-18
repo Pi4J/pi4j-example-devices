@@ -79,7 +79,7 @@ Dependent upon the -f parameter value logging details will be stored in
 
   
 java program to ensure the application configuration was completed.
-Second, the java MCP23008 apllication is invoked, this will remain active monitoring
+Second, the java MCP23008 application is invoked, this will remain active monitoring
 interrupts from the MCP23008. 
     The application configures a DigitalStateChangeListener for 
 each MCP23008 pin. 
