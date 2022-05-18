@@ -20,11 +20,14 @@ public class MCP3008App {
         boolean doAll = true;
         short pinNumber = 0;
 
+        double vref = 0;
+        
         SpiChipSelect chipSelect = SpiChipSelect.CS_0;
         SpiBus spiBus = SpiBus.BUS_0;
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP3008App");
-        String helpString = " parms: -p HEX value pinToRead  <if not supplied all pins read    -c HEX value chip select " +
+        String helpString = " parms: -p HEX value pinToRead  <if not supplied all pins read  " +
+                "  -c HEX value chip select   -vref decimal reference voltage " +
                 "-s HEX value SPI #  -t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
                 " or \"off\"  Default \"info\"";
 
@@ -41,6 +44,10 @@ public class MCP3008App {
                     console.println(helpString);
                     System.exit(40);
                 }
+            }else if (o.contentEquals("-vref")) { // reference voltage
+                String a = args[i + 1];
+                i++;
+                vref = Float.parseFloat(a);
             } else if (o.contentEquals("-c")) { // pin
                 String a = args[i + 1];
                 chipSelect = SpiChipSelect.getByNumber(Short.parseShort(a.substring(2), 16));
@@ -87,7 +94,7 @@ public class MCP3008App {
                 .build();
 
         var spiDevice = pi4j.create(spiConfig);
-        MCP3008 spiCls = new MCP3008(spiDevice, pinCount, console, traceLevel);
+        MCP3008 spiCls = new MCP3008(spiDevice, pinCount, console, traceLevel, vref);
 
         spiCls.displayProgramID();
         spiCls.displayMCP3008State(doAll, pinNumber);

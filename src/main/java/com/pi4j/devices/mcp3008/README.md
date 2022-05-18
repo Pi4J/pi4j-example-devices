@@ -12,8 +12,10 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: MCP3008 10 bit A/D conver
 Project by Tom Aarts
 ==========================================================================
 
+https://datasheetspdf.com/pdf-file/439989/MicrochipTechnology/MCP3008/1
 
-Assumption
+
+Default assumption
 Chip connected to SPI0   CE0
 
                  5V  ---------  ch0             Vdd  ------------  5V
@@ -27,16 +29,26 @@ Chip connected to SPI0   CE0
 
 1. mvn clean package
 2. cd target/distribution
-3. sudo ./runMcp3008.sh 
+3. sudo ./runMcp3008.sh   
+
+
+
 
 The above command will monitor and display the 10 bit value for all 8 pins.
 
 
-To monitor only pin 0
-sudo ./runMcp3008.sh -p 0x0
+-vref option: if > 0,  the -d feature will display calculated Channel input voltage.
 
-Change the logging detail to 'trace'
-sudo ./runMcp3008.sh -p 0x0 -t trace
+
+To monitor all pins 0   Vref of 5.0 volts
+sudo ./runMcp3008.sh   -vref 5.0    
+
+
+To monitor only pin 0
+sudo ./runMcp3008.sh -p 0x0  
+
+Change the logging detail to 'trace'    vref voltage of 3.3
+sudo ./runMcp3008.sh -p 0x0 -t trace -vref 3.3  
 
 
 Use SPI 1

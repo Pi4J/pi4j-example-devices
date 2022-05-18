@@ -46,7 +46,7 @@ sudo ./runVL53L0X.sh
 
 The user can reconfigure the chips device (ACK) address
 
-sudo ./runVL53L0X.sh -b 0x1 -a 0x2D -r 21 -x 0x29 -t info -b 1 -a 0x2D desired future address -r 21 Pi gpio connected to
-the chips XSHUT pin -x existing address
+sudo ./runVL53L0X.sh -b 0x1 -a 0x2D -r 21 -x 0x29 -t info 
+               -a 0x2D desired future address -r 21 Pi gpio connected to the chips XSHUT pin -x existing address
 
 sudo ./runVL53L0X.sh -b 0x1 -a 0x2D Must supply the newly configured device address

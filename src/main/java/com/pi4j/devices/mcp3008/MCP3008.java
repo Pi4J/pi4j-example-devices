@@ -9,13 +9,15 @@ import org.slf4j.LoggerFactory;
 public class MCP3008 {
 
 
-    public MCP3008(Spi spiDevice, short pinCount, Console console, String traceLevel) {
+
+    public MCP3008(Spi spiDevice, short pinCount, Console console, String traceLevel, double vref) {
         super();
         // SPI device
         this.console = console;
         this.spi = spiDevice;
         this.pinCount = pinCount;
         this.traceLevel = traceLevel;
+        this.vref = vref;
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
         //  encounters if using the defaultLogLevel
@@ -126,6 +128,8 @@ public class MCP3008 {
         // to get 10-bit result
         result |= (value[2] & 0xff);
         this.logger.info("Channel : " + channel + "   Bytes read : " + bytesRead + "  Value : " + result);
+        if(this.vref > 0){this.logger.info("A/D read input voltage : "+  ((result * this.vref )/1024 + " \n"));
+        }
         this.logger.trace("<<< Exit getConversionValue ");
 
         return result;
@@ -143,5 +147,8 @@ public class MCP3008 {
     private Console console;
     private final String traceLevel;
     private final Logger logger;
+
+    private final double vref;
+
 }
 
