@@ -41,5 +41,8 @@ SN74HC595 8 Bit shift register
 src/main/java/com/pi4j/devices/sn74hc595/README.md     
 This package does not use any other code within my repo.    
 
+MCP4725  12 bit DAC     
+src/main/java/com/pi4j/devices/mcp4725/README.md     
+This package does not use any other code within my repo.    
 
 
