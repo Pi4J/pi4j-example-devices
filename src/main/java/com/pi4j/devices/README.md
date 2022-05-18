@@ -36,5 +36,10 @@ src/main/java/com/pi4j/devices/bmp280/README.md
 MCP3008 SPI:  10bit A/D converter
 src/main/java/com/pi4j/devices/mcp3008/README.md
 
+SN74HC595 GPIO Manipulation (bit bang): 8 Bit shift register   
+src/main/java/com/pi4j/devices/sn74hc595/README.md   
+This package does not use any other code within my repo.   
 
-
+MCP4725 I2C:  12 bit DAC   
+src/main/java/com/pi4j/devices/mcp4725/README.md  
+This package does not use any other code within my repo.  

@@ -19,7 +19,7 @@ Use of different bus or device address, use the applicable values in the followi
 -a 0x76
 
 Will create the BMP280 device to create a BMP280Device instance Call the various temperature and pressure methods
-defined in the Sensor interface. The device defaults to Pi Bus 1 and device address 0X76
+defined in the interface. The device defaults to Pi Bus 1 and device address 0X76
 
 No parameters are required. However, if 'any' parameter value is to be supplied:
 parms: -b hex value bus -a hex value address -t trace  
