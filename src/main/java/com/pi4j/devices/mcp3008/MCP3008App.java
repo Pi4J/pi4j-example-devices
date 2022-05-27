@@ -83,18 +83,8 @@ public class MCP3008App {
         console.println("----------------------------------------------------------");
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
-        var spiConfig = Spi.newConfigBuilder(pi4j)
-                .id("SPI" + spiBus + " " + chipSelect)
-                .name("A/D converter")
-                .bus(spiBus)
-                .chipSelect(chipSelect)
-                .baud(Spi.DEFAULT_BAUD)
-                .mode(SpiMode.MODE_0)
-                .provider("pigpio-spi")
-                .build();
 
-        var spiDevice = pi4j.create(spiConfig);
-        MCP3008 spiCls = new MCP3008(spiDevice, pinCount, console, traceLevel, vref);
+        MCP3008 spiCls = new MCP3008(pi4j, spiBus, chipSelect,  pinCount, console, traceLevel, vref);
 
         spiCls.displayProgramID();
         spiCls.displayMCP3008State(doAll, pinNumber);

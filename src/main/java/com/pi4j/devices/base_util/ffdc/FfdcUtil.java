@@ -37,13 +37,17 @@ package com.pi4j.devices.base_util.ffdc;
 import com.pi4j.context.Context;
 import com.pi4j.devices.base_util.PrintInfo;
 import com.pi4j.util.Console;
-import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/*import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-
+*/
 
 
 /**
@@ -59,6 +63,10 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  *
  * <p>
  *     Assumes the logging configuration file 'log4j2.properties' is located in the class path.
+ * </p>
+ *
+ * <p>
+ *     At present time, the log4j usage has been commented out. The logging will use the slf4j simple
  * </p>
  */
 
@@ -91,20 +99,16 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     /**
      * init
      */
-    /* public enum Level {
-        ERROR(40, "ERROR"),
-        WARN(30, "WARN"),
-        INFO(20, "INFO"),
-        DEBUG(10, "DEBUG"),
-        TRACE(0, "TRACE");
-       */
     private void init() {
         //  this.logger = LogManager.getLogger(owner);
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
         //  encounters if using the defaultLogLevel
-        this.logger = LogManager.getLogger(owner);
         this.setLevel(this.ffdc);
+
+        this.logger = LoggerFactory.getLogger(this.owner);
+       // this.logger = LogManager.getLogger(this.owner);
+       // this.setLevel(this.ffdc);
 
 
     }
@@ -239,9 +243,11 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      */
     public boolean ffdcClearLogs(String detail) {
         // TODO
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        /*LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration conf = ctx.getConfiguration();
         LoggerConfig loggerConfig = conf.getLoggerConfig(this.owner.getName());
+        */
+
         this.logger.debug("Info : Logs cleared " + detail);
 
         return (true);
@@ -268,6 +274,10 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      */
     public boolean setLevel(int val) {
         boolean rval = true;
+        String lvl = this.mapIntToLevel(val);
+        System.setProperty("org.slf4j.simpleLogger.log." + this.owner.getName(), lvl);
+
+        /*
         if ((val >= 0) && (val < 7)) {
             LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
             Configuration conf = ctx.getConfiguration();
@@ -282,6 +292,64 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         } else {
             this.console.print("Invalid FFDC level");
             rval = false;
+        }
+        */
+        return (rval);
+    }
+
+    /**
+     * -     *   mapIntToLevel
+     * To be compatible with the slf4 facade on their subset levels will be mapped to log4j
+     * "trace", "debug", "info", "warn", "error" or "off").
+     *
+     * @param newLevel new logging level
+     *                 Allowable values
+     *                 <ul>
+     *                 <li> 0 TRACE
+     *                 <li> 1 DEBUG
+     *                 <li> 2 INFO
+     *                 <li> 3 WARN
+     *                 <li> 4 ERROR
+     *                 <li> 5 ERROR
+     *                 <li> 6 OFF
+     *                 </ul>
+     * @param newLevel
+     * @return Simple int converted to Log4j value
+     */
+    private String mapIntToLevel(int newLevel) {
+        String rval = "info";
+        switch (newLevel) {
+            case 0: {
+                rval = "trace";
+                break;
+            }
+            case 1: {
+                rval = "debug";
+                break;
+            }
+            case 2: {
+                rval = "info";
+                break;
+            }
+            case 3: {
+                rval = "warn";
+                break;
+            }
+            case 4: {
+                rval = "error";
+                break;
+            }
+            case 5: {
+                rval = "error";
+                break;
+            }
+            case 6: {
+                rval = "off";
+                break;
+            }
+            default: {
+                this.ffdcConfigWarningEntry("invalid parm : " + newLevel);
+            }
         }
         return (rval);
     }
@@ -305,7 +373,7 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      * @param newLevel
      * @return Simple int converted to Log4j value
      */
-    private Level mapIntToLevel(int newLevel) {
+  /*  private Level mapIntToLevel(int newLevel) {
         Level rval = Level.ERROR;
         switch (newLevel) {
             case 0: {
@@ -342,7 +410,7 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         }
         return (rval);
     }
-
+*/
 
     /**
      * ffdcFlushShutdown
@@ -351,7 +419,7 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      */
     @Override
     public boolean ffdcFlushShutdown() {
-        LogManager.shutdown();
+       // LogManager.shutdown();
         return (true);
     }
 
