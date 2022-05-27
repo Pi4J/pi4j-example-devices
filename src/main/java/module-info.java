@@ -7,8 +7,9 @@ module com.pi4j.devices{
     // SLF4J MODULES   LOG4J
     requires org.slf4j;
     requires org.slf4j.simple;
-    requires org.apache.logging.log4j;
-    requires org.apache.logging.log4j.core;
+
+   // requires org.apache.logging.log4j;
+   // requires org.apache.logging.log4j.core;
 
 
     requires java.logging;

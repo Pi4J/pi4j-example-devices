@@ -1,7 +1,11 @@
 package com.pi4j.devices.mcp3008;
 
+import com.pi4j.context.Context;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.spi.Spi;
+import com.pi4j.io.spi.SpiBus;
+import com.pi4j.io.spi.SpiChipSelect;
+import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +13,12 @@ import org.slf4j.LoggerFactory;
 public class MCP3008 {
 
 
-
-    public MCP3008(Spi spiDevice, short pinCount, Console console, String traceLevel, double vref) {
+    public MCP3008(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect, short pinCount, Console console, String traceLevel, double vref) {
         super();
-        // SPI device
         this.console = console;
-        this.spi = spiDevice;
+        this.pi4j = pi4j;
+        this.chipSelect = chipSelect;
+        this.spiBus = spiBus;
         this.pinCount = pinCount;
         this.traceLevel = traceLevel;
         this.vref = vref;
@@ -23,13 +27,27 @@ public class MCP3008 {
         //  encounters if using the defaultLogLevel
         System.setProperty("org.slf4j.simpleLogger.log." + MCP3008.class.getName(), this.traceLevel);
         this.logger = LoggerFactory.getLogger(MCP3008.class);
+        this.init();
 
     }
 
+    private void init(){
+        var spiConfig = Spi.newConfigBuilder(pi4j)
+                .id("SPI" + spiBus + " " + chipSelect)
+                .name("A/D converter")
+                .bus(spiBus)
+                .chipSelect(chipSelect)
+                .baud(Spi.DEFAULT_BAUD)
+                .mode(SpiMode.MODE_0)
+                .provider("pigpio-spi")
+                .build();
+        this.spi = this.pi4j.create(spiConfig);
+
+    }
     public void displayProgramID() {
         // print program title/header
         this.logger.trace(">>> Enter displayProgramID");
-        console.title("<-- The Pi4J Project -->", "SPI test program using MCP3004/MCP3008 AtoD Chip");
+        console.title("<-- The Pi4J Project -->", "SPI test program using MCP3008 AtoD Chip");
         this.logger.trace("<<< Exit displayProgramID");
 
     }
@@ -149,6 +167,10 @@ public class MCP3008 {
     private final Logger logger;
 
     private final double vref;
+    private final SpiChipSelect chipSelect;
+    private final SpiBus spiBus;
+
+    private Context pi4j;
 
 }
 

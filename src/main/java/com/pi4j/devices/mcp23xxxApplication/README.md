@@ -179,7 +179,7 @@ GPIO.output( 16 , GPIO.HIGH)
  
 8. Trip interrupt  GPIO16->p4   (in separate terminal console)
 pin0 Red LED will reflect state of pin4 when it interrupts
-python3
+sudo python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT) 
