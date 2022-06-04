@@ -36,5 +36,7 @@ module com.pi4j.devices{
 
     exports com.pi4j.devices.sn74hc595;
     exports com.pi4j.devices.mcp4725;
+    exports com.pi4j.devices.hd44780u;
+
 
 }

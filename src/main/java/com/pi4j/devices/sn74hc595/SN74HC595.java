@@ -37,7 +37,7 @@
 package com.pi4j.devices.sn74hc595;
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.vl53L0X.VL53L0X_Device;
+import com.pi4j.devices.hd44780u.HD44780U_Interface;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * SN74HC595 8 Bit shift register. Serial device.  Uses GPIOs line manipulation to clock data into the device
  *
  */
-public class SN74HC595 {
+public class SN74HC595 implements HD44780U_Interface {
     private final Console console;
     private final Context pi4j;
     private DigitalOutput oeGpio = null;
@@ -204,29 +204,7 @@ public class SN74HC595 {
         String withLeadingZeros = String.format("%8s", binaryString).replace(' ', '0');
         this.logger.trace(">>> Enter: updateSN74  shift data  " + withLeadingZeros);
 
-        // walk through the byte of shift data, LSB to MSB
-        // Set the dataPin same as the shift bit. For each bit toggle the clockPin.
-        // After all bits processed, Toggle latchPin
-        this.latchPin.low();      // make certain chip is quiet
-        this.clockPin.low();
-        this.dataPin.low();
-        for (int i = 7; i >= 0; i--) {
-            this.clockPin.low();
-            int compareBit = 1;
-            compareBit = compareBit << i;
-            boolean bitSet = ((this.registerData & compareBit) > 0);
-            if (bitSet) {
-                this.dataPin.high();
-            } else {
-                this.dataPin.low();
-            }
-            this.clockPin.high();
-            this.dataPin.low();
-;
-
-        }
-        this.clockPin.low();
-        this.latchPin.high();
+        this.sendCommand(this.registerData);
 
         this.logger.info("<<< Exit: updateSN74");
 
@@ -239,6 +217,42 @@ public class SN74HC595 {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    @Override
+    public void sendCommand(int cmd) {
+            String binaryString = Integer.toBinaryString(cmd & 0xff);
+            String withLeadingZeros = String.format("%8s", binaryString).replace(' ', '0');
+            this.logger.trace(">>> Enter: sendCommand  shift data  " + withLeadingZeros);
+
+            // walk through the byte of shift data, LSB to MSB
+            // Set the dataPin same as the shift bit. For each bit toggle the clockPin.
+            // After all bits processed, Toggle latchPin
+            this.latchPin.low();      // make certain chip is quiet
+            this.clockPin.low();
+            this.dataPin.low();
+            for (int i = 7; i >= 0; i--) {
+                this.clockPin.low();
+                int compareBit = 1;
+                compareBit = compareBit << i;
+                boolean bitSet = ((cmd & compareBit) > 0);
+                if (bitSet) {
+                    this.dataPin.high();
+                } else {
+                    this.dataPin.low();
+                }
+                this.clockPin.high();
+                this.dataPin.low();
+                ;
+
+            }
+            this.clockPin.low();
+            this.latchPin.high();
+
+
+
+        this.logger.trace("<<< Exit: sendCommand");
 
     }
 }
