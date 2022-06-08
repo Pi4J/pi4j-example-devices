@@ -39,94 +39,94 @@ package com.pi4j.devices.hd44780u;
 import com.pi4j.io.gpio.digital.DigitalState;
 
 public class HD44780U_Declares {
-    static final int  clearDispCMD = 0b0000000001;
+    public static final int   clearDispCMD = 0b0000000001;
 
 
-    static final int  returnHomeCMD = 0b0000000010;
+    public static final int   returnHomeCMD = 0b0000000010;
 
-    static final int  entryModeCMD = 0b0000000100;
-    static final int  entryModeIncCMD = 0b0000000010;
-    static final int  entryModeNoIncCMD = 0b0000000000;
-    static final int  entryModeShiftCMD = 0b0000000001;
+    public static final int   entryModeCMD = 0b0000000100;
+    public static final int   entryModeIncCMD = 0b0000000010;
+    public static final int   entryModeNoIncCMD = 0b0000000000;
+    public static final int   entryModeShiftCMD = 0b0000000001;
 
 
-    static final int  dispCMD = 0b0000001000;
-    static final int  dispOnBit = 0b0000000100;
-    static final int  dispOffBit = 0b0000000000;
-    static final int  dispOnCMD = 0b0000000000;
-    static final int  dispCrsOnBit = 0b0000000010;
-    static final int  dispCrsOffBit = 0b0000000000;
-    static final int  dispBlnkOnBit = 0b0000000001;
-    static final int  dispBlnkOffBit = 0b0000000000;
+    public static final int   dispCMD = 0b0000001000;
+    public static final int   dispOnBit = 0b0000000100;
+    public static final int   dispOffBit = 0b0000000000;
+    public static final int   dispOnCMD = 0b0000000000;
+    public static final int   dispCrsOnBit = 0b0000000010;
+    public static final int   dispCrsOffBit = 0b0000000000;
+    public static final int   dispBlnkOnBit = 0b0000000001;
+    public static final int   dispBlnkOffBit = 0b0000000000;
 
    //                                             sr
    //                                             cl
-    static final int  cursorCMD         = 0b0000010000;
-    static final int  cusorLeftBit      = 0b0000000000;
-    static final int  cusorRghtBit      = 0b0000000100;
-    static final int  displayLeftBit    = 0b0000001000;
-    static final int  displayRightBit   = 0b0000001100;
+    public static final int   cursorCMD         = 0b0000010000;
+    public static final int   cusorLeftBit      = 0b0000000000;
+    public static final int   cusorRghtBit      = 0b0000000100;
+    public static final int   displayLeftBit    = 0b0000001000;
+    public static final int   displayRightBit   = 0b0000001100;
 
-    static final int  funcSetCMD = 0b0000100000;
-    static final int  func4BitsBit = 0b0000000000;
-    static final int  func8BitsBit = 0b0000010000;
-    static final int  func5x8OneBit = 0b0000000000;
-    static final int  func5x10OneBit = 0b0000000100;
-    static final int  func5x8TwoBit = 0b0000001000;
+    public static final int   funcSetCMD = 0b0000100000;
+    public static final int   func4BitsBit = 0b0000000000;
+    public static final int   func8BitsBit = 0b0000010000;
+    public static final int   func5x8OneBit = 0b0000000000;
+    public static final int   func5x10OneBit = 0b0000000100;
+    public static final int   func5x8TwoBit = 0b0000001000;
 
     //  Not normally used                aaaaaa
-    static final int  setCGRAMCMD = 0b0001000000;
+    public static final int   setCGRAMCMD = 0b0001000000;
     //                                  aaaaaaa
-    static final int  setDDRAMCMD = 0b0010000000;
+    public static final int   setDDRAMCMD = 0b0010000000;
 
 
-    static final int  readBsfFlagCMD = 0b0100000000;
+    public static final int   readBsfFlagCMD = 0b0100000000;
 
 
 
      // RS GPIO and RW GPIO. Internal command
-    static final DigitalState RsInternalIr = DigitalState.LOW;
-    static final DigitalState RwInternalIr = DigitalState.LOW;
+    public static final DigitalState RsInternalIr = DigitalState.LOW;
+    public static final DigitalState RwInternalIr = DigitalState.LOW;
 
     // RS GPIO and RW GPIO. Busy Flag  command
-    static final DigitalState RsInternalBf = DigitalState.LOW;
-    static final DigitalState RwInternalBf = DigitalState.HIGH;
+    public static final DigitalState RsInternalBf = DigitalState.LOW;
+    public static final DigitalState RwInternalBf = DigitalState.HIGH;
 
 
 
 
     // RS GPIO and RW GPIO.  Write  commands
-    static final DigitalState RsInternalWrtState = DigitalState.HIGH;
-    static final DigitalState RwInternalWrtState = DigitalState.LOW;
+    public static final DigitalState RsInternalWrtState = DigitalState.HIGH;
+    public static final DigitalState RwInternalWrtState = DigitalState.LOW;
     // RS GPIO and RW GPIO.  Read  commands
-    static final DigitalState RsInternalRdState = DigitalState.HIGH;
-    static final DigitalState RwInternalRdState = DigitalState.LOW;
+    public static final DigitalState RsInternalRdState = DigitalState.HIGH;
+    public static final DigitalState RwInternalRdState = DigitalState.LOW;
 
     // E GPIO    enable display/read/write of DR
-    static final DigitalState enableOpState = DigitalState.HIGH;
-    static final DigitalState disableOpState = DigitalState.LOW;
+    public static final DigitalState enableOpState = DigitalState.HIGH;
+    public static final DigitalState disableOpState = DigitalState.LOW;
 
     // nano seconds
     // write operations
-    static final int preWrtEnableCycleDelay = 500;   // 400
-    static final int enableWrtCycleDuration = 200;  // 150
-    static final int postWrtEnableCycleDelay = 500;   // 400
+    public static final int  preWrtEnableCycleDelay = 500;   // 400
+    public static final int  enableWrtCycleDuration = 200;  // 150
+    public static final int  postWrtEnableCycleDelay = 500;   // 400
 
-    static final int addressWrtSetupDuration = 50; // 30
-    static final int postAddressWrtSetupDelay = 90;   // 60
+    public static final int  addressWrtSetupDuration = 50; // 30
+    public static final int  postAddressWrtSetupDelay = 90;   // 60
 
-    static final int dataWrtSetupDuration = 90;   // 60
-    static final int postDataWrtDelay = 20;   // 10
+    public static final int  dataWrtSetupDuration = 90;   // 60
+    public static final int  postDataWrtDelay = 20;   // 10
 
     // Read operations
-    static final int preRdEnableCycleDelay = 500;   // 400
-    static final int enableRdCycleDuration = 200;  // 150
-    static final int postRdEnableCycleDelay = 500;   // 400
+    public static final int  preRdEnableCycleDelay = 500;   // 400
+    public static final int  enableRdCycleDuration = 200;  // 150
+    public static final int  postRdEnableCycleDelay = 500;   // 400
 
-    static final int addressRdSetupDuration = 50; // 30
-    static final int postAddressRdSetupDelay = 20;   // 10
+    public static final int  addressRdSetupDuration = 50; // 30
+    public static final int  postAddressRdSetupDelay = 20;   // 10
 
-    static final int dataRdSetupDuration = 240;   // 100
-    static final int postDataRdDelay = 10;   // 5
+    public static final int  dataRdSetupDuration = 240;   // 100
+    public static final int  postDataRdDelay = 10;   // 5
     public static int enableWidthDuration = 450;
 }
