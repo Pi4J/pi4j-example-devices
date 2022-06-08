@@ -146,6 +146,13 @@ public class SN74HC595App {
         var snChip = new SN74HC595(pi4j, console, DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);
 
         snChip.updateSN74();
+        console.println("Wait 5 seconds, then turn on all outputs.");
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        snChip.sendCommand(0xff);
     }
 
 }

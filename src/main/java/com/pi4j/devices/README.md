@@ -43,3 +43,9 @@ This package does not use any other code within my repo.
 MCP4725 I2C:  12 bit DAC   
 src/main/java/com/pi4j/devices/mcp4725/README.md  
 This package does not use any other code within my repo.  
+
+
+HD44780U  1602A LCD
+src/main/java/com/pi4j/devices/hd44780u/README.md
+This package uses the SN74HC595 within my repo.
+
