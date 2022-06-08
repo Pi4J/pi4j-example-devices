@@ -45,45 +45,34 @@ import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.pi4j.devices.lcd1602a.LCD1602A;
 import java.util.concurrent.TimeUnit;
 
-public class HD44780U {
+public class HD44780U  extends LCD1602A{
 
 
-    private Console console = null;
-    private final Context pi4j;
     private DigitalOutput RsPin = null;
     private DigitalOutput EnPin = null;   //
 
-    private String traceLevel = "";
-    private Logger logger;
-    private int RsPinNum = 0xff;
+      private int RsPinNum = 0xff;
     private int EnPinNum = 0xff;
-    private boolean clearDisplay = false;
 
 
 
     private HD44780U_Interface D0_D7;
 
     public HD44780U(Context pi4j, Console console,HD44780U_Interface d0_d7, int rsGpio, int enGpio, boolean clearIt, String traceLevel) {
-        super();
-        this.console = console;
-        this.pi4j = pi4j;
+        super(pi4j,  console,  clearIt, traceLevel);
         this.D0_D7 = d0_d7;
         this.RsPinNum = rsGpio;
         this.EnPinNum = enGpio;
-        this.clearDisplay = clearIt;
-        this.traceLevel = traceLevel;
         this.init();
     }
 
 
-    void init() {
-        System.setProperty("org.slf4j.simpleLogger.log." + HD44780U.class.getName(), this.traceLevel);
-        this.logger = LoggerFactory.getLogger(HD44780U.class);
-        this.logger.trace(">>> Enter: init");
+    public void init() {
 
+        super.init();
         this.logger.trace("DR Pin  " + this.RsPinNum);
         this.logger.trace("EN Pin  " + this.EnPinNum);
 
@@ -140,47 +129,14 @@ public class HD44780U {
         this.logger.trace("<<< Exit: init  device  ");
     }
 
-    public void shiftLeft(int places){
-        this.logger.trace(">>> Enter: shiftLeft  : " + places);
-        for(int i = 0; i < places; i++){
-            this.sendCommand(HD44780U_Declares.cursorCMD | HD44780U_Declares.displayLeftBit);
-        }
-        this.logger.trace("<<< Exit: shiftLeft  ");
-
-    }
-
-    public void clearDisplay(){
-        this.logger.trace(">>> Enter: clearDisplay   ");
-        this.sendCommand(HD44780U_Declares.clearDispCMD);
-        this.logger.trace("<<< Exit: clearDisplay   ");
-    }
-
-
-    public void sendStringLineOne(String str,  int offset) {
-        this.logger.trace(">>> Enter: sendStringLineOne   : " + str + "  Offset  : " + offset);
-        char[] chars = str.toCharArray();
-        this.sendCommand(HD44780U_Declares.setDDRAMCMD | offset);
-        for(int i = 0; i < chars.length; i++){
-            this.sendChar(chars[i]);
-        }
-        this.logger.trace("<<<  Exit: sendStringLineOne  ");
-    }
 
 
 
 
-    public void sendStringLineTwo(String str, int offset) {
-        this.logger.trace(">>> Enter: sendStringLineTwo   : " + str + "  Offset  : " + offset);
-        char[] chars = str.toCharArray();
-       this.sendCommand(HD44780U_Declares.setDDRAMCMD | 0x40 | offset);
-       this.sleepTimeMS(4);
-        for(int i = 0; i < chars.length; i++){
-            this.sendChar(chars[i]);
-        }
-        this.logger.trace("<<<  Exit: sendStringLineTwo  ");
-    }
 
-    private void sendChar(char c) {
+
+
+    protected void sendChar(char c) {
          this.logger.trace(">>> Enter: sendChar   : " + c );
         if (this.lcdAvailable()) {
             this.RsPin.high();
@@ -194,7 +150,7 @@ public class HD44780U {
         this.logger.trace("<<<  Exit: sendChar  ");
     }
     // do required gpio->LCD_input dance before and after actual LCD pin update
-    private void sendCommand(int cmd){
+    protected void sendCommand(int cmd){
         this.logger.trace(">>> Enter: sendCommand   ");
             if(this.lcdAvailable()){
                 this.RsPin.low();
@@ -209,26 +165,6 @@ public class HD44780U {
     }
 
 
-    private boolean lcdAvailable(){
-        int c = 0;
-        this.logger.trace(">>> Enter: lcdAvailable  ");
-        this.sleepTimeMS(10);
-        boolean rval = this.isBfLow();
-        while(rval == false){
-            this.logger.info("\n\n\n !!!!!   BF was busy  \n\n");
-            this.sleepTimeMS(400);
-            c++;
-            if(c > 10){
-                this.logger.info(" LCD remained busy state ");
-                console.println(" LCD remained busy state ");
-                System.exit(100);
-            }
-            rval = this.isBfLow();
-        }
-        this.logger.trace("<<< Exit: lcdAvailable  : "   + rval);
-        return(rval);
-    }
-
     /**
      *   Value of 0 indicates the device is not performing internal
      *   operations and will accept commands
@@ -237,17 +173,9 @@ public class HD44780U {
      *   documented in datasheet
      * @return  bit value of DB7
      */
-    private boolean isBfLow(){
-        this.logger.trace(">>> Enter Enter: isBfLow  NOP Not possible on Pi ");
-        boolean rval = true;
-        // set read mode
-        this.logger.trace("<<< Exit: isBfLow  : "   + rval);
-        return (rval);
-
-    }
 
 
-    private void pulseEnable() {
+    protected void pulseEnable() {
         this.logger.trace(">>> Enter: pulseEnable  ");
         this.EnPin.high();
         this.sleepTimeNS(HD44780U_Declares.enableWidthDuration);
@@ -256,22 +184,7 @@ public class HD44780U {
         this.logger.trace("<<< Exit: pulseEnable  ");
     }
 
-    private void sleepTimeNS(int nanoSec) {
-        try {
-            Thread.sleep(0, nanoSec);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
-    }
 
-    private void sleepTimeMS(int milliSec) {
-        try {
-            Thread.sleep(milliSec);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 
 }
