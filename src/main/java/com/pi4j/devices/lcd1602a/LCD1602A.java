@@ -45,6 +45,7 @@ import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
 
 
 public abstract class LCD1602A {
@@ -53,7 +54,7 @@ public abstract class LCD1602A {
     protected Console console = null;
     protected final Context pi4j;
 
-    private String traceLevel = "";
+    protected String traceLevel = "";
     protected Logger logger;
     protected boolean clearDisplay = false;
 
@@ -64,12 +65,11 @@ public abstract class LCD1602A {
         this.pi4j = pi4j;
         this.clearDisplay = clearIt;
         this.traceLevel = traceLevel;
+
     }
 
 
     protected void init() {
-        System.setProperty("org.slf4j.simpleLogger.log." + HD44780U.class.getName(), this.traceLevel);
-        this.logger = LoggerFactory.getLogger(LCD1602A.class);
         this.logger.trace(">>> Enter: init");
 
         this.logger.trace("<<< Exit: init  device  ");
@@ -78,7 +78,7 @@ public abstract class LCD1602A {
     public void shiftLeft(int places) {
         this.logger.trace(">>> Enter: shiftLeft  : " + places);
         for (int i = 0; i < places; i++) {
-            this.sendCommand(HD44780U_Declares.cursorCMD | HD44780U_Declares.displayLeftBit);
+            this.sendCommand(LCD1602A_Declares.cursorCMD | LCD1602A_Declares.displayLeftBit);
         }
         this.logger.trace("<<< Exit: shiftLeft  ");
 
@@ -86,7 +86,7 @@ public abstract class LCD1602A {
 
     public void clearDisplay() {
         this.logger.trace(">>> Enter: clearDisplay   ");
-        this.sendCommand(HD44780U_Declares.clearDispCMD);
+        this.sendCommand(LCD1602A_Declares.clearDispCMD);
         this.logger.trace("<<< Exit: clearDisplay   ");
     }
 
@@ -94,7 +94,7 @@ public abstract class LCD1602A {
     public void sendStringLineOne(String str, int offset) {
         this.logger.trace(">>> Enter: sendStringLineOne   : " + str + "  Offset  : " + offset);
         char[] chars = str.toCharArray();
-        this.sendCommand(HD44780U_Declares.setDDRAMCMD | offset);
+        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | offset);
         for (int i = 0; i < chars.length; i++) {
             this.sendChar(chars[i]);
         }
@@ -105,8 +105,8 @@ public abstract class LCD1602A {
     public void sendStringLineTwo(String str, int offset) {
         this.logger.trace(">>> Enter: sendStringLineTwo   : " + str + "  Offset  : " + offset);
         char[] chars = str.toCharArray();
-        this.sendCommand(HD44780U_Declares.setDDRAMCMD | 0x40 | offset);
-        this.sleepTimeMS(4);
+        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | 0x40 | offset);
+        this.sleepTimeMilliS(4);
         for (int i = 0; i < chars.length; i++) {
             this.sendChar(chars[i]);
         }
@@ -116,11 +116,11 @@ public abstract class LCD1602A {
     protected boolean lcdAvailable() {
         int c = 0;
         this.logger.trace(">>> Enter: lcdAvailable  ");
-        this.sleepTimeMS(10);
+        this.sleepTimeMilliS(10);
         boolean rval = this.isBfLow();
         while (rval == false) {
             this.logger.info("\n\n\n !!!!!   BF was busy  \n\n");
-            this.sleepTimeMS(400);
+            this.sleepTimeMilliS(400);
             c++;
             if (c > 10) {
                 this.logger.info(" LCD remained busy state ");
@@ -133,24 +133,36 @@ public abstract class LCD1602A {
         return (rval);
     }
 
-    protected void sleepTimeNS(int nanoSec) {
+    protected void sleepTimeNanoS(int nanoSec) {
+        TimeUnit tu = TimeUnit.NANOSECONDS;
         try {
-            Thread.sleep(0, nanoSec);
+            tu.sleep(nanoSec);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+      
+
+    }
+
+    protected void sleepTimeMilliS(int milliSec) {
+        TimeUnit tu = TimeUnit.MILLISECONDS;
+        try {
+            tu.sleep(milliSec);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void sleepTimeMicroS(int microSec) {
+        TimeUnit tu = TimeUnit.MICROSECONDS;
+        try {
+            tu.sleep(microSec);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-    }
-
-    protected void sleepTimeMS(int milliSec) {
-        try {
-            Thread.sleep(milliSec);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
     }
-
 
     // Specific to SubClass
     protected void sendChar(char c) {
