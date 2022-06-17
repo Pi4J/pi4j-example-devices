@@ -7,7 +7,7 @@
  *     * **********************************************************************
  *     * ORGANIZATION  :  Pi4J
  *     * PROJECT       :  Pi4J :: EXTENSION
- *     * FILENAME      :  HD44780U_Declares.java
+ *     * FILENAME      :  PCF8574A_Declares.java
  *     *
  *     * This file is part of the Pi4J project. More information about
  *     * this project can be found here:  https://pi4j.com/
@@ -34,34 +34,33 @@
  *
  */
 
-package com.pi4j.devices.hd44780u;
+package com.pi4j.devices.pcf8574a;
 
-import com.pi4j.io.gpio.digital.DigitalState;
+public class PCF8574A_Declares {
 
-public class HD44780U_Declares {
-
-
-     // RS GPIO and RW GPIO. Internal command
-    public static final DigitalState RsInternalIr = DigitalState.LOW;
-    public static final DigitalState RwInternalIr = DigitalState.LOW;
-
-    // RS GPIO and RW GPIO. Busy Flag  command
-    public static final DigitalState RsInternalBf = DigitalState.LOW;
-    public static final DigitalState RwInternalBf = DigitalState.HIGH;
+    protected  static final int pcf8574A_OutputValid = 4;
+    protected  static final int pcf8574A_InputHold = 4;
 
 
+    protected  static final int data_bits_mask          = 0b11110000;
+    protected  static final int RS_bit_mask             = 0b00000001;
 
 
-    // RS GPIO and RW GPIO.  Write  commands
-    public static final DigitalState RsInternalWrtState = DigitalState.HIGH;
-    public static final DigitalState RwInternalWrtState = DigitalState.LOW;
-    // RS GPIO and RW GPIO.  Read  commands
-    public static final DigitalState RsInternalRdState = DigitalState.HIGH;
-    public static final DigitalState RwInternalRdState = DigitalState.LOW;
+    protected  static final int E_bit_mask              = 0b00000100;    // E P2
+    protected  static final int E_bit_mask_off          = 0b11111011;
 
-    // E GPIO    enable display/read/write of DR
-    public static final DigitalState enableOpState = DigitalState.HIGH;
-    public static final DigitalState disableOpState = DigitalState.LOW;
+    protected static final int E_low                    = 0b00000000;   // P2 off
+    protected static final int E_high                   = 0b00000100;    // P2 on
+
+
+    protected  static final int RS_bit_mask_off         = 0b11111110;    // RS P0
+    protected static final int RS_low  = 0b00000000;      // P0 off
+    protected static final int RS_high = 0b00000001;    // P0 on
+
+
+    protected  static final int RW_bit_mask_off         = 0b11111101;    // RW P1
+    protected static final int RW_low                   = 0b00000000;      // P1 off
+    protected static final int RW_high                  = 0b00000010;    // P1 on
 
 
 }

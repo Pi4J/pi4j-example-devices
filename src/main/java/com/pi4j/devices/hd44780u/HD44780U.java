@@ -38,6 +38,8 @@ package com.pi4j.devices.hd44780u;
 
 
 import com.pi4j.context.Context;
+import com.pi4j.devices.mcp4725.MCP4725;
+import com.pi4j.devices.pcf8574a.PCF8574A;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
@@ -46,6 +48,7 @@ import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.pi4j.devices.lcd1602a.LCD1602A;
+import com.pi4j.devices.lcd1602a.LCD1602A_Declares;
 import java.util.concurrent.TimeUnit;
 
 public class HD44780U  extends LCD1602A{
@@ -57,6 +60,7 @@ public class HD44780U  extends LCD1602A{
       private int RsPinNum = 0xff;
     private int EnPinNum = 0xff;
 
+    private String traceLevel;
 
 
     private HD44780U_Interface D0_D7;
@@ -66,15 +70,21 @@ public class HD44780U  extends LCD1602A{
         this.D0_D7 = d0_d7;
         this.RsPinNum = rsGpio;
         this.EnPinNum = enGpio;
+        this.traceLevel = traceLevel;
+
         this.init();
     }
 
 
     public void init() {
+        System.setProperty("org.slf4j.simpleLogger.log." + HD44780U.class.getName(), this.traceLevel);
+        this.logger = LoggerFactory.getLogger(LCD1602A.class);
 
         super.init();
         this.logger.trace("DR Pin  " + this.RsPinNum);
         this.logger.trace("EN Pin  " + this.EnPinNum);
+
+
 
         var outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
                 .id("RS_pin")
@@ -111,14 +121,14 @@ public class HD44780U  extends LCD1602A{
         this.D0_D7.sendCommand(0x00); // ensure all pins are low
 
         this.EnPin.low();
-        this.sleepTimeNS(HD44780U_Declares.postWrtEnableCycleDelay);
+        this.sleepTimeNanoS(LCD1602A_Declares.postWrtEnableCycleDelay);
           // enable LCD with blink
-        this.sendCommand(HD44780U_Declares.dispCMD | HD44780U_Declares.dispOnBit| HD44780U_Declares.dispBlnkOnBit | HD44780U_Declares.dispCrsOnBit );
+        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit| LCD1602A_Declares.dispBlnkOnBit | LCD1602A_Declares.dispCrsOnBit );
         // entry mode, cursor moves right each character
 
-        this.sendCommand(HD44780U_Declares.entryModeCMD | HD44780U_Declares.entryModeIncCMD);
+        this.sendCommand(LCD1602A_Declares.entryModeCMD | LCD1602A_Declares.entryModeIncCMD);
 
-        this.sendCommand(HD44780U_Declares.funcSetCMD | HD44780U_Declares.func8BitsBit  | HD44780U_Declares.func5x8TwoBit);
+        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func8BitsBit  | LCD1602A_Declares.func5x8TwoBit);
         if(this.clearDisplay){
             this.logger.trace("Clear Display");
             this.clearDisplay();
@@ -140,9 +150,9 @@ public class HD44780U  extends LCD1602A{
          this.logger.trace(">>> Enter: sendChar   : " + c );
         if (this.lcdAvailable()) {
             this.RsPin.high();
-             this.sleepTimeNS(HD44780U_Declares.dataWrtSetupDuration);
+             this.sleepTimeNanoS(LCD1602A_Declares.dataWrtSetupDuration);
             this.D0_D7.sendCommand(c);
-            this.sleepTimeNS(HD44780U_Declares.postAddressWrtSetupDelay);
+            this.sleepTimeNanoS(LCD1602A_Declares.postAddressWrtSetupDelay);
             this.pulseEnable();
         } else {
             this.logger.info("LCD in busy state, request not possible");
@@ -154,9 +164,9 @@ public class HD44780U  extends LCD1602A{
         this.logger.trace(">>> Enter: sendCommand   ");
             if(this.lcdAvailable()){
                 this.RsPin.low();
-                this.sleepTimeNS(HD44780U_Declares.dataWrtSetupDuration);
+                this.sleepTimeNanoS(LCD1602A_Declares.dataWrtSetupDuration);
                 this.D0_D7.sendCommand(cmd);
-                this.sleepTimeNS(HD44780U_Declares.postAddressWrtSetupDelay);
+                this.sleepTimeNanoS(LCD1602A_Declares.postAddressWrtSetupDelay);
                 this.pulseEnable();
             }else {
                 this.logger.info("LCD in busy state, request not possible");
@@ -178,9 +188,9 @@ public class HD44780U  extends LCD1602A{
     protected void pulseEnable() {
         this.logger.trace(">>> Enter: pulseEnable  ");
         this.EnPin.high();
-        this.sleepTimeNS(HD44780U_Declares.enableWidthDuration);
+        this.sleepTimeNanoS(LCD1602A_Declares.enableWidthDuration);
         this.EnPin.low();
-        this.sleepTimeNS(HD44780U_Declares.postWrtEnableCycleDelay);
+        this.sleepTimeNanoS(LCD1602A_Declares.postWrtEnableCycleDelay);
         this.logger.trace("<<< Exit: pulseEnable  ");
     }
 
