@@ -168,12 +168,12 @@ public class HD44780U_App {
 
 
         if(lineOne.length() >0) {
-            dispObj.sendStringLineOne(lineOne, lineOneOffset);
+            dispObj.sendStringLineX(lineOne, 1, lineOneOffset);
         }
 
 
         if(lineTwo.length() >0) {
-            dispObj.sendStringLineTwo(lineTwo,  lineTwoOffset);
+            dispObj.sendStringLineX(lineTwo, 2,  lineTwoOffset);
         }
 
         Thread.sleep(5000);

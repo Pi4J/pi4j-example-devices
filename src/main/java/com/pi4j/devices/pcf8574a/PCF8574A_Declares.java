@@ -52,6 +52,10 @@ public class PCF8574A_Declares {
     protected static final int E_low                    = 0b00000000;   // P2 off
     protected static final int E_high                   = 0b00000100;    // P2 on
 
+    protected static final int backlight_on            = 0b00001000;    // P2 on
+    protected static final int backlight_off           = 0b00000000;    // P2 on
+
+
 
     protected  static final int RS_bit_mask_off         = 0b11111110;    // RS P0
     protected static final int RS_low  = 0b00000000;      // P0 off

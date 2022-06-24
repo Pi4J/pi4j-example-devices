@@ -42,7 +42,17 @@ src/main/java/com/pi4j/devices/sn74hc595/README.md
 This package does not use any other code within my repo.    
 
 MCP4725  12 bit DAC     
-src/main/java/com/pi4j/devices/mcp4725/README.md     
-This package does not use any other code within my repo.    
+src/main/java/com/pi4j/devices/mcp4725/README.md        
+This package does not use any other code within my repo.       
+
+
+1602A LCD  HD44780U    
+App uses SN74HC595 to control the LCD    
+src/main/java/com/pi4j/devices/hd44780u/README.md   
+
+1602A LCD  HD44780U   
+PCF8574A I2C  Controller.   
+App uses PCF8574A to control the LCD   
+src/main/java/com/pi4j/devices/pcf8574A/README.md   
 
 

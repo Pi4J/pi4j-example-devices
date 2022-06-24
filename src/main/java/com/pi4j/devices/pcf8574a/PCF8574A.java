@@ -51,19 +51,20 @@ public class PCF8574A extends LCD1602A {
     private int busNum;
     private int address;
 
-    private int ctrlData;
 
 
     public PCF8574A(Context pi4j, Console console, boolean clearIt, String traceLevel, int bus, int address) {
         super(pi4j, console, clearIt, traceLevel);
         this.busNum = bus;
         this.address = address;
-        this.ctrlData = 0x00;
 
         this.init();
     }
 
 
+    /**
+     * Configure I2C LCD display
+     */
     public void init() {
         System.setProperty("org.slf4j.simpleLogger.log." + PCF8574A.class.getName(), this.traceLevel);
         this.logger = LoggerFactory.getLogger(PCF8574A.class);
@@ -71,204 +72,131 @@ public class PCF8574A extends LCD1602A {
         super.init();
         this.logger.trace(">>>Enter init   Bus  : " + this.busNum + "  address  " + this.address);
         this.createI2cDevice();
-// blahhhhh
-
-        /*
-        this.writeToDev(0x00); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-        this.writeToDev(0x10); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-        this.writeToDev(0x00); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-        this.writeToDev(0x00); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-        this.writeToDev(0x10); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
 
 
+        this.sendCommand((byte) 0x3);
+        this.sendCommand((byte) 0x3);
+        this.sendCommand((byte) 0x3);
+        this.sendCommand((byte) 0x2);
 
-
-
-
-
-
-        this.writeToDev(0x30); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-
-        this.writeToDev(0x30); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-
-        this.writeToDev(0x30); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-
-        this.writeToDev(0x20); // FUNC  but accepted as 8bit op
-        this.sleepTimeMilliS(15);
-        this.pulseEnable();
-
-
-
-
-
-
-        this.sendCommand(0x28);
-        this.sleepTimeMilliS(15);
-        this.sendCommand(0x0c);
-        this.sleepTimeMilliS(15);
-        this.sendCommand(0x01);
-        this.sleepTimeMilliS(15);
-        this.sendCommand(0x06);
-        this.sleepTimeMilliS(10);
-
-        this.sendChar('B');
-
-*/
-
-
-
-        //this.setRWLow();
-
-/*
-        this.sendCommand(0x20); // FUNC--4-bit
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-       // this.pulseEnable();
-//        this.sendCommand(0x00); // 1 line , 5x8
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-      //  this.pulseEnable();
-
-        this.sendCommand(0x0e); // Display  01
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-     //   this.pulseEnable();
-//        this.sendCommand(0x0e); // ON and  cursor
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-     //   this.pulseEnable();
-
-
-        this.sendCommand(0x16); // entry mode   00
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-     //   this.pulseEnable();
-        //this.sendCommand(0x06); // INC to right
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-     //   this.pulseEnable();
-
-*/
-
-
-//        this.sendChar('a');
-
-
-       // this.setEnLow();
-       // this.setRWLow();
-        this.writeToDev(0x20); // FUNC 4-bit, but accepted as 8bit op
-
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-
-        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func4BitsBit); // | LCD1602A_Declares.func5x8TwoBit );
+        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func4BitsBit  | LCD1602A_Declares.func5x8TwoBit  );
         // enable LCD with blink
-        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit | LCD1602A_Declares.dispCrsOnBit);   // | LCD1602A_Declares.dispBlnkOnBit
-
+        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit   ); //| LCD1602A_Declares.dispCrsOnBit
+        this.sendCommand( LCD1602A_Declares.clearDispCMD);
          // entry mode, cursor moves right each character
         this.sendCommand(LCD1602A_Declares.entryModeCMD | LCD1602A_Declares.entryModeIncCMD);
 
+        this.writeToDev((byte) LCD1602A_Declares.dispCMD);
 
+        this.sleepTimeMicroS(LCD1602A_Declares.postWrtEnableCycleDelay);
+
+        this.sendChar('H');
         if (this.clearDisplay) {
             this.logger.trace("Clear Display");
             this.clearDisplay();
         }
-
-        this.sendChar('H');
-
-        this.logger.trace("<<< Exit: init  device  ");
+      this.logger.trace("<<< Exit: init  device  ");
     }
 
 
-
-    private void writeToDev(int data){
+    /**
+     * Write byte to actual device I2C interface
+      * @param data
+     */
+    private void writeToDev(byte data){
+        data |=   PCF8574A_Declares.backlight_on;
         this.logger.trace(">>> Enter: writeToDev  data: "+ String.format("%02x ", data) );
 
         String logData = "";
         logData += " \n    P7-DB7: "+ ((data >> 7) & 0x1) +   " P6-DB6: "+ ((data >> 6) & 0x1) + " P5-DB5: "+ ((data >> 5) & 0x1) + "  P4-DB4: "  + ((data >> 4) & 0x1) +
-                "\n  EN: " + ((data >> 2) & 0x1)  + " RW: "  + ((data>>1) & 0x1) +    " RS: "  + ((data) & 0x1) +  "\n  Data : " + String.format("0X%02x: ",((data >> 4 ) &0xf));
+                "\n    BackLight: " +   ((data >> 3) & 0x1)  +  "  EN: " + ((data >> 2) & 0x1)  + " RW: "  + ((data>>1) & 0x1) +    " RS: "  + ((data) & 0x1) +  "\n  Data : " + String.format("0X%02x: ",((data >> 4 ) &0xf));
         this.logger.trace(logData);
         int rc = this.pcfDev.write(data);
+        this.sleepTimeMicroS(LCD1602A_Declares.preAddressWrtSetupDelay*2);
+
         this.logger.trace("Exit: writeToDev  RC : "  + rc);
     }
 
-    private void setEnLow() {
+    /**
+     *  Set EN bit low
+     * @param b byte
+     * @return  modified byte
+     */
+    private byte setEnLow(byte b) {
         this.logger.trace(">>> Enter: setEnLow");
-        this.ctrlData &= PCF8574A_Declares.E_bit_mask_off;
-        this.ctrlData |= PCF8574A_Declares.E_low;
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b &= PCF8574A_Declares.E_bit_mask_off;
+        b |= PCF8574A_Declares.E_low;
         this.logger.trace("<<< Exit: setEnLow");
+        return (b);
     }
 
 
-    private void setEnHigh() {
+    /**
+     *  Set EN bit high
+     * @param b byte
+     * @return  modified byte
+     */
+    private byte setEnHigh(byte b) {
         this.logger.trace(">>> Enter: setEnHigh");
-        this.ctrlData &= PCF8574A_Declares.E_bit_mask_off;
-        this.ctrlData |= PCF8574A_Declares.E_high;
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b  &= PCF8574A_Declares.E_bit_mask_off;
+        b |= PCF8574A_Declares.E_high;
         this.logger.trace("<<< Exit: setEnHigh");
+        return(b);
     }
 
 
-    private void setRSLow() {
+    /**
+     *  Set RS bit low
+     * @param b byte
+     * @return  modified byte
+     */
+    private byte setRSLow(byte b) {
         this.logger.trace(">>> Enter: setRSLow");
-        this.ctrlData &= PCF8574A_Declares.RS_bit_mask_off;
-        this.ctrlData |= PCF8574A_Declares.RS_low;
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b  &= PCF8574A_Declares.RS_bit_mask_off;
+        b |= PCF8574A_Declares.RS_low;
         this.logger.trace("<<< Exit: setRSLow");
+        return(b);
     }
 
 
-    private void setRSHigh() {
+    /**
+     *  Set RS bit high
+     * @param b byte
+     * @return  modified byte
+     */
+    private  byte setRSHigh(byte b) {
         this.logger.trace(">>> Enter: setRSHigh");
-        this.ctrlData &= PCF8574A_Declares.RS_bit_mask_off;
-        this.ctrlData |= PCF8574A_Declares.RS_high;
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b  &= PCF8574A_Declares.RS_bit_mask_off;
+        b  |= PCF8574A_Declares.RS_high;
         this.logger.trace("<<< Exit: setRSHigh");
+        return(b);
     }
 
-    private void setRWLow() {
+    /**
+     *  Set RW bit low
+     * @param b byte
+     * @return  modified byte
+     */
+    private byte setRWLow(byte b) {
         this.logger.trace(">>> Enter: setRWLow");
-        this.ctrlData &= PCF8574A_Declares.RW_bit_mask_off;
-        this.ctrlData |= PCF8574A_Declares.RW_low;
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b  &= PCF8574A_Declares.RW_bit_mask_off;
+        b  |= PCF8574A_Declares.RW_low;
         this.logger.trace("<<< Exit: setRWLow");
+        return(b);
     }
 
 
-    private void setRWHigh() {
+    /**
+     *  Set RW bit high
+     * @param b byte
+     * @return  modified byte
+     */
+    private byte setRWHigh(byte b) {
         this.logger.trace(">>> Enter: setRWHigh");
-        this.ctrlData &= PCF8574A_Declares.RW_bit_mask_off;
-        this.ctrlData |= PCF8574A_Declares.RW_high;
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.writeToDev(this.ctrlData);
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b  &= PCF8574A_Declares.RW_bit_mask_off;
+        b  |= PCF8574A_Declares.RW_high;
         this.logger.trace("<<< Exit: setRWHigh");
+        return(b);
     }
     private void createI2cDevice() {
         this.logger.trace(">>> Enter:createI2cDevice   bus  " + this.busNum + "  address " + this.address);
@@ -289,24 +217,32 @@ public class PCF8574A extends LCD1602A {
         this.logger.trace("<<< Exit:createI2cDevice  ");
     }
 
+    /**
+     * Write byte to device P4-P7, then pulse EN pin so P4-P7 are read into LCD
+     * @param b
+     */
+    protected void writeFourBits(byte b) {
+        this.logger.trace(">>> Enter: writeFourBits   : " +  b + String.format("    0X%02x: ", (int)b));
+        this.writeToDev((byte) (b));
+        this.pulseEnable(b);
+        this.logger.trace("<<<  Exit: writeFourBits  ");
+    }
 
-    protected void sendChar(char c) {
-        this.logger.trace(">>> Enter: sendChar   : " +  c + String.format("    0X%02x: ", (int)c));
-        this.ctrlData &= 0x0f;    // only include control bits, no char data
 
-        this.ctrlData = this.ctrlData | ((c )  & 0xf0);
+
+
+    /**
+     * Set RS bit high and write high then low nibble to device
+     * @param data
+     */
+    protected void sendChar(char data) {
+        this.logger.trace(">>> Enter: sendChar   : " +  data + String.format("    0X%02x: ", (int)data));
 
         if (this.lcdAvailable()) {
-            this.setRSHigh();
-            this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-            this.writeToDev(this.ctrlData);
-            this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-            this.pulseEnable();
-            this.ctrlData &= 0x0f;    // only include control bits, no data
-            this.ctrlData = this.ctrlData | ((c << 4 )& 0xf0);
-            this.writeToDev(this.ctrlData);
-            this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-            this.pulseEnable();
+            byte c= this.setRSHigh((byte) (data & 0xf0));
+            this.writeFourBits(c);
+            c = this.setRSHigh((byte)((data << 4) & 0xF0));
+            this.writeFourBits(c);
         } else {
             this.logger.trace("LCD in busy state, request not possible");
         }
@@ -314,23 +250,18 @@ public class PCF8574A extends LCD1602A {
     }
 
     // do required gpio->LCD_input dance before and after actual LCD pin update
-    protected void sendCommand(int cmd) {
-        this.logger.trace(">>> Enter: sendCommand  : " + String.format("0X%02x: ",cmd));
-        this.ctrlData &= 0x0f;    // only include control bits, no data
 
-        this.ctrlData = this.ctrlData | ((cmd )  & 0xf0);
-
+    /**
+     * Set RS bit low and write high then low nibble to device
+     * @param data
+     */
+    protected void sendCommand(int data) {
+        this.logger.trace(">>> Enter: sendCommand  : " + String.format("0X%02x: ", data));
         if (this.lcdAvailable()) {
-            this.setRSLow();
-            this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-            this.writeToDev(this.ctrlData);
-            this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-            this.pulseEnable();
-            this.ctrlData &= 0x0f;    // only include control bits, no data
-            this.ctrlData = this.ctrlData | ((cmd << 4 )& 0xf0);
-            this.writeToDev(this.ctrlData);
-            this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-            this.pulseEnable();
+            byte cmd = this.setRSLow((byte) (data & 0xf0));
+            this.writeFourBits(cmd);
+            cmd = this.setRSLow((byte) ((data << 4) & 0xF0));
+            this.writeFourBits(cmd);
         } else {
             this.logger.trace("LCD in busy state, request not possible");
         }
@@ -339,22 +270,22 @@ public class PCF8574A extends LCD1602A {
 
 
     /**
-     * Value of 0 indicates the device is not performing internal
-     * operations and will accept commands
-     * Not possible with the Pi GPIOs. Later if the D0_D7 interface is on an
-     * MCP230xx, this maybe possible.  For present time, use timing values
-     * documented in datasheet
+     * Modify data byte to set EN bit, write to device.
+     *  Wait
+     * Clear bit and write to device
      *
-     * @return bit value of DB7
+     * @param b
+     *
      */
 
-
-    protected void pulseEnable() {
+    protected void pulseEnable(byte b){
         this.logger.trace(">>> Enter: pulseEnable  ");
-        this.setEnHigh();
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
-        this.setEnLow();
-        this.sleepTimeMilliS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b = this.setEnHigh(b);
+        this.writeToDev(b);
+        this.sleepTimeMicroS(LCD1602A_Declares.postWrtEnableCycleDelay);
+        b = this.setEnLow(b);
+        this.writeToDev(b);
+        this.sleepTimeMicroS(LCD1602A_Declares.postWrtEnableCycleDelay);
         this.logger.trace("<<< Exit: pulseEnable  ");
     }
 

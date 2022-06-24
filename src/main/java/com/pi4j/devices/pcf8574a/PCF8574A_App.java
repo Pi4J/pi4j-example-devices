@@ -39,8 +39,7 @@ package com.pi4j.devices.pcf8574a;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.devices.bmp280.BMP280Declares;
-import com.pi4j.devices.hd44780u.HD44780U;
-import com.pi4j.devices.sn74hc595.SN74HC595;
+
 import com.pi4j.io.exception.IOException;
 import com.pi4j.util.Console;
 
@@ -143,17 +142,23 @@ public class PCF8574A_App {
 
 
         if (lineOne.length() > 0) {
-            dispObj.sendStringLineOne(lineOne, lineOneOffset);
+            dispObj.sendStringLineX(lineOne,1, lineOneOffset);
         }
 
 
         if (lineTwo.length() > 0) {
-            dispObj.sendStringLineTwo(lineTwo, lineTwoOffset);
+            dispObj.sendStringLineX(lineTwo, 2, lineTwoOffset);
         }
 
         Thread.sleep(5000);
 
         dispObj.shiftLeft(shiftLeftCount);
+        Thread.sleep(5000);
+
+        dispObj.clearDisplay();
+        Thread.sleep(5000);
+        dispObj.sendStringLineX("HelloWorld" , 1, 5);
+
     }
 
 

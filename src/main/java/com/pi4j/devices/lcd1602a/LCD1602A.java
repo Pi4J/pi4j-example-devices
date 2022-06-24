@@ -87,14 +87,20 @@ public abstract class LCD1602A {
     public void clearDisplay() {
         this.logger.trace(">>> Enter: clearDisplay   ");
         this.sendCommand(LCD1602A_Declares.clearDispCMD);
+        this.sendCommand(LCD1602A_Declares.returnHomeCMD);
         this.logger.trace("<<< Exit: clearDisplay   ");
     }
 
-
-    public void sendStringLineOne(String str, int offset) {
-        this.logger.trace(">>> Enter: sendStringLineOne   : " + str + "  Offset  : " + offset);
+    /**
+     *
+     * @param str  What to display
+     * @param line    line of display, 1,2...
+     * @param offset   offset within the line
+     */
+    public void sendStringLineX(String str, int line,int offset) {
+        this.logger.trace(">>> Enter: sendStringLineOne   : " + str + "    line : " + line + "  Offset  : " + offset);
         char[] chars = str.toCharArray();
-        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | offset);
+        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | ( 0x40 *(line-1)) | offset);
         for (int i = 0; i < chars.length; i++) {
             this.sendChar(chars[i]);
         }
@@ -102,16 +108,6 @@ public abstract class LCD1602A {
     }
 
 
-    public void sendStringLineTwo(String str, int offset) {
-        this.logger.trace(">>> Enter: sendStringLineTwo   : " + str + "  Offset  : " + offset);
-        char[] chars = str.toCharArray();
-        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | 0x40 | offset);
-        this.sleepTimeMilliS(4);
-        for (int i = 0; i < chars.length; i++) {
-            this.sendChar(chars[i]);
-        }
-        this.logger.trace("<<<  Exit: sendStringLineTwo  ");
-    }
 
     protected boolean lcdAvailable() {
         int c = 0;
@@ -170,6 +166,10 @@ public abstract class LCD1602A {
         this.logger.trace("<<<  Exit: sendChar  ");
     }
 
+    protected void sendChar(byte c) {
+        this.logger.trace(">>> Enter: sendChar   : " + c);
+        this.logger.trace("<<<  Exit: sendChar  ");
+    }
     // do required gpio->LCD_input dance before and after actual LCD pin update
     protected void sendCommand(int cmd) {
         this.logger.trace(">>> Enter: sendCommand   ");
@@ -198,5 +198,10 @@ public abstract class LCD1602A {
         this.logger.trace("<<< Exit: pulseEnable   ");
     }
 
+
+    protected void pulseEnable(byte b) {
+        this.logger.trace(">>> Enter: pulseEnable   ");
+        this.logger.trace("<<< Exit: pulseEnable   ");
+    }
 
 }
