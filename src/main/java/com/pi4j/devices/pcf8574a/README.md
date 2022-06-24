@@ -9,33 +9,12 @@
 Project by Tom Aarts
 ==========================================================================
 
+1602A
+https://www.sparkfun.com/datasheets/LCD/ADM1602K-NSR-FBS-3.3v.pdf
+
 PCF8574A I2C controlling a 1602A LCD
-https://www.playembedded.org/blog/hd44780-backpack-stm32/
 
-
-
-P0-P7 Pins on controller
-
-P0      RS
-P1      RW
-P2      CS
-P3      EN (CS)
-P4      DB4
-P5      DB5
-P6      DB6
-P7      DB7
-
-
-
-Init  
-file:///home/pi/Documents/HD44780.pdf table 12
-
-
-LCD1602A doc
-
-page12 4 bit init steps
-D7-D4     High bits sent first, then lower
-
+D7-D4     High bit nibble sent first, then lower nibble
 
 
 i2c
@@ -44,14 +23,14 @@ https://www.robotshop.com/community/forum/t/drive-a-standard-hd44780-lcd-using-a
 
 
 PCF                                                    LCD
-P0                                                      D4
-P1                                                      D5
-P2                                                      D6
-P3                                                      D7
-P4                                                      RS
-P5                                                      NC
-P6                                                      NC
-P7                                                      E
+P0                                                      RS
+P1                                                      RW
+P2                                                      E
+P3                                                      backlight
+P4                                                      D4
+P5                                                      D5
+P6                                                      D6
+P7                                                      D7
 
 
 

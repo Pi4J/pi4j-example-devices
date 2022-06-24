@@ -91,15 +91,14 @@ public class LCD1602A_Declares {
     public static final int  postAddressWrtSetupDelay = 90;   // 60
 
     public static final int  dataWrtSetupDuration = 90;   // 60
-    public static final int  postDataWrtDelay = 20;   // 10
+    public static final int  postDataWrtDelay = 60;   // 10
 
     // Read operations
     public static final int  preRdEnableCycleDelay = 500;   // 400
     public static final int  enableRdCycleDuration = 200;  // 150
-    public static final int  postRdEnableCycleDelay = 500;   // 400
-
+    public static final int  postResetEnableCycleDelay = 100;
     public static final int  addressRdSetupDuration = 50; // 30
-    public static final int  postAddressRdSetupDelay = 20;   // 10
+    public static final int  preAddressWrtSetupDelay = 20;   // 10
 
     public static final int  dataRdSetupDuration = 240;   // 100
     public static final int  postDataRdDelay = 10;   // 5
