@@ -34,9 +34,9 @@
  *
  */
 
-package com.pi4j.devices.pcf8574a;
+package com.pi4j.devices.pcf8574a_lcd1602a;
 
-public class PCF8574A_Declares {
+public class PCF8574A_Declares_LCD1602A {
 
     protected  static final int pcf8574A_OutputValid = 4;
     protected  static final int pcf8574A_InputHold = 4;

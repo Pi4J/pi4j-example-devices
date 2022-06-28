@@ -8,7 +8,7 @@
 #     * **********************************************************************
 #     * ORGANIZATION  :  Pi4J
 #     * PROJECT       :  Pi4J :: EXTENSION
-#     * FILENAME      :  runPCF8574A.sh
+#     * FILENAME      :  runPCF8574A_LCD1602A.sh
 #     *
 #     * This file is part of the Pi4J project. More information about
 #     * this project can be found here:  https://pi4j.com/
@@ -36,4 +36,4 @@
 #
 
 
-java --module-path . --module  com.pi4j.devices/com.pi4j.devices.pcf8574a.PCF8574A_App  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.pcf8574a_lcd1602a.PCF8574A_App_LCD1602A  $@

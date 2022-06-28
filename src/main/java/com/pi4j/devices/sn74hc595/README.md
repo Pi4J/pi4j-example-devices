@@ -14,6 +14,9 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: SN74HC595 8 Bit shift reg
 Project by Tom Aarts
 ==========================================================================
 
+
+Specific usage of sn74hc595 to control 1602A LCD
+
                             9               8         gnd
 
 gpio13                      10              7         QH Red LED   

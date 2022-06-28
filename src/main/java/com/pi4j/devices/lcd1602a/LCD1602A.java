@@ -38,12 +38,9 @@ package com.pi4j.devices.lcd1602a;
 
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.hd44780u.HD44780U;
-import com.pi4j.devices.hd44780u.HD44780U_Declares;
 
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 

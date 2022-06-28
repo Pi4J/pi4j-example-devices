@@ -7,7 +7,7 @@
  *     * **********************************************************************
  *     * ORGANIZATION  :  Pi4J
  *     * PROJECT       :  Pi4J :: EXTENSION
- *     * FILENAME      :  PCF8574A_App.java
+ *     * FILENAME      :  HD44780U_App.java
  *     *
  *     * This file is part of the Pi4J project. More information about
  *     * this project can be found here:  https://pi4j.com/
@@ -34,16 +34,15 @@
  *
  */
 
-package com.pi4j.devices.pcf8574a;
+package com.pi4j.devices.hd44780u_lcd1602a;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Declares;
-
+import com.pi4j.devices.sn74hc595.SN74HC595;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.util.Console;
 
-public class PCF8574A_App {
+public class HD44780U_App_LCD1602A {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         var console = new Console();
@@ -57,8 +56,6 @@ public class PCF8574A_App {
         String lineTwo = "";
         int lineTwoOffset = 0;
 
-        int busNum = BMP280Declares.DEFAULT_BUS;
-        int address = BMP280Declares.DEFAULT_ADDRESS;
 
         // params for shift register, HD44780U_interface
         int OEPinNum = 0xff;
@@ -71,24 +68,50 @@ public class PCF8574A_App {
 
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "HD44780U_App");
-        String helpString = " parms: HD44780U   -b hex value bus    -a hex value address -t trace \n  " +
-                "  -line1 LcdString,-line1Offset offset ," +
+        String helpString = " parms: HD44780U  \n  " +
+                "  -rs STCP gpio,  -en SHCP gpio,  -line1 LcdString,-line1Offset offset ," +
                 " -line2 LcdString, -line2Offset offset, -shiftL left shift -clearLCD  \n" +
+                "  parms :  HD44780U_interface  \n" +
+                " -ds HEX DS gpio -oe OE gpio,  -st STCP gpio,  -sh SHCP gpio, -mr MR gpio  " +
                 "-t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
                 " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if (o.contentEquals("-b")) { // bus
+            if (o.contentEquals("-oe")) {
                 String a = args[i + 1];
-                busNum = Integer.parseInt(a.substring(2), 16);
+                OEPinNum = Integer.parseInt(a);
                 i++;
-            } else if (o.contentEquals("-a")) { // device address
+            } else if (o.contentEquals("-ds")) {
+                String a = args[i + 1];
+                DSPinNum = Integer.parseInt(a);
+                i++;
+            } else if (o.contentEquals("-st")) {
+                String a = args[i + 1];
+                STCPPinNum = Integer.parseInt(a);
+                i++;
+            } else if (o.contentEquals("-sh")) {
+                String a = args[i + 1];
+                SHCPPinNum = Integer.parseInt(a);
+                i++;
+            } else if (o.contentEquals("-mr")) {
+                String a = args[i + 1];
+                MRPinNum = Integer.parseInt(a);
+                i++;
+            }  else if (o.contentEquals("-rd")) {
                 String a = args[i + 1];
                 i++;
-                address = Integer.parseInt(a.substring(2), 16);
-            } else  if(o.contentEquals("-line1")) {
+                registerData = (byte) (Integer.parseInt(a.substring(2), 16) & 0xff);
+            }else if (o.contentEquals("-rs")) {
+                String a = args[i + 1];
+                rsPinNum = Integer.parseInt(a);
+                i++;
+            }  else if (o.contentEquals("-en")) {
+                String a = args[i + 1];
+                enPinNum = Integer.parseInt(a);
+                i++;
+            }else if (o.contentEquals("-line1")) {
                 String a = args[i + 1];
                 lineOne = a;
                 i++;
@@ -96,21 +119,21 @@ public class PCF8574A_App {
                 String a = args[i + 1];
                 lineOneOffset = Integer.parseInt(a);
                 i++;
-            } else if (o.contentEquals("-line2")) {
+            }else if (o.contentEquals("-line2")) {
                 String a = args[i + 1];
                 lineTwo = a;
                 i++;
-            } else if (o.contentEquals("-line2Offset")) {
+            }else if (o.contentEquals("-line2Offset")) {
                 String a = args[i + 1];
                 lineTwoOffset = Integer.parseInt(a);
                 i++;
-            } else if (o.contentEquals("-shiftL")) {
+            }else if (o.contentEquals("-shiftL")) {
                 String a = args[i + 1];
                 shiftLeftCount = Integer.parseInt(a);
                 i++;
             } else if (o.contentEquals("-clearLCD")) {
-                clearLCD = true;
-            } else if (o.contentEquals("-t")) {
+                 clearLCD = true;
+            }else if (o.contentEquals("-t")) {
                 String a = args[i + 1];
                 i++;
                 traceLevel = a;
@@ -138,29 +161,28 @@ public class PCF8574A_App {
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
 
-        PCF8574A dispObj = new PCF8574A(pi4j, console,clearLCD, traceLevel, busNum, address);
+        var d0_d7 = new SN74HC595(pi4j, console,  DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);
+        HD44780U_LCD1602A dispObj = new HD44780U_LCD1602A(pi4j, console, d0_d7, rsPinNum, enPinNum,  clearLCD, traceLevel);
 
 
-        if (lineOne.length() > 0) {
-            dispObj.sendStringLineX(lineOne,1, lineOneOffset);
+        if(lineOne.length() >0) {
+            dispObj.sendStringLineX(lineOne, 1, lineOneOffset);
         }
 
 
-        if (lineTwo.length() > 0) {
-            dispObj.sendStringLineX(lineTwo, 2, lineTwoOffset);
+        if(lineTwo.length() >0) {
+            dispObj.sendStringLineX(lineTwo, 2,  lineTwoOffset);
         }
 
         Thread.sleep(5000);
 
         dispObj.shiftLeft(shiftLeftCount);
+
         Thread.sleep(5000);
 
-        dispObj.clearDisplay();
-        Thread.sleep(5000);
-        dispObj.sendStringLineX("HelloWorld" , 1, 5);
-
+        if(clearLCD) {
+            dispObj.clearDisplay();
+        }
     }
-
-
 
 }

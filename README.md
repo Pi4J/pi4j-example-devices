@@ -48,11 +48,16 @@ This package does not use any other code within my repo.
 
 1602A LCD  HD44780U    
 App uses SN74HC595 to control the LCD    
-src/main/java/com/pi4j/devices/hd44780u/README.md   
+src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md   
 
 1602A LCD  HD44780U   
 PCF8574A I2C  Controller.   
 App uses PCF8574A to control the LCD   
-src/main/java/com/pi4j/devices/pcf8574A/README.md   
+src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md   
 
 
+
+1602A LCD  MCP23017   
+MCP23017 I2C  Controller.   
+App uses MCP23017 to control the LCD   
+src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md   
