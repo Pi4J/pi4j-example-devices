@@ -34,24 +34,18 @@
  *
  */
 
-package com.pi4j.devices.hd44780u;
+package com.pi4j.devices.hd44780u_lcd1602a;
 
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.mcp4725.MCP4725;
-import com.pi4j.devices.pcf8574a.PCF8574A;
-import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.util.Console;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.pi4j.devices.lcd1602a.LCD1602A;
 import com.pi4j.devices.lcd1602a.LCD1602A_Declares;
-import java.util.concurrent.TimeUnit;
 
-public class HD44780U  extends LCD1602A{
+public class HD44780U_LCD1602A extends LCD1602A{
 
 
     private DigitalOutput RsPin = null;
@@ -63,9 +57,9 @@ public class HD44780U  extends LCD1602A{
     private String traceLevel;
 
 
-    private HD44780U_Interface D0_D7;
+    private HD44780U_Interface_LCD1602A D0_D7;
 
-    public HD44780U(Context pi4j, Console console,HD44780U_Interface d0_d7, int rsGpio, int enGpio, boolean clearIt, String traceLevel) {
+    public HD44780U_LCD1602A(Context pi4j, Console console, HD44780U_Interface_LCD1602A d0_d7, int rsGpio, int enGpio, boolean clearIt, String traceLevel) {
         super(pi4j,  console,  clearIt, traceLevel);
         this.D0_D7 = d0_d7;
         this.RsPinNum = rsGpio;
@@ -77,7 +71,7 @@ public class HD44780U  extends LCD1602A{
 
 
     public void init() {
-        System.setProperty("org.slf4j.simpleLogger.log." + HD44780U.class.getName(), this.traceLevel);
+        System.setProperty("org.slf4j.simpleLogger.log." + HD44780U_LCD1602A.class.getName(), this.traceLevel);
         this.logger = LoggerFactory.getLogger(LCD1602A.class);
 
         super.init();

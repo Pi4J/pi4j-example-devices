@@ -45,7 +45,16 @@ src/main/java/com/pi4j/devices/mcp4725/README.md
 This package does not use any other code within my repo.  
 
 
-HD44780U  1602A LCD
-src/main/java/compi4j/devices/hd44780u/README.md
+hd44780u_lcd1602a  1602A LCD
+src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md
 This package uses the SN74HC595 within my repo.
+
+pcf8574a_lcd1602a  1602A LCD    
+src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md   
+This package does not use any other code within my repo.   
+
+
+mcp23017_lcd1602a   1602A LCD    
+src/main/java/com/pi4j/devices//cp23017_lcd1602a/README.md    
+This package does not use any other code within my repo.   
 

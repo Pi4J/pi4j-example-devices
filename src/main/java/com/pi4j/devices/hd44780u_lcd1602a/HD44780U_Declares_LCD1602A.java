@@ -34,11 +34,11 @@
  *
  */
 
-package com.pi4j.devices.hd44780u;
+package com.pi4j.devices.hd44780u_lcd1602a;
 
 import com.pi4j.io.gpio.digital.DigitalState;
 
-public class HD44780U_Declares {
+public class HD44780U_Declares_LCD1602A {
 
 
      // RS GPIO and RW GPIO. Internal command

@@ -37,7 +37,7 @@
 package com.pi4j.devices.sn74hc595;
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.hd44780u.HD44780U_Interface;
+import com.pi4j.devices.hd44780u_lcd1602a.HD44780U_Interface_LCD1602A;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * SN74HC595 8 Bit shift register. Serial device.  Uses GPIOs line manipulation to clock data into the device
  *
  */
-public class SN74HC595 implements HD44780U_Interface {
+public class SN74HC595 implements HD44780U_Interface_LCD1602A {
     private final Console console;
     private final Context pi4j;
     private DigitalOutput oeGpio = null;

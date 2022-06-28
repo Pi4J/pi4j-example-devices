@@ -9,6 +9,8 @@
 Project by Tom Aarts
 ==========================================================================
 
+Specific usage of PCF8574A to control 1602A LCD
+
 1602A
 https://www.sparkfun.com/datasheets/LCD/ADM1602K-NSR-FBS-3.3v.pdf
 
@@ -36,13 +38,13 @@ P7                                                      D7
 
 1. mvn clean package
 2. cd target/distribution
-3. sudo ./runPCF8574A.sh parms........
+3. sudo ./runPCF8574A_LCD1602A.sh parms........
 
 
-sudo ./runPCF8574A.sh   -b 0x01   -a 0x27  -t trace -line1  aBc   -line2  XyZ
+sudo ./runPCF8574A_LCD1602A.sh   -b 0x01   -a 0x27  -t trace -line1  aBc   -line2  XyZ
 
 Clears display, Line1 begins in fourth position, line2 begins in second position
-sudo ./runPCF8574A.sh    -b 0x01   -a 0x27    -clearLCD  -t trace -line1  aaaaaa -line1Offset 4 -line2  zzzzzz  -line2Offset 2
+sudo ./runPCF8574A_LCD1602A.sh    -b 0x01   -a 0x27    -clearLCD  -t trace -line1  aaaaaa -line1Offset 4 -line2  zzzzzz  -line2Offset 2
 
 
 Param  -shiftL 2  shift both lines 2 positions to left

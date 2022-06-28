@@ -67,13 +67,13 @@ Vdd 5v                      16              1         QB
 
 1. mvn clean package
 2. cd target/distribution
-3. sudo ./runHD44780U.sh parms........
+3. sudo ./runHD44780U_LCD1602A.sh parms........
 
 
-sudo ./runHD44780U.sh   -rs 17 -en 27   -ds 23 -oe 20 -st 5 -mr 13 -sh 6 -rd 0x84 -t trace -line1  aBc   -line2  XyZ  
+sudo ./runHD44780U_LCD1602A.sh   -rs 17 -en 27   -ds 23 -oe 20 -st 5 -mr 13 -sh 6 -rd 0x84 -t trace -line1  aBc   -line2  XyZ  
 
 Clears display, Line1 begins in fourth position, line2 begins in second position
-sudo ./runHD44780U.sh   -rs 17 -en 27  -clearLCD -ds 23 -oe 20 -st 5 -mr 13 -sh 6 -rd 0x84 -t trace -line1  aaaaaa -line1Offset 4 -line2  zzzzzz  -line2Offset 2
+sudo ./runHD44780U_LCD1602A.sh   -rs 17 -en 27  -clearLCD -ds 23 -oe 20 -st 5 -mr 13 -sh 6 -rd 0x84 -t trace -line1  aaaaaa -line1Offset 4 -line2  zzzzzz  -line2Offset 2
 
 
 Param  -shiftL 2  shift both lines 2 positions to left

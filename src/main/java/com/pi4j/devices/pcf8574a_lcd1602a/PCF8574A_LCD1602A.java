@@ -34,10 +34,9 @@
  *
  */
 
-package com.pi4j.devices.pcf8574a;
+package com.pi4j.devices.pcf8574a_lcd1602a;
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.hd44780u.HD44780U;
 import com.pi4j.devices.lcd1602a.LCD1602A;
 import com.pi4j.devices.lcd1602a.LCD1602A_Declares;
 import com.pi4j.io.i2c.I2C;
@@ -45,7 +44,7 @@ import com.pi4j.util.Console;
 import org.slf4j.LoggerFactory;
 
 
-public class PCF8574A extends LCD1602A {
+public class PCF8574A_LCD1602A extends LCD1602A {
 
     private I2C pcfDev = null;
     private int busNum;
@@ -53,8 +52,8 @@ public class PCF8574A extends LCD1602A {
 
 
 
-    public PCF8574A(Context pi4j, Console console, boolean clearIt, String traceLevel, int bus, int address) {
-        super(pi4j, console, clearIt, traceLevel);
+    public PCF8574A_LCD1602A(Context pi4j, Console console,  String traceLevel, int bus, int address) {
+        super(pi4j, console, false, traceLevel);
         this.busNum = bus;
         this.address = address;
 
@@ -66,8 +65,8 @@ public class PCF8574A extends LCD1602A {
      * Configure I2C LCD display
      */
     public void init() {
-        System.setProperty("org.slf4j.simpleLogger.log." + PCF8574A.class.getName(), this.traceLevel);
-        this.logger = LoggerFactory.getLogger(PCF8574A.class);
+        System.setProperty("org.slf4j.simpleLogger.log." + PCF8574A_LCD1602A.class.getName(), this.traceLevel);
+        this.logger = LoggerFactory.getLogger(PCF8574A_LCD1602A.class);
 
         super.init();
         this.logger.trace(">>>Enter init   Bus  : " + this.busNum + "  address  " + this.address);
@@ -90,12 +89,7 @@ public class PCF8574A extends LCD1602A {
 
         this.sleepTimeMicroS(LCD1602A_Declares.postWrtEnableCycleDelay);
 
-        this.sendChar('H');
-        if (this.clearDisplay) {
-            this.logger.trace("Clear Display");
-            this.clearDisplay();
-        }
-      this.logger.trace("<<< Exit: init  device  ");
+        this.logger.trace("<<< Exit: init  device  ");
     }
 
 
@@ -104,7 +98,7 @@ public class PCF8574A extends LCD1602A {
       * @param data
      */
     private void writeToDev(byte data){
-        data |=   PCF8574A_Declares.backlight_on;
+        data |=   PCF8574A_Declares_LCD1602A.backlight_on;
         this.logger.trace(">>> Enter: writeToDev  data: "+ String.format("%02x ", data) );
 
         String logData = "";
@@ -124,8 +118,8 @@ public class PCF8574A extends LCD1602A {
      */
     private byte setEnLow(byte b) {
         this.logger.trace(">>> Enter: setEnLow");
-        b &= PCF8574A_Declares.E_bit_mask_off;
-        b |= PCF8574A_Declares.E_low;
+        b &= PCF8574A_Declares_LCD1602A.E_bit_mask_off;
+        b |= PCF8574A_Declares_LCD1602A.E_low;
         this.logger.trace("<<< Exit: setEnLow");
         return (b);
     }
@@ -138,8 +132,8 @@ public class PCF8574A extends LCD1602A {
      */
     private byte setEnHigh(byte b) {
         this.logger.trace(">>> Enter: setEnHigh");
-        b  &= PCF8574A_Declares.E_bit_mask_off;
-        b |= PCF8574A_Declares.E_high;
+        b  &= PCF8574A_Declares_LCD1602A.E_bit_mask_off;
+        b |= PCF8574A_Declares_LCD1602A.E_high;
         this.logger.trace("<<< Exit: setEnHigh");
         return(b);
     }
@@ -152,8 +146,8 @@ public class PCF8574A extends LCD1602A {
      */
     private byte setRSLow(byte b) {
         this.logger.trace(">>> Enter: setRSLow");
-        b  &= PCF8574A_Declares.RS_bit_mask_off;
-        b |= PCF8574A_Declares.RS_low;
+        b  &= PCF8574A_Declares_LCD1602A.RS_bit_mask_off;
+        b |= PCF8574A_Declares_LCD1602A.RS_low;
         this.logger.trace("<<< Exit: setRSLow");
         return(b);
     }
@@ -166,8 +160,8 @@ public class PCF8574A extends LCD1602A {
      */
     private  byte setRSHigh(byte b) {
         this.logger.trace(">>> Enter: setRSHigh");
-        b  &= PCF8574A_Declares.RS_bit_mask_off;
-        b  |= PCF8574A_Declares.RS_high;
+        b  &= PCF8574A_Declares_LCD1602A.RS_bit_mask_off;
+        b  |= PCF8574A_Declares_LCD1602A.RS_high;
         this.logger.trace("<<< Exit: setRSHigh");
         return(b);
     }
@@ -179,8 +173,8 @@ public class PCF8574A extends LCD1602A {
      */
     private byte setRWLow(byte b) {
         this.logger.trace(">>> Enter: setRWLow");
-        b  &= PCF8574A_Declares.RW_bit_mask_off;
-        b  |= PCF8574A_Declares.RW_low;
+        b  &= PCF8574A_Declares_LCD1602A.RW_bit_mask_off;
+        b  |= PCF8574A_Declares_LCD1602A.RW_low;
         this.logger.trace("<<< Exit: setRWLow");
         return(b);
     }
@@ -193,8 +187,8 @@ public class PCF8574A extends LCD1602A {
      */
     private byte setRWHigh(byte b) {
         this.logger.trace(">>> Enter: setRWHigh");
-        b  &= PCF8574A_Declares.RW_bit_mask_off;
-        b  |= PCF8574A_Declares.RW_high;
+        b  &= PCF8574A_Declares_LCD1602A.RW_bit_mask_off;
+        b  |= PCF8574A_Declares_LCD1602A.RW_high;
         this.logger.trace("<<< Exit: setRWHigh");
         return(b);
     }

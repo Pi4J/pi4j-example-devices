@@ -7,7 +7,7 @@
 #      * **********************************************************************
 #      * ORGANIZATION  :  Pi4J
 #      * PROJECT       :  Pi4J :: EXTENSION
-#      * FILENAME      :  runHD44780U.py
+#      * FILENAME      :  runHD44780U_LCD1602A.py
 #      *
 #      * This file is part of the Pi4J project. More information about
 #      * this project can be found here:  https://pi4j.com/
@@ -33,4 +33,4 @@
 #
 
 
-java --module-path . --module  com.pi4j.devices/com.pi4j.devices.hd44780u.HD44780U_App  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.hd44780u_lcd1602a.HD44780U_App_LCD1602A  $@
