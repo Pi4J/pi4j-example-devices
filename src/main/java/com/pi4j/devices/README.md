@@ -58,3 +58,8 @@ mcp23017_lcd1602a   1602A LCD
 src/main/java/com/pi4j/devices//cp23017_lcd1602a/README.md    
 This package does not use any other code within my repo.   
 
+
+
+DHT22       
+src/main/java/com/pi4j/devices/dht22/README.md          
+This package does not use any other code within my repo.        
