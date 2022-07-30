@@ -56,17 +56,17 @@ public class ADS1256_Declares {
     protected final static int WAKEUPb          = 0b11111111;   // wakeup/exist standby
 
 
-    protected final int STATUS_REG_STATUS        = 0x00;
-    protected final int STATUS_REG_MUX           = 0x01;
-    protected final int STATUS_REG_ADCON         = 0x02;
-    protected final int STATUS_REG_DRATE         = 0x03;
-    protected final int STATUS_REG_IO            = 0x04;
-    protected final int STATUS_REG_OFC0          = 0x05;
-    protected final int STATUS_REG_OFC1          = 0x06;
-    protected final int STATUS_REG_OFC2          = 0x07;
-    protected final int STATUS_REG_FSC0          = 0x08;
-    protected final int STATUS_REG_FSC1          = 0x09;
-    protected final int STATUS_REG_FSC2          = 0x0A;
+    protected final static int REG_STATUS        = 0x00;
+    protected final static int REG_MUX           = 0x01;
+    protected final static int REG_ADCON         = 0x02;
+    protected final static int REG_DRATE         = 0x03;
+    protected final static int REG_IO            = 0x04;
+    protected final static int REG_OFC0          = 0x05;
+    protected final static int REG_OFC1          = 0x06;
+    protected final static int REG_OFC2          = 0x07;
+    protected final static int REG_FSC0          = 0x08;
+    protected final static int REG_FSC1          = 0x09;
+    protected final static int REG_FSC2          = 0x0A;
 
 
 }
