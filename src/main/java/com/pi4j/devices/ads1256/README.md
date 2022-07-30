@@ -105,32 +105,37 @@ The above command will monitor and display the 24 bit value for all 8 pins.
 
 
 To monitor all pins 0   Vref of 5.0 volts
-sudo ./runADS1256.sh   -vref 5.0
+sudo ./runADS1256.sh   -vref 5.0 -rst 18  -cs 22  -drdy 17
 
 
 To monitor only pin 0
-sudo ./runADS1256.sh -p 0x0
+sudo ./runADS1256.sh -p 0x0  -rst 18  -cs 22  -drdy 17
 
 Change the logging detail to 'trace'    vref voltage of 3.3
-sudo ./runADS1256.sh -p 0x0 -t trace -vref 3.3 -pp AIN0 -pn AINCOM
+sudo ./runADS1256.sh  -t trace -vref 3.3 -pp AIN0 -pn AINCOM  -rst 18  -cs 22  -drdy 17
 
+sudo ./runADS1256.sh  -t trace -vref 3.3 -pp AIN0 -pn AIN1  -rst 18  -cs 22  -drdy 17
 
 
 Use SPI 1
-sudo ./runADS1256.sh -p 0x0 -s 0x01
-
-
-Use ChipSelect 1
-sudo ./runADS1256.sh -p 0x0 -c 0x01
+sudo ./runADS1256.sh -p 0x0 -s 0x01  -rst 18  -cs 22  -drdy 17
 
 
 
-sudo ./runADS1256.sh -p 0x0 -c 0x00
+
+
+sudo ./runADS1256.sh -p 0x0 -rst 18  -cs 22  -drdy 17 
 INFO com.pi4j.devices.ads1256.ADS1256App - Channel : 0   Bytes read : 3  Value : 1023
 
 
 
-sudo ./runADS1256.sh -p 0x01
+sudo ./runADS1256.sh -p 0x01  -rst 18  -cs 22  -drdy 17 
 INFO com.pi4j.devices.ads1256.ADS1256App - Channel : 1   Bytes read : 3  Value : 647
+
+
+
+
+
+//    -c 0x00   not used when -cs parm is used
 
 
