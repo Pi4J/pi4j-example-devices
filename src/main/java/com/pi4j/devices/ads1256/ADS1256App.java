@@ -56,13 +56,14 @@ public class ADS1256App {
         int drdyPin = 0;
         int csPin = 0;
         int rsrtPin = 0;
+        int pdwnPin = 0;
         boolean resetChip = false;
         SpiChipSelect chipSelect = SpiChipSelect.CS_0;
         SpiBus spiBus = SpiBus.BUS_0;
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP3008App");
         String helpString = " parms:  -vref decimal reference voltage  \n" +
-                "-rst resetPin   -cs  chipSelectPin   -drdy  drdyPin   \n" +
+                "-rst resetPin   -cs  chipSelectPin   -drdy  drdyPin  -pdwn syn/pwrdPin \n" +
                 "  -pp -pn  AIN0 AIN1 AIN2 AIN3 AIN4 AIN5 AIN6 AIN7 AINCOM   -x reset \n" +
                 "-s HEX value SPI #  -t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
                 " or \"off\"  Default \"info\""; //   -c HEX value chip select
@@ -86,6 +87,10 @@ public class ADS1256App {
                 String a = args[i + 1];
                 i++;
                 drdyPin = Integer.parseInt(a);
+            }  else if (o.contentEquals("-pdwn")) { // device address
+                String a = args[i + 1];
+                i++;
+                pdwnPin = Integer.parseInt(a);
             } else if (o.contentEquals("-cNotUsed")) {
                 String a = args[i + 1];
                 chipSelect = SpiChipSelect.getByNumber(Short.parseShort(a.substring(2), 16));
@@ -144,14 +149,17 @@ public class ADS1256App {
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
 
-        ADS1256 spiCls = new ADS1256(pi4j, spiBus, chipSelect, drdyPin, csPin, rsrtPin,  ppName, pnName,  console, traceLevel, vref);
+        ADS1256 spiCls = new ADS1256(pi4j, spiBus, chipSelect, drdyPin, csPin, rsrtPin, pdwnPin,  ppName, pnName,  console, traceLevel, vref);
 
 
-        if(resetChip){
+         if(resetChip){
             spiCls.doReset();
         }
 
-        spiCls.displayProgramID();
+
+         spiCls.ADS1256_ConfigADC("ADS1256_GAIN_1", "ADS1256_30000SPS");
+
+         spiCls.displayProgramID();
 
          spiCls.displayProgramID();
          spiCls.displayProgramID();

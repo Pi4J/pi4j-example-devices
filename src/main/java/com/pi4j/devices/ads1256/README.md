@@ -37,22 +37,89 @@
 
 
 
-Default assumption
-Chip connected to SPI0   CE0
 
-                 5V  ---------  ch0             DVdd  ------------  3.3V
+
+#     #                                                   ###
+#     # #    # ##### ######  ####  ##### ###### #####     ###
+#     # ##   #   #   #      #        #   #      #    #    ###                              
+#     # # #  #   #   #####   ####    #   #####  #    #     #                                      
+#     # #  # #   #   #           #   #   #      #    #                                            
+#     # #   ##   #   #      #    #   #   #      #    #    ###                                     
+#####   #   ##   ##  ######  ####    #   ###### #####     ###                                 ### 
+             ##    #  ####  #####     ####   ####  #    # #####  #      ###### ##### ######    ### 
+             # #   # #    #   #      #    # #    # ##  ## #    # #      #        #   #         ### 
+             #  #  # #    #   #      #      #    # # ## # #    # #      #####    #   #####      #  
+             #   # # #    #   #      #      #    # #    # #####  #      #        #   #             
+             #    ## #    #   #      #    # #    # #    # #      #      #        #   #         ### 
+             #     #  ####    #       ####   ####  #    # #      ###### ######   #   ######    ### 
+                      ######                                                           ###         
+                      #     #  ####     #    #  ####  #####    #    #  ####  ######    ###         
+                      #     # #    #    ##   # #    #   #      #    # #      #         ###         
+                      #     # #    #    # #  # #    #   #      #    #  ####  #####      #          
+                      #     # #    #    #  # # #    #   #      #    #      # #                     
+                      #     # #    #    #   ## #    #   #      #    # #    # #         ###         
+                      ######   ####     #    #  ####    #       ####   ####  ######    ###         
+
+
+When I have the HW I will complete this work.
+
+
+
+
+ADS1256 module mounted Waveshare  AD/DA board
+Chip connected to SPI0   
+
+                 5V  ---------  ch0          P13    Syn/PwrD  --------- GPIO 27 or 5V  tie high
+                3.3v ---------  ch1          P15    CS   ------------   GPIO22  Chip select
+                                ch2          P11    DRDY  ------------  GPIO17
+                                ch3          P21    Dout ------------   GPIO9  MISO 
+                                ch4          P19    Din  ------------   GPIO10 MOSI
+                                ch5          P23    Sclk  ------------  GPIO11 SCLK
+                                ch6          P6     Agnd  ------------  Gnd
+                                ch7          P2     DVdd  ------------  5V
+                GPIO6           D0           P12    RESET  -----------  GPIO18
+                GPIO13          D1           
+                GPIO19          D2           
+                GPIO26          D3           
+
+
+
+ADS1256 module mounted
+Chip connected to SPI0                      Module pin number
+                                             \/   
+                 5V  ---------  ch0          P1 Syn/PwrD  ------------ GPIO 27 or 5V  tie high
+                3.3v ---------  ch1          P2 CS   ------------  GPIO22  Chip select
+                                ch2          P3 DRDY  ------------ GPIO17
+                                ch3          P4 Dout ------------  GPIO9  MISO 
+                                ch4          P5 Din  ------------  GPIO10 MOSI
+                                ch5          P6 Sclk  ------------  GPIO11 SCLK
+                                ch6          P7 Agnd  ------------  Gnd
+                                ch7          P8 DVdd  ------------  5V
+                                D0           
+                                D1           
+                                D2           
+                                D3           
+                                             
+
+
+
+
+ADS1256 direct connect to the Pi.
+Chip connected to SPI0   
+
+                 5V  ---------  ch0             DVdd  ------------  5V
                 3.3v ---------  ch1             VrefP ------------  5V
                                 ch2             VrefN ------------  Gnd
                                 ch3             Agnd  ------------  Gnd
                                 ch4             Sclk  ------------  GPIO11 SCLK
                                 ch5             Dout ------------  GPIO9  MISO
                                 ch6             Din  ------------  GPIO10 MOSI
-                                ch7             CS   ------------  GPIO8  CE0
-                                D0              RESET  ----------  5V  tie high
-                                D1              Syn/PwrD  ------------  5V  tie high
+                                ch7             CS   ------------  GPIO22  Chip select
+                                D0              RESET  ----------  GPIO18 or 5V  tie high
+                                D1              Syn/PwrD  ------------ GPIO 27 or 5V  tie high
                                 D2              Avdd -------------  5V
                                 D3              AINCOM  ---        +- voltage compare single point
-
+                                                DRDY  ------------ GPIO17
 
 DRDY    low ->> data conversion complete, RDATA 24 bits.
 
@@ -109,7 +176,12 @@ sudo ./runADS1256.sh   -vref 5.0 -rst 18  -cs 22  -drdy 17
 
 
 To monitor only pin 0
-sudo ./runADS1256.sh -p 0x0  -rst 18  -cs 22  -drdy 17
+sudo ./runADS1256.sh -p 0x0  -pp AIN0 -pn AINCOM  -rst 18  -cs 22  -drdy 17
+
+sudo ./runADS1256.sh -p 0x0  -pp AIN0 -pn AIN1  -rst 18  -cs 22  -drdy 17
+
+
+
 
 Change the logging detail to 'trace'    vref voltage of 3.3
 sudo ./runADS1256.sh  -t trace -vref 3.3 -pp AIN0 -pn AINCOM  -rst 18  -cs 22  -drdy 17
@@ -118,20 +190,20 @@ sudo ./runADS1256.sh  -t trace -vref 3.3 -pp AIN0 -pn AIN1  -rst 18  -cs 22  -dr
 
 
 Use SPI 1
-sudo ./runADS1256.sh -p 0x0 -s 0x01  -rst 18  -cs 22  -drdy 17
+sudo ./runADS1256.sh  -s 0x01  -rst 18  -cs 22  -drdy 17
 
 
 
 
 
-sudo ./runADS1256.sh -p 0x0 -rst 18  -cs 22  -drdy 17 
+sudo ./runADS1256.sh  -rst 18  -cs 22  -drdy 17  -pdwn 27 
 INFO com.pi4j.devices.ads1256.ADS1256App - Channel : 0   Bytes read : 3  Value : 1023
 
 
 
-sudo ./runADS1256.sh -p 0x01  -rst 18  -cs 22  -drdy 17 
+sudo ./runADS1256.sh    -cs 22  -drdy 17  -pp AIN0 -pn AIN1  -t trace
 INFO com.pi4j.devices.ads1256.ADS1256App - Channel : 1   Bytes read : 3  Value : 647
-
+omitt  -rst 18  -pdwn 27
 
 
 
@@ -139,3 +211,6 @@ INFO com.pi4j.devices.ads1256.ADS1256App - Channel : 1   Bytes read : 3  Value :
 //    -c 0x00   not used when -cs parm is used
 
 
+
+sudo ./runADS1256.sh   -pp AIN0 -pn AIN1  -cs 22  -drdy 17  -pdwn 27  -t trace
+// no  -rst 18    use command
