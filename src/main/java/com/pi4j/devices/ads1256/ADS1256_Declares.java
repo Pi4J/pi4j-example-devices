@@ -46,7 +46,7 @@ public class ADS1256_Declares {
     protected final static int RREG             = 0b00010000; //  read register(s)
     protected final static int WREG             = 0b01010000; // write register(s)
     protected final static int SELFCAL          = 0b11110000; // offset/gain self calibration
-    protected final static int SELFOCAL         = 0b11110001; // offset self calibration
+    protected final static int SELFOCAL         = 0b11110001&0xff; // offset self calibration
     protected final static int SELFGCAL         = 0b11110010;  // gain self calibration
     protected final static int SYSOCAL          = 0b11110011; //system offset calibration
     protected final static int SYSGCAL          = 0b11110100;  // system gain calibration
