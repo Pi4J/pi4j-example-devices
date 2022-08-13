@@ -61,3 +61,9 @@ src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md
 MCP23017 I2C  Controller.   
 App uses MCP23017 to control the LCD   
 src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md   
+
+
+
+ADS1256 24bit A-to-D  
+src/main/java/com/pi4j/devices/ads1256/README.md  
+This package does not use any other code within my repo.    

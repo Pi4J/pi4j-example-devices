@@ -111,21 +111,43 @@ public class ADS1256 {
             (int) 0x53,
             (int) 0x43,
             (int) 0x33,
-            (int) 0x20,
+            (int) 0x23,
             (int) 0x13,
             (int) 0x03
     };
 
-    public ADS1256(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect, int drdyPin, int csPin, int rstPin, int pdwnPin, String ppName, String pnName, Console console, String traceLevel, double vref) throws InterruptedException {
+    /**
+     *   See ADS1256App.java help text to explain these parms
+     * @param pi4j
+     * @param spiBus
+     * @param chipSelect
+     * @param reset
+     * @param drdyPin
+     * @param csPin
+     * @param rstPin
+     * @param crtRstGpio
+     * @param pdwnPin
+     * @param crtPdwnGpio
+     * @param ppName
+     * @param pnName
+     * @param console
+     * @param traceLevel
+     * @param vref
+     * @throws InterruptedException
+     */
+    public ADS1256(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect, boolean  reset,  int drdyPin, int csPin, int rstPin, boolean crtRstGpio, int pdwnPin,boolean crtPdwnGpio,  String ppName, String pnName, Console console, String traceLevel, double vref) throws InterruptedException {
         super();
         this.console = console;
         this.pi4j = pi4j;
         this.chipSelect = chipSelect;
+        this.resetChip = reset;
         this.spiBus = spiBus;
         this.csPinNum = csPin;
         this.rstPinNum = rstPin;
+        this.crtRstGpio = crtRstGpio;
         this.drdyPinNum = drdyPin;
         this.pdwnPinNum = pdwnPin;
+        this.crtPdwnGpio = crtPdwnGpio;
         this.traceLevel = traceLevel;
         this.ppName = ppName;
         this.pnName = pnName;
@@ -140,24 +162,31 @@ public class ADS1256 {
 
     }
 
+    /**
+     *  Creates the SPI and requested GPIOs.
+     *  Do reset if so requested by app
+     *  Configure chip Gain and speed.
+     * @throws InterruptedException
+     */
     private void init() throws InterruptedException {
         var spiConfig = Spi.newConfigBuilder(pi4j)
                 .id("SPI" + this.spiBus + " " + this.chipSelect)
                 .name("A/D converter")
                 .bus(this.spiBus)
                 .chipSelect(this.chipSelect)
-                .baud(Spi.DEFAULT_BAUD)
-                .mode(SpiMode.MODE_0)
+                .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
+                .baud(976563) //Spi.DEFAULT_BAUD)
+                .mode(SpiMode.MODE_1)
                 .provider("pigpio-spi")
                 .build();
         this.spi = this.pi4j.create(spiConfig);
 
-
+    // required all configs
         var inputConfig1 = DigitalInput.newConfigBuilder(pi4j)
                 .id("DRDY_pin")
                 .name("DRDY")
                 .address(this.drdyPinNum)
-                .provider("pigpio-digital-input");
+                .provider("pigpio-digital-input"); //               .pull(PullResistance.PULL_UP)
         try {
             this.drdyGpio = pi4j.create(inputConfig1);
         } catch (Exception e) {
@@ -165,6 +194,7 @@ public class ADS1256 {
             console.println("create DigIn DRDY failed");
             System.exit(201);
         }
+        // required all configs
         var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
                 .id("CS_pin")
                 .name("CS")
@@ -179,25 +209,32 @@ public class ADS1256 {
             console.println("create DigOut DRDY failed");
             System.exit(202);
         }
-        var outputConfig3 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("RST_pin")
-                .name("RESET")
-                .address(this.rstPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
-        try {
-            this.csGpio = pi4j.create(outputConfig3);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut RESET failed");
-            System.exit(203);
+        // not always required, see README
+        if(this.crtRstGpio) {
+            var outputConfig3 = DigitalOutput.newConfigBuilder(pi4j)
+                    .id("RST_pin")
+                    .name("RESET")
+                    .address(this.rstPinNum)
+                    .shutdown(DigitalState.HIGH)
+                    .initial(DigitalState.HIGH)
+                    .provider("pigpio-digital-output");
+            try {
+                this.rstGpio = pi4j.create(outputConfig3);
+            } catch (Exception e) {
+                e.printStackTrace();
+                console.println("create DigOut RESET failed");
+                System.exit(203);
+            }
+        }else{
+            this.logger.trace("RESET Gpio not requested/created");
         }
 
+        // not always required, see README
+        if(this.crtPdwnGpio) {
         var outputConfig4 = DigitalOutput.newConfigBuilder(pi4j)
                 .id("PDWN_pin")
                 .name("PDWN")
-                .address(this.rstPinNum)
+                .address(this.pdwnPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
                 .provider("pigpio-digital-output");
@@ -208,28 +245,55 @@ public class ADS1256 {
             console.println("create DigOut PDWN failed");
             System.exit(203);
         }
-     }
+        }else{
+            this.logger.trace("PDWN Gpio not requested/created");
+        }
 
-    public byte displayProgramID() throws InterruptedException {
+
+        if(this.resetChip){
+            this.doReset();
+        }
+
+
+        this.ADS1256_ConfigADC("ADS1256_GAIN_1", "ADS1256_10SPS");
+
+
+    }
+
+    /**
+     * Validate chip ID = 3, if not program will exist
+     * @return chip ID
+     * @throws InterruptedException
+     */
+    public int validateChipID() throws InterruptedException {
         // print program title/header
-        byte id = 0;
+        int id = 0;
         this.logger.trace(">>> Enter displayProgramID");
         console.title("<-- The Pi4J Project -->", "SPI test program using ADS1256 AtoD Chip");
         this.waitForDrdyLow();
-        id = this.readRegData(ADS1256_Declares.REG_STATUS);
-        this.logger.trace("<<< Exit displayProgramID  : " + (id >> 4));
+        id = this.readRegData(ADS1256_Declares.REG_STATUS) >> 4;
+        if (id != ADS1256_Declares.CHIP_ID){
+            console.println("Incorrect chip ID : " + id);
+            System.exit(301);
+        }
+        this.logger.trace("<<< Exit displayProgramID  : " + id);
         return(id);
     }
 
 
-
-    public void ADS1256_ConfigADC(String gain, String  drate) throws InterruptedException {
+    /**
+     *   Set chip Gain and speed
+     * @param gain
+     * @param drate
+     * @throws InterruptedException
+     */
+    private void ADS1256_ConfigADC(String gain, String  drate) throws InterruptedException {
         this.waitForDrdyLow();
         int buf[] = {0,0,0,0};
-        buf[0] = (0<<3) | (1<<2) | (0<<1);
-        buf[1] = 0x08;
-        buf[2] = (0<<5) | (0<<3) | (this.mapGainString(gain)<<0);
-        buf[3] = this.mapDrateString(drate);
+        buf[0] = (0<<3) | (1<<2) | (0<<1);                               //STATUS_REG
+        buf[1] =  (byte) (0b00000000 | (((0 & 0xf) << 4)) | 8);         // MUX_REG   initial: AIN0/AINCOM
+        buf[2] = (0<<5) | (0<<3) | (this.mapGainString(gain)<<0);       // ADCON_REG
+        buf[3] = this.mapDrateString(drate);                            // DRATE_REG
         this.csGpio.low();
         this.writeCmd(ADS1256_Declares.WREG | 0);
         this.spi.write(0x03);  // writing 4 bytes data
@@ -240,8 +304,12 @@ public class ADS1256 {
         this.csGpio.high();
         this.busyWaitMS(1);
     }
-    private void showDrdyState(int num) {
-        this.logger.trace("showDrdyState : " + num);
+
+    /**
+     * Debug usage, display state of DRDY InputGpio
+     */
+    private void showDrdyState() {
+        this.logger.trace("showDrdyState " );
         if (this.drdyGpio.state() == DigitalState.HIGH) {
             this.logger.trace("DRDY state HIGH");
         } else if (this.drdyGpio.state() == DigitalState.LOW) {
@@ -251,6 +319,10 @@ public class ADS1256 {
         }
     }
 
+    /**
+     * If the RESET Gpio was configured reset dhip via Gpio, else use commands
+     * @throws InterruptedException
+     */
     public void doReset() throws InterruptedException {
         this.logger.trace(">>> Enter doReset");
         if(this.rstGpio != null) {
@@ -267,7 +339,7 @@ public class ADS1256 {
     }
 
     private void writeCmd(int cmd) {
-        this.logger.trace(">>> Enter writeCmd");
+        this.logger.trace(">>> Enter writeCmd  cmd " + cmd);
         this.csGpio.low();
         this.busyWaitMS(2);
         this.spi.write(cmd);
@@ -278,25 +350,30 @@ public class ADS1256 {
 
 
     private void writeReg(int reg, int data) {
-        this.logger.trace(">>> Enter writeReg");
+        this.logger.trace(">>> Enter writeReg  reg :  " + reg  + " data " + data);
         this.csGpio.low();
         this.busyWaitMS(2);
-        this.spi.write(ADS1256_Declares.WREG | reg);
-        this.spi.write(0x00);
-        this.spi.write(data);
+        byte buf[] = {0,0,0};
+        buf[0] = (byte) (ADS1256_Declares.WREG | reg);
+        buf[1] =  0x00;
+        buf[2] = (byte) data;
+        this.spi.write(buf);
+
         this.busyWaitMS(2);
         this.csGpio.high();
         this.logger.trace("<<< Exit writeReg");
     }
 
     private byte readRegData(int reg) {
-        this.logger.trace(">>> Enter readReg");
-        byte rval = 0x42;
+        this.logger.trace(">>> Enter readReg register# : "  + reg);
+        byte rval = 42;
         this.csGpio.low();
         this.busyWaitMS(2);
-        this.spi.write(ADS1256_Declares.RREG | reg);
-        this.spi.write(0x00);
-        this.busyWaitMS(1);
+        byte buf[] = {0,0,0};
+        buf[0] = (byte) (ADS1256_Declares.RREG | reg);
+        buf[1] =  0x00;
+        this.spi.write(buf);
+        this.busyWaitMS(2);
         rval = this.spi.readByte();
         this.busyWaitMS(2);
         this.csGpio.high();
@@ -304,7 +381,12 @@ public class ADS1256 {
         return(rval);
     }
 
-
+    private static void busyWaitNano(long nanos) {
+        long waitUntil = System.nanoTime() + (nanos);
+        while (waitUntil > System.nanoTime()) {
+            ;
+        }
+    }
 
     private static void busyWaitMicros(long micros) {
         long waitUntil = System.nanoTime() + (micros * 1000);
@@ -320,15 +402,17 @@ public class ADS1256 {
         }
     }
 
-
+    /**
+     * Name(s) supplied by app. These are mapped to integer values
+     * @param name
+     * @return
+     */
     private short mapMuxString(String name) {
         MuxValue muxMap[] = MuxValue.values();
         int posPin = 0xff;
         for (MuxValue col : muxMap) {
-            System.out.println(col + " at index "
-                    + col.ordinal());
             // Calling ordinal() to find index
-            // of color.
+            // of pin name
             if (col.toString().contentEquals(name)) {
                 posPin = col.ordinal();
                 this.logger.trace(" pname : " + name + "  No : " + posPin);
@@ -338,6 +422,13 @@ public class ADS1256 {
         return (short) (posPin & 0xff);
     }
 
+    /**
+     * Name pairs pChannel and nChannel written into chips MUX register
+     * @param pChannel
+     * @param nChannel
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private void mapMux(short pChannel, short nChannel) throws IOException, InterruptedException {
         this.logger.trace(">>> Enter mapMux  channel : " + pChannel + "/" + nChannel);
 
@@ -355,21 +446,47 @@ public class ADS1256 {
     }
 
 
+    /**
+     * One-shot get the RDATA for ppName and pnName, then return the value
+     * @param ppName
+     * @param pnName
+     * @return
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    public double getADS1256State(String ppName, String pnName) throws InterruptedException, IOException {
 
+        short pChannel = this.mapMuxString(ppName);
+        short nChannel = this.mapMuxString(pnName);
+        // allow for user to exit program using CTRL-C
+        this.logger.trace(">>> Enter getADS1256State  channel  : " + pChannel + "/" + nChannel);
+        // continue running program until user exits using CTRL-C
+        double rval =  read(pChannel, nChannel);
+        this.logger.trace("<<< Exit getADS1256State: channel  :" + pChannel + "/" + nChannel + "  value  :" + rval);
+        return(rval);
+    }
+
+    /**
+     * Will repeatedly get the RDATA for ppName and pnName, until user ctrl-C
+     * @param ppName
+     * @param pnName
+     * @throws InterruptedException
+     * @throws IOException
+     */
     public void displayADS1256State(String ppName, String pnName) throws InterruptedException, IOException {
 
         short pChannel = this.mapMuxString(ppName);
         short nChannel = this.mapMuxString(pnName);
         // allow for user to exit program using CTRL-C
-        console.promptForExit();
+        this.console.promptForExit();
         this.logger.trace(">>> Enter displayADS1256State  channel  : " + pChannel + "/" + nChannel);
         // continue running program until user exits using CTRL-C
-        while (console.isRunning()) {
+        while (this.console.isRunning()) {
             read(pChannel, nChannel);
             Thread.sleep(1000);
         }
         console.emptyLine();
-        this.logger.trace("<<< Exit displayMCP3008State");
+        this.logger.trace("<<< Exit displayADS1256State");
     }
 
     /**
@@ -377,17 +494,24 @@ public class ADS1256 {
      *
      * @throws IOException
      */
-    public void read(short pChannel, short nChannel) throws IOException, InterruptedException {
+    public double read(short pChannel, short nChannel) throws IOException, InterruptedException {
         this.logger.trace(">>> Enter read ");
         // see if chip ready for additional commands
         this.waitForDrdyLow();
-        double conversion_value = getConversionValue(pChannel, nChannel);
+        double conversion_value = this.getConversionValue(pChannel, nChannel);
+
         this.logger.trace(" |\r");
         this.logger.trace("<<< Exit read");
+        return(conversion_value);
     }
 
 
-
+    /**
+     * Polling for controlled number of times testing for
+     * DRDY Gpio being DigitalState.LOW, return true, else false
+     * @return
+     * @throws InterruptedException
+     */
     private boolean waitForDrdyLow() throws InterruptedException {
         boolean rval = false;
         long i = 0;
@@ -411,57 +535,69 @@ public class ADS1256 {
     /**
      * Communicate to the ADC chip via SPI to get single-ended conversion value
      * for a specified channel.
+     * Issue SYNC and WAKEUP commands so chip will calculate the
+     * digital value for pChannel nChannel
      *
      * @param pChannel analog input channel on ADC chip
      * @param nChannel analog input channel on ADC chip
      * @return conversion value for specified analog input channel
      * @throws IOException
      */
-    public double getConversionValue(short pChannel, short nChannel) throws IOException, InterruptedException {
+    public int getConversionValue(short pChannel, short nChannel) throws IOException, InterruptedException {
         this.logger.trace(">>> Enter getConversionValue  channel : " + pChannel + "/" + nChannel);
 
 
         this.mapMux(pChannel, nChannel);
+        this.busyWaitMS(2);
 
         this.writeCmd(ADS1256_Declares.SYNC);
+        this.busyWaitMS(2);
         this.writeCmd(ADS1256_Declares.WAKEUP);
-        double value = this.doRDATA();
+        this.busyWaitMS(2);
+        int value = this.doRDATA();
+        this.busyWaitMS(2);
 
-         this.logger.trace("Channel  :" + pChannel + "/" + nChannel + "  value  :" + String.format(" | %06f", value)); // print
+        this.logger.info("Channel  :" + pChannel + "/" + nChannel + "  value  :" + value ); //String.format(" | %06f", value)); // print
         if (this.vref > 0) {
-            this.logger.info("A/D read input voltage : " + ((value * this.vref) / 0x40000 + " \n"));
+            this.logger.info("A/D read input voltage : " + ((value * this.vref) / 0x7fffff + " \n"));
         }
-
 
         this.logger.trace("<<< Exit getConversionValue ");
        return value;
     }
 
-private double doRDATA() throws InterruptedException {
+    /**
+     * REtrieve RDATA from chip
+     * @return
+     * @throws InterruptedException
+     */
+    private int doRDATA() throws InterruptedException {
     this.logger.trace(">>> Enter doRDATA ");
 
-    long read = 0;
-    long buf[] = {0,0,0};
+    int read = 0;
+    int buf[] = {0,0,0};
 
     this.waitForDrdyLow();
     this.busyWaitMS(1);
 
     this.csGpio.low();
+    this.busyWaitMS(2);
     this.spi.write(ADS1256_Declares.RDATA);
     this.busyWaitMS(1);
     buf[0] = this.spi.readByte();
     buf[1] = this.spi.readByte();
     buf[2] = this.spi.readByte();
     this.csGpio.high();
-    read = ((long)buf[0] << 16) & 0x00FF0000;
-    read |= ((long)buf[1] << 8) & 0x0000FF00;  /* Pay attention to It is wrong   read |= (buf[1] << 8) */
-    read |= (long)buf[2] & 0x000000FF;
+    read = (buf[0] << 16) & 0x00FF0000;
+    read |= (buf[1] << 8) & 0x0000FF00;
+    read |= buf[2] & 0x000000FF;
+    read &= 0x00ffffff;
     //printf("%d  %d  %d \r\n",buf[0],buf[1],buf[2]);
-    if ((read & 0x800000) >0 ) {
-        read &= 0xFF000000; // negative value
+    if (read >= 0x800000) {
+        read -=  0x1000000; // negative value
     }
     this.logger.trace("<<< Exit doRDATA ");
-    return (double)read;
+    return read;
 
 }
 
@@ -470,10 +606,8 @@ private double doRDATA() throws InterruptedException {
         ADS1256_DRATE drateMap[] = ADS1256_DRATE.values();
         int posPin = 0xff;
         for (ADS1256_DRATE col : drateMap) {
-            System.out.println(col + " at index "
-                    + col.ordinal());
             // Calling ordinal() to find index
-            // of color.
+            // of drate.
             if (col.toString().contentEquals(name)) {
                 posPin = col.ordinal();
                 this.logger.trace(" drate : " + name + "  No : " + ADS1256_DRATE_E[posPin]);
@@ -487,10 +621,8 @@ private double doRDATA() throws InterruptedException {
         ADS1256_GAIN drateMap[] = ADS1256_GAIN.values();
         int posPin = 0xff;
         for (ADS1256_GAIN col : drateMap) {
-            System.out.println(col + " at index "
-                    + col.ordinal());
             // Calling ordinal() to find index
-            // of color.
+            // of Gain name.
             if (col.toString().contentEquals(name)) {
                 posPin = col.ordinal();
                 this.logger.trace(" gain : " + name + "  No : " + posPin);
@@ -511,13 +643,14 @@ private double doRDATA() throws InterruptedException {
     private final String traceLevel;
     private final Logger logger;
 
-    private final double vref;
+    private double vref = 2.5;
     private final SpiChipSelect chipSelect;
     private final SpiBus spiBus;
 
     private Context pi4j;
     private String ppName = "";
     private String pnName = "";
+    private boolean resetChip = false;
 
     private DigitalInput drdyGpio;
     private int drdyPinNum;   // 17
@@ -526,10 +659,10 @@ private double doRDATA() throws InterruptedException {
 
     private DigitalOutput rstGpio;
     private int rstPinNum;     //  18
-
+    private boolean crtRstGpio = false;
     private DigitalOutput pdwnGpio;
 
     private int pdwnPinNum;     //  27
-
+    private boolean crtPdwnGpio = false;
 }
 

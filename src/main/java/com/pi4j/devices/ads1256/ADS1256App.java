@@ -42,6 +42,7 @@ import com.pi4j.context.Context;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiChipSelect;
+import com.pi4j.plugin.pigpio.provider.spi.PiGpioSpiProvider;
 import com.pi4j.util.Console;
 
 public class ADS1256App {
@@ -49,14 +50,17 @@ public class ADS1256App {
      public static void main(String[] args) throws InterruptedException, IOException {
         var console = new Console();
         Context pi4j = Pi4J.newAutoContext();
+
         double vref = 0;
         String ppName = "AINCOM";
         String pnName = "AINCOM";
 
-        int drdyPin = 0;
-        int csPin = 0;
-        int rsrtPin = 0;
-        int pdwnPin = 0;
+        boolean crtRestart = false;
+        boolean crtPdwn = false;
+        int drdyPin = 42;
+        int csPin = 42;
+        int rsrtPin = 42;
+        int pdwnPin = 42;
         boolean resetChip = false;
         SpiChipSelect chipSelect = SpiChipSelect.CS_0;
         SpiBus spiBus = SpiBus.BUS_0;
@@ -79,6 +83,7 @@ public class ADS1256App {
                 String a = args[i + 1];
                 i++;
                 rsrtPin = Integer.parseInt(a);
+                crtRestart = true;
             } else if (o.contentEquals("-cs")) { // device address
                 String a = args[i + 1];
                 i++;
@@ -91,6 +96,7 @@ public class ADS1256App {
                 String a = args[i + 1];
                 i++;
                 pdwnPin = Integer.parseInt(a);
+                crtPdwn = true;
             } else if (o.contentEquals("-cNotUsed")) {
                 String a = args[i + 1];
                 chipSelect = SpiChipSelect.getByNumber(Short.parseShort(a.substring(2), 16));
@@ -149,26 +155,18 @@ public class ADS1256App {
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
 
-        ADS1256 spiCls = new ADS1256(pi4j, spiBus, chipSelect, drdyPin, csPin, rsrtPin, pdwnPin,  ppName, pnName,  console, traceLevel, vref);
+        ADS1256 spiCls = new ADS1256(pi4j, spiBus, chipSelect, resetChip, drdyPin, csPin, rsrtPin, crtRestart, pdwnPin, crtPdwn,  ppName, pnName,  console, traceLevel, vref);
 
 
-         if(resetChip){
-            spiCls.doReset();
-        }
 
 
-         spiCls.ADS1256_ConfigADC("ADS1256_GAIN_1", "ADS1256_30000SPS");
-
-         spiCls.displayProgramID();
-
-         spiCls.displayProgramID();
-         spiCls.displayProgramID();
-         spiCls.displayProgramID();
-         spiCls.displayProgramID();
-         spiCls.displayProgramID();
+         spiCls.validateChipID();
 
 
-        spiCls.displayADS1256State(ppName, pnName);
+         double rtn = spiCls.getADS1256State(ppName, pnName);
+         System.out.println("getMCP3008State returned : channel  :" + ppName + "/" + pnName + "  value  :" + rtn);
+
+         spiCls.displayADS1256State(ppName, pnName);
 
     }
 
