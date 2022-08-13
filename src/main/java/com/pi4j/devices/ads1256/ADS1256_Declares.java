@@ -69,4 +69,7 @@ public class ADS1256_Declares {
     protected final static int REG_FSC2          = 0x0A;
 
 
+    protected final static int CHIP_ID           = 0x03;
+
+
 }

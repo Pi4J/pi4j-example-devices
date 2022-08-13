@@ -37,6 +37,7 @@ public class MCP3008 {
                 .name("A/D converter")
                 .bus(spiBus)
                 .chipSelect(chipSelect)
+                .flags(0b0000000000000000000000L)
                 .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
                 .provider("pigpio-spi")
