@@ -65,7 +65,7 @@ src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md
 
 
 ADS1256 24bit A-to-D  
-1. Simple module mount of the chip
-2. Mounted within WaveShare AD/DA Board
+1. Simple module mount of the chip  
+2. Mounted within WaveShare AD/DA Board  
 src/main/java/com/pi4j/devices/ads1256/README.md  
 This package does not use any other code within my repo.    
