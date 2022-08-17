@@ -54,21 +54,21 @@ It appears the DVdd 5V is used as the V-reference.
 
 At present time the code does not support access to the chips four GPIOs.
 
-
-Chip connected to SPI0                  Module pin number
-                                     \/           \/
- 3.3V  --------- AIN0 ch0          P1 Syn/PwrD  ------------3.3V  tie high
- 5  v ---------  AIN1 ch1          P2 CS   ------------  GPIO22  Chip select
-                 AIN2 ch2          P3 DRDY  ------------ GPIO17
-                 AIN3 ch3          P4 Dout ------------  GPIO9  MISO 
-                 AIN4 ch4          P5 Din  ------------  GPIO10 MOSI
-                 AIN5 ch5          P6 Sclk  ------------  GPIO11 SCLK
-                 AIN6 ch6          P7 Agnd  ------------  Gnd
-                 AIN7 ch7          P8 DVdd  ------------  5V
-                 D0           
-                 D1           
-                 D2           
-                 D3
+--Connections
+--Chip connected to SPI0   
+-Pi----------------Module pin number----------------------Pi   
+--3.3V-----------AIN0 ch0----------P1 Syn/PwrD--------------3.3V  tie high   
+--5v------------ AIN1 ch1----------P2 CS-----------------GPIO22  Chip select  
+-----------------AIN2 ch2----------P3 DRDY----------------PIO17  
+-----------------AIN3 ch3----------P4 Dout---------------GPIO9  MISO  
+-----------------AIN4 ch4----------P5 Din----------------GPIO10 MOSI  
+-----------------AIN5 ch5----------P6 Sclk----------------GPIO11 SCLK  
+-----------------AIN6 ch6----------P7 Agnd----------------Gnd  
+-----------------AIN7 ch7----------P8 DVdd----------------5V  
+-----------------D0             
+-----------------D1             
+-----------------D2             
+-----------------D3  
 
 The Syn/PwrD is tied high. The program does not use the Sync pin to initiate 
 a conversion, rather the issue the SYNC and WAKEUP commands. 
@@ -115,20 +115,20 @@ INFO com.pi4j.devices.ads1256.ADS1256 - A/D read input voltage : 1.8071987399099
 
 
 ADS1256 module mounted within Waveshare  AD/DA board
-Chip connected to SPI0
-
- 5V   ---------  ch0          P13    Syn/PwrD  --------- GPIO 27 
- 3.3v ---------  ch1          P15    CS   ------------   GPIO22  Chip select
-                 ch2          P11    DRDY  ------------  GPIO17
-                 ch3          P21    Dout ------------   GPIO9  MISO 
-                 ch4          P19    Din  ------------   GPIO10 MOSI
-                 ch5          P23    Sclk  ------------  GPIO11 SCLK
-                 ch6          P6     Agnd  ------------  Gnd
-                 ch7          P2     DVdd  ------------  5V
- GPIO6           D0           P12    RESET  -----------  GPIO18
- GPIO13          D1           
- GPIO19          D2           
- GPIO26          D3           
+Chip connected to SPI0      
+Pi---------------AD/DA---BOARD---------------------------Pi   
+-5V--------------ch0----------P13----Syn/PwrD------------GPIO 27   
+-3.3v------------ch1----------P15----CS------------------GPIO22  Chip select  
+-----------------ch2----------P11----DRDY----------------GPIO17  
+-----------------ch3----------P21----Dout----------------GPIO9  MISO   
+-----------------ch4----------P19----Din-----------------GPIO10 MOSI  
+-----------------ch5----------P23----Sclk----------------GPIO11 SCLK  
+-----------------ch6----------P6-----Agnd----------------Gnd  
+-----------------ch7----------P2-----DVdd----------------5V  
+-GPIO6-----------D0           P12    RESET  -----------  GPIO18  
+-GPIO13----------D1             
+-GIO19-----------D2             
+-GPIO26----------D3             
 
 The Syn/PwrD is configured as HIGH under all conditions. The program does not 
 use the Sync pin to initiate a conversion, rather the issue the 
