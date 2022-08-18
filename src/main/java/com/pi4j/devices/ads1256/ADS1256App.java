@@ -122,9 +122,8 @@ public class ADS1256App {
                 i++;
                 ppName =  a;
                 if (a.contentEquals("AIN0") | a.contentEquals("AIN1") | a.contentEquals("AIN2") | a.contentEquals("AIN3") | a.contentEquals("AIN4") | a.contentEquals("AIN5") | a.contentEquals("AIN6") | a.contentEquals("AIN7") | a.contentEquals("AINCOM")) {
-                    console.println("Changing trace level to : " + traceLevel);
-                } else {
-                    console.println("-pp invalid  : " + traceLevel);
+                 } else {
+                    console.println("-pp invalid  : " + ppName);
                     System.exit(42);
                 }
             } else if (o.contentEquals("-pn")) { // pin positive
@@ -132,10 +131,9 @@ public class ADS1256App {
                 i++;
                 pnName =  a;
                 if (a.contentEquals("AIN0") | a.contentEquals("AIN1") | a.contentEquals("AIN2") | a.contentEquals("AIN3") | a.contentEquals("AIN4") | a.contentEquals("AIN5") | a.contentEquals("AIN6") | a.contentEquals("AIN7") | a.contentEquals("AINCOM")) {
-                    console.println("Changing trace level to : " + traceLevel);
                 } else {
-                    console.println("-pn invalid  : " + traceLevel);
-                    System.exit(42);
+                    console.println("-pn invalid  : " + pnName);
+                    System.exit(43);
                 }
             }else if (o.contentEquals("-h")) {
                 console.println(helpString);

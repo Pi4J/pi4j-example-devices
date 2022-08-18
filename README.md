@@ -69,3 +69,10 @@ ADS1256 24bit A-to-D
 2. Mounted within WaveShare AD/DA Board  
 src/main/java/com/pi4j/devices/ads1256/README.md  
 This package does not use any other code within my repo.    
+
+
+DAC8552  16bit DAC  SPI connected     
+src/main/java/com/pi4j/devices/dac8552/README.md      
+This package does not use any other code within my repo     
+ 
+
