@@ -73,7 +73,7 @@ public class ADS1256 {
                 ADS1256_GAIN_16,		 //	= 4,	/* GAIN  16 */
                 ADS1256_GAIN_32,		   //	= 5,	/*GAIN    32 */
                 ADS1256_GAIN_64,		//	= 6,	/*GAIN    64 */
-    };
+    }
 
     enum ADS1256_DRATE {
         ADS1256_30000SPS,
@@ -93,27 +93,27 @@ public class ADS1256 {
         ADS1256_5SPS,
         ADS1256_2d5SPS,
         ADS1256_DRATE_MAX
-    };
+    }
 
 
     static final int[] ADS1256_DRATE_E =
     {
-            (int) 0xF0,		/*reset the default values  */
-            (int) 0xE0,
-            (int) 0xD0,
-            (int) 0xC0,
-            (int) 0xB0,
-            (int) 0xA1,
-            (int) 0x92,
-            (int) 0x82,
-            (int) 0x72,
-            (int) 0x63,
-            (int) 0x53,
-            (int) 0x43,
-            (int) 0x33,
-            (int) 0x23,
-            (int) 0x13,
-            (int) 0x03
+            0xF0,		/*reset the default values  */
+            0xE0,
+            0xD0,
+            0xC0,
+            0xB0,
+            0xA1,
+            0x92,
+            0x82,
+            0x72,
+            0x63,
+            0x53,
+            0x43,
+            0x33,
+            0x23,
+            0x13,
+            0x03
     };
 
     /**
@@ -128,14 +128,12 @@ public class ADS1256 {
      * @param crtRstGpio
      * @param pdwnPin
      * @param crtPdwnGpio
-     * @param ppName
-     * @param pnName
      * @param console
      * @param traceLevel
      * @param vref
      * @throws InterruptedException
      */
-    public ADS1256(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect, boolean  reset,  int drdyPin, int csPin, int rstPin, boolean crtRstGpio, int pdwnPin,boolean crtPdwnGpio,  String ppName, String pnName, Console console, String traceLevel, double vref) throws InterruptedException {
+    public ADS1256(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect, boolean  reset,  int drdyPin, int csPin, int rstPin, boolean crtRstGpio, int pdwnPin,boolean crtPdwnGpio,  Console console, String traceLevel, double vref) throws InterruptedException {
         super();
         this.console = console;
         this.pi4j = pi4j;
@@ -149,8 +147,6 @@ public class ADS1256 {
         this.pdwnPinNum = pdwnPin;
         this.crtPdwnGpio = crtPdwnGpio;
         this.traceLevel = traceLevel;
-        this.ppName = ppName;
-        this.pnName = pnName;
 
         this.vref = vref;
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
@@ -289,18 +285,27 @@ public class ADS1256 {
      */
     private void ADS1256_ConfigADC(String gain, String  drate) throws InterruptedException {
         this.waitForDrdyLow();
+        byte status = this.readRegData(ADS1256_Declares.REG_STATUS);
         int buf[] = {0,0,0,0};
-        buf[0] = (0<<3) | (1<<2) | (0<<1);                               //STATUS_REG
+        // preserve DRDY bit state and set ACAL bit
+        buf[0] = (status & ADS1256_Declares.STATUS_DRDY_MASK)|ADS1256_Declares.STATUS_ACAL;                               //STATUS_REG
         buf[1] =  (byte) (0b00000000 | (((0 & 0xf) << 4)) | 8);         // MUX_REG   initial: AIN0/AINCOM
-        buf[2] = (0<<5) | (0<<3) | (this.mapGainString(gain)<<0);       // ADCON_REG
+        buf[2] = (0<<5) | (0<<3) | (this.mapGainString(gain)<<0);       // ADCON_REG CLK/SENSOR off
         buf[3] = this.mapDrateString(drate);                            // DRATE_REG
         this.csGpio.low();
-        this.writeCmd(ADS1256_Declares.WREG | 0);
+        this.busyWaitMS(2);
+        this.spi.write(ADS1256_Declares.WREG | 0);
+        this.busyWaitMS(2);
         this.spi.write(0x03);  // writing 4 bytes data
+        this.busyWaitMS(2);
         this.spi.write(buf[0]);
+        this.busyWaitMS(2);
         this.spi.write(buf[1]);
+        this.busyWaitMS(2);
         this.spi.write(buf[2]);
+        this.busyWaitMS(2);
         this.spi.write(buf[3]);
+        this.busyWaitMS(2);
         this.csGpio.high();
         this.busyWaitMS(1);
     }
@@ -350,7 +355,7 @@ public class ADS1256 {
 
 
     private void writeReg(int reg, int data) {
-        this.logger.trace(">>> Enter writeReg  reg :  " + reg  + " data " + data);
+        this.logger.trace(">>> Enter writeReg  reg :  " + reg  + " data " +  String.format("0X%02x: ", data&0xff));
         this.csGpio.low();
         this.busyWaitMS(2);
         byte buf[] = {0,0,0};
@@ -377,8 +382,9 @@ public class ADS1256 {
         rval = this.spi.readByte();
         this.busyWaitMS(2);
         this.csGpio.high();
-        this.logger.trace("<<< Exit readReg  : " +  String.format("0X%02x: ", rval));
-        return(rval);
+        this.busyWaitMS(200);  // let chip quiet
+        this.logger.trace("<<< Exit readReg  : " +  String.format("0X%02x: ", rval&0xff));
+        return (byte) (rval & 0xff);
     }
 
     private static void busyWaitNano(long nanos) {
@@ -520,7 +526,7 @@ public class ADS1256 {
                 rval = true;
                 break;
             }else{
-                this.logger.trace("Not desired State");
+                this.logger.trace("Not desired State counter "  + i);
             }
         }
         if(i >= 4000000){
@@ -632,11 +638,102 @@ public class ADS1256 {
         return (short) (posPin & 0xff);
     }
 
+    public  DigitalState readGpio(int pin){
+        this.logger.trace(">>> Enter readGpio pin  "  + pin);
+        DigitalState rval = DigitalState.UNKNOWN;
+        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
+        if(this.isPinInput(pin, regVal)){
+            rval = this.getPinState(pin, regVal);
+        }
+        this.logger.trace("<<< Exit readGpio  State"  + rval);
+        return (rval);
+    }
+
+    public  boolean setGpioDirOut(int pin){
+        this.logger.trace(">>> Enter setGpioDirOut pin  "  + pin);
+        boolean rval = false;
+       // this.logger.trace("ADCON"  + this.readRegData(ADS1256_Declares.REG_ADCON));
+        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
+        regVal &=  ~(0x10<< pin) & 0xff;
+        this.writeReg(ADS1256_Declares.REG_IO, regVal);
+        rval = true;
+        this.logger.trace("<<< Exit setGpioDirOut  "  + rval);
+        return (rval);
+    }
+
+    public  boolean setGpioDirIn(int pin){
+        this.logger.trace(">>> Enter setGpioDirIn pin  "  + pin);
+        boolean rval = false;
+        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
+        regVal |= (0x10<< pin) & 0xff;
+        this.writeReg(ADS1256_Declares.REG_IO, regVal);
+        this.logger.trace("<<< Exit setGpioDirIn  State"  + rval);
+        rval = true;
+        return (rval);
+    }
+
+    private DigitalState getPinState(int pin, byte registerVal){
+        DigitalState rval = DigitalState.UNKNOWN;
+        this.logger.trace(">>> Enter isPinInput pin: "  +pin);
+        if((registerVal & (0x01 << pin)) == 0){
+            rval = DigitalState.LOW;
+        }else{
+            rval = DigitalState.HIGH;
+        }
+        this.logger.trace(" Exit isPinInput ");
+        return(rval);
+    }
+    public  boolean setGpio(int pin, DigitalState newState){
+        this.logger.trace(">>> Enter setGpio  pin "  + pin + "  state : "+ newState);
+        boolean rval = false;
+        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
+        if(this.isPinOutput(pin, regVal)){
+            rval = this.setPinState(pin, newState, regVal);
+        }else {
+            this.logger.trace("Pin " + pin + " not configured for output");
+        }
+        this.logger.trace("<<< Exit setGpio "  + rval);
+        return (rval);
+    }
+
+    private boolean setPinState(int pin, DigitalState newState, byte registerVal){
+        boolean rval = false;
+        this.logger.trace(">>> Enter setPinState pin: "  +pin  +  "  state: " + newState);
+        if(newState == DigitalState.HIGH){
+           registerVal |= (1<< pin);
+           rval = true;
+        }else{
+            registerVal &= ~(1<< pin);
+            rval = true;
+        }
+        this.writeReg(ADS1256_Declares.REG_IO, registerVal);
+        this.logger.trace(" Exit setPinState   " + rval);
+        return(rval);
+    }
+    private boolean isPinInput(int pin, byte registerVal){
+        boolean rval = false;
+        this.logger.trace(">>> Enter isPinInput pin: "  +pin);
+        if((registerVal & (0x10 << pin)) >0){
+            rval = true;
+        }
+        this.logger.trace(" Exit isPinInput "  + rval);
+        return(rval);
+    }
+    private boolean isPinOutput(int pin, byte registerVal){
+        boolean rval = false;
+        this.logger.trace(">>> Enter isPinOutput pin: "  +pin);
+        if((registerVal & (0x10 << pin)) == 0){
+            rval = true;
+        }
+        this.logger.trace(" Exit isPinOutput "  + rval);
+        return(rval);
+    }
+
+
     // SPI device
     //  public SpiDevice spi;
 
     // ADC channel count
-    public short pinCount; // ADS1256=8 move to chip config
     // file
     private Spi spi;
     private Console console;
@@ -648,8 +745,6 @@ public class ADS1256 {
     private final SpiBus spiBus;
 
     private Context pi4j;
-    private String ppName = "";
-    private String pnName = "";
     private boolean resetChip = false;
 
     private DigitalInput drdyGpio;
