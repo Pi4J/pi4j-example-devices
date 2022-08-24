@@ -43,7 +43,8 @@
 2. cd target/distribution
 3. sudo ./runADS1256.sh
 
-
+Note_0  Within the code of this application,  The use of -rp or -sp and 
+all AD/DA parms will be ignored 
 
 
 Tested 
@@ -52,7 +53,6 @@ nor documentation. Used a VOM to map lines from the ADS1256 to external pins
 It appears the DVdd 5V is used as the V-reference.  
 
 
-At present time the code does not support access to the chips four GPIOs.
 
 --Connections
 --Chip connected to SPI0   
@@ -124,14 +124,14 @@ Pi---------------AD/DA---BOARD---------------------------Pi
 -----------------ch4----------P19----Din-----------------GPIO10 MOSI  
 -----------------ch5----------P23----Sclk----------------GPIO11 SCLK  
 -----------------ch6----------P6-----Agnd----------------Gnd  
------------------ch7----------P2-----DVdd----------------5V  
--GPIO6-----------D0-----------P12----RESET---------------GPIO18  
--GPIO13----------D1             
--GIO19-----------D2             
--GPIO26----------D3             
+-----------------ch7----------P2-----DVdd----------------5V     See Note_1
+-GPIO26----------D0-----------P12----RESET---------------GPIO18  
+-GPIO19----------D1             
+-GPIO13----------D2             
+-GPIO6-----------D3             
 
 The Syn/PwrD is configured as HIGH under all conditions. The program does not 
-use the Sync pin to initiate a conversion, rather the issue the 
+use the Sync pin to initiate a conversion, rather to issue the 
 SYNC and WAKEUP commands.  
 
 Also note, the ChipSelect 'CS' uses GPIO22, not the Pi normal CS0 or CS1 
@@ -145,6 +145,83 @@ sudo ./runADS1256.sh -pp AIN1 -pn AINCOM -cs 22 -drdy 17 -rst 18 -pdwn 27  -t tr
 
 -vref option: if > 0,  feature will display calculated Channel input voltage.
 
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+NOTE_1 !!!!!!   ADS1256 must operate with Vcc 3.3v.  Needed to be compatible with Pi logic voltage
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! WARNING:  WHen the AD/DA bard is strapped VCC-3.3, the Pi4 may not power on. Seems the drag 
+on the 3.3v prevents the Pi boot. 
+
+sudo ./runADS1256.sh -p 3 -rp -pp AIN1 -pn AINCOM -cs 22 -drdy 17 -rst 18 -pdwn 27  -t trace -x -vref 5.0
+Read DIO 0,  Pi gpio 6
+
+python3
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(6, GPIO.OUT)
+GPIO.output(6,GPIO.LOW)
+GPIO.output(6 , GPIO.HIGH)
+
+
+
+
+python3
+import RPi.GPIO as GPIO
+import time
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+for i in range(100):
+time.sleep(0.1)
+print('Pin status = ', GPIO.input(6))
+
+GPIO.cleanup()
+
+sudo ./runADS1256.sh -p 0 -sp HIGH -pp AIN1 -pn AINCOM -cs 22 -drdy 17 -rst 18 -pdwn 27  -t trace -x -vref 5.0
+Write setting HIGH DIO 0, 
+
+
+?? Open question to Waveshare. Do-D3 not connected to P1
+Pi gpio 26
+python3
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(26, GPIO.OUT)
+GPIO.output(26,GPIO.LOW)
+GPIO.output(26 , GPIO.HIGH)
+
+python3
+import RPi.GPIO as GPIO
+import time
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+for i in range(100):
+     time.sleep(0.1)
+     print('Pin status = ', GPIO.input(26))
+
+GPIO.cleanup()
+
+ pull_up_down=GPIO.PUD_UP
+
+python3
+
+
+
+
+sudo ./runADS1256.sh -p 3 -rp -pp AIN1 -pn AINCOM -cs 22 -drdy 17 -rst 18 -pdwn 27  -t trace -x -vref 5.0Read
+Read DIO 0, 
+
+
+?? Open question to Waveshare. Do-D3 not connected to P1
+Pi gpio 6
+python3
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(6, GPIO.OUT)
+GPIO.output(6,GPIO.LOW)
+GPIO.output(6 , GPIO.HIGH)
 
 
 

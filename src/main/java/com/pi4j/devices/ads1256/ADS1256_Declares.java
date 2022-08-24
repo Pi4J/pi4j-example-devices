@@ -46,7 +46,7 @@ public class ADS1256_Declares {
     protected final static int RREG             = 0b00010000; //  read register(s)
     protected final static int WREG             = 0b01010000; // write register(s)
     protected final static int SELFCAL          = 0b11110000; // offset/gain self calibration
-    protected final static int SELFOCAL         = 0b11110001&0xff; // offset self calibration
+    protected final static int SELFOCAL         = 0b11110001; // offset self calibration
     protected final static int SELFGCAL         = 0b11110010;  // gain self calibration
     protected final static int SYSOCAL          = 0b11110011; //system offset calibration
     protected final static int SYSGCAL          = 0b11110100;  // system gain calibration
@@ -56,6 +56,20 @@ public class ADS1256_Declares {
     protected final static int WAKEUPb          = 0b11111111;   // wakeup/exist standby
 
 
+    protected final static int GPIO_0_IS_IN     = 0b00010000; // cfg for input
+    protected final static int GPIO_1_IS_IN     = 0b00100000; // cfg for input
+    protected final static int GPIO_2_IS_IN     = 0b01000000; // cfg for input
+    protected final static int GPIO_3_IS_IN     = 0b10000000; // cfg for input
+
+
+    protected final static int GPIO_0_MASK      = 0b00000001; // bit mask
+    protected final static int GPIO_1_MASK      = 0b00000010; // bit mask
+    protected final static int GPIO_2_MASK      = 0b00000100; // bit mask
+    protected final static int GPIO_3_MASK      = 0b00001000; // bit mask
+
+
+    protected final static int STATUS_ACAL      = 0b00000100;  // enable auto calibrate
+    protected final static int STATUS_DRDY_MASK = 0b00000001;  // Mask off DRDY status bit
     protected final static int REG_STATUS        = 0x00;
     protected final static int REG_MUX           = 0x01;
     protected final static int REG_ADCON         = 0x02;
