@@ -1,6 +1,11 @@
-# Collection of devices implemented for use with Pi4J V2.
+Pi4J :: Java I/O Library for Raspberry Pi :: Device :: TCA9548
+==========================================================================
 
-The following lists the currently supported devices:
+Collection of devices implemented for use with Pi4J V2.
+
+Project by Tom Aarts.
+
+The following lists the currently supported devices within this project:
 
 * [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
 * [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)
