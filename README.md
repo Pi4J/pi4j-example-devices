@@ -1,5 +1,5 @@
-Pi4J :: Java I/O Library for Raspberry Pi :: Device :: TCA9548
-==========================================================================
+Pi4J :: Java I/O Library for Raspberry Pi :: Devices
+====================================================
 
 Collection of devices implemented for use with Pi4J V2.
 
