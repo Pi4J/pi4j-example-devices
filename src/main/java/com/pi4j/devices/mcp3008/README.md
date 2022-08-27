@@ -34,10 +34,8 @@ Chip connected to SPI0   CE0
 
 
 
-The above command will monitor and display the 10 bit value for all 8 pins.
 
-
--vref option: if > 0,  the -d feature will display calculated Channel input voltage.
+-vref option: if > 0,  the will display calculated Channel input voltage.
 
 
 To monitor all pins 0   Vref of 5.0 volts

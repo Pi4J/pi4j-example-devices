@@ -107,7 +107,7 @@ public class DAC8552 {
         int chnlNumber = mapChnl(channel);
         int temp = (int) (voltage * DAC8552_Declares.DAC_Value_MAX / vref);
         if ((temp <= DAC8552_Declares.DAC_Value_MAX) && (temp >= 0.0)) {
-            Write_DAC8532(chnlNumber, temp);
+            this.Write_DAC8532(chnlNumber, temp);
             rval = true;
         } else {
             this.logger.error("Invalid Voltage :" + String.format(" | %04f", voltage));

@@ -53,7 +53,7 @@ public class DAC8552App {
         boolean hasVref = false;
         SpiBus spiBus = SpiBus.BUS_0;
         String channel = "";
-        console.title("<-- The Pi4J V2 Project Extension  -->", "DAC8552App");
+        console.title("<-- The Pi4J V2 Project Extension  -->", "DAC8552App \n");
         String helpString = " parms:   -cs chip select GPIO -s HEX value SPI #  -t  trace  \n" +
                 "-chn  channel, -vout voltage out  -vref reference voltage\n" +
                 " Tracevalues : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
