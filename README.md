@@ -18,10 +18,12 @@ The following lists the currently supported devices within this project:
 * [SN74HC595 8 Bit shift register](src/main/java/com/pi4j/devices/sn74hc595/README.md) (1)
 * [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md) (1)   
 * [1602A LCD  HD44780U](src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md): App uses SN74HC595 to control the LCD    
-* [PCF8574A I2C  Controller](src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md): App uses PCF8574A to control the LCD   
+* [1602A_LCD_PCF8574A I2C  Controller](src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md): App uses PCF8574A to control the LCD   
 * [1602A LCD  MCP23017 I2C  Controller](src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md): App uses MCP23017 to control the LCD 
 * [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md)
 * [ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md) (1)
+* [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md) (1)
+
     * Simple module mount of the chip  
     * Mounted within WaveShare AD/DA Board  
  
