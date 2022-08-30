@@ -237,9 +237,14 @@ public class Is31Fl37_matrix_app {
             } else if (o.contentEquals("-t")) {
                 String a = args[i + 1];
                 i++;
-                bmp_address = Integer.parseInt(a.substring(2), 16);
-                // display_app.address = Integer.parseInt(a, 16);
-            } else if (o.contentEquals("-c")) {
+                traceLevel = a;
+                if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
+                    console.println("Changing trace level to : " + traceLevel);
+                } else {
+                    console.println("Changing trace level invalid  : " + traceLevel);
+                    System.exit(41);
+                }
+              } else if (o.contentEquals("-c")) {
                 String a = args[i + 1];
                 i++;
                 repeat_count = Integer.parseInt(a.substring(0));
