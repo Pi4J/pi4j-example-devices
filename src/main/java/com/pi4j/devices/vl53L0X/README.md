@@ -42,6 +42,11 @@ The program defaults to the device being connected to Pi i2c bus 1, and ACKs dev
 
 At power on the chip is configured to 0x29 device address, default parm values will operate correctly.
 
+Config the i2c mux
+
+sudo ./runTca9548.sh   -b 0x01 -a 0x70  -f 1   -l  -e 0x2  -r 0x13
+
+
 sudo ./runVL53L0X.sh
 
 The user can reconfigure the chips device (ACK) address

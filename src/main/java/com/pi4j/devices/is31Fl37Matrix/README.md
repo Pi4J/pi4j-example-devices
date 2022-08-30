@@ -67,3 +67,9 @@ The python3 program monitorGpio2.py uses the GPIO.add_event_detect function call
 operate same as the java monitor program's  event callback
 
 
+
+
+
+Special regression test.  Only displaus time.  Bogus but valid address passed on for -bmpA
+
+sudo ./runIs31fl37MatrixTest.sh -b 0x01 -a 0x74 -bmpB 0x01 -bmpA 0x74 -g 24 -w 20 -i 128 -c 1 -l 1 -r 18 -z 25 -t info

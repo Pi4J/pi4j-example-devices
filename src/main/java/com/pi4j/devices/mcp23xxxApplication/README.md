@@ -275,7 +275,7 @@ contain spaces. So as you can see the -m and -z values wrapped by " " contain no
  
 
  Listen A side
-   sudo ./runMcp23017PinMonitor.sh   -q 9548#1  -g 23  -i on -r 4  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
+   sudo ./runMcp23017PinMonitor.sh   -q 9548#1  -g 23  -i on -r 4  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio27':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 13 -f 0
      In another terminal
  i2cdump -y 1 0x22     This will clear existing interrupts in the chip
  
@@ -284,14 +284,14 @@ Trip interrupt  GPIO12->p4
 python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(12, GPIO.OUT) 
-GPIO.output(12,GPIO.LOW)
-GPIO.output( 12 , GPIO.HIGH)
-GPIO.output(12,GPIO.LOW)  
+GPIO.setup(6, GPIO.OUT) 
+GPIO.output(6,GPIO.LOW)
+GPIO.output( 6 , GPIO.HIGH)
+GPIO.output(6,GPIO.LOW)  
    
    
  Listen B side
-   sudo ./runMcp23017PinMonitor.sh  -q 9548#1  -g 21 -i on  -r 15  -p pin0 -c 23017#1         -z "{{'gpio23':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin15':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'out','int_ena':'no'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
+   sudo ./runMcp23017PinMonitor.sh  -q 9548#1  -g 21 -i on  -r 14  -p pin0 -c 23017#1         -z "{{'gpio21':{'name':'InterruptADetect','dir':'in','pull':'up'}},{'gpio21':{'name':'InterruptBDetect','dir':'in','pull':'up'}},{'gpio5':{'name':'ResetChip','dir':'out,'int_ena':'no','initial':'high'}}}"    -m   "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin4':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin14':{'dir':'in','pull':'up','default':'0','do_compare':'no','int_ena':'yes','act':'low'}},{'pin5':{'dir':'out','int_ena':'no'}},{'pin6':{'dir':'out','int_ena':'no'}},{'pin7':{'dir':'out','int_ena':'no'}}}"  -x 5 -f 0
      In another terminal
   i2cdump -y 1 0x22     This will clear existing interruupts in the chip
  
@@ -299,10 +299,10 @@ GPIO.output(12,GPIO.LOW)
 python3
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT) 
-GPIO.output(18,GPIO.LOW)
-GPIO.output( 18 , GPIO.HIGH)
-GPIO.output(18,GPIO.LOW)
+GPIO.setup(12, GPIO.OUT) 
+GPIO.output(12,GPIO.LOW)
+GPIO.output( 12 , GPIO.HIGH)
+GPIO.output(12,GPIO.LOW)
  
 Drive pin0 hi low     Red LED
 

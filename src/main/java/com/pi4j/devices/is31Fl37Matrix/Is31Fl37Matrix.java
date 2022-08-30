@@ -81,7 +81,7 @@ public class Is31Fl37Matrix {
         this.input = interruptPin;
         this.pi4j = pi4j;
 
-       this.device = this.createI2cDevice(this.bus_num, this.address);
+        this.device = this.createI2cDevice(this.bus_num, this.address);
         this.init();
         this.reset();
 

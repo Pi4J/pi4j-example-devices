@@ -15,8 +15,9 @@ class documentation to understand its various logging options.
 2. cd target/distribution
 3. sudo ./runBMP280.sh
 
-Use of different bus or device address, use the applicable values in the following command. sudo ./runBMP280.sh -b 0x01
--a 0x76
+Use of different bus or device address, use the applicable values in the following command. 
+sudo ./runBMP280.sh -b 0x01 -a 0x76  
+
 
 Will create the BMP280 device to create a BMP280Device instance Call the various temperature and pressure methods
 defined in the interface. The device defaults to Pi Bus 1 and device address 0X76
