@@ -42,5 +42,6 @@ module com.pi4j.devices{
     exports com.pi4j.devices.dht22;
     exports com.pi4j.devices.ads1256;
     exports com.pi4j.devices.dac8552;
+    exports com.pi4j.devices.mpl3115a2;
 
     }
