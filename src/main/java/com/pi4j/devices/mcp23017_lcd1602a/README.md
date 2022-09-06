@@ -6,7 +6,7 @@
 #      * **********************************************************************
 #      * ORGANIZATION  :  Pi4J
 #      * PROJECT       :  Pi4J :: EXTENSION
-#      * FILENAME      :  runMCP23017_LCD.py
+#      * FILENAME      :  README.md
 #      *
 #      * This file is part of the Pi4J project. More information about
 #      * this project can be found here:  https://pi4j.com/
