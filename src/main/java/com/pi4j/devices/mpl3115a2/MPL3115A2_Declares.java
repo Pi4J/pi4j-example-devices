@@ -58,13 +58,20 @@ public class MPL3115A2_Declares {
     protected final static int CTL1_SBYB_SFT_RESET      = 0b00000100;  // Sofware reset
     protected final static int CTL1_OVR_SAMPL_MAX       = 0b00111000;  // ration 128
 
-
     protected final static int CTL3_PP_OD1_DRAIN        = 0b00010000;  // open drain
     protected final static int CTL3_PP_OD2_DRAIN        = 0b00000001;  // open drain
 
 
     protected final static int CTL4_INT_EN_DRDY         = 0b10000000;  // interrupt enabled
+    protected final static int CTL4_INT_EN_PW           = 0b00100000;  // interrupt enabled pressure win
+    protected final static int CTL4_INT_EN_TW           = 0b00010000;  // interrupt enabled  temp win
+    protected final static int CTL4_INT_EN_PTH          = 0b00001000;  // interrupt enabled press limit
+    protected final static int CTL4_INT_EN_TTH          = 0b00000100;  // interrupt enabled temp limit
 
+    protected final static int CTL5_INT_CFG_PW          = 0b00100000;  // interrupt PW thru int1
+    protected final static int CTL5_INT_CFG_TW          = 0b00010000;  // interrupt TW thru int1
+    protected final static int CTL5_INT_CFG_PTH         = 0b00001000;  // interrupt PTH thru int1
+    protected final static int CTL5_INT_CFG_TTH         = 0b00000100;  // interrupt TTH thru int1
 
     protected final static int PT_DATA_CFG_EVNT_ENBL    = 0b00000100;  // enable events
     protected final static int PT_DATA_CFG_EVNT_PA      = 0b00000010;  // for Alt and Press
@@ -72,6 +79,8 @@ public class MPL3115A2_Declares {
 
 
     protected final static int  REG_INT_SOURCE_DRDY     = 0b10000000; // Data ready to read
+    protected final static int  REG_INT_SOURCE_PW       = 0b00100000; // pressure/alti limit-window
+    protected final static int  REG_INT_SOURCE_TW       = 0b00010000; // temp limit-window
 
 
     protected final static int  WHO_AM_I                = 0xC4; // expected chip ID
