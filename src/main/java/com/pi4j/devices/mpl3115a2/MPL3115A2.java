@@ -38,14 +38,16 @@ package com.pi4j.devices.mpl3115a2;
 
 import com.pi4j.context.Context;
 
-import com.pi4j.io.gpio.digital.DigitalInput;
-import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.io.gpio.digital.PullResistance;
+import com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt;
+import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  *    Implementation for the MPL3115A2 sensor. Chip is altitude, pressure and
@@ -174,13 +176,14 @@ private void init(){
 
             var ledConfigIntr = DigitalInput.newConfigBuilder(pi4j)
                     .id("Interrupt_1")
-                    .name("Interrupt_1")
+                    .name("Interrupt_1_TW_PW")
                     .address(this.int1_gpio)
-                    .pull(PullResistance.PULL_UP)
+                    .pull(PullResistance.OFF)
                     .debounce(4000L)
                     .provider("pigpio-digital-input");
     try {
         this.int1 = pi4j.create(ledConfigIntr);
+        this.int1.addListener(new MonitorInterrupt1(this));
     } catch (Exception e) {
         e.printStackTrace();
         console.println("create Digital 1 failed");
@@ -189,9 +192,9 @@ private void init(){
 
     var ledConfigIntr2 = DigitalInput.newConfigBuilder(pi4j)
             .id("Interrupt_2")
-            .name("Interrupt_2")
+            .name("Interrupt_2_DRDY")
             .address(this.int2_gpio)
-            .pull(PullResistance.PULL_UP)
+            .pull(PullResistance.OFF)
             .debounce(4000L)
             .provider("pigpio-digital-input");
     try {
@@ -265,7 +268,7 @@ private void init(){
         this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL3);
-        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL3, MPL3115A2_Declares.CTL3_PP_OD1_DRAIN | MPL3115A2_Declares.CTL3_PP_OD2_DRAIN);
+ //       this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL3, MPL3115A2_Declares.CTL3_PP_OD1_DRAIN | MPL3115A2_Declares.CTL3_PP_OD2_DRAIN);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_DRDY);
@@ -275,15 +278,15 @@ private void init(){
 
       // wait INT2
         int i = 0;
-        for(i=0;i<4000000;i++){
-            if(this.int2.state()  == DigitalState.HIGH) {
+        for(i=0;i<400;i++){
+            if(this.int2.state()  == DigitalState.LOW) {
                 break;
             }else{
                 this.logger.trace("Not desired State counter "  + i);
                 this.busyWaitMS(20); // depending upon 'sample rate' possible delay 512MS
             }
         }
-        if(i >= 4000000){
+        if(i >= 400){
             this.logger.trace("int2 Time Out ...\r\n");
         }
 
@@ -312,22 +315,25 @@ private void init(){
         this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL3);
-        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL3, reg |MPL3115A2_Declares.CTL3_PP_OD1_DRAIN | MPL3115A2_Declares.CTL3_PP_OD2_DRAIN);
+      //  this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL3, reg |MPL3115A2_Declares.CTL3_PP_OD1_DRAIN | MPL3115A2_Declares.CTL3_PP_OD2_DRAIN);
+
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_DRDY);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1, reg & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK | MPL3115A2_Declares.CTL1_OVR_SAMPL_MAX | MPL3115A2_Declares.CTL1_SBYB_ACT);
 
         // wait INT2
         int i = 0;
-        for(i=0;i<4000000;i++){
-            if(this.int2.state()  == DigitalState.HIGH) {
+        for(i=0;i<400;i++){
+            if(this.int2.state()  == DigitalState.LOW) {
                 break;
             }else{
                 this.logger.trace("Not desired State counter "  + i);
                 this.busyWaitMS(20); // depending upon 'sample rate' possible delay 512MS
             }
         }
-        if(i >= 4000000){
+        if(i >= 400){
             this.logger.trace("int2 Time Out ...\r\n");
         }
 
@@ -371,7 +377,7 @@ private void init(){
 
             rval[0] = alt + lsbFrac;
 
-            Double temp = Double.valueOf((dig_t1 & 0xff) );
+            Double temp = Double.valueOf(dig_t1 );  // sign bit remains attached
             Double tempFrac = (((dig_t2 & 0xF0) >> 4)/16.0);
             rval[1] = temp + tempFrac;
         }else{
@@ -410,7 +416,7 @@ private void init(){
              rval[0] = prs + lsbFrac;
 
 
-            Double temp = Double.valueOf((dig_t1 & 0xff) );
+            Double temp = Double.valueOf(dig_t1);   // sign bit still attached
             Double tempFrac = (((dig_t2 & 0xF0) >> 4)/16.0);
             rval[1] = temp + tempFrac;
         }else{
@@ -474,4 +480,119 @@ private void init(){
         }
     }
 
+    // SRC_PTH  alt/press limit. When exceeded
+    // interrupt thru int2
+    public void set_P_PGT(long target){
+        this.logger.trace(">>> Enter: set_P_TGT : " + target);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_P_TGT_MSB, (byte) ((target ) >> 8));
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_P_TGT_LSB, (byte) (target ));
+        byte reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_PTH |  MPL3115A2_Declares.CTL4_INT_EN_PW);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL5);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL5, reg | MPL3115A2_Declares.CTL5_INT_CFG_PW  | MPL3115A2_Declares.CTL5_INT_CFG_PTH);
+
+        this.logger.trace("<<< Exit: set_P_TGT  ");
+    }
+
+
+    // SRC_PW  alt/press window limit. When exceeded
+    // interrupt thru int2
+    public void set_P_WND(long window){
+        this.logger.trace(">>> Enter: set_P_WND : " + window);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_P_WND_MSB, (byte) ((window & 0xff00) >> 8));
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_P_WND_LSB, (byte) (window & 0xff));
+        byte reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_PW |  MPL3115A2_Declares.CTL4_INT_EN_PTH);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL5);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL5, reg | MPL3115A2_Declares.CTL5_INT_CFG_PW  | MPL3115A2_Declares.CTL5_INT_CFG_PTH);
+
+        this.logger.trace("<<< Exit: set_P_WND  ");
+    }
+
+
+    // SRC_TTH  temp limit. When exceeded
+    // interrupt thru int1
+    public void set_T_TGT(long target){
+        this.logger.trace(">>> Enter: set_T_TGT : " + target);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_T_TGT, (byte) (target & 0x00ff));
+        byte reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_TTH  | MPL3115A2_Declares.CTL4_INT_EN_PW);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL5);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL5, reg | MPL3115A2_Declares.CTL5_INT_CFG_TW  | MPL3115A2_Declares.CTL5_INT_CFG_TTH);
+
+        this.logger.trace("<<< Exit: set_T_TGT  ");
+    }
+
+
+    // SRC_TW  temp window limit. When exceeded
+    // interrupt thru int1
+    public void set_T_WND(long window){
+        this.logger.trace(">>> Enter: set_T_WND : " + window);
+        boolean rval = false;
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_T_WND, (byte) (window & 0xff));
+        byte reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_TW  | MPL3115A2_Declares.CTL4_INT_EN_TTH);
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL5);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL5, reg | MPL3115A2_Declares.CTL5_INT_CFG_TW  | MPL3115A2_Declares.CTL5_INT_CFG_TTH);
+
+
+        this.logger.trace("<<< Exit: set_T_WND " );
+    }
+
+    //  Interrupt handler
+
+
+
+    public static class MonitorInterrupt1 implements DigitalStateChangeListener {
+        MPL3115A2 mplObj;
+        public MonitorInterrupt1( MPL3115A2 mplObj) {
+            this.mplObj =  mplObj;
+           /* Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    System.out.println("MatrixGpioListener: Performing ctl-C shutdown");
+                    // Thread.dumpStack();
+                }
+            });
+            */
+        }
+
+        @Override
+        public void onDigitalStateChange(DigitalStateChangeEvent event) {
+            // display pin state on console
+            // system.out.println(" Matrix -->Utility : GPIO PIN STATE CHANGE: "
+            // + event.getPin() + " = " + event.getState());
+            if (event.state() == DigitalState.LOW) {
+                // determine which condition occured
+                System.out.println("onDigitalStateChange Pin went low, see who caused it");
+                byte source = this.mplObj.i2c.readRegisterByte(MPL3115A2_Declares.REG_INT_SOURCE);
+                if ((source & MPL3115A2_Declares.REG_INT_SOURCE_PW) > 0) {
+                    byte reg = this.mplObj.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
+                    if((reg & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK ) > 0){
+                        double rval = this.mplObj.readPresureMb();
+                        System.out.println("Pressure " + rval);
+                    }else{
+                    double rval = this.mplObj.readAltimeterM();
+                    System.out.println("Altitude " + rval);
+                    }
+                } else if ((source & MPL3115A2_Declares.REG_INT_SOURCE_TW) > 0) {
+                    double rval = this.mplObj.readTemperatureF();
+                    System.out.println("Temperature " + rval);
+                } else {
+                    System.out.println("onDigitalStateChange unexpected source");
+                }
+            } else if (event.state() == DigitalState.HIGH) {
+                System.out.println("onDigitalStateChange Pin went high  NOP");
+            } else {
+                System.out.println("Strange event state  " + event.state());
+            }
+        }
+    }
 }

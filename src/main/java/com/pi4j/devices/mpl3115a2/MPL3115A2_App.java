@@ -70,6 +70,10 @@ public class MPL3115A2_App {
         boolean doReset = false;
         int gpio_int_1_num = 0x42 ;
         int gpio_int_2_num = 0x42 ;
+        float pw = 0;
+        float tw = 0;
+        float tg = 0;
+        float pg = 0;
 
         // ------------------------------------------------------------
         // Initialize the Pi4J Runtime Context
@@ -116,7 +120,8 @@ public class MPL3115A2_App {
 
 
         String helpString = " parms: -b hex value bus    -a hex value address -int1 interrupt1 gpio," +
-                " -int2 interrrupt2 gpio, -x do reset,  -t trace \n " +
+                " -int2 interrrupt2 gpio, -x do reset,  -t trace \n" +
+                "  -PW pressure/alt window -PG pressure/alt limit   -TW temp window -TG temp limit  \n" +
                 " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -125,6 +130,22 @@ public class MPL3115A2_App {
                 String a = args[i + 1];
                 busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
+            }else if (o.contentEquals("-TG")) { // temp limit
+                String a = args[i + 1];
+                i++;
+                tg  = Float.parseFloat(a);
+            }else if (o.contentEquals("-TW")) { // temp window
+                String a = args[i + 1];
+                i++;
+                tw  = Float.parseFloat(a);
+            }else if (o.contentEquals("-PG")) { // pressure limit
+                String a = args[i + 1];
+                i++;
+                pg  = Float.parseFloat(a);
+            }else if (o.contentEquals("-PW")) { // pressure window
+                String a = args[i + 1];
+                i++;
+                pw  = Float.parseFloat(a);
             } else if (o.contentEquals("-int1")) {
                 String a = args[i + 1];
                 i++;
@@ -187,6 +208,27 @@ public class MPL3115A2_App {
         double altitudeF = mplDev.readAltimeterF();
         console.println(" Altitude Feet = " + altitudeF);
 
+
+        if(pg > 0){
+            mplDev.set_P_PGT((long) pg);
+        }
+        if(pw > 0){
+            mplDev.set_P_WND((long) pw);
+        }
+        if(tg > 0){
+            mplDev.set_T_TGT((long) tg);
+        }
+        if(tw > 0){
+            mplDev.set_T_WND((long) tw);
+        }
+
+        console.promptForExit();
+
+        while (console.isRunning()) {
+            // spin and allow the interrupt handlers to fire
+            Thread.sleep(1000);
+        }
+        console.emptyLine();
 
 
         // Shutdown Pi4J
