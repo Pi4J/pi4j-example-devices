@@ -38,7 +38,6 @@ package com.pi4j.devices.mpl3115a2;
 
 import com.pi4j.context.Context;
 
-import com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
@@ -46,8 +45,6 @@ import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.time.Instant;
 
 /**
  *    Implementation for the MPL3115A2 sensor. Chip is altitude, pressure and
@@ -213,7 +210,7 @@ private void init(){
      */
     public String i2cDetail() {
         this.logger.trace(">>> Enter: i2cDetail");
-        this.logger.trace("<<< Exit: i2cDetail  " + (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device()));
+        this.logger.trace("<<< Exit: i2cDetail  " + (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + String.format("0X%02x: ", this.config.device())));
         return (this.i2c.toString() + " bus : " + String.format("0X%02x: ", this.config.bus()) + "  address : " + String.format("0X%02x: ", this.config.device()));
     }
 
@@ -245,14 +242,15 @@ private void init(){
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1,  reg & MPL3115A2_Declares.CTL1_SBYB_STBY_MASK);
         this.busyWaitMS(10);  // ensure chip quiet
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1,  reg | MPL3115A2_Declares.CTL1_SBYB_SFT_RESET);
-        this.busyWaitMS(5000);  // allow time fir the reboot/POR
+        this.busyWaitMS(10000);  // allow time fir the reboot/POR
         this.logger.trace("<<< Exit : reset");
     }
 
 
 
+
     /**
-     *  Configure chip to calculate Altimeter and temperature
+     *  Configure chip to calculate Altimeter
      *  Configure interrupt pins to match the Pi GPIO pin configurations
      *  Enter standby and then active to initiate calculation
      */
@@ -265,10 +263,7 @@ private void init(){
         this.busyWaitMS(10);  // ensure chip quiet
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
-        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
-
-        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL3);
- //       this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL3, MPL3115A2_Declares.CTL3_PP_OD1_DRAIN | MPL3115A2_Declares.CTL3_PP_OD2_DRAIN);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_DRDY);
@@ -276,14 +271,14 @@ private void init(){
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1, MPL3115A2_Declares.CTL1_ALT_ALTIM | MPL3115A2_Declares.CTL1_OVR_SAMPL_MAX | MPL3115A2_Declares.CTL1_SBYB_ACT);
 
-      // wait INT2
+        // wait INT2
         int i = 0;
         for(i=0;i<400;i++){
             if(this.int2.state()  == DigitalState.LOW) {
                 break;
             }else{
                 this.logger.trace("Not desired State counter "  + i);
-                this.busyWaitMS(20); // depending upon 'sample rate' possible delay 512MS
+                this.busyWaitMS(40); // depending upon 'sample rate' possible delay 512MS
             }
         }
         if(i >= 400){
@@ -298,8 +293,10 @@ private void init(){
         this.logger.trace("<<< Exit: forceAltCalc rval : " + rval);
         return (rval);
     }
+
+
     /**
-     *  Configure chip to calculate Pressure and temperature
+     *  Configure chip to calculate Pressure
      *  Configure interrupt pins to match the Pi GPIO pin configurations
      *  Enter standby and then active to initiate calculation
      */
@@ -312,12 +309,56 @@ private void init(){
         this.busyWaitMS(10);  // ensure chip quiet
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
-        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
-
-        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL3);
-      //  this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL3, reg |MPL3115A2_Declares.CTL3_PP_OD1_DRAIN | MPL3115A2_Declares.CTL3_PP_OD2_DRAIN);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_DRDY);
+
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1, reg & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK | MPL3115A2_Declares.CTL1_OVR_SAMPL_MAX | MPL3115A2_Declares.CTL1_SBYB_ACT);
+
+        // wait INT2
+        int i = 0;
+        for(i=0;i<400;i++){
+            if(this.int2.state()  == DigitalState.LOW) {
+                break;
+            }else{
+                this.logger.trace("Not desired State counter "  + i);
+                this.busyWaitMS(40); // depending upon 'sample rate' possible delay 512MS
+            }
+        }
+        if(i >= 400){
+            this.logger.trace("int2 Time Out ...\r\n");
+        }
+
+        byte source = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_INT_SOURCE);
+        if((source & MPL3115A2_Declares.REG_INT_SOURCE_DRDY) > 0){
+            rval = true;
+        }
+        this.busyWaitMS(500);  // ensure chip quiet
+        this.logger.trace("<<< Exit: forcePressCalc rval : " + rval);
+        return (rval);
+    }
+
+
+//
+    /**
+     *  Configure chip to calculate temperature
+     *  Configure interrupt pins to match the Pi GPIO pin configurations
+     *  Enter standby and then active to initiate calculation
+     */
+    private boolean forceTempCalc(){
+        this.logger.trace(">>> Enter: forceTempCalc : ");
+        boolean rval = false;
+        this.busyWaitMS(1000);  // ensure chip quiet
+        byte reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1, reg & MPL3115A2_Declares.CTL1_SBYB_STBY_MASK & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK | MPL3115A2_Declares.CTL1_OVR_SAMPL_MAX);
+        this.busyWaitMS(10);  // ensure chip quiet
+
+        reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_T);
+
+          reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_DRDY);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
@@ -342,16 +383,17 @@ private void init(){
             rval = true;
         }
         this.busyWaitMS(500);  // ensure chip quiet
-        this.logger.trace("<<< Exit: forcePressCalc rval : " + rval);
+        this.logger.trace("<<< Exit: forceTempCalc rval : " + rval);
         return (rval);
     }
 
 
 
 
-    private double[] readAltimeterTemperature(){
-        this.logger.trace(">>> Enter: readAltimeterTemperature");
-        double rval[] = new double[2];
+
+    private double readAltimeter(){
+        this.logger.trace(">>> Enter: readAltimeter");
+        double rval = 0;
         if(this.forceAltCalc()) {
 
             byte[] compVal = new byte[2];
@@ -362,10 +404,6 @@ private void init(){
 
             byte dig_a3 = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_P_LSB);
 
-            int dig_t1 =  this.i2c.readRegisterByte(MPL3115A2_Declares.REG_T_MSB);
-
-            int dig_t2 = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_T_LSB);
-
             // fill in rval double
             // 16 bits are integer value  4 bits frac
             Double alt = Double.valueOf((dig_a1  << 8) | (dig_a2 & 0xff) );
@@ -375,22 +413,19 @@ private void init(){
             // https://indepth.dev/posts/1019/the-simple-math-behind-decimal-binary-conversion-algorithms
             Double lsbFrac = ((dig_a3 >> 4) & 0xF)/16.0;
 
-            rval[0] = alt + lsbFrac;
+            rval = alt + lsbFrac;
 
-            Double temp = Double.valueOf(dig_t1 );  // sign bit remains attached
-            Double tempFrac = (((dig_t2 & 0xF0) >> 4)/16.0);
-            rval[1] = temp + tempFrac;
         }else{
             this.logger.error("forceAltCalc failure");
         }
 
-        this.logger.trace("<<< Exit : readAltimeterTemperature  :" + rval[0] + "/" + rval[1]);
+        this.logger.trace("<<< Exit : readAltimeter  :" + rval);
         return(rval);
     }
 
-    private double[] readPressureTemperature(){
-        this.logger.trace(">>> Enter: readPressureTemperature");
-        double rval[] = new double[2];
+    private double readPressure(){
+        this.logger.trace(">>> Enter: readPressure");
+        double rval = 0;
         if(this.forcePressCalc()) {
 
             byte[] compVal = new byte[2];
@@ -401,9 +436,6 @@ private void init(){
 
             byte dig_p3 = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_P_LSB);
 
-            int dig_t1 =  this.i2c.readRegisterByte(MPL3115A2_Declares.REG_T_MSB);
-
-            int dig_t2 = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_T_LSB);
 
             // fill in rval double
             // 18 bits are integer value  2 bits frac
@@ -412,25 +444,46 @@ private void init(){
             Double lsbFrac = ((dig_p3 >> 4) & 0x3)/4.0;
             Double prs = Double.valueOf(((dig_p1 & 0xff) << 10) | ((dig_p2 & 0xff)<<2)  | ((dig_p3 &0xC0) >>6) );
 
+             rval = prs + lsbFrac;
 
-             rval[0] = prs + lsbFrac;
-
-
-            Double temp = Double.valueOf(dig_t1);   // sign bit still attached
-            Double tempFrac = (((dig_t2 & 0xF0) >> 4)/16.0);
-            rval[1] = temp + tempFrac;
         }else{
-            this.logger.error("forceAltCalc failure");
+            this.logger.error("forcePressCalc failure");
         }
 
-        this.logger.trace("<<< Exit : readPressureTemperature  :" + rval[0] + "/" + rval[1]);
+        this.logger.trace("<<< Exit : readPressure  :" + rval);
         return(rval);
     }
 
+    private double readTemperature(){
+        this.logger.trace(">>> Enter: readTemperature");
+        double rval = 0;
+        if(this.forceTempCalc()) {
+
+            byte[] compVal = new byte[2];
+
+            int dig_t1 =  this.i2c.readRegisterByte(MPL3115A2_Declares.REG_T_MSB);
+
+            int dig_t2 = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_T_LSB);
+
+            // fill in rval double
+            // 18 bits are integer value  2 bits frac
+            // see
+            // https://indepth.dev/posts/1019/the-simple-math-behind-decimal-binary-conversion-algorithms
+
+            Double temp = Double.valueOf(dig_t1);   // sign bit still attached
+            Double tempFrac = (((dig_t2 & 0xF0) >> 4)/16.0);
+            rval = temp + tempFrac;
+        }else{
+            this.logger.error("forceTempCalc failure");
+        }
+
+        this.logger.trace("<<< Exit : readTemperature  :" + rval);
+        return(rval);
+    }
 
     public double readAltimeterM(){
         this.logger.trace(">>> Enter: readAltimeterM");
-        double rval =  this.readAltimeterTemperature()[0];
+        double rval =  this.readAltimeter();
         this.logger.trace("<<< Exit : readAltimeterM  :" + rval);
         return(rval);
     }
@@ -446,7 +499,7 @@ private void init(){
     public double readTemperatureC(){
         this.logger.trace(">>> Enter: readTemperatureC");
         double rval = 0.0;
-        rval = this.readAltimeterTemperature()[1];
+        rval = this.readTemperature();
         this.logger.trace("<<< Exit : readTemperatureC  :" + rval);
         return(rval);
     }
@@ -461,7 +514,7 @@ private void init(){
 
     public double readPresurePa(){
         this.logger.trace(">>> Enter: readPresurePa");
-        double rval = this.readPressureTemperature()[0];
+        double rval = this.readPressure();
         this.logger.trace("<<< Exit : readPresurePa  :" + rval);
         return(rval);
     }
@@ -547,21 +600,36 @@ private void init(){
         this.logger.trace("<<< Exit: set_T_WND " );
     }
 
+
+
+    // Chip perform altitude calc using 101,326 Pa. If local Pa is different
+    // the Altitude calculation will be incorrect.
+    public void set_local_Pa_correction(long pa){
+        this.logger.trace(">>> Enter: set_local_Pa_correction : " + pa);
+        pa = pa >> 1;
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_BAR_IN_MSB, (byte) ((pa & 0xff00) >> 8));
+        this.i2c.writeRegister(MPL3115A2_Declares.REG_BAR_IN_LSB, (byte) (pa & 0xff));
+
+        this.logger.trace("<<< Exit: set_local_Pa_correction  ");
+    }
+
+
+
+
+
     //  Interrupt handler
 
 
-
+    /**
+     * The code at present just prints the present value for what
+     * caused the interrupt.  You could change the code to take some action
+     * based on what occurred.
+      */
     public static class MonitorInterrupt1 implements DigitalStateChangeListener {
         MPL3115A2 mplObj;
         public MonitorInterrupt1( MPL3115A2 mplObj) {
             this.mplObj =  mplObj;
-           /* Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    System.out.println("MatrixGpioListener: Performing ctl-C shutdown");
-                    // Thread.dumpStack();
-                }
-            });
-            */
+
         }
 
         @Override
@@ -571,27 +639,30 @@ private void init(){
             // + event.getPin() + " = " + event.getState());
             if (event.state() == DigitalState.LOW) {
                 // determine which condition occured
-                System.out.println("onDigitalStateChange Pin went low, see who caused it");
+                this.mplObj.logger.trace("onDigitalStateChange Pin " + event.toString() + " went low, see who caused it" + "\n");
                 byte source = this.mplObj.i2c.readRegisterByte(MPL3115A2_Declares.REG_INT_SOURCE);
                 if ((source & MPL3115A2_Declares.REG_INT_SOURCE_PW) > 0) {
                     byte reg = this.mplObj.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
                     if((reg & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK ) > 0){
                         double rval = this.mplObj.readPresureMb();
-                        System.out.println("Pressure " + rval);
+                        // User add meaningful code here
+                        System.out.println("Pressure limit exceeded  " + rval + "\n");
                     }else{
-                    double rval = this.mplObj.readAltimeterM();
-                    System.out.println("Altitude " + rval);
+                        double rval = this.mplObj.readAltimeterM();
+                        // User add meaningful code here
+                        System.out.println("Altitude limit exceeded  " + rval + "\n");
                     }
                 } else if ((source & MPL3115A2_Declares.REG_INT_SOURCE_TW) > 0) {
                     double rval = this.mplObj.readTemperatureF();
-                    System.out.println("Temperature " + rval);
+                    // User add meaningful code here
+                    System.out.println("Temperature limit exceeded " + rval   + "\n");
                 } else {
-                    System.out.println("onDigitalStateChange unexpected source");
+                    this.mplObj.logger.trace("onDigitalStateChange " + event.toString() + " unexpected source" + "\n");
                 }
             } else if (event.state() == DigitalState.HIGH) {
-                System.out.println("onDigitalStateChange Pin went high  NOP");
+                this.mplObj.logger.trace("onDigitalStateChange " + event.toString() + " Pin went high  NOP"  + "\n");
             } else {
-                System.out.println("Strange event state  " + event.state());
+                this.mplObj.logger.trace("Pin " + event.toString() + " Strange event state  " + event.state() + "\n");
             }
         }
     }
