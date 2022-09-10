@@ -74,6 +74,7 @@ public class MPL3115A2_App {
         float tw = 0;
         float tg = 0;
         float pg = 0;
+        float pa = 0 ;
 
         // ------------------------------------------------------------
         // Initialize the Pi4J Runtime Context
@@ -120,7 +121,7 @@ public class MPL3115A2_App {
 
 
         String helpString = " parms: -b hex value bus    -a hex value address -int1 interrupt1 gpio," +
-                " -int2 interrrupt2 gpio, -x do reset,  -t trace \n" +
+                " -int2 interrrupt2 gpio, -x do reset,  -t trace -Pa local_Pa\n" +
                 "  -PW pressure/alt window -PG pressure/alt limit   -TW temp window -TG temp limit  \n" +
                 " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
@@ -146,7 +147,11 @@ public class MPL3115A2_App {
                 String a = args[i + 1];
                 i++;
                 pw  = Float.parseFloat(a);
-            } else if (o.contentEquals("-int1")) {
+            } else if (o.contentEquals("-Pa")) { // local Pa
+                String a = args[i + 1];
+                i++;
+                pa  = Float.parseFloat(a);
+            }else if (o.contentEquals("-int1")) {
                 String a = args[i + 1];
                 i++;
                 gpio_int_1_num = Integer.parseInt(a);
@@ -207,6 +212,16 @@ public class MPL3115A2_App {
 
         double altitudeF = mplDev.readAltimeterF();
         console.println(" Altitude Feet = " + altitudeF);
+
+
+        console.println("Adjust the Pa used in altitude calculation ");
+        if(pa > 0){
+            mplDev.set_local_Pa_correction((long) (pa));
+        }
+        console.println("Again obtain the altitude in meters using new Pa ");
+
+        double altitudePa = mplDev.readAltimeterM();
+        console.println(" Altitude Meters = " + altitudePa);
 
 
         if(pg > 0){
