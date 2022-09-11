@@ -85,9 +85,12 @@ public class MCP4725_App {
         boolean setOutputFast = false;
         boolean dumpChip = false;
         double vref = 0;
+        float eepromVolt = 0;
+        float fastVolt = 0;
 
         String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address  -t trace   \n " +
-                "  -r  reset chip  -d dumpChipData  -rde 0x???? update DAC and EEPROM  " +
+                "  -r  reset chip  -d dumpChipData  -rde 0x???? update DAC and EEPROM \n" +
+                " -ev eeprom voltage  -fv fast voltage \n" +
                 " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " +
                 "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
                 " or \"off\"  Default \"info\"";
@@ -142,6 +145,14 @@ public class MCP4725_App {
             }else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
+            } else if (o.contentEquals("-fv")) {  // eeprom volts
+                String a = args[i + 1];
+                i++;
+                eepromVolt =  Float.parseFloat(a);
+            }  else if (o.contentEquals("-ev")) { // fast volts
+                String a = args[i + 1];
+                i++;
+                fastVolt =  Float.parseFloat(a);
             } else {
                 console.println("  !!! Invalid Parm " + args);
                 console.println(helpString);
@@ -151,6 +162,22 @@ public class MCP4725_App {
 
 
 
+        if(vref == 0){
+            console.println("-vref is zero");
+            System.exit(50);
+
+        }
+        if(eepromVolt > vref){
+            console.println("-ev greater than -vref");
+            System.exit(51);
+
+        }
+
+        if(fastVolt > vref){
+            console.println("-ef greater than -vref");
+            System.exit(51);
+
+        }
 
         MCP4725 dacChip = null;
         dacChip = new MCP4725(pi4j, busNum, address, registerData, traceLevel, vref);
@@ -170,6 +197,22 @@ public class MCP4725_App {
                 console.println("setOutputFast failed");
             }
         }
+
+        if(eepromVolt > 0){
+            boolean worked = dacChip.setOutputVoltEEPROM(eepromVolt);
+            if(worked == false){
+                console.println("setOutputVoltEEPROM failed");
+            }
+        }
+
+
+        if(fastVolt > 0){
+            boolean worked = dacChip.setOutputVoltFast(fastVolt);
+            if(worked == false){
+                console.println("setOutputVoltFast failed");
+            }
+        }
+
 
         if(dumpChip){
             dacChip.dumpChip();
