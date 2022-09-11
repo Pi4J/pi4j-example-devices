@@ -121,9 +121,18 @@ public class MCP4725 {
         this.logger.trace("Exit: resetChip ");
     }
 
-
-    boolean setOutputEEPROM(int twelveBitData) {
+    boolean setOutputVoltEEPROM(float twelveBitData) {
+        this.logger.trace(">>> Enter: setOutputVoltEEPROM  data :  " + twelveBitData);
         boolean rval = false;
+        int twelveBit = (int) Math.round((twelveBitData *4096)/ this.vref) - 1;
+        rval = this.setOutputEEPROM(twelveBit);
+        this.logger.trace("<<< Exit: setOutputVoltEEPROM  : " + rval);
+        return (rval);
+    }
+
+        boolean setOutputEEPROM(int twelveBitData) {
+        boolean rval = false;
+        this.registerData = twelveBitData;
         String binaryString = Integer.toBinaryString(this.registerData & 0xff);
         String withLeadingZeros = String.format("0b%12s", binaryString).replace(' ', '0');
         this.logger.trace(">>> Enter: setOutputEEPROM  data :  " + withLeadingZeros + "   " + this.registerData);
@@ -140,12 +149,22 @@ public class MCP4725 {
         } else {
             this.logger.info("setOutputEEPROM not possible, chip BSY  ");
         }
-        this.logger.trace("<<< Exit: setOutputEEPROM  ");
+        this.logger.trace("<<< Exit: setOutputEEPROM  :"  + rval);
+        return (rval);
+    }
+
+    boolean setOutputVoltFast(float twelveBitData) {
+        this.logger.trace(">>> Enter: setOutputVoltFast  data :  " + twelveBitData);
+        boolean rval = false;
+        int twelveBit = (int) Math.round((twelveBitData *4096)/ this.vref) - 1;
+        rval = this.setOutputFast(twelveBit);
+        this.logger.trace("<<< Exit: setOutputVoltFast  : " + rval);
         return (rval);
     }
 
     boolean setOutputFast(int twelveBitData) {
         boolean rval = false;
+        this.registerData = twelveBitData;
         String binaryString = Integer.toBinaryString(this.registerData & 0xff);
         String withLeadingZeros = String.format("0b%12s", binaryString).replace(' ', '0');
         this.logger.trace(">>> Enter: setOutputFast  data :  " + withLeadingZeros + "   " + this.registerData);
@@ -161,7 +180,7 @@ public class MCP4725 {
         } else {
             this.logger.info("setOutputFast not possible, chip BSY  ");
         }
-        this.logger.trace("<<< Exit: setOutputFast  ");
+        this.logger.trace("<<< Exit: setOutputFast  + " + rval);
         return (rval);
     }
 
