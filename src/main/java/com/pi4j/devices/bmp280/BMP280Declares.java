@@ -45,7 +45,7 @@ public class BMP280Declares {
      */
     String ID = BMP280Device.I2C_PROVIDER_ID;
 
-    public static final int DEFAULT_ADDRESS = 0x76;
+    public static final int DEFAULT_ADDRESS = 0x77;
 
     public static final int DEFAULT_BUS = 0x1;
 
