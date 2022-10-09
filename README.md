@@ -30,3 +30,7 @@ The following lists the currently supported devices within this project:
     * Mounted within WaveShare AD/DA Board  
  
 (1): This package does not use any other code within this repo
+
+
+NOT complete.  Requires change in Pi4j to allow i2c muktibyte write/restart
+* [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1)
