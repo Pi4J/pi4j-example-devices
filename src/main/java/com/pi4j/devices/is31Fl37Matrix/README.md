@@ -47,7 +47,11 @@ was learning the V2 default debounce time is 10 ms, too great a value for this c
 documented 7 ms interrupt duration.
 
 Java Monitor input GPIO pin 18 configured as an active low interrupt.  
-com.pi4j.devices.multi/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 18 -d DOWN 
+com.pi4j.devices.multi/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 18 -d DOWN
+sudo /usr/lib/jvm/java-1.11.0-openjdk-arm64/bin/java -javaagent:/home/pi/Tools/Intellij/idea-IC-222.4167.29/lib/idea_rt.jar=43151:/home/pi/Tools/Intellij/idea-IC-222.4167.29/bin -Dfile.encoding=UTF-8 -classpath /home/pi/.m2/repository/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar -p /home/pi/.m2/repository/org/slf4j/slf4j-simple/2.0.3/slf4j-simple-2.0.3.jar:/home/pi/.m2/repository/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar:/home/pi/Pi4J_V2/Pi4J_V2_Devices/target/classes:/home/pi/.m2/repository/com/pi4j/pi4j-library-linuxfs/2.2.1-SNAPSHOT/pi4j-library-linuxfs-2.2.1-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-pigpio/2.2.1-SNAPSHOT/pi4j-library-pigpio-2.2.1-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-core/2.2.1-SNAPSHOT/pi4j-core-2.2.1-SNAPSHOT.jar:/home/pi/.m2/repository/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-pigpio/2.2.1-SNAPSHOT/pi4j-plugin-pigpio-2.2.1-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-linuxfs/2.2.1-SNAPSHOT/pi4j-plugin-linuxfs-2.2.1-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-raspberrypi/2.2.1-SNAPSHOT/pi4j-plugin-raspberrypi-2.2.1-SNAPSHOT.jar -m com.pi4j.devices/com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 25 -d DOWN
+
+sudo /usr/lib/jvm/java-1.11.0-openjdk-arm64/bin/java   -cp .:/home/pi/Pi4J_V2/Pi4J_V2_Devices/target/distribution  com.pi4j.devices.is31Fl37Matrix.MonitorInterrupt -p 25 -d DOWN
+
 
 
 Java Create output GPIO pin 18.  Create interrupt by driving line low for 15 millisecond duration 
