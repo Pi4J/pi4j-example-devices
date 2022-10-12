@@ -58,6 +58,7 @@ public class MonitorInterrupt {
         int monitorPinNum = 43;
         String pullDirection = "";
         int countLoops = 120;
+        PullResistance pd = PullResistance.OFF;
         DigitalInput monitorPin = null;
 
         for (int i = 0; i < args.length; i++) {
@@ -74,14 +75,18 @@ public class MonitorInterrupt {
                 i++;
             } else if (o.contentEquals("-d")) { // mainChip
                 pullDirection = args[i + 1];
-                if (pullDirection.contentEquals("UP") | pullDirection.contentEquals("DOWN") | pullDirection.contentEquals("OFF")) {
+                if (pullDirection.contentEquals("UP")) {
                     i++;
-                } else {
-                    console.println("Parms -p pin to monitor interrupt, -d direction of pull <UP DOWN OFF>");
+                    pd = PullResistance.PULL_UP;
+                }else if (pullDirection.contentEquals("DOWN")) {
+                    i++;
+                    pd = PullResistance.PULL_UP;
+                }else if (pullDirection.contentEquals("OFF")) {
+                    i++;
+                    pd = PullResistance.PULL_UP;
+                } else{
+                    console.println("INVALID Parms -p pin to monitor interrupt, -d direction of pull <UP DOWN OFF>");
                 }
-            } else {
-                console.println("INVALID Parms -p pin to monitor interrupt, -d direction of pull <UP DOWN OFF>");
-
             }
         }
 
@@ -96,44 +101,32 @@ public class MonitorInterrupt {
         // we will use the PULL_DOWN argument to set the pin pull-down resistance on this GPIO pin
         var config = DigitalInput.newConfigBuilder(pi4j)
                 .load(properties)
+                .provider("pigpio-digital-input") // linuxfs   pigpio
                 .build();
 
-        var input = pi4j.din().create(config);
-
-        var ledConfigIntr = DigitalInput.newConfigBuilder(pi4j)
-                .id("MatrixInterrupt")
-                .name("MatrixInterrupt")
-                .address(monitorPinNum)
-                .pull(PullResistance.PULL_UP)
-                .provider("pigpio-digital-input");
-        try {
-            monitorPin = pi4j.create(ledConfigIntr);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigitalIn failed");
-            System.exit(200);
-        }
-
+        monitorPin = pi4j.create(config);
         monitorPin.addListener(new MatrixGpioListener());
+
 
 
         // lets read the digital output state
         console.print("DIGITAL INPUT [");
-        console.print(input);
+        console.print(monitorPin);
         console.print("] STATE IS [");
-        console.println(input.state() + "]");
+        console.println(monitorPin.state() + "]");
 
         console.print("DIGITAL INPUT [");
-        console.print(input);
+        console.print(monitorPin);
         console.print("] PULL RESISTANCE IS [");
-        console.println(input.pull() + "]");
+        console.println(monitorPin.pull() + "]");
 
         console.println();
         console.println("CHANGE INPUT STATES VIA I/O HARDWARE AND CHANGE EVENTS WILL BE PRINTED BELOW:");
 
-        /*for(int c = 0; c < countLoops; c++){
+        for(int c = 0; c < countLoops; c++){
             Thread.sleep(500);
-        }*/
+            console.println(monitorPin.state() + "state");
+        }
         // wait (block) for user to exit program using CTRL-C
         console.waitForExit();
         monitorPin.shutdown(pi4j);
@@ -173,6 +166,9 @@ public class MonitorInterrupt {
                 System.out.println("onDigitalStateChange Pin went high");
                 long elapsedTime = end - start;
                 System.out.println("Elapsed time MS " + elapsedTime);
+                if (startInstant == null) {
+                    startInstant = Instant.now(); // hack so test case works either U/D
+                }
                 Duration timeElapsed = Duration.between(startInstant, endInstant);
                 System.out.println("timeElapsed time MS " + timeElapsed.toMillis());
             }else{
