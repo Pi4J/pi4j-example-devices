@@ -66,10 +66,12 @@ public class AT24C512_App {
         int numBytes = 1;
         long readReg = 0;
         boolean doRead = false;
+        boolean doCurrentRead = false;
         long writeReg = 0;
-        long writeData;
+        String writeData = "";
         boolean doWrite = false;
-
+        int writeDataLen = 0;
+        
         // ------------------------------------------------------------
         // Initialize the Pi4J Runtime Context
         // ------------------------------------------------------------
@@ -115,7 +117,7 @@ public class AT24C512_App {
 
 
         String helpString = " parms: -b hex value bus    -a hex value address  \n" +
-                "-n numBytes -r readReg   -w writeReg -d  data -t trace\n" +
+                "-n numBytes <hex> -r readReg <hex> -rr read current addr NoData  -w writeReg <hex> -d  data <Hex Hex...> -t trace\n" +
                 "-r not permitted with args -d -w, either read data or write data \n " +
                 " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
@@ -133,12 +135,14 @@ public class AT24C512_App {
                 String a = args[i + 1];
                 i++;
                 numBytes = Integer.parseInt(a.substring(2), 16);
-            }else if (o.contentEquals("-r")) { // read reg
+            }else if (o.contentEquals("-rr")) { // current chip pointer used
+                doCurrentRead = true;
+            }else if (o.contentEquals("-r")) { // read specific reg
                 String a = args[i + 1];
                 i++;
                 doRead = true;
                 readReg = Long.parseLong(a.substring(2), 16);
-            }else if (o.contentEquals("-w")) { // write reg
+            }else if (o.contentEquals("-w")) { // write specific reg
                 String a = args[i + 1];
                 i++;
                 doWrite = true;
@@ -146,7 +150,17 @@ public class AT24C512_App {
             }else if (o.contentEquals("-d")) { // write reg
                 String a = args[i + 1];
                 i++;
-                writeData = Long.parseLong(a.substring(2), 16);
+                writeDataLen = (a.length()-2)/2;  // subtract 0X from the string
+                writeData = a.substring(2);
+                try
+                {
+                    int value = Integer.parseInt(writeData, 16);
+                }
+                catch(NumberFormatException nfe)
+                {
+                    // not a valid hex
+                    console.println("Invalid:  parm -d not a valid hex \n");
+                }
             } else if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
                 i++;
@@ -182,19 +196,47 @@ public class AT24C512_App {
         console.println("  I2C detail : " + seeDev.i2cDetail());
 
 
-        byte toWrite[] = {(byte) 0xDE, (byte) 0xAD, (byte) 0xBE, (byte) 0xEF};
-        // TODO get users data to send to SEEPROM
-            // TODO use -w
-        if(doWrite) {
-            int bWritten = seeDev.writeEEPROM(writeReg, toWrite.length, toWrite);
-            console.println("Wrote " + bWritten + " bytes, expected : " + numBytes);
-        }
-
         byte[] toRead;
-        // TODO use -r
-        if(doRead) {
-                toRead = seeDev.readEEPROM(readReg, numBytes);
+        if(doWrite) {
+            if(numBytes != writeDataLen){
+                console.println("  !!! -n NOT equal to length of -d data ");
+                console.println(helpString);
+                System.exit(44);
             }
+            byte[] bytesToWrite = new byte[writeDataLen];
+            int toOffset = 0;
+            for ( int i = 0; i < writeDataLen*2; i+=2){
+                int singleInt =  Integer.parseInt(writeData.substring(i, i+2), 16);
+                bytesToWrite[toOffset] = (byte) (bytesToWrite[toOffset] | (byte) (singleInt & 0xff ));
+                toOffset++;
+            }
+            int bWritten = seeDev.writeEEPROM(writeReg, writeDataLen, bytesToWrite);
+            console.println("Wrote " + bWritten + " bytes, expected : " + writeDataLen);
+        } else if(doRead) {
+            toRead = seeDev.readEEPROM(readReg, numBytes);
+            var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
+            details = details + String.format(" %02x: ", 0);
+            for (int i = 0; i < numBytes; i++) {
+                details = details + String.format("%02x ", toRead[i]) + " ";
+                if (((i > 0) && ((i + 1) % 16) == 0) || (i == 15) ){
+                    details = details + "\n";
+                    details = details + String.format(" %02x: ", i + 1);
+                }
+            }
+            console.println("Read "  + numBytes + "  bytes   "  + details);
+        }else if(doCurrentRead) {
+            toRead = seeDev.readCurrentAddrEEPROM(numBytes);
+            var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
+            details = details + String.format(" %02x: ", 0);
+            for (int i = 0; i < numBytes; i++) {
+                details = details + String.format("%02x ", toRead[i]) + " ";
+                if (((i > 0) && ((i + 1) % 16) == 0) || (i == 15)) {
+                    details = details + "\n";
+                    details = details + String.format(" %02x: ", i + 1);
+                }
+            }
+            console.println("Read "  + numBytes + "  bytes   "  + details);
+        }
         // Shutdown Pi4J
         pi4j.shutdown();
     }

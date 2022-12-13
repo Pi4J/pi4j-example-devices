@@ -187,6 +187,31 @@ public class AT24C512 {
 
 
 
+    public byte[]  readCurrentAddrEEPROM(int numBytes){
+        this.logger.trace(">>> enter: readCurrentAddrEEPROM   numByte : " + numBytes);
+        byte rData[] = new byte[numBytes];
+        int rc = 0;
+        String details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
+        details = details + String.format("     %02x: ", 0);
+        byte[] compVal = new byte[numBytes];
+
+        for (int i = 0; i < numBytes; i++) {
+            rData[i] = (byte) this.i2c.read();// .readRegister((int) register);
+             details = details + String.format("%02x ", rData[i]) + " ";
+            if (((i > 0) && ((i + 1) % 16) == 0) || (i == 15)){
+                details = details + "\n";
+                details = details + String.format(" %02x: ", i + 1);
+            }
+        }
+
+        rc = rData.length;
+        this.logger.trace("read  data :" + details
+                + "\n  rc: "+ String.format("0X%02x: ",rc ) + "\n" );
+
+        this.logger.trace("<<< Exit: readCurrentAddrEEPROM numByte read : "  + rc );
+        return(rData);
+    }
+
 
     public byte[]  readEEPROM(long register, int numBytes){
         this.logger.trace(">>> enter: readEEPROM register " +  String.format("%04x ", register)  + " numByte : " + numBytes);
@@ -195,25 +220,26 @@ public class AT24C512 {
         int rc = 0;
 //        int rc = this.i2c.readRegister((int) ((register&0xff00) >> 8),rData, numBytes);
         String details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
-        // rData[i] = this.i2c.readRegisterByte(i);
+        details = details + String.format(" %02x: ", 0);
+         // rData[i] = this.i2c.readRegisterByte(i);
         byte[] compVal = new byte[numBytes];
 
         // this one needs to handle multibyte reg value
-        rc = this.i2c.readRegister((int)register, rData);
-
+        byte[] regByte = new byte[2]; // This chip is two byte register address
+        regByte[0] = (byte) ((register & 0xff00) >> 8);
+        regByte[1] = (byte) (register & 0xff);
+        rc = this.i2c.readRegister(regByte, rData);
         for (int i = 0; i < numBytes; i++) {
-            rData[i] = (byte) this.i2c.read();// .readRegister((int) register);
-             details = details + String.format("%02x ", rData[i]) + " ";
-            if ((i > 0) && ((i + 1) % 16) == 0) {
+            details = details + String.format( "%02x ", rData[i]) + " ";
+            if (((i > 0) && ((i + 1) % 16) == 0) || (i == 15)){
                 details = details + "\n";
-                details = details + String.format("%02x: ", i + 1);
+                details = details + String.format(" %02x: ", i + 1);
             }
         }
-
         rc = rData.length;
         // rc =  this.i2c.readRegister((int) register, rData, 0, numBytes);
         this.logger.trace("readRegister  data :" + details
-                + "  rc: " + "\n" + String.format("0X%02x: ",rc));
+                + "\n  rc: "  + String.format("0X%02x: ",rc) + "\n");
 
         this.logger.trace("<<< Exit: readEEPROM numByte read : "  + rc );
         return(rData);
@@ -221,24 +247,28 @@ public class AT24C512 {
 
 
     public int  writeEEPROM(long register, int numBytes, byte[] wData){
-        this.logger.trace(">>> enter: writeEEPROM register :" + register + " numBytes " + numBytes);
+        this.logger.trace(">>> enter: writeEEPROM register :"  +  String.format("%04x ", register) + " numBytes " + numBytes);
 
-        // needs to handle multibtye reg value
-        int rc = this.i2c.writeRegister((int) register, wData, numBytes);
+        // needs to handle multibyte reg value
+        byte[] regByte = new byte[2]; // This chip is two byte register address
+        regByte[0] = (byte) ((register & 0xff00) >> 8);
+        regByte[1] = (byte) (register & 0xff);
+
+        int rc = this.i2c.writeRegister(regByte, wData, numBytes);
         // TODO use rc OR numBytes in loop ???
-        var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
-        details = details + String.format("%02x: ", 0);
+        var details = "\n      0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
+        details = details + String.format(" %02x:  ", 0);
         for (int i = 0; i < numBytes; i++) {
             details = details + String.format("%02x ", wData[i]) + " ";
-            if ((i > 0) && ((i + 1) % 16) == 0) {
+            if( ((i > 0) && ((i + 1) % 16) == 0)|| (i == 15)) {
                 details = details + "\n";
-                details = details + String.format("%02x: ", i + 1);
+                details = details + String.format(" %02x: ", i + 1);
             }
         }
         this.logger.trace("writeRegister  data :" + details
-                + "  rc: " + "\n" + String.format("0X%02x: ",rc));
+                + "\n  rc: "+ String.format("0X%02x: ",rc) + "\n" );
 
-        this.logger.trace("<<< Exit: writeEEPROM numBytes written numBytes written :" + rc);
+        this.logger.trace("<<< Exit: writeEEPROM numBytes written numBytes written regAddr + data :" + rc);
         return(rc);
     }
 
