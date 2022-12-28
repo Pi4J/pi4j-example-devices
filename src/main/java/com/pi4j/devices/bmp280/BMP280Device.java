@@ -271,7 +271,17 @@ public class BMP280Device implements BMP280Interface {
         ctlReg &= ~BMP280Declares.presOverSampleMsk;   // mask off all pressure bits
         ctlReg |= BMP280Declares.ctl_pressSamp1;   //  Pressure oversample 1
 
-        this.i2c.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
+        // TODO use new write signatue
+
+        byte[] regVal = new byte[1];
+        regVal[0] = (byte)(BMP280Declares.ctrl_meas);
+        byte[] ctlVal = new byte[1];
+        ctlVal[0] = (byte) ctlReg;
+
+
+        this.i2c.writeRegister(regVal,ctlVal, ctlVal.length);
+
+     //    this.i2c.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
 
 
         // Next delay for 100 ms to provide chip time to perform measurements
@@ -285,7 +295,13 @@ public class BMP280Device implements BMP280Interface {
 
         byte[] compVal = new byte[2];
 
-        this.i2c.readRegister(BMP280Declares.reg_dig_t1, compVal);
+        byte[] wrtReg = new byte[1];
+        wrtReg[0] = (byte) BMP280Declares.reg_dig_t1;
+
+       this.i2c.readRegister(wrtReg, compVal);
+
+    //    this.i2c.readRegister(BMP280Declares.reg_dig_t1, compVal);
+
         long dig_t1 = castOffSignInt(compVal);
 
         this.i2c.readRegister(BMP280Declares.reg_dig_t2, compVal);
@@ -323,6 +339,8 @@ public class BMP280Device implements BMP280Interface {
 
 
         byte[] buff = new byte[6];
+
+        // TODO  use new interface
         this.i2c.readRegister(BMP280Declares.press_msb, buff);
 
 

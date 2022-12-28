@@ -11,6 +11,7 @@ The following lists the currently supported devices within this project:
 * [1602A LCD MCP23017 I2C  Controller](src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md): App uses MCP23017 to control the LCD
 * [1602A_LCD_PCF8574A I2C  Controller](src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md): App uses PCF8574A to control the LCD
 * [ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md) (1)
+* [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1) (2)
 * [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md) (1)
 * [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md)
 * [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md) (1)
@@ -24,13 +25,8 @@ The following lists the currently supported devices within this project:
 * [SN74HC595 8 Bit shift register](src/main/java/com/pi4j/devices/sn74hc595/README.md) (1)
 * [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
 * [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) (1)
-
-
-    * Simple module mount of the chip  
-    * Mounted within WaveShare AD/DA Board  
+  
+  
  
 (1): This package does not use any other code within this repo
-
-
-NOT complete.  Requires change in Pi4j to allow i2c muktibyte write/restart
-* [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1)
+(2): Requires SNAPSHOT of Pi4j that supports i2c multibyte write/restart
