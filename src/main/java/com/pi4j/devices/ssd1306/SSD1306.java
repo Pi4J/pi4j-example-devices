@@ -147,6 +147,7 @@ public class SSD1306 {
 
         this.logger = LoggerFactory.getLogger(SSD1306.class);
         this.createI2cDevice(); // will set start this.i2c
+        this.initialize();
     }
 
 
@@ -238,26 +239,35 @@ public class SSD1306 {
     public void sendCmd(byte cmd){
         this.logger.info("Enter: sendCmd  : "+  String.format("0x%08x ",cmd));
         byte[] cmdData = new byte[2];
-        cmdData[0] = SSD1306_Defines.WITH_COMMAND;
+        cmdData[0] = SSD1306_Defines.WITH_ONE_COMMAND;
         cmdData[1] = cmd;
         this.i2c.write(cmdData);
         this.logger.info("Exit: sendCmd");
     }
-    public void sendCmdData(byte cmd, byte data){
+    public void sendCmdOneData(byte cmd, byte data){
         this.logger.info("Enter: sendCmdData  CMD: "+  String.format("0x%08x ",cmd) + "  Data : " +  String.format("0x%08x",data));
         byte[] cmdData = new byte[3];
-        cmdData[0] = SSD1306_Defines.WITH_COMMAND;
+        cmdData[0] = SSD1306_Defines.WITH_ONE_DATA; //WITH_MULTI_COMMAND;   -----
         cmdData[1] = cmd;
         cmdData[2] = data;
+        //this.i2c.write(cmdData);
+
         this.i2c.write(cmdData[0], cmdData[1]);
         this.i2c.write(cmdData[0], cmdData[2]);
+
         this.logger.info("Exit: sendCmdData");
     }
 
-
-    public void sendData(byte[] dataArray){
+    public void sendCmdMultiData(byte[] dataArray){
         byte[] cmdData = new byte[dataArray.length + 1];
-        cmdData[0] = SSD1306_Defines.WITH_DATA;
+        cmdData[0] = SSD1306_Defines.WITH_MULTI_COMMAND;
+        System.arraycopy(dataArray, 0, cmdData,1 , dataArray.length);
+        this.i2c.write(cmdData);
+    }
+
+    public void sendMultiData(byte[] dataArray){
+        byte[] cmdData = new byte[dataArray.length + 1];
+        cmdData[0] = SSD1306_Defines.WITH_MULTI_DATA;
         System.arraycopy(dataArray, 0, cmdData,1 , dataArray.length);
         this.i2c.write(cmdData);
     }
@@ -268,9 +278,11 @@ public class SSD1306 {
     protected void setColumnAddress(byte start, byte end)
     {
         this.logger.info("Enter: setColumnAddress   "   + start  + "  " + end);
-        this.sendCmd(SSD1306_Defines.COMMAND_COLUMN_ADDRESS);
-        this.i2c.write(start);
-        this.i2c.write(end);
+        byte[] cmdData = new byte[3];
+        cmdData[0] = SSD1306_Defines.COMMAND_COLUMN_ADDRESS;
+        cmdData[1] = start;
+        cmdData[2] = end;
+        sendCmdMultiData( cmdData);
         this.logger.info("Exit: setColumnAddress");
     }
 
@@ -280,71 +292,81 @@ public class SSD1306 {
     protected void setPageAddress(byte start, byte end)
     {
         this.logger.info("Enter: setPageAddress   "   + start  + "  " + end);
-        this.sendCmd(SSD1306_Defines.COMMAND_SET_PAGE_ADDRESS);
-        this.i2c.write((byte) (start & 0x07));
-        this.i2c.write((byte) (end & 0x07));
+        byte[] cmdData = new byte[3];
+        cmdData[0] = SSD1306_Defines.COMMAND_SET_PAGE_ADDRESS;
+        cmdData[1] = start;
+        cmdData[2] = end;
+        sendCmdMultiData(  cmdData);
         this.logger.info("Exit: setPageAddress   ");
     }
 
     // Send a data buffer GDDRAM
     protected void sendBuffer(byte[] buffer, long length)
     {
-        this.logger.info("Enter: setBuffer  ");
-        this.i2c.writeRegister(SSD1306_Defines.WITH_DATA,buffer);
-        this.logger.info("Exit: setBuffer  ");
+        this.logger.info("Enter: sendBuffer  ");
+        this.i2c.writeRegister(SSD1306_Defines.WITH_MULTI_DATA,buffer);   // TODO  which command
+        this.logger.info("Exit: sendBuffer  ");
     }
 
     private void initialize() {
         this.logger.info("Enter: initialize  ");
         // start of init steps
         this.sendCmd((byte) (SSD1306_Defines.COMMAND_DISPLAY_ON | SSD1306_Defines.DISABLE_DISPLAY));
-        //Set MUX Ratio [$A8, $3F]
-        this.sendCmdData((byte) (0xA8), (byte) (0x3f));
 
-        //Set display offset [$D3, $00]
-        this.sendCmdData((byte) (0xD3), (byte) (0x00));
-
-        //Set start line [$40] TODO where to place this statement
-        this.sendCmd((byte) (0x40));
-
-        //Set segment re-map $A0 / $A1.... ?????
-        this.sendCmd((byte) (0xA1));
+      // memory mode horz
+        this.sendCmdOneData((byte) (0x20), (byte) (0x00));
 
         //Set COM output scan direction $C0 / $C8 ......
         this.sendCmd((byte) (0xC0));
 
-        //Set COM pin hardware configuration [$DA, $02]
-        this.sendCmdData((byte) (0xDA), (byte) (0x02));
-
-        //Set contrast [$81, $7F]
-        this.sendCmdData((byte) (0x81), (byte) (0x8f));
-
-        //Set display offset [$D9, $22]
-        this.sendCmdData((byte) (0xD9), (byte) (0x22));
-
-        // v de-select  $DB
-        this.sendCmd((byte) 0xDB);
-
         //Set start line [$40]
         this.sendCmd((byte) (0x40));
 
+        // missing ???  A1
+        this.sendCmd((byte) (0xA1));
+
+        //  missing ??? C0   ----
+        this.sendCmd((byte) (0xC0));
+        //??? DA  02    -----
+        this.sendCmdOneData((byte) (0xDA), (byte) (0x02));
+
+
+        // missing ??  81 AF
+          //Set contrast [$81, $7F]
+        this.sendCmdOneData((byte) (0x81), (byte) (0x8f));
+
+        // Normal display   A6    ??? A7   ---+++
+        this.sendCmd((byte) (0xA6));
+
+        // Set MUX Ratio [$A8, $3F]
+        this.sendCmdOneData((byte) (0xA8), (byte) (0x3F));
+
+        //Set display offset [$D3, $00]
+        this.sendCmdOneData((byte) (0xD3), (byte) (0x00));
+
+        //Set Oscillator frequency [$D5, $80]
+        // SETDISPLAYCLOCKDIV, 0x80,
+        this.sendCmdOneData((byte) (0xD5), (byte) (0x80));
+
+        //Set pre-charge [$D9, $22]
+        this.sendCmdOneData((byte) (0xD9), (byte) (0x22));
+
+        //Set divide ratio[$D5, $12]   ??? 80  --+++
+        this.sendCmdOneData((byte) (0xD5), (byte) (0x12));
+
+       /// SSD1306_SETVCOMDETECT, 0x20,     ??? only DB   ----   ++++
+        this.sendCmdOneData((byte) (0xDB), (byte) (0x20));
+
+        //Enable charge pump [$8D, $14]
+        this.sendCmdOneData((byte) (0x8D), (byte) (0x14));
+
+         //SSD1306_DISPLAYALLON_RESUME
         //Resume the display $A4
         this.sendCmd((byte) (0xA4));
 
-        // normal display $A6/$A7(inverse)
-        this.sendCmd((byte) (0xA7));
 
 
-        //Set Oscillator frequency [$D5, $80]
-        this.sendCmdData((byte) (0xD5), (byte) (0x80));
-
-        //Set memory mode $20
-        this.sendCmdData((byte) (0x20), (byte) (0x00));
-
-        //Enable charge pump [$8D, $14]
-        this.sendCmdData((byte) (0x8D), (byte) (0x14));
-
-        //Turn the display on $AF
+      //Turn the display on $AF
         this.sendCmd((byte) (SSD1306_Defines.COMMAND_DISPLAY_ON | SSD1306_Defines.ENABLE_DISPLAY));
 
         // completion of init steps

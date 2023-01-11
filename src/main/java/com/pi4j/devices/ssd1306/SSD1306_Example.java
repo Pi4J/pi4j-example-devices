@@ -176,9 +176,9 @@ public class SSD1306_Example {
        // 128 columns (each bit in each byte is a row pixel)
         byte[] page_buffer = new byte[128];
 
-        byte value = (byte) 0xff;
+        int value =  0xff;
          // Fix the page buffer with 1s (all pixels on)
-        Arrays.fill(page_buffer,0,page_buffer.length-1, value);
+        Arrays.fill(page_buffer,0,page_buffer.length-1, (byte)value);
 
         //Set start line [$40]
         ssdDev.sendCmd((byte) (0x40));
