@@ -300,6 +300,9 @@
                                 <copy todir="${project.build.directory}/distribution" overwrite="true" flatten="true">
                                     <fileset dir="assets" includes="*.py"> </fileset>
                                 </copy>
+                                <copy todir="${project.build.directory}/distribution" overwrite="true" flatten="true">
+                                    <fileset dir="assets" includes="*.jpg"> </fileset>
+                                </copy>
                                 <chmod dir="${project.build.directory}/distribution" perm="ugo+rx" includes="**/*.py"/>
                             </target>
                         </configuration>

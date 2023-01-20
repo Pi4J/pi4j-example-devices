@@ -15,6 +15,7 @@ module com.pi4j.devices{
     requires java.logging;
     requires jdk.unsupported;
     requires com.pi4j.plugin.linuxfs;
+    requires java.desktop;
 
 
     uses com.pi4j.extension.Extension;

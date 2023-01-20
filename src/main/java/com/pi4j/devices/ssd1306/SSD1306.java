@@ -128,9 +128,9 @@ public class SSD1306 {
      */
 
     /**
-     * @param console Context instance used accross application
-     * @param bus     Pi bus
-     * @param address Device address
+     * @param console    Context instance used accross application
+     * @param bus        Pi bus
+     * @param address    Device address
      * @param traceLevel for Logger
      */
     public SSD1306(Context pi4j, Console console, int bus, int address, String traceLevel) {
@@ -147,6 +147,7 @@ public class SSD1306 {
 
         this.logger = LoggerFactory.getLogger(SSD1306.class);
         this.createI2cDevice(); // will set start this.i2c
+        this.initialize();
     }
 
 
@@ -167,6 +168,7 @@ public class SSD1306 {
         this.createI2cDevice(); // will set start this.i2c
         this.initialize();
     }
+
     /**
      * @param device Set i2c state
      */
@@ -234,64 +236,101 @@ public class SSD1306 {
     }
 
 
-
-    public void sendCmd(byte cmd){
-        this.logger.info("Enter: sendCmd  : "+  String.format("0x%08x ",cmd));
+    public void sendCmd(byte cmd) {
+        this.logger.info("Enter: sendCmd  : " + String.format("0x%08x ", cmd));
         byte[] cmdData = new byte[2];
-        cmdData[0] = SSD1306_Defines.WITH_COMMAND;
+        cmdData[0] = SSD1306_Defines.WITH_ONE_COMMAND;
         cmdData[1] = cmd;
         this.i2c.write(cmdData);
         this.logger.info("Exit: sendCmd");
     }
-    public void sendCmdData(byte cmd, byte data){
-        this.logger.info("Enter: sendCmdData  CMD: "+  String.format("0x%08x ",cmd) + "  Data : " +  String.format("0x%08x",data));
+
+    public void sendCmdData(byte cmd, byte data) {
+        this.logger.info("Enter: sendCmdData  CMD: " + String.format("0x%08x ", cmd) + "  Data : " + String.format("0x%08x", data));
         byte[] cmdData = new byte[3];
-        cmdData[0] = SSD1306_Defines.WITH_COMMAND;
+        cmdData[0] = SSD1306_Defines.WITH_ONE_COMMAND;
         cmdData[1] = cmd;
         cmdData[2] = data;
-        this.i2c.write(cmdData[0], cmdData[1]);
-        this.i2c.write(cmdData[0], cmdData[2]);
+        this.i2c.write(cmdData);
         this.logger.info("Exit: sendCmdData");
     }
 
 
-    public void sendData(byte[] dataArray){
-        byte[] cmdData = new byte[dataArray.length + 1];
-        cmdData[0] = SSD1306_Defines.WITH_DATA;
-        System.arraycopy(dataArray, 0, cmdData,1 , dataArray.length);
+    private void sendData(byte[] dataArray, int arrayLength) {
+        this.logger.info("Enter: sendData  ");
+        byte[] cmdData = new byte[arrayLength + 1];
+        cmdData[0] = SSD1306_Defines.WITH_DATA_ONLY;
+        System.arraycopy(dataArray, 0, cmdData, 1, dataArray.length);
         this.i2c.write(cmdData);
+        this.logger.info("Exit: sendData  ");
     }
 
 
+    // Valid all address modes
+    // Set starting offset within columns
+    protected void setDisplayStartLine(byte line) {
+        this.logger.info("Enter: setDisplayRAMStartLine   " + line + " Command value " + (SSD1306_Defines.COMMAND_SET_ADDRESS_LINE + line));
+        if (line > 63) {
+            this.logger.error("Invalid line, greater than 63");
+            System.exit(500);
+        }
+        this.sendCmd((byte) (SSD1306_Defines.COMMAND_SET_ADDRESS_LINE | (byte) (line & 0x3F)));
+        this.logger.info("Exit: setDisplayRAMStartLine");
+    }
 
-    // Set start and end column addresses (COL0 - COL127)
-    protected void setColumnAddress(byte start, byte end)
-    {
-        this.logger.info("Enter: setColumnAddress   "   + start  + "  " + end);
-        this.sendCmd(SSD1306_Defines.COMMAND_COLUMN_ADDRESS);
-        this.i2c.write(start);
-        this.i2c.write(end);
+
+    // Starting column offset used to display DRAM
+    // Appears as though the image data was moved up
+    protected void setDisplayComOffset(byte offset) {
+        this.logger.info("Enter: setDisplayComOffset   " + offset);
+        if (offset > 63) {
+            this.logger.error("Invalid line, greater than 63");
+            System.exit(500);
+        }
+        byte[] cmdData = new byte[3];
+        cmdData[0] = SSD1306_Defines.WITH_ONE_COMMAND;
+        cmdData[1] = SSD1306_Defines.COMMAND_SET_DISPLAY_OFFSET;
+        cmdData[2] = (byte) (offset & 0x3F);
+        this.i2c.write(cmdData);
+
+        this.logger.info("Exit: setDisplayComOffset");
+    }
+
+    protected void setMemoryAddressMode(byte mode) {
+        this.logger.info("Enter: setMemoryAddressMode   " + mode);
+        this.sendCmdData(SSD1306_Defines.COMMAND_SET_MEM_ADDRESS_MODE, mode);
+
+        this.logger.info("Exit: setMemoryAddressMode");
+    }
+
+    // Set start and end column addresses (COL0 - COL127) for display
+    // Valid in horizontal or vertical address mode
+    protected void setColumnAddress(byte start, byte end) {
+        this.logger.info("Enter: setColumnAddress   " + start + "  " + end);
+        if ((start > 127) || (end > 127)) {
+            this.logger.error("Invalid column, greater than 127");
+            System.exit(502);
+        }
+
+        byte[] cmdData = new byte[4];
+        cmdData[0] = SSD1306_Defines.WITH_ONE_COMMAND;
+        cmdData[1] = SSD1306_Defines.COMMAND_SET_COLUMN_ADDRESS;
+        cmdData[2] = (byte) (start & 0x7F);
+        cmdData[3] = (byte) (end & 0x7F);
+        this.i2c.write(cmdData);
         this.logger.info("Exit: setColumnAddress");
     }
 
-    // ...
 
-    // Set the start and end pages (PAGE0-PAGE7)
-    protected void setPageAddress(byte start, byte end)
-    {
-        this.logger.info("Enter: setPageAddress   "   + start  + "  " + end);
-        this.sendCmd(SSD1306_Defines.COMMAND_SET_PAGE_ADDRESS);
-        this.i2c.write((byte) (start & 0x07));
-        this.i2c.write((byte) (end & 0x07));
-        this.logger.info("Exit: setPageAddress   ");
-    }
-
-    // Send a data buffer GDDRAM
-    protected void sendBuffer(byte[] buffer, long length)
-    {
-        this.logger.info("Enter: setBuffer  ");
-        this.i2c.writeRegister(SSD1306_Defines.WITH_DATA,buffer);
-        this.logger.info("Exit: setBuffer  ");
+    // Send a data buffer to GDDRAM
+    protected void sendBuffer(byte[] buffer, int bufferLength) {
+        this.logger.info("Enter: sendBuffer  ");
+        if (buffer.length < bufferLength) {
+            this.logger.error("SendBuffer length exceeds actual buffer size ");
+            System.exit(501);
+        }
+        this.sendData(buffer, bufferLength);
+        this.logger.info("Exit: sendBuffer  ");
     }
 
     private void initialize() {
@@ -304,45 +343,37 @@ public class SSD1306 {
         //Set display offset [$D3, $00]
         this.sendCmdData((byte) (0xD3), (byte) (0x00));
 
-        //Set start line [$40] TODO where to place this statement
-        this.sendCmd((byte) (0x40));
+        //Set segment re-map $A0 / $A1
+        this.sendCmd((byte) (0xA0));
 
-        //Set segment re-map $A0 / $A1.... ?????
-        this.sendCmd((byte) (0xA1));
-
-        //Set COM output scan direction $C0 / $C8 ......
+        //Set COM output scan direction $C0 / $C8
         this.sendCmd((byte) (0xC0));
 
-        //Set COM pin hardware configuration [$DA, $02]
-        this.sendCmdData((byte) (0xDA), (byte) (0x02));
+        //Set COM pin hardware configuration [$DA, $12]  128x64  --  was 00
+        this.sendCmdData((byte) (0xDA), (byte) (0x12));
 
-        //Set contrast [$81, $7F]
-        this.sendCmdData((byte) (0x81), (byte) (0x8f));
+        //Set contrast [$81, $7F]---  8f
+        this.sendCmdData((byte) (0x81), (byte) (0x7f));
 
-        //Set display offset [$D9, $22]
+        //Set precharge [$D9, $22]
         this.sendCmdData((byte) (0xD9), (byte) (0x22));
 
-        // v de-select  $DB
-        this.sendCmd((byte) 0xDB);
-
-        //Set start line [$40]
-        this.sendCmd((byte) (0x40));
-
-        //Resume the display $A4
-        this.sendCmd((byte) (0xA4));
-
-        // normal display $A6/$A7(inverse)
-        this.sendCmd((byte) (0xA7));
+        // voltage com detect $DB   20
+        this.sendCmdData((byte) 0xDB, (byte) (0x20));
 
 
         //Set Oscillator frequency [$D5, $80]
         this.sendCmdData((byte) (0xD5), (byte) (0x80));
 
-        //Set memory mode $20
-        this.sendCmdData((byte) (0x20), (byte) (0x00));
 
         //Enable charge pump [$8D, $14]
         this.sendCmdData((byte) (0x8D), (byte) (0x14));
+
+        //Resume the display $A4
+        this.sendCmd((byte) (0xA4));
+
+        // normal display $A6/$A7(inverse)
+        this.sendCmd((byte) (0xA6));
 
         //Turn the display on $AF
         this.sendCmd((byte) (SSD1306_Defines.COMMAND_DISPLAY_ON | SSD1306_Defines.ENABLE_DISPLAY));
@@ -350,4 +381,5 @@ public class SSD1306 {
         // completion of init steps
         this.logger.info("Exit: initialize  ");
     }
+
 }

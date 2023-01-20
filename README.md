@@ -23,10 +23,11 @@ The following lists the currently supported devices within this project:
 * [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md) (1)
 * [MPL3115A2 Temp/Pressure/Altitude device](src/main/java/com/pi4j/devices/mpl3115a2/README.md) (1)
 * [SN74HC595 8 Bit shift register](src/main/java/com/pi4j/devices/sn74hc595/README.md) (1)
+* [SSD1306 OLED I2C](src/main/java/com/pi4j/devices/ssd1306/README.md) (1)
 * [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
 * [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) (1)
   
   
  
 (1): This package does not use any other code within this repo
-(2): Requires SNAPSHOT of Pi4j that supports i2c multibyte write/restart
+(2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart 

@@ -281,7 +281,7 @@ public class BMP280Device implements BMP280Interface {
 
         this.i2c.writeRegister(regVal,ctlVal, ctlVal.length);
 
-     //    this.i2c.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
+      //  this.i2c.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
 
 
         // Next delay for 100 ms to provide chip time to perform measurements
