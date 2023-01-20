@@ -42,8 +42,9 @@ import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
+
 import java.util.Arrays;
-import com.pi4j.devices.ssd1306.SSD1306_Defines;
+
 
 public class SSD1306_Example {
 
@@ -59,8 +60,11 @@ public class SSD1306_Example {
     public static void main(String[] args) throws Exception {
 
 
-        int busNum = SSD1306_Defines.SSD1306_I2C_ADDRESS;
-        int address = SSD1306_Defines.SSD1306_I2C_BUS;
+        int address = SSD1306_Defines.SSD1306_I2C_ADDRESS;
+        int busNum = SSD1306_Defines.SSD1306_I2C_BUS;
+
+        int x = 10;     // multiplier time 1000 ms in thread sleep
+
 
         // ------------------------------------------------------------
         // Initialize the Pi4J Runtime Context
@@ -148,48 +152,98 @@ public class SSD1306_Example {
 
         console.println("  I2C detail : " + ssdDev.i2cDetail());
 
-        console.println(" Enable Display " );
+        console.println(" Enable Display ");
 
 
+        // Display RAM page buffer
+        // 128 columns (each bit in each byte is a row pixel)
+        byte[] page_buffer = new byte[128 * 8];
 
-  /*      // display off
-        ssdDev.sendCmd((byte) (0xAE));
-         // 1 pixel on
-        ssdDev.sendCmd((byte) (0xA6));
-        ssdDev.sendCmdData((byte) 0x20, (byte) 0x00);
-        ssdDev.sendCmd((byte) 0x40);
-        ssdDev.sendCmd((byte) 0xA0);
-        ssdDev.sendCmd((byte) 0xC0);
-        ssdDev.sendCmdData((byte) 0xA8, (byte) 0x3F);
-        ssdDev.sendCmdData((byte) 0xD3, (byte) 0x00);
-        ssdDev.sendCmdData((byte) 0xD5, (byte) 0x80);
-        ssdDev.sendCmdData((byte) 0xD9, (byte) 0x22);
-        ssdDev.sendCmdData((byte) 0xDA, (byte) 0x12);
-        ssdDev.sendCmdData((byte) 0xDB, (byte) 0x20);
-        ssdDev.sendCmdData((byte) 0x8D, (byte) 0x14);
-*/
+        int valueAllOn = 0xff;
+        int valueAllOff = 0x00;
 
 
+        // set display to vertical address mode.
+        ssdDev.setMemoryAddressMode(SSD1306_Defines.COMMAND_SET_MEM_ADDRESS_MODE_VERT);
+
+        //    ssdDev.setDisplayColumnOffset((byte)0x00);   // restore image
+        //   ssdDev.setDisplayStartLine((byte)0x00);   // Start image display at this line
+        //  ssdDev.setColumnAddress((byte)0x00, (byte)0x3f);
+
+        // In vertical or horizontal some commands are not functional
+        // in Page addressing, you also use the commands. See chip datasheet
+        // for details
+        // 0x00 -- 0x0f  lower column starting point
+        // 0x10 -- 0x1f  higher column starting point
+        // 0xB0 -- 0xB7  starting page
+        // 0xD3          Set display offset
 
 
-       // Display RAM page buffer
-       // 128 columns (each bit in each byte is a row pixel)
-        byte[] page_buffer = new byte[128];
-
-        int value =  0xff;
-         // Fix the page buffer with 1s (all pixels on)
-        Arrays.fill(page_buffer,0,page_buffer.length-1, (byte)value);
-
-        //Set start line [$40]
-        ssdDev.sendCmd((byte) (0x40));
-        // Set the column bounds to the full width of the display
-         // This also set the current column to 0
-        ssdDev.setColumnAddress((byte) 0, (byte) 127);
-        // Set the page bounds to all pages
-        ssdDev.setPageAddress((byte) 0, (byte) 7);
-
+        console.println("Blank the display, wait 10 seconds.  Fill from top left.");
+        // Fix the page buffer with 1s (all pixels off)
+        Arrays.fill(page_buffer, 0, page_buffer.length, (byte) valueAllOff);
+        ssdDev.setDisplayStartLine((byte) 0x00);
         // Send the buffer to the display
         ssdDev.sendBuffer(page_buffer, page_buffer.length);
+        Thread.sleep(1000 * x);
+
+
+        console.println("Set all pixels in the display, wait 10 seconds. Fill line 4 column 32");
+        // Fix the page buffer with 1s (all pixels on)
+        Arrays.fill(page_buffer, 0, page_buffer.length, (byte) valueAllOn);
+        //Set start line [$40]
+        //    ssdDev.setPageAddress((byte)0x00, (byte )0x07);
+        // Send the buffer to the display
+        ssdDev.setDisplayStartLine((byte) 0x00);
+
+        ssdDev.sendBuffer(page_buffer, page_buffer.length);
+
+
+        Thread.sleep(1000 * x);
+
+
+        console.println("Clear half the display, wait 10 seconds.  Fill from top left");
+        // Fix the page buffer with 1s (all pixels on)
+        Arrays.fill(page_buffer, 0, page_buffer.length / 2, (byte) valueAllOff);
+        ssdDev.setDisplayStartLine((byte) 0x00);
+        // Send the buffer to the display
+        ssdDev.sendBuffer(page_buffer, page_buffer.length);
+        Thread.sleep(1000 * x);
+
+        byte[] image1 = SSD1306Sample128X64IMAGE.ImageOne;
+
+        console.println("Display image and wait 10 seconds");
+        //Set start line [$40]
+        ssdDev.setDisplayComOffset((byte) 0x00);
+
+        // Send the buffer to the display
+        ssdDev.sendBuffer(image1, image1.length);
+        Thread.sleep(1000 * x);
+
+
+        console.println("Move to line 5 out of 64, appears as though whole image moved up.  wait a bit");
+        //Set start line [$40]
+        ssdDev.setDisplayComOffset((byte) 0x05);   // shift entire image
+        Thread.sleep(1000 * x);
+        console.println("Restore image, wait bit");
+        ssdDev.setDisplayComOffset((byte) 0x00);   // restore image
+        Thread.sleep(1000 * x);
+        console.println("Display image from line 16, wait a bit");
+        ssdDev.setDisplayStartLine((byte) 0x10);   // Start image display at this line
+        Thread.sleep(1000 * x);
+        console.println("Restore image, wait a bit");
+        ssdDev.setDisplayStartLine((byte) 0x00);   // Start image display at this line
+        Thread.sleep(1000 * x);
+        console.println("Move to columns 5 - 48, wait a bit");
+        ssdDev.setColumnAddress((byte) 0x05, (byte) 0x30);
+        // Send the buffer to the display
+        ssdDev.sendBuffer(image1, image1.length);
+        Thread.sleep(1000 * x);
+        console.println("Restore image, wait a bit");
+        ssdDev.setColumnAddress((byte) 0x00, (byte) 0x7f);
+        ssdDev.sendBuffer(image1, image1.length);
+        Thread.sleep(1000 * x);
+
 
         // Shutdown Pi4J
         pi4j.shutdown();

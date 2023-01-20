@@ -52,13 +52,27 @@ public class SSD1306_Defines {
 //   0b11000000 = 0xC0 = multiple data
 //  0b01000000 = 0x40 = one data byte
 
+    // CO and   D/C bits
     protected static final byte WITH_ONE_COMMAND = 0x00;
     protected static final byte WITH_MULTI_COMMAND = (byte) 0x80;
-    protected static final byte WITH_ONE_DATA = 0x40;
+    protected static final byte WITH_DATA_ONLY = 0x40;
     protected static final byte WITH_MULTI_DATA = (byte) 0xC0;
 
-    protected static final byte COMMAND_COLUMN_ADDRESS = 0x21;
+
+    // COMMANDS
+    protected static final byte COMMAND_SET_MEM_ADDRESS_MODE = 0x20;
+    protected static final byte COMMAND_SET_MEM_ADDRESS_MODE_PAGE = 0x02;
+    protected static final byte COMMAND_SET_MEM_ADDRESS_MODE_VERT = 0x01;
+    protected static final byte COMMAND_SET_MEM_ADDRESS_MODE_HORZ = 0x00;
+
+
+    protected static final byte COMMAND_SET_COLUMN_ADDRESS = 0x21;
     // Set page address
     protected static final byte COMMAND_SET_PAGE_ADDRESS = 0x22;
+
+    protected static final byte COMMAND_SET_ADDRESS_LINE = 0x40;
+
+    protected static final byte COMMAND_SET_DISPLAY_OFFSET = (byte) 0xD3;
+
 
 }
