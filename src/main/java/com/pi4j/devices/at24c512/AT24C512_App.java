@@ -152,15 +152,6 @@ public class AT24C512_App {
                 i++;
                 writeDataLen = (a.length()-2)/2;  // subtract 0X from the string
                 writeData = a.substring(2);
-                try
-                {
-                    int value = Integer.parseInt(writeData, 16);
-                }
-                catch(NumberFormatException nfe)
-                {
-                    // not a valid hex
-                    console.println("Invalid:  parm -d not a valid hex \n");
-                }
             } else if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
                 i++;
@@ -173,7 +164,7 @@ public class AT24C512_App {
                 }
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
-                System.exit(39);
+                System.exit(41);
             } else {
                 console.println("  !!! Invalid Parm " + args);
                 console.println(helpString);
@@ -198,16 +189,23 @@ public class AT24C512_App {
 
         byte[] toRead;
         if(doWrite) {
-            if(numBytes != writeDataLen){
+            if (numBytes != writeDataLen) {
                 console.println("  !!! -n NOT equal to length of -d data ");
                 console.println(helpString);
                 System.exit(44);
             }
             byte[] bytesToWrite = new byte[writeDataLen];
             int toOffset = 0;
-            for ( int i = 0; i < writeDataLen*2; i+=2){
-                int singleInt =  Integer.parseInt(writeData.substring(i, i+2), 16);
-                bytesToWrite[toOffset] = (byte) (bytesToWrite[toOffset] | (byte) (singleInt & 0xff ));
+            int singleInt = 0;
+            for (int i = 0; i < writeDataLen * 2; i += 2) {
+            try {
+                    singleInt = Integer.parseInt(writeData.substring(i, i + 2), 16);
+            } catch (NumberFormatException nfe) {
+                // not a valid hex
+                console.println("Invalid:  parm -d not a valid hex \n");
+                System.exit(45);
+            }
+            bytesToWrite[toOffset] = (byte) (bytesToWrite[toOffset] | (byte) (singleInt & 0xff));
                 toOffset++;
             }
             int bWritten = seeDev.writeEEPROM(writeReg, writeDataLen, bytesToWrite);
