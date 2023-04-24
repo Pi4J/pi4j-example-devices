@@ -83,8 +83,7 @@ Read the temperature 'C' value.   Set -TW and -TG a few degrees above this
 value.  
 -PW pressure/alt window -PG pressure/alt limit -TW temp window -TG temp limit       
 
-sudo ./runMPL3115A2.sh -b 0x01 -a 0x60    
-            -int1 15   -int2 26   -t info    -PW 3 -PG 314 -TW 1 -TG 35      
+sudo ./runMPL3115A2.sh -b 0x01 -a 0x60  -int1 15   -int2 26   -t info    -PW 3 -PG 314 -TW 1 -TG 35      
 
 Use heat gun on circuit board and temp interrupt1 will fire.     
 
