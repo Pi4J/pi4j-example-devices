@@ -129,6 +129,15 @@ public class NeoPixel94V extends Component {
      * The time, when the last rendering happened
      */
     private long lastRenderTime;
+
+
+
+    // PWM usage
+    private  int duty = 50;
+    private  int pwmFrequency = 1;
+    private  int duration = 10;
+    private String pwmType = "H";
+    private Pwm pwm;
     /**
          * Creates a new simpleLed component with a custom BCM pin.
          *
@@ -136,8 +145,8 @@ public class NeoPixel94V extends Component {
          * @param numLEDs    How many LEDs are on this Strand
          * @param brightness How bright the leds can be at max, Range 0 - 255
          */
-        public NeoPixel94V(Context pi4j,Console console, int numLEDs, double brightness,int gpioNum,  String traceLevel) {
-            this(pi4j, console, numLEDs, brightness, gpioNum, DEFAULT_SPI_CHANNEL, traceLevel);
+        public NeoPixel94V(Context pi4j,Console console, int numLEDs, int duty, int duration,int freq, double brightness,int gpioNum,  String traceLevel) {
+            this(pi4j, console, numLEDs, duty, duration, freq, brightness, gpioNum, DEFAULT_SPI_CHANNEL, traceLevel);
         }
 
         /**
@@ -148,7 +157,7 @@ public class NeoPixel94V extends Component {
          * @param brightness How bright the leds can be at max, range 0 - 1
          * @param channel    which channel to use
          */
-        public NeoPixel94V(Context pi4j,Console console, int numLEDs, double brightness,int gpioNum,  int channel, String traceLevel) {
+        public NeoPixel94V(Context pi4j,Console console, int numLEDs, int duty, int duration,int freq, double brightness,int gpioNum,  int channel, String traceLevel) {
             if (numLEDs < 1 || brightness < 0 || brightness > 1 || channel < 0 || channel > 1) {
                 throw new IllegalArgumentException("Illegal Constructor");
             }
@@ -160,6 +169,9 @@ public class NeoPixel94V extends Component {
             this.context = pi4j;
             this.channel = channel;
             this.dataPinNum = gpioNum;
+            this.duration= duration;
+            this.duty = duty;
+            this.pwmFrequency = freq;
             this.init();
             this.logger.info("initialising a LED strip with " + numLEDs + " leds");
  
@@ -180,7 +192,9 @@ public class NeoPixel94V extends Component {
         this.logger.trace(">>> Enter: init");
         this.pixel = new PixelColor();
         this.spi = this.context.create(buildSpiConfig(this.context, this.channel, frequency));
-        this.outputConfig1 = DigitalOutput.newConfigBuilder(this.context)
+        this.pwm = this.createPwm();
+
+       this.outputConfig1 = DigitalOutput.newConfigBuilder(this.context)
                 .id("Data_Out")
                 .name("Data_Out")
                 .address(this.dataPinNum)
@@ -192,8 +206,44 @@ public class NeoPixel94V extends Component {
 
     }
 
+    private Pwm createPwm(){
+        this.logger.trace(">>> Enter: createPwm");
+        PwmType pinType = PwmType.SOFTWARE;
+        if(pwmType.equalsIgnoreCase("H")){
+            pinType = PwmType.HARDWARE;
+        }
 
-        /**
+        final PwmConfig config = PwmConfigBuilder.newInstance (this.context)
+                .id ("PWM0_BCM18")
+                .name ("PWM")
+                .address (0) //this.address)
+                .pwmType(pinType)
+                //.initial(this.duty)
+                .frequency(this.pwmFrequency)
+                .provider ("linuxfs-pwm") // pigpio
+                .shutdown (0)
+                .build ();
+
+        this.logger.trace("<<< Exit: createPwm");
+        return(this.context.create (config));
+
+    }
+
+
+    public void PwmActivate(int duty, int freq, long duration) {
+
+        this.pwm.on(duty, freq);
+        if (duration > 0) {
+            try {
+                Thread.sleep(duration);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            this.pwm.off();
+        }
+    }
+
+    /**
          * Builds a new SPI instance for the LED matrix
          *
          * @param pi4j Pi4J context
@@ -235,6 +285,15 @@ public class NeoPixel94V extends Component {
             this.logger.trace("Turning all leds off before close");
             allOff();
         }
+
+
+        public void blinkViaPwm(){
+            this.pwm.on();
+
+
+        }
+
+
 
         /**
          * function to get the amount of the leds on the strip
@@ -338,16 +397,41 @@ public class NeoPixel94V extends Component {
             }
 
             //writing on the PIN
-            spi.write(pixelRaw);
+            //spi.write(pixelRaw);
 
-            //this.writeData(pixelRaw);
+            // PWM
+            this.writeDataPwm(pixelRaw);
+
+            //this.writeDataGpio(pixelRaw);
             this.logger.debug("finished rendering");
             lastRenderTime = System.nanoTime();
 
         }
 
-        private boolean writeData(byte[] pixelRaw){
-            this.logger.debug(">>> Enter  writeData");
+    private boolean writeDataPwm(byte[] pixelRaw){
+        this.logger.debug(">>> Enter  writeDataPwm");
+        boolean rval = false;
+        int numBytes = pixelRaw.length;
+        int bitsToShift = numBytes * 8;
+        int theBit = 0;
+        byte theByte = 0;
+        for(int b = numBytes-1; b > 0; b--) {
+            theByte = (byte) (pixelRaw[b] & 0xff);
+            for (int c = 8; c >0; c--) {
+                theBit = (theByte & (1 << c-1 )) >> c-1;
+                this.pwmWriteBit(theBit);
+            }
+        }
+        this.doReset();
+        //  PWM off to end all LED chip processing
+        this.pwm.off();
+        this.logger.debug("<<< Exit writeDataPwm");
+        return(rval);
+    }
+
+
+    private boolean writeDataGpio(byte[] pixelRaw){
+            this.logger.debug(">>> Enter  writeDataGpio");
             boolean rval = false;
             int numBytes = pixelRaw.length;
             int bitsToShift = numBytes * 8;
@@ -361,7 +445,7 @@ public class NeoPixel94V extends Component {
                 }
             }
             this.doReset();
-            this.logger.debug("<<< Exit writeData");
+            this.logger.debug("<<< Exit writeDataGpio");
             return(rval);
         }
 
@@ -375,26 +459,40 @@ public class NeoPixel94V extends Component {
             return(rval);
         }
 
-        private boolean writeBit(int theBit){
-         //   this.logger.debug(" Enter writeBit");
+        private boolean pwmWriteBit(int theBit){
+         //   this.logger.debug(" Enter pwmWriteBit");
             boolean rval = false;
             long now = System.nanoTime();
             if(theBit == 1) {
-                this.dataOut.high(); //state(DigitalState.HIGH);
-                while (System.nanoTime() - now < this.highTime1NanoSeconds) ;
-                this.dataOut.low(); //.state(DigitalState.LOW);
-                now = System.nanoTime();
-                while (System.nanoTime() - now < this.lowTime1NanoSeconds) ;
+                this.pwm.on(60);
             }else{
-                    this.dataOut.high(); //state(DigitalState.HIGH);
-                    while (System.nanoTime() - now < this.highTime0NanoSeconds) ;
-                    this.dataOut.low();//state(DigitalState.LOW);
-                    now = System.nanoTime();
-                    while (System.nanoTime() - now < this.lowTime0NanoSeconds) ;
+                this.pwm.on(20);
             }
-       //     this.logger.debug("<<< Exit writeBit");
+            this.pwm.off();
+       //     this.logger.debug("<<< Exit pwmWriteBit");
             return(rval);
         }
+
+    private boolean writeBit(int theBit){
+        //   this.logger.debug(" Enter writeBit");
+        boolean rval = false;
+        long now = System.nanoTime();
+        if(theBit == 1) {
+            this.dataOut.high(); //state(DigitalState.HIGH);
+            while (System.nanoTime() - now < this.highTime1NanoSeconds) ;
+            this.dataOut.low(); //.state(DigitalState.LOW);
+            now = System.nanoTime();
+            while (System.nanoTime() - now < this.lowTime1NanoSeconds) ;
+        }else{
+            this.dataOut.high(); //state(DigitalState.HIGH);
+            while (System.nanoTime() - now < this.highTime0NanoSeconds) ;
+            this.dataOut.low();//state(DigitalState.LOW);
+            now = System.nanoTime();
+            while (System.nanoTime() - now < this.lowTime0NanoSeconds) ;
+        }
+        //     this.logger.debug("<<< Exit writeBit");
+        return(rval);
+    }
 
 
     /**
