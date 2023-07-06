@@ -42,7 +42,6 @@ import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
-
 import java.util.Scanner;
 
 public class NeoPixel94V_App {
@@ -55,7 +54,11 @@ public class NeoPixel94V_App {
         console.title("<-- The Pi4J V2 Project Extension  -->", "NeoPixel94V");
 
 
-        int pixels = 8;
+        int pixels = 1;
+        int duty = 0;
+        int freq = 1;
+        int duration = 0;
+        boolean doTest = false;
 
         Signal.handle(new Signal("INT"), new SignalHandler() {
             public void handle(Signal sig) {
@@ -69,9 +72,54 @@ public class NeoPixel94V_App {
                 System.exit(2);
             }
         });
-    final NeoPixel94V ledStrip = new NeoPixel94V(pi4j, console, pixels, 0.5, 21, "trace");
 
-    //set them all off, so nothing is shining
+        for (int i = 0; i < args.length; i++) {
+            String o = args[i];
+            if (o.contentEquals("-duty")) {
+                String a = args[i + 1];
+                duty = Integer.parseInt(a.substring(0));
+                i++;
+            }else if (o.contentEquals("-freq")) {
+                String a = args[i + 1];
+                freq = Integer.parseInt(a.substring(0));
+                i++;
+            }else if (o.contentEquals("-duration")) {
+                String a = args[i + 1];
+                duration = Integer.parseInt(a.substring(0));
+                i++;
+            }else if (o.contentEquals("-test")) {
+                doTest = true;
+            }
+             else {
+                console.println("  !!! Invalid Parm " + o);
+                console.println("  -duty, -freq,  - duration  -test");
+                System.exit(42);
+            }
+        }
+        
+        
+       // todo final WS281xFuncsNative functionsV1 = new WS281xFuncsNative("lib/v1/libfunctions.so");
+       
+       // todo functionsV1.functionsNative.ws2811_render(0);
+        
+        
+
+/*
+        final NeoPixel94V ledStrip = new NeoPixel94V(pi4j, console, pixels,duty, duration,freq, 0.5, 21, "trace");
+
+        if(doTest) {
+            System.out.println("LED ON()    duty  " + duty + "  freq  " + freq + "  duration " + duration);
+            ledStrip.PwmActivate(duty, freq, duration);
+            ledStrip.waitForInput();
+        }
+
+
+       // System.out.println("Blink as configured");
+        //ledStrip.blinkViaPwm();
+        //ledStrip.waitForInput();
+
+
+        //set them all off, so nothing is shining
         System.out.println("All Off");
         ledStrip.allOff();
 
@@ -130,9 +178,10 @@ public class NeoPixel94V_App {
 
         ledStrip.waitForInput();
 
+        // !!!!!!!!
         System.out.println("setting the brightness to full and just show the fourth led as Red");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(3, ledStrip.pixel.RED);
+        ledStrip.setPixelColor(0, ledStrip.pixel.RED);  //3
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -148,7 +197,7 @@ public class NeoPixel94V_App {
 
         System.out.println("setting the brightness to full and just show the sixth led as orange");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(5, ledStrip.pixel.ORANGE);
+        ledStrip.setPixelColor(0, ledStrip.pixel.ORANGE);   // 5
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -164,7 +213,7 @@ public class NeoPixel94V_App {
 
         System.out.println("setting the brightness to full and just show the seventh led as  yellow");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(6, ledStrip.pixel.YELLOW);
+        ledStrip.setPixelColor(0, ledStrip.pixel.YELLOW);   // 6
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -179,7 +228,7 @@ public class NeoPixel94V_App {
 
         System.out.println("setting the brightness to full and just show the fifth led as Green");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(4, ledStrip.pixel.GREEN);
+        ledStrip.setPixelColor(0, ledStrip.pixel.GREEN);  //4
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -191,6 +240,7 @@ public class NeoPixel94V_App {
         System.out.println("closing the app");
         System.out.println("Color "+ ledStrip.getPixelColor(0));
 
+*/
         System.out.println("LED strip app done.");
 }
 }
