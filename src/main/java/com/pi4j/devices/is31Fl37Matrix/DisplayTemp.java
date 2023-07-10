@@ -34,6 +34,7 @@ package com.pi4j.devices.is31Fl37Matrix;/*
 
 import com.pi4j.context.Context;
 import com.pi4j.devices.bmp280.BMP280Device;
+import com.pi4j.devices.bmp280.BMP280DeviceI2C;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 
@@ -74,7 +75,7 @@ public class DisplayTemp {
 
         // pi4j_V2 does not support creating an instance more than one.
         if (this.bmpDev == null) {
-            this.bmpDev = new BMP280Device(this.pi4j, this.console, bmp_bus, bmp_address, this.logger);
+            this.bmpDev = new BMP280DeviceI2C(this.pi4j, this.console, bmp_bus, bmp_address, this.logger);
         }
         readings[0] = bmpDev.temperatureC();
 

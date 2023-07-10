@@ -39,11 +39,11 @@ public class BMP280Declares {
     /**
      * Constant <code>NAME="BMP.I2C_PROVIDER_NAME"</code>
      */
-    String NAME = BMP280Device.I2C_PROVIDER_NAME;
+    String NAME = BMP280DeviceI2C.I2C_PROVIDER_NAME;
     /**
      * Constant <code>ID="BMP.I2C_PROVIDER_ID"</code>
      */
-    String ID = BMP280Device.I2C_PROVIDER_ID;
+    String ID = BMP280DeviceI2C.I2C_PROVIDER_ID;
 
     public static final int DEFAULT_ADDRESS = 0x77;
 
