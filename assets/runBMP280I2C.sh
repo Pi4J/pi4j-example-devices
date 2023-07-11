@@ -32,4 +32,4 @@
 #
 #
 
-java --module-path . --module  com.pi4j.devices/com.pi4j.devices.bmp280.BMP280I2cExample  $@
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.bmp280.BMP280I2cExample  "$@"
