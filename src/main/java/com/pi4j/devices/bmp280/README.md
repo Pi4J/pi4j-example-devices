@@ -58,23 +58,25 @@ The file BMP280.pdf documents a method of connecting an Adafruit BMP280 to a Pi.
 
 I2C connection 
 
-Pi pin1  3.3v     to 	Red    Vin
-                  N/C   3v	
-Pi pin6  Gnd      to    Brown  Gnd
-Pi pin5  SCL      to    Green  SCK
-                 N/C    yellow SDO    
-Pi pin3  SDA      to    Blue   SDI
-Pi pin17 3.3v     to    Orange CS 
-
-
+| RPi         | Color   | Sensor |
+| :---        | :---    | :---   |
+| Pin1  3.3V  |	Red     | Vin    |
+| N/C         |         | 3v	   |
+| Pin6  Gnd   | Brown   | Gnd    |
+| Pin5  SCL   | Green   | SCK    |
+| N/C         | Yellow  | SDO    |
+| Pin3  SDA   | Blue    | SDI    |
+| Pin17 3.3v  | Orange  | CS     |
 
 SPI connection using 4-wire SPI
 
-Pi p19 MOSI            BMP SDI  Blue
-Pi p21 MISO            BMP SDO  Yellow
-Pi p23 SCLK            BMP SCK  Green
-Pi p40 GPIO21          BMP CS   Orange
-Pi Gnd                 BMP GND  Brown
-Pi 3.3                 BMP Vin  Red
+| RPi         | Color   | Sensor |
+| :---        | :---    | :---   |
+| Pin19 MOSI  | Blue    | SDI    |
+| Pin21 MISO  | Yellow  | SDO    |
+| Pin23 SCLK  | Green   | SCK    |
+| Pin40 GPIO21| Orange  | CS     |
+| Pin6  Gnd   | Brown   | GND    |
+| Pin1  3.3V  | Red     | Vin    |
 
 
