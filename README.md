@@ -13,6 +13,7 @@ The following lists the currently supported devices within this project:
 * [ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md) (1)
 * [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1) (2)
 * [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md) (1)
+* [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md) (1)
 * [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md)
 * [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md) (1)
 * [Is31fl3731 matrix controller](src/main/java/com/pi4j/devices/is31Fl37Matrix/README.md) (1)
@@ -29,5 +30,5 @@ The following lists the currently supported devices within this project:
   
   
  
-(1): This package does not use any other code within this repo
+(1): This package uses code within this repo and Pi4J
 (2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart 
