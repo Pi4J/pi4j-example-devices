@@ -106,7 +106,8 @@ public class BMP280Declares {
     static int tempMsbMsk = 0xFF;  // mask bits 0 - 7
     static int tempLsbMsk = 0xFF;  // mask bits 0 - 7
     static int tempXlsbMsk = 0x0F;  // mask bits 0 - 3
-    static int idValueMsk = 0x58;   // expected chpId value
+    static int idValueMskBMP = 0x58;   // expected chpId value BMP280
+    static int idValueMskBME = 0x60;   // expected chpId value BME280
 
     // For the control reg 0xf4
     static int ctl_forced = 0x01;

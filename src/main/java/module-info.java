@@ -31,7 +31,8 @@ module com.pi4j.devices{
     // new TOF chip
     exports com.pi4j.devices.vl53L0X;
 
-    exports com.pi4j.devices.bmp280 ;
+    exports com.pi4j.devices.bmp280;
+    exports com.pi4j.devices.bme280;
     exports com.pi4j.devices.is31Fl37Matrix;
     exports com.pi4j.devices.mcp3008;
 
