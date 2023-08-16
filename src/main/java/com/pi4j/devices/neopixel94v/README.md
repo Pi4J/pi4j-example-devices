@@ -30,35 +30,55 @@
 #      *
 #
 #
-          _        ______   _______  _______                                                                
-|\     /|( (    /|(  __  \ (  ____ \(  ____ )                                                               
-| )   ( ||  \  ( || (  \  )| (    \/| (    )|                                                               
-| |   | ||   \ | || |   ) || (__    | (____)|                                                               
-| |   | || (\ \) || |   | ||  __)   |     __)                                                               
-| |   | || | \   || |   ) || (      | (\ (                                                                  
-| (___) || )  \  || (__/  )| (____/\| ) \ \__                                                               
-(_______)|/    )_)(______/ (_______/|/   \__/
+ 
 
- _______  _______  _        _______ _________ _______           _______ __________________ _______  _       
-(  ____ \(  ___  )( (    /|(  ____ \\__   __/(  ____ )|\     /|(  ____ \\__   __/\__   __/(  ___  )( (    /|
-| (    \/| (   ) ||  \  ( || (    \/   ) (   | (    )|| )   ( || (    \/   ) (      ) (   | (   ) ||  \  ( |
-| |      | |   | ||   \ | || (_____    | |   | (____)|| |   | || |         | |      | |   | |   | ||   \ | |
-| |      | |   | || (\ \) |(_____  )   | |   |     __)| |   | || |         | |      | |   | |   | || (\ \) |
-| |      | |   | || | \   |      ) |   | |   | (\ (   | |   | || |         | |      | |   | |   | || | \   |
-| (____/\| (___) || )  \  |/\____) |   | |   | ) \ \__| (___) || (____/\   | |   ___) (___| (___) || )  \  |
-(_______/(_______)|/    )_)\_______)   )_(   |/   \__/(_______)(_______/   )_(   \_______/(_______)|/    )_)
+# NeoPixel94V GRB Stick
 
-# NeoPixel94V RGB Stick
 
-At present this code attempts to use SPI and GPIO bit banging.
-Neither work correctly as they cannot maintain the architected 
-pulse duration to represent a one nor a zero.
+
+1. mvn clean package
+2. cd target/distribution
+3. sudo ./runNeopixel.sh OPT parms........
+Parm -t   traceLevel
+
+# NOTE: 
+At present this code uses the SPI.
+NEOPIXEL WS2812B uses the following timing to represent a '1' or a '0' bit. To
+accomplish in SPI, a '1' sends a byte0b11111000 and a '0' sends a byte 0b11000000.
+When the array of bytes are sent via SPI at a specific frequency the WS2812B 
+interprets the bytes as correctly timed 0's and 1's.
+To accomplish the SPI frequency is set to 6400000.  This frequency will vary
+dependent upon the PI throttling.  To lock the frequency to the desired value:
+
+PI4 : Add the following to  /boot/config.txt
+core_freq=250
+core_freq_min=250
+
+Similar changes for previous model PIs are not supplied. Also, no 
+performance testing was performed to determine possible impacts
+
+Pulse duration to represent a one or a zero.
 int32_t highTime0NanoSeconds,    400 ns
 int32_t lowTime0NanoSeconds,     850 ns
 int32_t highTime1NanoSeconds,    800 ns
 int32_t lowTime1NanoSeconds,     450 ns
 
-# So I am integrating this code simply to protect it from loss.
+
+RED  LEDSTRIP  0x00FF00;
+Transmits   8 short,  8 long,  8 short
+
+GREEN  LEDSTRIP 0xFF0000
+Transmits    8 long,  8 short,   8 short
+
+BLUE LEDSTRIP 0x0000FF
+Transmits    8 short,   8 short,   8 long
+
+
+800/400
+
+300/900
+
+
 
 
 Composition of 24bit data:
@@ -72,9 +92,6 @@ to individual bytes.
 If your LED strip uses a different order within the 24 bits the render function 
 must be modified.
 
-sudo /usr/lib/jvm/java-1.11.0-openjdk-arm64/bin/java -javaagent:/home/pi/Tools/Intellij/idea-IC-222.4167.29/lib/idea_rt.jar=33917:/home/pi/Tools/Intellij/idea-IC-222.4167.29/bin -Dfile.encoding=UTF-8 -classpath /home/pi/.m2/repository/net/java/dev/jna/jna/5.12.1/jna-5.12.1.jar:/home/pi/.m2/repository/org/jetbrains/annotations/24.0.1/annotations-24.0.1.jar -p /home/pi/.m2/repository/com/pi4j/pi4j-library-linuxfs/2.3.0-SNAPSHOT/pi4j-library-linuxfs-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-pigpio/2.3.0-SNAPSHOT/pi4j-library-pigpio-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-linuxfs/2.3.0-SNAPSHOT/pi4j-plugin-linuxfs-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-pigpio/2.3.0-SNAPSHOT/pi4j-plugin-pigpio-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-raspberrypi/2.3.0-SNAPSHOT/pi4j-plugin-raspberrypi-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-core/2.3.0-SNAPSHOT/pi4j-core-2.3.0-SNAPSHOT.jar:/home/pi/Pi4J_V2/Pi4J_V2_Devices/target/classes:/home/pi/.m2/repository/org/slf4j/slf4j-simple/2.0.3/slf4j-simple-2.0.3.jar -m com.pi4j.devices/com.pi4j.devices.neopixel94v.NeoPixel94V_App
 
 
-debug
 
-sudo /usr/lib/jvm/java-1.11.0-openjdk-arm64/bin/java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:45495,suspend=y,server=n -javaagent:/home/pi/Tools/Intellij/idea-IC-222.4167.29/plugins/java/lib/rt/debugger-agent.jar -Dfile.encoding=UTF-8 -classpath /home/pi/.m2/repository/net/java/dev/jna/jna/5.12.1/jna-5.12.1.jar:/home/pi/.m2/repository/org/jetbrains/annotations/24.0.1/annotations-24.0.1.jar:/home/pi/Tools/Intellij/idea-IC-222.4167.29/lib/idea_rt.jar -p /home/pi/.m2/repository/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.jar:/home/pi/Pi4J_V2/Pi4J_V2_Devices/target/classes:/home/pi/.m2/repository/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-raspberrypi/2.3.0-SNAPSHOT/pi4j-plugin-raspberrypi-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-core/2.3.0-SNAPSHOT/pi4j-core-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-linuxfs/2.3.0-SNAPSHOT/pi4j-plugin-linuxfs-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-linuxfs/2.3.0-SNAPSHOT/pi4j-library-linuxfs-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/org/slf4j/slf4j-simple/2.0.3/slf4j-simple-2.0.3.jar:/home/pi/.m2/repository/com/pi4j/pi4j-plugin-pigpio/2.3.0-SNAPSHOT/pi4j-plugin-pigpio-2.3.0-SNAPSHOT.jar:/home/pi/.m2/repository/com/pi4j/pi4j-library-pigpio/2.3.0-SNAPSHOT/pi4j-library-pigpio-2.3.0-SNAPSHOT.jar -m com.pi4j.devices/com.pi4j.devices.neopixel94v.NeoPixel94V_App

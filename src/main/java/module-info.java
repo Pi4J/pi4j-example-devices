@@ -47,5 +47,6 @@ module com.pi4j.devices{
     exports com.pi4j.devices.mpl3115a2;
     exports com.pi4j.devices.at24c512;
     exports com.pi4j.devices.cp2102n;
+    exports com.pi4j.devices.neopixel94v;
 
     }
