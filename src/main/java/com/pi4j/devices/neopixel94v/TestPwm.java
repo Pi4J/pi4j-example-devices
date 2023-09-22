@@ -60,7 +60,7 @@ public class TestPwm {
     {
         var pigpio =  PiGpio.newNativeInstance();
         pigpio.gpioCfgClock(2, 1, 0);
-        pigpio.initialize();
+      //  pigpio.initialize();
     }
 
     private static void initGPIOCM4()
