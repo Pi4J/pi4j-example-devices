@@ -34,7 +34,7 @@
 
 # NeoPixel94V GRB Stick
 
-
+## Wiring:  As coded this program uses SPI_0
 
 1. mvn clean package
 2. cd target/distribution
@@ -43,19 +43,14 @@ Parm -t   traceLevel
 
 # NOTE: 
 At present this code uses the SPI.
+The timing is calculated for the Pi4 hardware.
+
 NEOPIXEL WS2812B uses the following timing to represent a '1' or a '0' bit. To
 accomplish in SPI, a '1' sends a byte0b11111000 and a '0' sends a byte 0b11000000.
 When the array of bytes are sent via SPI at a specific frequency the WS2812B 
 interprets the bytes as correctly timed 0's and 1's.
-To accomplish the SPI frequency is set to 6400000.  This frequency will vary
-dependent upon the PI throttling.  To lock the frequency to the desired value:
+To accomplish the SPI frequency is set to 8*500_000.
 
-PI4 : Add the following to  /boot/config.txt
-core_freq=250
-core_freq_min=250
-
-Similar changes for previous model PIs are not supplied. Also, no 
-performance testing was performed to determine possible impacts
 
 Pulse duration to represent a one or a zero.
 int32_t highTime0NanoSeconds,    400 ns

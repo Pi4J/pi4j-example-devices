@@ -39,6 +39,7 @@ package com.pi4j.devices.neopixel94v;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.spi.Spi;
+import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiConfig;
 import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
@@ -89,6 +90,12 @@ public class NeoPixel94V extends Component {
      * Default frequency of a WS2812 Neopixel Strip
      */
     private final int frequency = 6400000;
+    /**
+     * Default frequency of a WS2812 Neopixel Strip
+     */
+    private static final int DEFAULT_FREQUENCY_PI3 = 800_000;   //use this for a Pi4
+    private static final int DEFAULT_FREQUENCY_PI4 = 500_000;   //use this for a Pi4
+
     /**
      * between each rendering of the strip, there has to be a reset-time where nothing is written to the SPI
      */
@@ -184,9 +191,10 @@ public class NeoPixel94V extends Component {
         return Spi.newConfigBuilder(pi4j)
                 .id("SPI" + 1)
                 .name("LED Matrix")
+                .bus(SpiBus.BUS_0)
                 .address(channel)
                 .mode(SpiMode.MODE_0)
-                .baud(frequency) //     bit-banging from Bit to SPI-Byte
+                .baud(8 * DEFAULT_FREQUENCY_PI4) //     bit-banging from Bit to SPI-Byte
                 .provider("pigpio-spi")
                 .build();
 
@@ -369,16 +377,17 @@ public class NeoPixel94V extends Component {
     /**
      * Helper Class specific for only LEDStrips and matrices
      * can calculate different colors, and gets the individual color channels
+     * G R B
      */
     public class PixelColor {
         public static final int WHITE = 0xFFFFFF;
         public static final int RED = 0x00FF00;
-        public static final int ORANGE = 0xFFC800;
+        public static final int ORANGE = 0x66CC00;
         public static final int YELLOW = 0xFFFF00;
         public static final int GREEN = 0xFF0000;
         public static final int LIGHT_BLUE = 0xadd8e6;
         public static final int BLUE = 0x0000FF;
-        public static final int PURPLE = 0x800080;
+        public static final int PURPLE = 0x008080;
         public static final int PINK = 0xFFC0CB;
         public static final int Color_COMPONENT_MAX = 0xff;
         private static final int WHITE_MASK = 0xffffff;
