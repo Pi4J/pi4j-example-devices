@@ -1,11 +1,9 @@
 Pi4J :: Java I/O Library for Raspberry Pi :: Device :: TCA9548
 ==========================================================================
 
-## DISCLAIMER :: EXPERIMENTAL VERSION 2 
-
 ### This repository is a first device specific support project for the TCA9548
 
-### !! NOT READY FOR PRODUCTION USE !!
+### This is an example implementation and will need to be adjusted to fit your needs.
 
 Project by Tom Aarts
 

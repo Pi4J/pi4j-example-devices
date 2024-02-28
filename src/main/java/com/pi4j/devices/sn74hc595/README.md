@@ -5,11 +5,9 @@
 Pi4J :: Java I/O Library for Raspberry Pi :: Device :: SN74HC595 8 Bit shift register
 ==========================================================================
 
-## DISCLAIMER :: EXPERIMENTAL VERSION 2
-
 ### This repository contains device specific support for various devices.
 
-### !! NOT READY FOR PRODUCTION USE !!
+### This is an example implementation and will need to be adjusted to fit your needs.
 
 Project by Tom Aarts
 ==========================================================================

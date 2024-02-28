@@ -2,11 +2,9 @@
 Pi4J :: Java I/O Library for Raspberry Pi :: Device :: CP2102N serial to USB
 ==========================================================================
 
-## DISCLAIMER :: EXPERIMENTAL VERSION 2
-
 ### This repository contains device specific support for various devices.
 
-### !! NOT READY FOR PRODUCTION USE !!
+### This is an example implementation and will need to be adjusted to fit your needs. 
 
 Project by Tom Aarts
 ==========================================================================
@@ -42,11 +40,9 @@ Project by Tom Aarts
 #
 #
 
-## DISCLAIMER :: EXPERIMENTAL VERSION 2
-
 ### This repository contains device specific support for various devices.
 
-### !! NOT READY FOR PRODUCTION USE !!
+### This is an example implementation and will need to be adjusted to fit your needs.
 
 Project by Tom Aarts
 ==========================

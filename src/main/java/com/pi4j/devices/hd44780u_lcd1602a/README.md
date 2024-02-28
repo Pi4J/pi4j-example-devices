@@ -7,11 +7,9 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: HD44780U LCD
 Uses SN74HC595 to update D0-D7 of the LCD display module
 ==========================================================================
 
-## DISCLAIMER :: EXPERIMENTAL VERSION 2
-
 ### This repository contains device specific support for various devices.
 
-### !! NOT READY FOR PRODUCTION USE !!
+### This is an example implementation and will need to be adjusted to fit your needs.
 
 Project by Tom Aarts
 ==========================================================================
