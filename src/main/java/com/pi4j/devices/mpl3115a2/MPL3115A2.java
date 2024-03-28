@@ -124,6 +124,8 @@ public class MPL3115A2 {
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
         //  encounters if using the defaultLogLevel
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "TRACE");
+         
         System.setProperty("org.slf4j.simpleLogger.log." + MPL3115A2.class.getName(), this.traceLevel);
 
         this.logger = LoggerFactory.getLogger(MPL3115A2.class);
@@ -161,7 +163,7 @@ public class MPL3115A2 {
                 .device(address)
                 .id(id + " " + name)
                 .name(name)
-                .provider("pigpio-i2c")
+                .provider("linuxfs-i2c")
                 .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);
@@ -177,7 +179,7 @@ private void init(){
                     .address(this.int1_gpio)
                     .pull(PullResistance.OFF)
                     .debounce(4000L)
-                    .provider("pigpio-digital-input");
+                    .provider("gpiod-digital-input");
     try {
         this.int1 = pi4j.create(ledConfigIntr);
         this.int1.addListener(new MonitorInterrupt1(this));
@@ -193,7 +195,7 @@ private void init(){
             .address(this.int2_gpio)
             .pull(PullResistance.OFF)
             .debounce(4000L)
-            .provider("pigpio-digital-input");
+            .provider("gpiod-digital-input");
     try {
         this.int2 = pi4j.create(ledConfigIntr2);
     } catch (Exception e) {
@@ -219,6 +221,7 @@ private void init(){
     private boolean validateWhoAmI(){
         this.logger.trace(">>> Enter: validateWhoAmI");
         boolean rval = false;
+       // this.i2c.read();
         int who =  this.i2c.readRegisterByte(MPL3115A2_Declares.REG_WHO_AM_I) & 0xff;
         if(who == MPL3115A2_Declares.WHO_AM_I){
             rval = true;
@@ -226,6 +229,8 @@ private void init(){
             this.logger.error("validateWhoAmI failure");
             System.exit(300);
         }
+        int config = 0xff;
+        
         this.logger.trace("<<< Exit: validateWhoAmI :  "+ rval);
         return(rval);
     }
@@ -305,16 +310,20 @@ private void init(){
         boolean rval = false;
         this.busyWaitMS(1000);  // ensure chip quiet
         byte reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
+        this.busyWaitMS(1000);  // ensure chip quiet
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1, reg & MPL3115A2_Declares.CTL1_SBYB_STBY_MASK & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK | MPL3115A2_Declares.CTL1_OVR_SAMPL_MAX);
         this.busyWaitMS(10);  // ensure chip quiet
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_PT_DATA_CFG);
+        this.busyWaitMS(1000);  // ensure chip quiet
         this.i2c.writeRegister(MPL3115A2_Declares.REG_PT_DATA_CFG, reg | MPL3115A2_Declares.PT_DATA_CFG_EVNT_ENBL | MPL3115A2_Declares.PT_DATA_CFG_EVNT_PA);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL4);
+        this.busyWaitMS(1000);  // ensure chip quiet
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL4, reg | MPL3115A2_Declares.CTL4_INT_EN_DRDY);
 
         reg = this.i2c.readRegisterByte(MPL3115A2_Declares.REG_CTRL1);
+        this.busyWaitMS(1000);  // ensure chip quiet
         this.i2c.writeRegister(MPL3115A2_Declares.REG_CTRL1, reg & MPL3115A2_Declares.CTL1_ALT_PRESS_MASK | MPL3115A2_Declares.CTL1_OVR_SAMPL_MAX | MPL3115A2_Declares.CTL1_SBYB_ACT);
 
         // wait INT2
