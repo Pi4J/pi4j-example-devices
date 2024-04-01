@@ -76,7 +76,7 @@ public class CP2102N {
                 .id(id)
                 .name(name)
                 .device("/dev/ttyAMA0")
-                .provider("pigpio-serial")
+                .provider("linuxfsserial")
                 .build());
 
         this.logger.info("Exit: createSerialDevice CP2102N" + id + "" + name);

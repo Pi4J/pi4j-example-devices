@@ -247,7 +247,7 @@ public class BaseGpioInOut  implements GpioBasics {
                     .name(name)
                     .address(number)
                     .pull(pullup)
-                    .provider("pigpio-digital-input");
+                    .provider("linuxfs-digital-input");
             DigitalInput input = null;
             try {
                 input = this.pi4j.create(ledConfig);
@@ -297,7 +297,7 @@ public class BaseGpioInOut  implements GpioBasics {
                     .address(number)
                     .shutdown(initialValue)
                     .initial(initialValue)
-                    .provider("pigpio-digital-output");
+                    .provider("linuxfs-digital-output");
             DigitalOutput output = null;
             try {
                 output = this.pi4j.create(ledConfig);

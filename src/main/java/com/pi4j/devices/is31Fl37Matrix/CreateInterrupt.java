@@ -94,7 +94,7 @@ public class CreateInterrupt {
                 .address(interruptPinNum)
                 .shutdown(initialState)
                 .initial(initialState)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             interruptPin = pi4j.create(interruptConfig);
         } catch (Exception e) {

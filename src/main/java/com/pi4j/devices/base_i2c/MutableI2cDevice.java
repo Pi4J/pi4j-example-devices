@@ -105,7 +105,7 @@ public class MutableI2cDevice {
                     .device(this.address)
                     .id(id)
                     .name(name)
-                    .provider("linuxfs-i2c")
+                    .provider("linuxfsi2c")
                     .build();
         } catch (Pi4JException e) {
             String details = String.format("new config create failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));

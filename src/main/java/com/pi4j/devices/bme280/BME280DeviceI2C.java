@@ -113,7 +113,7 @@ public class BME280DeviceI2C {
         }
         // Initialize I2C
         console.println("Initializing the sensor via I2C");
-        I2CProvider i2CProvider = pi4j.provider("linuxfs-i2c");
+        I2CProvider i2CProvider = pi4j.provider("linuxfsi2c");
         I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
                 .id("BME280")
                 .bus(I2C_BUS)
