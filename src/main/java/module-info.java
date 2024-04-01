@@ -2,8 +2,8 @@ module com.pi4j.devices{
 
     // Pi4J MODULES
     requires com.pi4j;
-    requires com.pi4j.plugin.pigpio;
-    requires com.pi4j.library.pigpio;
+   // requires com.pi4j.plugin.pigpio;
+  //  requires com.pi4j.library.pigpio;
 
     // SLF4J MODULES   LOG4J
     requires org.slf4j;
@@ -17,7 +17,7 @@ module com.pi4j.devices{
     requires jdk.unsupported;
     requires com.pi4j.plugin.linuxfs;
     requires java.desktop;
-
+    requires com.pi4j.plugin.gpiod;
 
     uses com.pi4j.extension.Extension;
     uses com.pi4j.provider.Provider;

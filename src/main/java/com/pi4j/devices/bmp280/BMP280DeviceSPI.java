@@ -109,7 +109,7 @@ public class BMP280DeviceSPI extends BMP280Device {
                 .address(this.csPin)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class BMP280DeviceSPI extends BMP280Device {
                 // .flags(0b0000000000000000100000L)  // MODE0, ux GPIO not used for chip select
                 .baud(Spi.DEFAULT_BAUD)    // Max 10MHz
                 .mode(SpiMode.MODE_0)
-                .provider("pigpio-spi")
+                .provider("linuxfsspi")
                 .build();
         this.spi = this.pi4j.create(spiConfig);
         this.logger.info("Exit:createSPIDevice  ");

@@ -167,7 +167,7 @@ public class AT24C512 {
                 .bus(bus)
                 .device(address) 
                 .name(name) 
-                .provider("linuxfs-i2c")  /* "pigpio-i2c")  "linuxfs-i2c") */
+                .provider("linuxfsi2c")  /* "linuxfsi2c")  "linuxfsi2c") */
                 .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);

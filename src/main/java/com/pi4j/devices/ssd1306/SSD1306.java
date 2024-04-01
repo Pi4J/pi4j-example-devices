@@ -207,7 +207,7 @@ public class SSD1306 {
                 .device(address)
                 .id(id + " " + name)
                 .name(name)
-                .provider("linuxfs-i2c")
+                .provider("linuxfsi2c")
                 .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);

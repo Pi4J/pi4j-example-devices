@@ -84,7 +84,7 @@ public interface GpioBasics {
                 .address(resetGpio)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         DigitalOutput resetPin = null;
         try {
             resetPin = pi4j.create(ledConfig);

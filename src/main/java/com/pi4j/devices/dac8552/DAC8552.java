@@ -163,7 +163,7 @@ public class DAC8552 {
                 .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
                 .baud(976563)
                 .mode(SpiMode.MODE_1)
-                .provider("pigpio-spi")
+                .provider("linuxfsspi")
                 .build();
         this.spi = this.pi4j.create(spiConfig);
 
@@ -174,7 +174,7 @@ public class DAC8552 {
                 .address(this.csPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {

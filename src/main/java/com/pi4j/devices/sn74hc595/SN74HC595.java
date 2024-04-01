@@ -119,7 +119,7 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
                 .address(this.OEPinNum)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.oeGpio = pi4j.create(outputConfig1);
         } catch (Exception e) {
@@ -133,7 +133,7 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
                 .address(this.STCPPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.latchPin = pi4j.create(outputConfig2);
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
                 .address(this.SHCPPinNum)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.clockPin = pi4j.create(outputConfig3);
         } catch (Exception e) {
@@ -161,7 +161,7 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
                 .address(this.MRPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.mrGpio = pi4j.create(outputConfig4);
         } catch (Exception e) {
@@ -175,7 +175,7 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
                 .address(this.DSPinNum)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         try {
             this.dataPin = pi4j.create(outputConfig5);
         } catch (Exception e) {

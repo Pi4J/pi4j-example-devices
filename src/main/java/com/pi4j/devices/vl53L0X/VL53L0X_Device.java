@@ -96,7 +96,7 @@ public class VL53L0X_Device {
                 .device(address)
                 .id("VL53L0X_TOF  " + id + " " + name)
                 .name(name)
-                .provider("linuxfs-i2c")
+                .provider("linuxfsi2c")
                 .build();
         rval = this.pi4j.create(i2cDeviceConfig);
         this.logger.info("Exit: createI2cDevice VL53L0X_TOF" + id + "" + name);
@@ -291,7 +291,7 @@ public class VL53L0X_Device {
                 .address(resetGpio)
                 .shutdown(initial)
                 .initial(initial)
-                .provider("pigpio-digital-output");
+                .provider("linuxfs-digital-output");
         DigitalOutput resetPin = null;
         try {
             resetPin = pi4j.create(resetConfig);
