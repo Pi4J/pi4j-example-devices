@@ -101,7 +101,7 @@ public class MonitorInterrupt {
         // we will use the PULL_DOWN argument to set the pin pull-down resistance on this GPIO pin
         var config = DigitalInput.newConfigBuilder(pi4j)
                 .load(properties)
-                .provider("linuxfs-digital-input") // linuxfs   pigpio
+                .provider("gpiod-digital-input") // linuxfs   pigpio
                 .build();
 
         monitorPin = pi4j.create(config);

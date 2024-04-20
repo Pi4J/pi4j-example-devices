@@ -182,7 +182,7 @@ public class ADS1256 {
                 .id("DRDY_pin")
                 .name("DRDY")
                 .address(this.drdyPinNum)
-                .provider("linuxfs-digital-input"); //               .pull(PullResistance.PULL_UP)
+                .provider("gpiod-digital-input"); //               .pull(PullResistance.PULL_UP)
         try {
             this.drdyGpio = pi4j.create(inputConfig1);
         } catch (Exception e) {
@@ -197,7 +197,7 @@ public class ADS1256 {
                 .address(this.csPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class ADS1256 {
                     .address(this.rstPinNum)
                     .shutdown(DigitalState.HIGH)
                     .initial(DigitalState.HIGH)
-                    .provider("linuxfs-digital-output");
+                    .provider("gpiod-digital-output");
             try {
                 this.rstGpio = pi4j.create(outputConfig3);
             } catch (Exception e) {
@@ -233,7 +233,7 @@ public class ADS1256 {
                 .address(this.pdwnPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.pdwnGpio = pi4j.create(outputConfig4);
         } catch (Exception e) {

@@ -205,7 +205,7 @@ public class PCF8574A_LCD1602A extends LCD1602A {
                 .device(address)
                 .id(id + " " + name)
                 .name(name)
-                .provider("linuxfsi2c")
+                .provider("linuxfs-i2c")
                 .build();
         this.pcfDev = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("<<< Exit:createI2cDevice  ");

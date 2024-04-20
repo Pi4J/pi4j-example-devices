@@ -86,7 +86,7 @@ public class HD44780U_LCD1602A extends LCD1602A{
                 .address(this.RsPinNum)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.RsPin = pi4j.create(outputConfig1);
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class HD44780U_LCD1602A extends LCD1602A{
                 .address(this.EnPinNum)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.EnPin = pi4j.create(outputConfig3);
         } catch (Exception e) {

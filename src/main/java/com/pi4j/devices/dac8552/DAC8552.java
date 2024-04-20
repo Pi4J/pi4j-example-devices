@@ -174,7 +174,7 @@ public class DAC8552 {
                 .address(this.csPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {

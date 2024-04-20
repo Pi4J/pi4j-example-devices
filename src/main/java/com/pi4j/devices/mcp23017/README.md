@@ -120,8 +120,8 @@ property files
 
 3. Drive pin0 hi low.  Drives Red LED.
 
- sudo ./runMcp23017.sh    -b 0x01 -a 0x22    -d 0 -o ON   -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"   -f 1
- sudo ./runMcp23017.sh   -b 0x01 -a 0x22    -d 0 -o OFF   -f 1
+ sudo ./runMcp23017.sh    -b 0x01 -a 0x20    -d 0 -o ON   -m   "{{'pin0':{'dir':'out','int_ena':'no'}}}"   -f 1
+ sudo ./runMcp23017.sh   -b 0x01 -a 0x20    -d 0 -o OFF   -f 1
 
 4. Drive pin14 hi low.   Drives Yellow LED.
 

@@ -89,7 +89,7 @@ public class MPL3115A2_App {
         // may include 'Platforms' and 'I/O Providers'
 
         /*var pi4j = Pi4J.newContextBuilder().add(
-                LinuxFsI2CProvider.newInstance()).build();
+                linuxfs-i2cProvider.newInstance()).build();
 */
         Context pi4j = Pi4J.newAutoContext();
 

@@ -32,9 +32,10 @@ package com.pi4j.devices.bmp280;
 
 
 import com.pi4j.Pi4J;
-import com.pi4j.context.Context;
+
 import com.pi4j.exception.LifecycleException;
-import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
+
+import com.pi4j.context.Context;
 import com.pi4j.util.Console;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
@@ -74,11 +75,9 @@ public class BMP280I2cExample {
         // extensions found in the application's classpath which
         // may include 'Platforms' and 'I/O Providers'
 
-        var pi4j = Pi4J.newContextBuilder().add(
-                LinuxFsI2CProvider.newInstance()).build();
 
 
-       // Context pi4j =  Pi4J.newAutoContext();
+        Context pi4j =  Pi4J.newAutoContext();
 
         // print installed providers
         System.out.println("----------------------------------------------------------");

@@ -109,7 +109,7 @@ public class BMP280DeviceSPI extends BMP280Device {
                 .address(this.csPin)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {

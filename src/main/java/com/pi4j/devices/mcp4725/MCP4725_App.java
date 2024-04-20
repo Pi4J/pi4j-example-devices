@@ -53,7 +53,7 @@ public class MCP4725_App {
         Context pi4j = Pi4J.newAutoContext();
 
 /*        var pi4j = Pi4J.newContextBuilder().add(
-                LinuxFsI2CProvider.newInstance()).build();
+                linuxfs-i2cProvider.newInstance()).build();
 */
         // Prior to running methods, set up control-c handler
         Signal.handle(new Signal("INT"), new SignalHandler() {

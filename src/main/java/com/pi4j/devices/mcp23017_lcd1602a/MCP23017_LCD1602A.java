@@ -94,7 +94,7 @@ public class MCP23017_LCD1602A extends LCD1602A {
                 .address(this.resetPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         try {
             this.ResetPin = pi4j.create(outputConfig1);
         } catch (Exception e) {
@@ -385,7 +385,7 @@ public class MCP23017_LCD1602A extends LCD1602A {
                 .device(address)
                 .id(id + " " + name)
                 .name(name)
-                .provider("linuxfsi2c")
+                .provider("linuxfs-i2c")
                 .build();
         this.mcpDev = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("<<< Exit:createI2cDevice  ");
