@@ -129,7 +129,7 @@ public class BME280DeviceSPI {
                 .address(csPin)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
         csGpio = pi4j.create(csGpioConfig);
 
         var spiConfig = Spi.newConfigBuilder(pi4j)

@@ -108,7 +108,7 @@ public class DHT22 {
                 .address(this.dataPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("linuxfs-digital-output");
+                .provider("gpiod-digital-output");
 
 
         this.inputConfig1 = DigitalInput.newConfigBuilder(pi4j)
@@ -116,7 +116,7 @@ public class DHT22 {
                 .name("Data_In")
                 .address(this.dataPinNum)
                 .pull(PullResistance.OFF)
-                .provider("linuxfs-digital-input");
+                .provider("gpiod-digital-input");
 
 
 

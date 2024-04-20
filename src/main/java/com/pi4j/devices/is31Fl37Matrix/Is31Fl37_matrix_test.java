@@ -285,7 +285,7 @@ public class Is31Fl37_matrix_test {
                     .address(monitorPinNum)
                     .pull(PullResistance.PULL_UP)
                     .debounce(4000L)
-                    .provider("linuxfs-digital-input");
+                    .provider("gpiod-digital-input");
             try {
                 monitorPin = pi4j.create(ledConfigIntr);
             } catch (Exception e) {
@@ -299,7 +299,7 @@ public class Is31Fl37_matrix_test {
                     .address(resetPinNum)
                     .shutdown(DigitalState.HIGH)
                     .initial(DigitalState.HIGH)
-                    .provider("linuxfs-digital-output");
+                    .provider("gpiod-digital-output");
             try {
                 resetPin = pi4j.create(ledConfigReset);
             } catch (Exception e) {
@@ -315,7 +315,7 @@ public class Is31Fl37_matrix_test {
                         .address(processGPIO)
                         .shutdown(DigitalState.LOW)
                         .initial(DigitalState.LOW)
-                        .provider("linuxfs-digital-output");
+                        .provider("gpiod-digital-output");
                 try {
                     processPin = pi4j.create(ledConfigGreen);
                 } catch (Exception e) {
@@ -332,7 +332,7 @@ public class Is31Fl37_matrix_test {
                         .address(warnGPIO)
                         .shutdown(DigitalState.LOW)
                         .initial(DigitalState.LOW)
-                        .provider("linuxfs-digital-output");
+                        .provider("gpiod-digital-output");
                 try {
                     warnPin = pi4j.create(ledConfigRed);
                 } catch (Exception e) {

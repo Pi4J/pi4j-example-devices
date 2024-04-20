@@ -102,7 +102,7 @@ public class Is31Fl37Matrix {
                 .device(address)
                 .id("VL53L0X_TOF  " + id + " " + name)
                 .name(name)
-                .provider("linuxfsi2c")
+                .provider("linuxfs-i2c")
                 .build();
         rval = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("Exit: createI2cDevice VL53L0X_TOF" + id + "" + name);

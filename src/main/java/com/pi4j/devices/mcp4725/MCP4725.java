@@ -88,7 +88,7 @@ public class MCP4725 {
                 .device(address)
                 .id("MCP4725_DAC  " + id + " " + name)
                 .name(name)
-                .provider("linuxfsi2c")
+                .provider("linuxfs-i2c")
                 .build();
         rval = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("Exit: createI2cDevice MCP4725 DAC " + id + "" + name);
