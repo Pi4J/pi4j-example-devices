@@ -53,8 +53,8 @@ public class DHT22_App {
         String traceLevel = "info";
         console.title("<-- The Pi4J V2 Project Extension  -->", "DHT22_App");
         String helpString = " parms:  -d  data GPIO number  -t trace " +
-                " \n -t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            " \n -t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         Signal.handle(new Signal("INT"), new SignalHandler() {
             public void handle(Signal sig) {
@@ -64,7 +64,7 @@ public class DHT22_App {
                 } catch (LifecycleException e) {
                     e.printStackTrace();
                 }
-               // Thread.dumpStack();
+                // Thread.dumpStack();
                 System.exit(2);
             }
         });
@@ -94,10 +94,10 @@ public class DHT22_App {
                 System.exit(43);
             }
         }
-        DHT22 sensor = new DHT22(pi4j, console, dataPinNum,  traceLevel);
+        DHT22 sensor = new DHT22(pi4j, console, dataPinNum, traceLevel);
         sensor.readAndDisplayData();
 
-       // console.waitForExit();
+        // console.waitForExit();
 
         pi4j.shutdown();
     }
