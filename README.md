@@ -5,6 +5,12 @@ Collection of devices implemented for use with Pi4J V2.
 
 Project by Tom Aarts.
 
+```text
+Note: This repository has a tag identifying the code level that works with
+2.4.0-SNAPSHOT.   Commits newer than this tag are migrations to the 
+2.6.0-SNAPSHOT. These commits may contain  code using providers and/or Pi4J-V2
+interfaces not available in prior SNAPSHOTs. 
+```
 The following lists the currently supported devices within this project:
 
 * [1602A LCD  HD44780U](src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md): App uses SN74HC595 to control the LCD

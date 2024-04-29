@@ -56,5 +56,4 @@ public class DHT22_Declares {
     protected final static int CKSUM_NUM_BITS = 8;
 
 
-
 }
