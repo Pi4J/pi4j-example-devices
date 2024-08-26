@@ -173,7 +173,7 @@ public class ADS1256 {
                 .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
                 .baud(976563) //Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_1)
-                .provider("linuxfsspi")
+                .provider("pigpio-spi")
                 .build();
         this.spi = this.pi4j.create(spiConfig);
 
