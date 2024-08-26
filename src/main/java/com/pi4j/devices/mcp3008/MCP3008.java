@@ -40,7 +40,7 @@ public class MCP3008 {
                 .flags(0b0000000000000000000000L)
                 .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
-                .provider("linuxfsspi")
+                .provider("pigpio-spi")
                 .build();
         this.spi = this.pi4j.create(spiConfig);
 

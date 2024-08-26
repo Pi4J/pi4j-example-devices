@@ -139,7 +139,7 @@ public class BME280DeviceSPI {
                 .chipSelect(chipSelect)
                 .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
-                .provider("linuxfsspi")
+                .provider("pigpio-spi")
                 .build();
         spi = pi4j.create(spiConfig);
 

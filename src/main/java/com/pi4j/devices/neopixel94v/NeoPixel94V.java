@@ -191,11 +191,11 @@ public class NeoPixel94V extends Component {
         return Spi.newConfigBuilder(pi4j)
                 .id("SPI" + 1)
                 .name("LED Matrix")
-                .bus(SpiBus.BUS_0)
+                .bus(SpiBus.BUS_1)
                 .address(channel)
                 .mode(SpiMode.MODE_0)
                 .baud(8 * DEFAULT_FREQUENCY_PI4) //     bit-banging from Bit to SPI-Byte
-                .provider("linuxfsspi")
+                .provider("pigpio-spi")
                 .build();
 
     }

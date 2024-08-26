@@ -16,6 +16,16 @@ class documentation to understand its various logging options.
 
 The I2C connection functions as written in the Phillips spec.
 
+
+I2C connection path.
+1. mvn clean package
+2. cd target/distribution
+3. sudo ./runBMP280I2C.sh
+   Args if bus and or address must be set
+   -b 0x01 -a 0x77
+
+
+
 The SPI connection per the Datasheet supports MODE0 or MODE3.  The spec shows reading a register consists of:
 1. Chip select driven low 
 2. Eight clocks pulses to write the register address via the Pi MOSI
@@ -29,10 +39,6 @@ the chips config register be modified. As most chips use 4-wire configuration I 
 GPIO as the CS (chip select)
 
 
-I2C connection path.
-1. mvn clean package
-2. cd target/distribution
-3. sudo ./runBMP280I2C.sh
 
 SPI connection path.
 1. mvn clean package

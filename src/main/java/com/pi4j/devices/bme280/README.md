@@ -2,10 +2,19 @@
 https://pdf1.alldatasheet.com/datasheet-pdf/view/1132060/BOSCH/BME280.html
 
 
-The SPI example assumes SPI bus 0, ChipSelect GPIO 21. The GPIO is configurable as a program parm option.
+
 
 The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2 documentation. Consult that logger
 class documentation to understand its various logging options.
+
+I2C connection path.
+1. mvn clean package
+2. cd target/distribution
+3. sudo ./runBME280I2C.sh
+Args if bus and or address must be set
+   -b 0x01 -a 0x77
+
+The SPI example assumes SPI bus 0, ChipSelect GPIO 21. The GPIO is configurable as a program parm option.
 
 The SPI connection per the Datasheet supports MODE0 or MODE3.  The spec shows reading a register consists of:
 1. Chip select driven low
@@ -22,7 +31,7 @@ GPIO as the CS (chip select)
 SPI connection path.
 1. mvn clean package
 2. cd target/distribution
-3. sudo ./runBMP280SPI.sh -csp 21
+3. sudo ./runBME280SPI.sh -csp 21
 
 
 
