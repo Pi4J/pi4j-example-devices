@@ -136,7 +136,7 @@
             <artifactId>pi4j-plugin-rp1spi</artifactId>
             <version>${pi4j.version}</version>
         </dependency-->
-        <!--- log4j version 2   -->
+        <!--- log4j - version 2   -->
 
         <!-- include Pi4J Plugins (Platforms and I/O Providers) -->
         <dependency>

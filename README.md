@@ -9,7 +9,7 @@ Project by Tom Aarts.
 Note: This repository has a tag identifying the code level that works with
 2.4.0-SNAPSHOT.   Commits newer than this tag are migrations to the 
 2.6.0-SNAPSHOT. These commits may contain  code using providers and/or Pi4J-V2
-interfaces not available in prior SNAPSHOTs. 
+interfaces not available in prior SNAPSHOTs.. 
 ```
 The following lists the currently supported devices within this project:
 

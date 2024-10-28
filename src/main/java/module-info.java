@@ -18,7 +18,7 @@ module com.pi4j.devices{
     requires com.pi4j.plugin.linuxfs;
     requires java.desktop;
     requires com.pi4j.plugin.gpiod;
-   // requires com.pi4j.library.kernel;
+   //  requires com.pi4j.library.kernel;
    // requires com.pi4j.plugin.rp1spi;
 
     uses com.pi4j.extension.Extension;
