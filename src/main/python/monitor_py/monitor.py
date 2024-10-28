@@ -1,49 +1,66 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # monitor.py
-# 2016-09-17
-# Public Domain
-
-# monitor.py          # monitor all GPIO
-# monitor.py 23 24 25 # monitor GPIO 23, 24, and 25
-
-# start daemon   sudo pigpiod
+# Monitors specified GPIO pins or all GPIO pins if none are specified.
+#
+# Required Libraries:
+# This script requires the `pigpio` library to interface with GPIO.
+# Install it via pip:
+#   pip install pigpio
+#
+# Additionally, ensure the `pigpiod` daemon is running before executing this script:
+#   sudo pigpiod
+#
+# Usage:
+#   python3 monitor.py            # Monitor all GPIO pins
+#   python3 monitor.py 23 24 25   # Monitor only GPIO pins 23, 24, and 25
 
 import sys
 import time
 import pigpio
 
-last = [None]*32
-cb = []
+# Store the last tick times for each GPIO
+last_ticks = [None] * 32
 
-def cbf(GPIO, level, tick):
-   if last[GPIO] is not None:
-      diff = pigpio.tickDiff(last[GPIO], tick)
-      print("G={} l={} d={}".format(GPIO, level, diff))
-   last[GPIO] = tick
+# Callback instances for cleanup
+callbacks = []
 
-pi = pigpio.pi()
+def gpio_callback(gpio, level, tick):
+  """Callback function to handle GPIO state changes."""
+  if last_ticks[gpio] is not None:
+    diff = pigpio.tickDiff(last_ticks[gpio], tick)
+    print(f"GPIO={gpio} Level={level} Time Diff={diff} μs")
+  last_ticks[gpio] = tick
 
-if not pi.connected:
-   exit()
+def initialize_gpio_monitor(pins):
+  """Initialize monitoring for specified GPIO pins."""
+  for pin in pins:
+    callbacks.append(pi.callback(pin, pigpio.EITHER_EDGE, gpio_callback))
 
-if len(sys.argv) == 1:
-   G = range(0, 32)
-else:
-   G = []
-   for a in sys.argv[1:]:
-      G.append(int(a))
-   
-for g in G:
-   cb.append(pi.callback(g, pigpio.EITHER_EDGE, cbf))
+def main():
+  global pi
+  pi = pigpio.pi()
 
-try:
-   while True:
-      time.sleep(60)
-except KeyboardInterrupt:
-   print("\nTidying up")
-   for c in cb:
-      c.cancel()
+  if not pi.connected:
+    print("Error: Could not connect to pigpio daemon.")
+    sys.exit(1)
 
-pi.stop()
+  # GPIO pins to monitor
+  pins = range(32) if len(sys.argv) == 1 else map(int, sys.argv[1:])
 
+  # Initialize monitoring on specified GPIO pins
+  initialize_gpio_monitor(pins)
+
+  try:
+    print("Monitoring GPIO pins... Press Ctrl+C to stop.")
+    while True:
+      time.sleep(60)  # Keeps the script alive
+  except KeyboardInterrupt:
+    print("\nCleaning up and exiting...")
+  finally:
+    for callback in callbacks:
+      callback.cancel()
+    pi.stop()
+
+if __name__ == "__main__":
+  main()
