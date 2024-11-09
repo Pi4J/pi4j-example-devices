@@ -23,11 +23,31 @@ Wiring
 
 Compile and Run
 ------
-
-1. `mvn clean install`
-2. `cd target/distribution`
-3. `sudo ./runHCSR04.sh`
-
+1. **Build the project:**
+    ```bash
+    mvn clean install
+    ```
+2. **Navigate to the distribution directory:**
+    ```bash
+    cd target/distribution
+   ```
+3. **Run the application with optional GPIO parameters:** 
+    ```bash
+    sudo ./runHCSR04.sh <TRIG_PIN> <ECHO_PIN>
+    ```
+#### Example Usage
+ - **Using Default GPIO Pins (TRIG=23, ECHO=24):**
+    ```bash
+    sudo ./runHCSR04.sh
+    ```
+ - **Specifying GPIO Pins (e.g., TRIG=20, ECHO=21):**
+    ```bash
+    sudo ./runHCSR04.sh 20 21
+    ```
+ - **Getting Help Information:**
+    ```bash
+    sudo ./runHCSR04.sh -h
+    ```
 Code Overview
 -------------
 

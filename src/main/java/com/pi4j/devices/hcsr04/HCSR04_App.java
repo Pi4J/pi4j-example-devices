@@ -37,7 +37,6 @@
 package com.pi4j.devices.hcsr04;
 
 import com.pi4j.Pi4J;
-
 import com.pi4j.context.Context;
 import com.pi4j.util.Console;
 
@@ -50,26 +49,49 @@ import com.pi4j.util.Console;
  */
 public class HCSR04_App {
 
-    // GPIO pins for the HC-SR04 sensor
-    private static final int TRIG = 23;
-    private static final int ECHO = 24;
+    // Default GPIO pins for the HC-SR04 sensor
+    private static final int DEFAULT_TRIG = 23;
+    private static final int DEFAULT_ECHO = 24;
 
     /**
      * Main method to initialize the Pi4J context, configure the HC-SR04 sensor, and
      * continuously measure and display the distance.
      *
-     * @param args command line arguments (not used)
+     * @param args command line arguments for GPIO pins or help
      * @throws Exception if an error occurs during measurement
      */
     public static void main(String[] args) throws Exception {
         // Create Pi4J console wrapper/helper
         final var console = new Console();
 
+        // Check for help parameter
+        if (args.length > 0 && args[0].equals("-h")) {
+            printUsage(console);
+            System.exit(0);
+        }
+
+        // Parse GPIO pins from command-line arguments if provided
+        int trigPin = DEFAULT_TRIG;
+        int echoPin = DEFAULT_ECHO;
+
+        try {
+            if (args.length > 0) {
+                trigPin = Integer.parseInt(args[0]);
+            }
+            if (args.length > 1) {
+                echoPin = Integer.parseInt(args[1]);
+            }
+        } catch (NumberFormatException e) {
+            console.println("Invalid GPIO pin format. Please enter pins as integers.");
+            printUsage(console);
+            System.exit(1);
+        }
+
         // Initialize Pi4J context
         Context pi4j = Pi4J.newAutoContext();
 
         // Initialize the HCSR04 sensor with specified GPIO pins
-        HCSR04 hcsr04 = new HCSR04(pi4j, TRIG, ECHO);
+        HCSR04 hcsr04 = new HCSR04(pi4j, trigPin, echoPin);
 
         // Register a shutdown hook to release resources when the program exits
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -77,14 +99,15 @@ public class HCSR04_App {
             console.println("Application has been stopped. Pi4J resources released.");
         }));
 
-        System.out.println("Starting HC-SR04 distance measurement application...");
+        console.println("Starting HC-SR04 distance measurement application...");
+        console.println("Using TRIG pin: " + trigPin + ", ECHO pin: " + echoPin);
 
         // Continuous loop to measure and display distance
         while (true) {
             try {
                 double distance = hcsr04.measureDistance();
                 if (distance >= 0) {
-                    console.println("Distance: %.2f cm%n", distance);
+                    console.println(String.format("Distance: %.2f cm", distance));
                 } else {
                     console.println("Out of range or invalid reading.");
                 }
@@ -96,5 +119,17 @@ public class HCSR04_App {
             Thread.sleep(1000);
         }
     }
-}
 
+    /**
+     * Prints usage information for the program.
+     *
+     * @param console the console object for output
+     */
+    private static void printUsage(Console console) {
+        console.println("Usage: java HCSR04_App [TRIG_PIN] [ECHO_PIN]");
+        console.println("       java HCSR04_App -h");
+        console.println("Options:");
+        console.println("  [TRIG_PIN] [ECHO_PIN]  GPIO pins for TRIG and ECHO (default: 23 and 24)");
+        console.println("  -h                     Show this help message");
+    }
+}

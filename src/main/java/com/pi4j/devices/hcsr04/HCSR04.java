@@ -33,7 +33,6 @@
  *
  *
  */
-
 package com.pi4j.devices.hcsr04;
 
 import com.pi4j.context.Context;
@@ -109,13 +108,15 @@ public class HCSR04 {
      *         measurement is invalid (out of range).
      */
     public double measureDistance() {
-        // Send TRIG signal for 10 microseconds
-        trigPin.high();
-        long trigStartTime = System.nanoTime();
-        while (System.nanoTime() - trigStartTime < TRIG_SIGNAL_DURATION_NANOS) {
-            // Busy-wait for 10 microseconds
+        try {
+            // Send TRIG signal for 10 microseconds
+            trigPin.high();
+            Thread.sleep(0, (int) TRIG_SIGNAL_DURATION_NANOS); // Sleep for 10 microseconds
+            trigPin.low();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return -1; // Exit measurement if interrupted
         }
-        trigPin.low();
 
         // Measure echo pulse duration
         long echoStartTime = waitForEchoSignal(true);
@@ -155,7 +156,7 @@ public class HCSR04 {
      * (from the HC-SR04 sensor) into a distance. The calculation is done in
      * centimeters and accounts for the round-trip of the signal (to the object and back).
      *
-     * @param pulseStartTime the start time of the echo pulse in nanosecondshcsr
+     * @param pulseStartTime the start time of the echo pulse in nanoseconds
      * @param pulseEndTime the end time of the echo pulse in nanoseconds
      * @return the calculated distance to the object in centimeters, or -1 if the
      *         pulse duration is outside expected bounds (handled in measureDistance).
