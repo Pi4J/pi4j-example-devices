@@ -22,6 +22,7 @@ The following lists the currently supported devices within this project:
 * [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md) (1)(3)
 * [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md) (3)
 * [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md) (1)
+* [HC-SR04 Ultrasonic Sensor](src/main/java/com/pi4j/devices/hcsr04/README.md)
 * [Is31fl3731 matrix controller](src/main/java/com/pi4j/devices/is31Fl37Matrix/README.md) (1)
 * [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)
 * [MCP23008 and MCP23017 Pin monitoring (interrupt support)](src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md)
@@ -37,7 +38,7 @@ The following lists the currently supported devices within this project:
 * [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) (1)
 
 
- 
+
 (1): This package uses code within this repo and Pi4J
 (2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart
 (3): SPI versions of the device uses Pigpio, cannot be used on Raspberry Pi5
