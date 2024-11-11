@@ -46,23 +46,29 @@ The following lists the currently supported devices within this project:
 
 ### GPIO monitor
 
-This repository includes two Python scripts to monitor GPIO pin states in real-time on a Raspberry Pi. Both scripts require the `pigpio` library for interfacing with GPIO pins. To install `pigpio`, run:
+This repository includes two Python scripts to monitor GPIO pin states in real-time on a Raspberry Pi. \
+**Note**: These scripts use the pigpio library, which is currently incompatible with the Raspberry Pi 5.
 
-```
+**Setting Up pigpio**
+
+To install pigpio, run:
+
+```bash
 pip install pigpio
 ```
 
 Also, make sure the `pigpiod` daemon is running before executing either script:
 
-```
+```bash
 sudo pigpiod
 ```
+
 1. `monitor.py`
 
 This script provides a detailed, line-by-line log of GPIO state changes, including the time difference in microseconds between state changes for each pin.
  - Usage:
    
-```
+```bash
 python3 monitor.py              # Monitor all GPIO pins
 python3 monitor.py 23 24 25     # Monitor only GPIO pins 23, 24, and 25
 ```
@@ -73,7 +79,7 @@ python3 monitor.py 23 24 25     # Monitor only GPIO pins 23, 24, and 25
     - Structured with modular functions for initializing GPIO monitoring, handling state changes, and cleanup on exit.
  - Example Output:
 
-```
+```bash
 Monitoring GPIO pins... Press Ctrl+C to stop.
 GPIO=23 Level=1 Time Diff=120 μs
 GPIO=24 Level=0 Time Diff=95 μs
@@ -85,7 +91,7 @@ GPIO=25 Level=1 Time Diff=110 μs
 This script offers a compact, tabular format for monitoring GPIO states, displaying the current state of each pin in a single, updating line. This view is ideal for visualizing slow state changes without excessive log clutter.
 
  - Usage:
-```
+```bash
 python3 monitor_table_format.py          # Monitor all GPIO pins
 python3 monitor_table_format.py 23 24 25 # Monitor only GPIO pins 23, 24, and 25
 ```
@@ -96,7 +102,7 @@ python3 monitor_table_format.py 23 24 25 # Monitor only GPIO pins 23, 24, and 25
    - Automatically updates the state every second (customizable by adjusting the sleep interval).
  - Example Output:
 
-```
+```bash
 Monitoring GPIO pins... Press Ctrl+C to stop.
 GPIO   23 | 24 | 25
 STATE   1 |  0 |  1
