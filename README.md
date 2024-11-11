@@ -37,15 +37,70 @@ The following lists the currently supported devices within this project:
 * [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
 * [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) (1)
 
+### Notes:
+
+(1): This package uses code within this repo and Pi4J \
+(2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart \
+(3): SPI versions of the device uses Pigpio, cannot be used on Raspberry Pi5 \
 
 
-(1): This package uses code within this repo and Pi4J
-(2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart
-(3): SPI versions of the device uses Pigpio, cannot be used on Raspberry Pi5
+### GPIO monitor
+
+This repository includes two Python scripts to monitor GPIO pin states in real-time on a Raspberry Pi. Both scripts require the `pigpio` library for interfacing with GPIO pins. To install `pigpio`, run:
+
+```
+pip install pigpio
+```
+
+Also, make sure the `pigpiod` daemon is running before executing either script:
+
+```
+sudo pigpiod
+```
+1. `monitor.py`
+
+This script provides a detailed, line-by-line log of GPIO state changes, including the time difference in microseconds between state changes for each pin.
+ - Usage:
+   
+```
+python3 monitor.py              # Monitor all GPIO pins
+python3 monitor.py 23 24 25     # Monitor only GPIO pins 23, 24, and 25
+```
+
+ - Features:
+    - Logs state changes (`HIGH`/`LOW`) for each monitored GPIO pin.
+    - Displays the time difference between successive state changes in microseconds.
+    - Structured with modular functions for initializing GPIO monitoring, handling state changes, and cleanup on exit.
+ - Example Output:
+
+```
+Monitoring GPIO pins... Press Ctrl+C to stop.
+GPIO=23 Level=1 Time Diff=120 μs
+GPIO=24 Level=0 Time Diff=95 μs
+GPIO=25 Level=1 Time Diff=110 μs
+```
+
+2. `monitor_table_format.py`
+   
+This script offers a compact, tabular format for monitoring GPIO states, displaying the current state of each pin in a single, updating line. This view is ideal for visualizing slow state changes without excessive log clutter.
+
+ - Usage:
+```
+python3 monitor_table_format.py          # Monitor all GPIO pins
+python3 monitor_table_format.py 23 24 25 # Monitor only GPIO pins 23, 24, and 25
+```
+
+ - Features:
+   - Displays pin states in a single, continuously updating line.
+   - Ideal for slow changes, as it reduces visual clutter by showing only the current state of each pin.
+   - Automatically updates the state every second (customizable by adjusting the sleep interval).
+ - Example Output:
+
+```
+Monitoring GPIO pins... Press Ctrl+C to stop.
+GPIO   23 | 24 | 25
+STATE   1 |  0 |  1
+```
 
 
-Python
-For details see https://github.com/Pi4J/pi4j-example-devices/pull/80
-monitor.py
-monitor_single_line.py:
 
