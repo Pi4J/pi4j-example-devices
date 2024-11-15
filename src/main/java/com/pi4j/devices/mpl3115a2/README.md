@@ -52,7 +52,7 @@ A future commit will incorporate 'target' interrupt support.
 
 
 
-1. mvn clean package      
+1. ./mvnw clean package      
 2. cd target/distribution      
 3. sudo ./runMPL3115A2.sh   
 

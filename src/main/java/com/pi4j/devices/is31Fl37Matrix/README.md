@@ -7,7 +7,7 @@ translate alphabetic characters.
 
 
 
-   1. mvn clean package
+   1. ./mvnw clean package
    2. cd target/distribution
    3. Execute command to perform desired Matrix operation
 

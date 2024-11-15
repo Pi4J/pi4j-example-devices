@@ -8,7 +8,7 @@ The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2
 class documentation to understand its various logging options.
 
 I2C connection path.
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBME280I2C.sh
 Args if bus and or address must be set
@@ -29,7 +29,7 @@ the chips config register be modified. As most chips use 4-wire configuration I 
 GPIO as the CS (chip select)
 
 SPI connection path.
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBME280SPI.sh -csp 21
 

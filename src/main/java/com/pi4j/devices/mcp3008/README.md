@@ -25,7 +25,7 @@ Chip connected to SPI0   CE0
                                 ch6             CS   ------------  GPIO8  CE0
                                 ch7             Dgnd ------------  Gnd
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runMcp3008.sh   
 

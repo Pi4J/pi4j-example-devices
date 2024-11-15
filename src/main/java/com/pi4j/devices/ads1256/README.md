@@ -1,7 +1,7 @@
 
 # Pi4J_V2-ADS1256 
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runADS1256.sh
 

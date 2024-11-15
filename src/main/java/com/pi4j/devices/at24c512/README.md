@@ -15,7 +15,7 @@ parms. Or modify the AT24C512_App program to use your specific bus and device ad
 The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2 documentation. Consult that logger
 class documentation to understand its various logging options.
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runAT24C512.sh
 

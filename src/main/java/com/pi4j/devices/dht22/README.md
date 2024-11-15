@@ -29,7 +29,7 @@ Pi           DHT22
 GPIO         2. Data   
 Gnd          3. Ground
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runDHT22.sh parms........
 

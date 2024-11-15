@@ -16,7 +16,7 @@ Project by Tom Aarts
 
 
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runMCP4725.sh parms........
 
