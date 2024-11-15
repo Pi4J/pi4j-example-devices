@@ -36,7 +36,7 @@
 
 ## Wiring:  As coded this program uses SPI_0
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runNeopixel.sh OPT parms........
 Parm -t   traceLevel

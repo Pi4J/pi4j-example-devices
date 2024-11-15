@@ -16,7 +16,7 @@ class documentation to understand its various logging options.
 Example code uses Vertical Address Mode.  
 No Page Address Mode verification has been performed.
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runSSD1306.sh
 

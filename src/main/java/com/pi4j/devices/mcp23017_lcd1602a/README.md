@@ -65,7 +65,7 @@ src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md
 
 
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runMCP23017_LCD.sh.sh parms........
 

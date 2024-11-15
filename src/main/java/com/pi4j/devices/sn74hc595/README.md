@@ -25,7 +25,7 @@ gpio23                      14              3         QD
 QA                          15              2         QC Green LED
 Vdd 5v                      16              1         QB
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runSN74HC595.sh parms........
 

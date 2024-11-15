@@ -18,7 +18,7 @@ The I2C connection functions as written in the Phillips spec.
 
 
 I2C connection path.
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBMP280I2C.sh
    Args if bus and or address must be set
@@ -41,7 +41,7 @@ GPIO as the CS (chip select)
 
 
 SPI connection path.
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBMP280SPI.sh -csp 21
 

@@ -46,7 +46,7 @@ directly on the Pi bus, the the value would be -q 23008#1
 -m MCP23xxx pin configuration
 
 
-    1. mvn clean package
+    1. ./mvnw clean package
     2. cd target/distribution
     3. Execute command to set configuration data  (will not be used by example)
     4. Execute command to reset Mcp23008

@@ -34,7 +34,7 @@ P7                                                      D7
 
 
 
-1. mvn clean package
+1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runPCF8574A_LCD1602A.sh parms........
 

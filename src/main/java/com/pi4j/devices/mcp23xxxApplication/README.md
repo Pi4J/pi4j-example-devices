@@ -59,7 +59,7 @@ directly on the Pi bus, the the value would be -q 23008#1
 
 
 
-    1. mvn clean package
+    1. ./mvnw clean package
     2. cd target/distribution
     3. Execute command to set configuration data
     4. Execute command to reset TCA9548 I2C switch

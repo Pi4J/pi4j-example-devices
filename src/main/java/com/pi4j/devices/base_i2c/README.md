@@ -12,7 +12,7 @@ Simple program to execute and I2C read at the specified bus -b,  address -a,
 -o offset, -n number of bytes.  Other parms, -f FFDC level, -s dump pi4j sys data
 
 
-    1. mvn clean package
+    1. ./mvnw clean package
     2. cd target/distribution
     3. sudo ./runSimpleRead.sh  -b 0x1 -a 0x22 -r register -n 0x1
 
