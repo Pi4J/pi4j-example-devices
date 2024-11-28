@@ -36,14 +36,11 @@
 package com.pi4j.devices.rotary_encoder;
 
 import com.pi4j.Pi4J;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import static java.util.Arrays.fill;
 
@@ -62,18 +59,6 @@ public class RotaryEncoderId5880I2C {
         int address = 0x77;
         int pin = 42;
         int position = 0;
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                // Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         String helpString = " parms:  -a hex address -i  hex interrupt  GPIO number,  -p hex position, -h help \n ";
         for (int i = 0; i < args.length; i++) {
@@ -213,7 +198,6 @@ public class RotaryEncoderId5880I2C {
         rotary.write(data);
         return true;
     }
-
 
 
     private static boolean enable_encoder_interrupt(I2C rotary) {

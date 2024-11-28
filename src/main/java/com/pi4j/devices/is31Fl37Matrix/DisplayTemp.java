@@ -50,7 +50,7 @@ public class DisplayTemp {
      * This class includes the state -  private BMP280Device bmpDev;    This is required as Pi4j_V2
      * does not permit repeated instantiations of an I2C device using the same Pi i2c Bus and address. So
      * this class creates the BMP280 device once and reuses that same instance on subsequent invocation.
-     * */
+     */
 
     public DisplayTemp(Context pi4j, Console console, Is31Fl37Matrix display, Logger logger) {
         this.display = display;
@@ -61,8 +61,8 @@ public class DisplayTemp {
     }
 
     /**
-     *   Note, the bmp_bus and bmp_address supplied on the initial call to this method will continue to be used
-     *   on subsequent calls regardless of values supplied.
+     * Note, the bmp_bus and bmp_address supplied on the initial call to this method will continue to be used
+     * on subsequent calls regardless of values supplied.
      */
     public void process_bmp_data(ControlLeds pin_monitor, int led_blink,
                                  Integer loop_count, Integer bmp_bus, Integer bmp_address) {
@@ -71,7 +71,7 @@ public class DisplayTemp {
         // bmp = read_BMP180.ReadBmp180()
         this.logger.trace("process_bmp_data");
         this.logger.trace("parms :  blink : " + String.format("0x%02X", led_blink) + " loop_count : "
-                + String.format("0x%02X", loop_count) + " bmp180 address : " + String.format("0x%02X", bmp_address));
+            + String.format("0x%02X", loop_count) + " bmp180 address : " + String.format("0x%02X", bmp_address));
 
         // pi4j_V2 does not support creating an instance more than one.
         if (this.bmpDev == null) {
@@ -93,7 +93,7 @@ public class DisplayTemp {
         char[] display_asc = new char[5];
         DisplayLED disp_worker = new DisplayLED(this.logger);
         disp_worker.create_led_pattern(pin_monitor, this.display, display_num, display_asc, led_blink, loop_count,
-                time_mode);
+            time_mode);
         /*
          * System.out.println("sit and spin to see if the java trigger fires");
          * try { Thread.sleep(10); } catch (InterruptedException e) { // TODO
@@ -118,14 +118,14 @@ public class DisplayTemp {
         LocalTime thisSec;
         this.logger.trace("show_time");
         this.logger.trace("parms :   blink : " + String.format("0x%02X", led_blink) + " loop_count : "
-                + String.format("0x%02X", loop_count));
+            + String.format("0x%02X", loop_count));
 
         thisSec = LocalTime.now();
         String string_asc = String.format("%1$02d:%2$02d", thisSec.getHour(), thisSec.getMinute());
         char[] display_asc = string_asc.toCharArray();
         DisplayLED disp_worker = new DisplayLED(this.logger);
         disp_worker.create_led_pattern(pin_monitor, this.display, display_num, display_asc, led_blink, loop_count,
-                time_mode);
+            time_mode);
 
         InterruptDetails completed = pin_monitor.wait_for_interrupt();
         if (completed.getSuccessVal()) {
@@ -137,7 +137,7 @@ public class DisplayTemp {
 
     }
 
-    private Is31Fl37Matrix display;
+    private final Is31Fl37Matrix display;
     private final Logger logger;
     private BMP280Device bmpDev;
     private final Context pi4j;

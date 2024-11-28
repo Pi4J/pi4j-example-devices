@@ -41,15 +41,13 @@ import com.pi4j.io.gpio.digital.DigitalState;
 public class HD44780U_Declares_LCD1602A {
 
 
-     // RS GPIO and RW GPIO. Internal command
+    // RS GPIO and RW GPIO. Internal command
     public static final DigitalState RsInternalIr = DigitalState.LOW;
     public static final DigitalState RwInternalIr = DigitalState.LOW;
 
     // RS GPIO and RW GPIO. Busy Flag  command
     public static final DigitalState RsInternalBf = DigitalState.LOW;
     public static final DigitalState RwInternalBf = DigitalState.HIGH;
-
-
 
 
     // RS GPIO and RW GPIO.  Write  commands

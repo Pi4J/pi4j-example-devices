@@ -95,7 +95,6 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     }
 
 
-
     /**
      * init
      */
@@ -107,8 +106,8 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         this.setLevel(this.ffdc);
 
         this.logger = LoggerFactory.getLogger(this.owner);
-       // this.logger = LogManager.getLogger(this.owner);
-       // this.setLevel(this.ffdc);
+        // this.logger = LogManager.getLogger(this.owner);
+        // this.setLevel(this.ffdc);
 
 
     }
@@ -313,7 +312,6 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      *                 <li> 5 ERROR
      *                 <li> 6 OFF
      *                 </ul>
-     * @param newLevel
      * @return Simple int converted to Log4j value
      */
     private String mapIntToLevel(int newLevel) {
@@ -419,7 +417,7 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
      */
     @Override
     public boolean ffdcFlushShutdown() {
-       // LogManager.shutdown();
+        // LogManager.shutdown();
         return (true);
     }
 

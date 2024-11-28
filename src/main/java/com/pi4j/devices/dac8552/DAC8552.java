@@ -66,8 +66,8 @@ public class DAC8552 {
 
     private void writeByte(byte toWrite) {
         this.logger.trace(">>> Enter writeByte  :" + String.format(" | %04x", toWrite));
-        byte value[] = new byte[1];
-        byte valueToWrite[] = new byte[1];
+        byte[] value = new byte[1];
+        byte[] valueToWrite = new byte[1];
         valueToWrite[0] = toWrite;
         int bytesRead = this.spi.transfer(valueToWrite, 0, value, 0, 1);
         this.logger.trace("<<< Exit writeByte  ");
@@ -82,12 +82,12 @@ public class DAC8552 {
      * @param data
      */
     private void Write_DAC8532(int channel, int data) {
-        this.logger.trace(">>> Enter Write_DAC8532  channel : " +  String.format(" | %04x",channel) + "  data  :" + String.format(" | %04x", data));
+        this.logger.trace(">>> Enter Write_DAC8532  channel : " + String.format(" | %04x", channel) + "  data  :" + String.format(" | %04x", data));
 
         this.csGpio.high();
         this.csGpio.low();
         this.writeByte((byte) (channel & 0xff));
-        this.writeByte((byte) ((data  >> 8) & 0xff));
+        this.writeByte((byte) ((data >> 8) & 0xff));
         this.writeByte((byte) (data & 0xff));
         this.csGpio.high();
         this.logger.trace("<<< Exit Write_DAC8532 ");
@@ -132,9 +132,8 @@ public class DAC8552 {
     }
 
     /**
-     *
      * @param channel
-     * @return  numeric  value for this channel, used as input data written  to the DAC
+     * @return numeric  value for this channel, used as input data written  to the DAC
      */
     private int mapChnl(String channel) {
         this.logger.trace(">>> Enter mapChnl  : " + channel);
@@ -147,34 +146,34 @@ public class DAC8552 {
             this.logger.error("Invalid channel designation :" + channel);
             System.exit(300);
         }
-        this.logger.trace("<<< Exit mapChnl  :"+ String.format(" | %04x", rval));
+        this.logger.trace("<<< Exit mapChnl  :" + String.format(" | %04x", rval));
         return (rval);
     }
 
     private void init() throws InterruptedException {
         this.logger.trace(">>> Enter init");
         var spiConfig = Spi.newConfigBuilder(this.pi4j)
-                .id("SPI" + this.spiBus + "_DAC8552")
-                .name("D/A converter")
-                .bus(this.spiBus)
-                .chipSelect(SpiChipSelect.CS_0)   // not used
-                // 30D400
-                //     0b001100001101010000000000
-                .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
-                .baud(976563)
-                .mode(SpiMode.MODE_1)
-                .provider("pigpio-spi")
-                .build();
+            .id("SPI" + this.spiBus + "_DAC8552")
+            .name("D/A converter")
+            .bus(this.spiBus)
+            .chipSelect(SpiChipSelect.CS_0)   // not used
+            // 30D400
+            //     0b001100001101010000000000
+            .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
+            .baud(976563)
+            .mode(SpiMode.MODE_1)
+            .provider("pigpio-spi")
+            .build();
         this.spi = this.pi4j.create(spiConfig);
 
         // required all configs
         var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("CS_pin")
-                .name("CS")
-                .address(this.csPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("gpiod-digital-output");
+            .id("CS_pin")
+            .name("CS")
+            .address(this.csPinNum)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH)
+            .provider("gpiod-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {
@@ -188,19 +187,19 @@ public class DAC8552 {
 
 
     private Spi spi;
-    private Console console;
-    private String traceLevel;
-    private Logger logger;
+    private final Console console;
+    private final String traceLevel;
+    private final Logger logger;
 
-    private double vref = DAC8552_Declares.DAC_VREF;
-    private double voutput = 0;
+    private final double vref = DAC8552_Declares.DAC_VREF;
+    private final double voutput = 0;
 
 
     private DigitalOutput csGpio;
-    private int csPinNum;
+    private final int csPinNum;
 
-    private Context pi4j;
+    private final Context pi4j;
 
-    private SpiBus spiBus;
+    private final SpiBus spiBus;
 
 }

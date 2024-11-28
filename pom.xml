@@ -60,6 +60,7 @@
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
 
 
         <!-- DEPENDENCIES VERSIONS  2.0.3  -SNAPSHOT  -->
@@ -420,6 +421,27 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>checkstyle-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failsOnError>true</failsOnError>
+                    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                    <excludes>**/module-info.java</excludes>
+                    <outputFileFormat>plain</outputFileFormat>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -38,17 +38,17 @@ import com.pi4j.io.gpio.digital.DigitalState;
 
 /**
  * PinInterruptActionIntf
- *
+ * <p>
  * Implementing class can take whatever action/steps they want
-
+ * <p>
  * Class implementing this interface are each specific to the device that
  * created the interrupt
  */
 public interface PinInterruptActionIntf {
     /**
-     *   interruptAction
+     * interruptAction
      *
-     * @param pinNumber  MCP23008 or MCP23017 pin that caused the chip interrupt
+     * @param pinNumber MCP23008 or MCP23017 pin that caused the chip interrupt
      * @param pinState  DigitalState
      */
     void interruptAction(int pinNumber, DigitalState pinState);

@@ -8,9 +8,8 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: Mcp23xxPinMonitor
 Project by Tom Aarts
 
 ==========================================================================
-Simple program to execute and I2C read at the specified bus -b,  address -a,
--o offset, -n number of bytes.  Other parms, -f FFDC level, -s dump pi4j sys data
-
+Simple program to execute and I2C read at the specified bus -b, address -a,
+-o offset, -n number of bytes. Other parms, -f FFDC level, -s dump pi4j sys data
 
     1. ./mvnw clean package
     2. cd target/distribution

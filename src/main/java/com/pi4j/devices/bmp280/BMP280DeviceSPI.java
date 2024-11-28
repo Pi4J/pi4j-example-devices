@@ -104,12 +104,12 @@ public class BMP280DeviceSPI extends BMP280Device {
 
         // required all configs
         var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("CS_pin")
-                .name("CS")
-                .address(this.csPin)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("gpiod-digital-output");
+            .id("CS_pin")
+            .name("CS")
+            .address(this.csPin)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH)
+            .provider("gpiod-digital-output");
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {
@@ -130,17 +130,17 @@ public class BMP280DeviceSPI extends BMP280Device {
     private void createSPIDevice() {
         this.logger.info(">>> Enter:createSPIDevice   bus  " + this.spiBus + "  CS Gpio" + this.csGpio.toString());
         var spiConfig = Spi.newConfigBuilder(this.pi4j)
-                .id("SPI" + this.spiBus + "_BMP280")
-                .name("D/A converter")
-                .bus(this.spiBus)
-                .chipSelect(this.chipSlct)
-                //1 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
-                //b  b  b  b  b  b  R  T  n  n  n  n  W  A u2 u1 u0 p2 p1 p0  m  m
-                // .flags(0b0000000000000000100000L)  // MODE0, ux GPIO not used for chip select
-                .baud(Spi.DEFAULT_BAUD)    // Max 10MHz
-                .mode(SpiMode.MODE_0)
-                .provider("pigpio-spi")
-                .build();
+            .id("SPI" + this.spiBus + "_BMP280")
+            .name("D/A converter")
+            .bus(this.spiBus)
+            .chipSelect(this.chipSlct)
+            //1 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+            //b  b  b  b  b  b  R  T  n  n  n  n  W  A u2 u1 u0 p2 p1 p0  m  m
+            // .flags(0b0000000000000000100000L)  // MODE0, ux GPIO not used for chip select
+            .baud(Spi.DEFAULT_BAUD)    // Max 10MHz
+            .mode(SpiMode.MODE_0)
+            .provider("pigpio-spi")
+            .build();
         this.spi = this.pi4j.create(spiConfig);
         this.logger.info("Exit:createSPIDevice  ");
     }
@@ -153,9 +153,9 @@ public class BMP280DeviceSPI extends BMP280Device {
     public int readRegister(int register) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         this.csGpio.low();
-        byte data[] = new byte[]{(byte) (0b10000000 | register)};
+        byte[] data = new byte[]{(byte) (0b10000000 | register)};
         int bytesWritten = this.spi.write(data);
-        byte value[] = new byte[1];
+        byte[] value = new byte[1];
         byte rval = this.spi.readByte();
         this.csGpio.high();
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", rval));
@@ -169,7 +169,7 @@ public class BMP280DeviceSPI extends BMP280Device {
      */
     public int readRegister(int register, byte[] buffer) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
-        byte data[] = new byte[]{(byte) (0b10000000 | register)};
+        byte[] data = new byte[]{(byte) (0b10000000 | register)};
         this.csGpio.low();
         int bytesWritten = this.spi.write(data);
         int bytesRead = this.spi.read(buffer);
@@ -188,10 +188,10 @@ public class BMP280DeviceSPI extends BMP280Device {
         this.logger.trace(">>> Enter writeRegister   : " + String.format("0X%02x: ", register));
         int rval = 0;
         int byteswritten = -1;
-        byte buffer[] = new byte[]{(byte) (0b01111111 & register),
-                (byte) data
+        byte[] buffer = new byte[]{(byte) (0b01111111 & register),
+            (byte) data
         };
-        byte dummy[] = new byte[2];
+        byte[] dummy = new byte[2];
         // send read request to BMP chip via SPI channel
         this.csGpio.low();
         byteswritten = this.spi.write(buffer);

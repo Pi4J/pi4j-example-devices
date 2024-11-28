@@ -89,17 +89,17 @@ public class VL53L0X_Device {
     I2C createI2cDevice(int bus, int address) {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
-        this.logger.info("Enter: createI2cDevice VL53L0X_TOF" + id + "" + name);
+        this.logger.info("Enter: createI2cDevice VL53L0X_TOF" + id + name);
         I2C rval = null;
         var i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                .bus(bus)
-                .device(address)
-                .id("VL53L0X_TOF  " + id + " " + name)
-                .name(name)
-                .provider("linuxfs-i2c")
-                .build();
+            .bus(bus)
+            .device(address)
+            .id("VL53L0X_TOF  " + id + " " + name)
+            .name(name)
+            .provider("linuxfs-i2c")
+            .build();
         rval = this.pi4j.create(i2cDeviceConfig);
-        this.logger.info("Exit: createI2cDevice VL53L0X_TOF" + id + "" + name);
+        this.logger.info("Exit: createI2cDevice VL53L0X_TOF" + id + name);
         return (rval);
 
     }
@@ -155,8 +155,8 @@ public class VL53L0X_Device {
         }
 
         int[][] pair3 = {{0xFF, 0x01}, {Vl53L0X_Declares._DYNAMIC_SPAD_REF_EN_START_OFFSET, 0x00},
-                {Vl53L0X_Declares._DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD, 0x2C}, {0xFF, 0x00},
-                {Vl53L0X_Declares._GLOBAL_CONFIG_REF_EN_START_SELECT, 0xB4}};
+            {Vl53L0X_Declares._DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD, 0x2C}, {0xFF, 0x00},
+            {Vl53L0X_Declares._GLOBAL_CONFIG_REF_EN_START_SELECT, 0xB4}};
         for (int i = 0; i < pair3.length; i++) {
             this.writeDevice8(pair3[i][0], (byte) pair3[i][1]);
         }
@@ -185,19 +185,19 @@ public class VL53L0X_Device {
         }
 
         int[][] pair4 = {{0xFF, 0x01}, {0x00, 0x00}, {0xFF, 0x00}, {0x09, 0x00}, {0x10, 0x00},
-                {0x11, 0x00}, {0x24, 0x01}, {0x25, 0xFF}, {0x75, 0x00}, {0xFF, 0x01}, {0x4E, 0x2C},
-                {0x48, 0x00}, {0x30, 0x20}, {0xFF, 0x00}, {0x30, 0x09}, {0x54, 0x00}, {0x31, 0x04},
-                {0x32, 0x03}, {0x40, 0x83}, {0x46, 0x25}, {0x60, 0x00}, {0x27, 0x00}, {0x50, 0x06},
-                {0x51, 0x00}, {0x52, 0x96}, {0x56, 0x08}, {0x57, 0x30}, {0x61, 0x00}, {0x62, 0x00},
-                {0x64, 0x00}, {0x65, 0x00}, {0x66, 0xA0}, {0xFF, 0x01}, {0x22, 0x32}, {0x47, 0x14},
-                {0x49, 0xFF}, {0x4A, 0x00}, {0xFF, 0x00}, {0x7A, 0x0A}, {0x7B, 0x00}, {0x78, 0x21},
-                {0xFF, 0x01}, {0x23, 0x34}, {0x42, 0x00}, {0x44, 0xFF}, {0x45, 0x26}, {0x46, 0x05},
-                {0x40, 0x40}, {0x0E, 0x06}, {0x20, 0x1A}, {0x43, 0x40}, {0xFF, 0x00}, {0x34, 0x03},
-                {0x35, 0x44}, {0xFF, 0x01}, {0x31, 0x04}, {0x4B, 0x09}, {0x4C, 0x05}, {0x4D, 0x04},
-                {0xFF, 0x00}, {0x44, 0x00}, {0x45, 0x20}, {0x47, 0x08}, {0x48, 0x28}, {0x67, 0x00},
-                {0x70, 0x04}, {0x71, 0x01}, {0x72, 0xFE}, {0x76, 0x00}, {0x77, 0x00}, {0xFF, 0x01},
-                {0x0D, 0x01}, {0xFF, 0x00}, {0x80, 0x01}, {0x01, 0xF8}, {0xFF, 0x01}, {0x8E, 0x01},
-                {0x00, 0x01}, {0xFF, 0x00}, {0x80, 0x00}};
+            {0x11, 0x00}, {0x24, 0x01}, {0x25, 0xFF}, {0x75, 0x00}, {0xFF, 0x01}, {0x4E, 0x2C},
+            {0x48, 0x00}, {0x30, 0x20}, {0xFF, 0x00}, {0x30, 0x09}, {0x54, 0x00}, {0x31, 0x04},
+            {0x32, 0x03}, {0x40, 0x83}, {0x46, 0x25}, {0x60, 0x00}, {0x27, 0x00}, {0x50, 0x06},
+            {0x51, 0x00}, {0x52, 0x96}, {0x56, 0x08}, {0x57, 0x30}, {0x61, 0x00}, {0x62, 0x00},
+            {0x64, 0x00}, {0x65, 0x00}, {0x66, 0xA0}, {0xFF, 0x01}, {0x22, 0x32}, {0x47, 0x14},
+            {0x49, 0xFF}, {0x4A, 0x00}, {0xFF, 0x00}, {0x7A, 0x0A}, {0x7B, 0x00}, {0x78, 0x21},
+            {0xFF, 0x01}, {0x23, 0x34}, {0x42, 0x00}, {0x44, 0xFF}, {0x45, 0x26}, {0x46, 0x05},
+            {0x40, 0x40}, {0x0E, 0x06}, {0x20, 0x1A}, {0x43, 0x40}, {0xFF, 0x00}, {0x34, 0x03},
+            {0x35, 0x44}, {0xFF, 0x01}, {0x31, 0x04}, {0x4B, 0x09}, {0x4C, 0x05}, {0x4D, 0x04},
+            {0xFF, 0x00}, {0x44, 0x00}, {0x45, 0x20}, {0x47, 0x08}, {0x48, 0x28}, {0x67, 0x00},
+            {0x70, 0x04}, {0x71, 0x01}, {0x72, 0xFE}, {0x76, 0x00}, {0x77, 0x00}, {0xFF, 0x01},
+            {0x0D, 0x01}, {0xFF, 0x00}, {0x80, 0x01}, {0x01, 0xF8}, {0xFF, 0x01}, {0x8E, 0x01},
+            {0x00, 0x01}, {0xFF, 0x00}, {0x80, 0x00}};
 
         for (int i = 0; i < pair4.length; i++) {
             this.writeDevice8(pair4[i][0], (byte) pair4[i][1]);
@@ -286,18 +286,18 @@ public class VL53L0X_Device {
     void resetChip(int resetGpio, Context pi4j, int delay, boolean bar, DigitalState initial, Console console) {
         this.logger.trace("Enter: resetChip  gpio " + resetGpio + "  delay " + delay + " UnderBar " + bar + " initial state  " + initial);
         var resetConfig = DigitalOutput.newConfigBuilder(pi4j)
-                .id("resetPin")
-                .name("Chip reset")
-                .address(resetGpio)
-                .shutdown(initial)
-                .initial(initial)
-                .provider("gpiod-digital-output");
+            .id("resetPin")
+            .name("Chip reset")
+            .address(resetGpio)
+            .shutdown(initial)
+            .initial(initial)
+            .provider("gpiod-digital-output");
         DigitalOutput resetPin = null;
         try {
             resetPin = pi4j.create(resetConfig);
         } catch (Exception e) {
             e.printStackTrace();
-            console.println(String.format("reset_chip  %s", e.toString()), 600);
+            console.println(String.format("reset_chip  %s", e), 600);
         }
         try {
             if (bar) {  // active low
@@ -436,12 +436,12 @@ public class VL53L0X_Device {
         }
         int final_range_timeout_us = budget_us - used_budget_us;
         int final_range_timeout_mclks = this.get_timeout_microseconds_to_mclks(final_range_timeout_us,
-                final_range_vcsel_period_pclks);
+            final_range_vcsel_period_pclks);
         if (pre_range) {
             final_range_timeout_mclks += pre_range_mclks;
         }
         this.writeDevice16(Vl53L0X_Declares._FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI,
-                this.encode_timeout(final_range_timeout_mclks));
+            this.encode_timeout(final_range_timeout_mclks));
 
         this.measurement_timing_budget_us = budget_us;
         this.logger.trace("Exit: set_measurement_timing_budget  ");
@@ -458,18 +458,18 @@ public class VL53L0X_Device {
         int msrc_dss_tcc_mclks = (this.readDevice8(Vl53L0X_Declares._MSRC_CONFIG_TIMEOUT_MACROP) + 1) & 0xFF;
         int msrc_dss_tcc_us = this.timeout_mclks_to_microseconds(msrc_dss_tcc_mclks, pre_range_vcsel_period_pclks);
         int pre_range_mclks = this
-                .decode_timeout(this.readDevice16(Vl53L0X_Declares._PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI));
+            .decode_timeout(this.readDevice16(Vl53L0X_Declares._PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI));
         int pre_range_us = this.timeout_mclks_to_microseconds(pre_range_mclks, pre_range_vcsel_period_pclks);
         int final_range_vcsel_period_pclks = this.get_vcsel_pulse_period(Vl53L0X_Declares._VCSEL_PERIOD_FINAL_RANGE);
         int final_range_mclks = this
-                .decode_timeout(this.readDevice16(Vl53L0X_Declares._FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI));
+            .decode_timeout(this.readDevice16(Vl53L0X_Declares._FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI));
         if (pre_range) {
             final_range_mclks -= pre_range_mclks;
         }
         int final_range_us = this.timeout_mclks_to_microseconds(final_range_mclks, final_range_vcsel_period_pclks);
         StepTimeouts rval = new StepTimeouts(msrc_dss_tcc_us, pre_range_us, final_range_us,
-                final_range_vcsel_period_pclks, pre_range_mclks);
-        this.logger.trace("Exit: get_sequence_step_timeouts  StepTimeouts  " + rval.toString());
+            final_range_vcsel_period_pclks, pre_range_mclks);
+        this.logger.trace("Exit: get_sequence_step_timeouts  StepTimeouts  " + rval);
         return (rval);
     }
 
@@ -512,7 +512,7 @@ public class VL53L0X_Device {
         boolean pre_range = ((sequence_config >> 6) & 0x1) > 0;
         boolean final_range = ((sequence_config >> 7) & 0x1) > 0;
         StepEnable rval = new StepEnable(tcc, dss, msrc, pre_range, final_range);
-        this.logger.trace("Exit: get_sequence_step_enables  " + rval.toString());
+        this.logger.trace("Exit: get_sequence_step_enables  " + rval);
         return (rval);
     }
 
@@ -731,7 +731,7 @@ public class VL53L0X_Device {
 
         this.logger.trace("Entered range()");
         int[][] pair = {{0x80, 0x01}, {0xFF, 0x01}, {0x00, 0x00}, {0x91, this._stop_variable}, {0x00, 0x01},
-                {0xFF, 0x00}, {0x80, 0x00}, {Vl53L0X_Declares._SYSRANGE_START, 0x01}};
+            {0xFF, 0x00}, {0x80, 0x00}, {Vl53L0X_Declares._SYSRANGE_START, 0x01}};
         for (int i = 0; i < pair.length; i++) {
             this.writeDevice8(pair[i][0], (byte) pair[i][1]);
         }
@@ -739,7 +739,7 @@ public class VL53L0X_Device {
         float start = System.nanoTime() / (float) 1000000;
         while ((this.readDevice8(Vl53L0X_Declares._SYSRANGE_START) & 0x01) > 0) {
             if (((System.nanoTime() / (float) 1000000) > 0)
-                    && (((System.nanoTime() / (float) 1000000) - start) >= this.io_timeout_s)) {
+                && (((System.nanoTime() / (float) 1000000) - start) >= this.io_timeout_s)) {
                 this.logger.error("Timeout waiting for VL53L0X!");
                 System.exit(60);
             }

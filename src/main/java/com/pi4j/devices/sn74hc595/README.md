@@ -17,13 +17,13 @@ Specific usage of sn74hc595 to control 1602A LCD
 
                             9               8         gnd
 
-gpio13                      10              7         QH Red LED   
-gpio6                       11              6         QG  
-gpio5                       12              5         QF  
-gpio20                      13              4         QE  
-gpio23                      14              3         QD   
-QA                          15              2         QC Green LED
-Vdd 5v                      16              1         QB
+gpio13 10 7 QH Red LED   
+gpio6 11 6 QG  
+gpio5 12 5 QF  
+gpio20 13 4 QE  
+gpio23 14 3 QD   
+QA 15 2 QC Green LED
+Vdd 5v 16 1 QB
 
 1. ./mvnw clean package
 2. cd target/distribution

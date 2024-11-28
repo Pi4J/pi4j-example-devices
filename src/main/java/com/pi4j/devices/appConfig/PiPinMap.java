@@ -35,32 +35,23 @@
 package com.pi4j.devices.appConfig;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Properties;
 //  Map Pi3B and Pi4B gpio mapping
 
 /**
  * <h1>PiPinMap</h1>
- *   <p>
- *       Defines each GPIO pins on the Pi BCM. Numbering follows the BCM numbering.
- *       Included detail action details when an interrupt pertains to this pin.
- *   </p>
- *   <p>
- *       The structure is defined and must be followed, or code updates be completed.
- *   </p>
- *   <p>
- *       The application must ensure the 'set_properties()' method has been called.
- *       See com.pi4j.devices.appConfig.SetProperties as an example.
- *   </p>
- *
- *
+ * <p>
+ * Defines each GPIO pins on the Pi BCM. Numbering follows the BCM numbering.
+ * Included detail action details when an interrupt pertains to this pin.
+ * </p>
+ * <p>
+ * The structure is defined and must be followed, or code updates be completed.
+ * </p>
+ * <p>
+ * The application must ensure the 'set_properties()' method has been called.
+ * See com.pi4j.devices.appConfig.SetProperties as an example.
+ * </p>
  */
 
 public class PiPinMap {
@@ -72,8 +63,7 @@ public class PiPinMap {
      *
      * <p>
      * PostCond:  File config_pi_pins.properties contains the class data pi_pin_map
-     *
-     * */
+     */
     public void setProperties() {
         Properties prop = new Properties();
         OutputStream output = null;
@@ -84,10 +74,10 @@ public class PiPinMap {
 
             output = new FileOutputStream(fName);
             prop.setProperty("pi_pin_map",
-                    "{{'dio13':{'appName':'output','action':'hilow','chipName':'pi4B'}},"
-                            + "{'dio12':{'appName':'LED','action':'reflect','chipName':'pi4B'}},"
-                            + "{'dio18':{'appName':'LED','action':'reflect','chipName':'pi4B'}},"
-                            + "{'dio26':{'appName':'hilow','action':'reflect','chipName':'pi4B'}}}");
+                "{{'dio13':{'appName':'output','action':'hilow','chipName':'pi4B'}},"
+                    + "{'dio12':{'appName':'LED','action':'reflect','chipName':'pi4B'}},"
+                    + "{'dio18':{'appName':'LED','action':'reflect','chipName':'pi4B'}},"
+                    + "{'dio26':{'appName':'hilow','action':'reflect','chipName':'pi4B'}}}");
 
             // save properties to project root folder
             prop.store(output, null);
@@ -136,8 +126,7 @@ public class PiPinMap {
      * PostCond:  File config_pi_pins.properties read.
      *
      * @return String containing value for key pi_pin_map
-     *
-     * */
+     */
 
     public String readProperties() {
         Properties prop = new Properties();

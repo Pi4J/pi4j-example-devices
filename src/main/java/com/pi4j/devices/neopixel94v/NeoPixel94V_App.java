@@ -38,10 +38,8 @@ package com.pi4j.devices.neopixel94v;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
+
 
 public class NeoPixel94V_App {
 
@@ -57,18 +55,6 @@ public class NeoPixel94V_App {
         String traceLevel = "info";
         boolean doTest = false;
 
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                // Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -82,17 +68,16 @@ public class NeoPixel94V_App {
                     console.println("Changing trace level invalid  : " + traceLevel);
                     System.exit(40);
                 }
-            }else {
+            } else {
                 console.println("  !!! Invalid Parm " + o);
                 console.println("  -trace " +
-                        " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"");
+                    " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"");
                 System.exit(42);
             }
         }
 
 
         final NeoPixel94V ledStrip = new NeoPixel94V(pi4j, console, pixels, 0.5, traceLevel);
-
 
 
         // System.out.println("Blink as configured");
@@ -108,14 +93,14 @@ public class NeoPixel94V_App {
 
 
         System.out.println("setting the LEDs to RED");
-        ledStrip.setStripColor(ledStrip.pixel.RED);
+        ledStrip.setStripColor(NeoPixel94V.PixelColor.RED);
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
         ledStrip.waitForInput();
 
         System.out.println("setting the first led to green");
-        ledStrip.setPixelColor(0, ledStrip.pixel.GREEN);
+        ledStrip.setPixelColor(0, NeoPixel94V.PixelColor.GREEN);
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -123,7 +108,7 @@ public class NeoPixel94V_App {
 
 
         System.out.println("setting the LEDs to  Blue");
-        ledStrip.setStripColor(ledStrip.pixel.BLUE);
+        ledStrip.setStripColor(NeoPixel94V.PixelColor.BLUE);
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -131,7 +116,7 @@ public class NeoPixel94V_App {
 
 
         System.out.println("setting the first led to Purple");
-        ledStrip.setPixelColor(0, ledStrip.pixel.PURPLE);
+        ledStrip.setPixelColor(0, NeoPixel94V.PixelColor.PURPLE);
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -145,7 +130,7 @@ public class NeoPixel94V_App {
 
         System.out.println("setting the brightness to full and just show the first led as White");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(0, ledStrip.pixel.WHITE);
+        ledStrip.setPixelColor(0, NeoPixel94V.PixelColor.WHITE);
         ledStrip.render();
 
         ledStrip.sleep(3000, 0);
@@ -162,7 +147,7 @@ public class NeoPixel94V_App {
         // !!!!!!!!
         System.out.println("setting the brightness to full and just show the fourth led as Red");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(3, ledStrip.pixel.RED);  //3
+        ledStrip.setPixelColor(3, NeoPixel94V.PixelColor.RED);  //3
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -177,7 +162,7 @@ public class NeoPixel94V_App {
 
 
         System.out.println("setting the LEDs to  Orange");
-        ledStrip.setStripColor(ledStrip.pixel.ORANGE);
+        ledStrip.setStripColor(NeoPixel94V.PixelColor.ORANGE);
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -189,10 +174,9 @@ public class NeoPixel94V_App {
         ledStrip.waitForInput();
 
 
-
         System.out.println("setting the brightness to 50% and just show the sixth led as orange");
         ledStrip.setBrightness(0.5);
-        ledStrip.setPixelColor(5, ledStrip.pixel.ORANGE);   // 5
+        ledStrip.setPixelColor(5, NeoPixel94V.PixelColor.ORANGE);   // 5
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -206,7 +190,7 @@ public class NeoPixel94V_App {
         ledStrip.waitForInput();
 
         System.out.println("setting the brightness to 50% and just show the seventh led as  yellow");
-        ledStrip.setPixelColor(6, ledStrip.pixel.YELLOW);   // 6
+        ledStrip.setPixelColor(6, NeoPixel94V.PixelColor.YELLOW);   // 6
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 
@@ -221,7 +205,7 @@ public class NeoPixel94V_App {
 
         System.out.println("setting the brightness to full and just show the fifth led as Green");
         ledStrip.setBrightness(1);
-        ledStrip.setPixelColor(4, ledStrip.pixel.GREEN);  //4
+        ledStrip.setPixelColor(4, NeoPixel94V.PixelColor.GREEN);  //4
         ledStrip.render();
         ledStrip.sleep(3000, 0);
 

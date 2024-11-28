@@ -1,6 +1,5 @@
 Pi4J :: Java I/O Library for Raspberry Pi :: Device ::  DHT22
 
-Uses SN74HC595 to update D0-D7 of the LCD display module
 ==========================================================================
 
 ### This repository contains device specific support for various devices.
@@ -24,10 +23,10 @@ https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf
 
 Simple usage of the DHT22 Humidity and Temperature sensor.
 
-Pi           DHT22   
-5+           1. VDD    
-GPIO         2. Data   
-Gnd          3. Ground
+Pi DHT22   
+5+ 1. VDD    
+GPIO 2. Data   
+Gnd 3. Ground
 
 1. ./mvnw clean package
 2. cd target/distribution

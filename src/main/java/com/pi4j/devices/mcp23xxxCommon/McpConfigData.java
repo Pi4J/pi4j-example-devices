@@ -51,7 +51,8 @@ public class McpConfigData {
 
     /**
      * CTOR
-      * @param ffdc  logginf
+     *
+     * @param ffdc logginf
      */
     public McpConfigData(FfdcUtil ffdc) {
 
@@ -68,7 +69,6 @@ public class McpConfigData {
         this.outerMap = new HashMap<String, HashMap<String, String>>();
 
     }
-
 
 
     // # Offset into data from getAddrMapFirst8(); and getAddrMapSecond8() .
@@ -102,7 +102,8 @@ public class McpConfigData {
 
     /**
      * Unit testing
-      * @return    HashMap
+     *
+     * @return HashMap
      */
     public HashMap<String, HashMap<String, String>> getFullMap() {
         this.ffdc.ffdcMethodEntry("getFullMap");
@@ -113,6 +114,7 @@ public class McpConfigData {
 
     /**
      * Unit testing
+     *
      * @param newMap
      */
     public void replaceMap(HashMap<String, HashMap<String, String>> newMap) {
@@ -124,22 +126,22 @@ public class McpConfigData {
 
     /**
      * Unit testing.  Dump and pretty print HashMap
-      */
+     */
     public void DumpGpiosConfig() {
         this.ffdc.ffdcMethodEntry("mcpConfigure::DumpGpiosConfig (program details)");
         HashMap<String, HashMap<String, String>> outerMap = this.getFullMap();
         Set outerSet = outerMap.entrySet();
         Iterator<Map.Entry<String, Map<String, String>>> outerIterator = outerSet.iterator();
         while (outerIterator.hasNext()) {
-            Map.Entry<String, Map<String, String>> mentry = (Map.Entry) outerIterator.next();
-            this.ffdc.ffdcDebugEntry("key is: " + mentry.getKey() );
+            Map.Entry<String, Map<String, String>> mentry = outerIterator.next();
+            this.ffdc.ffdcDebugEntry("key is: " + mentry.getKey());
             // System.out.println(mentry.getValue());
             // iterate inner map
             HashMap<String, String> innerMap = new HashMap<String, String>();
             Iterator<Map.Entry<String, String>> child = (mentry.getValue()).entrySet().iterator();
             while (child.hasNext()) {
                 Map.Entry childPair = child.next();
-                this.ffdc.ffdcDebugEntry("childPair:   " + childPair.getKey() + " ->  "  + childPair.getValue());
+                this.ffdc.ffdcDebugEntry("childPair:   " + childPair.getKey() + " ->  " + childPair.getValue());
             }
         }
         this.ffdc.ffdcMethodExit("DumpGpiosConfig");
@@ -147,7 +149,6 @@ public class McpConfigData {
 
     HashMap<String, HashMap<String, String>> outerMap;
     FfdcUtil ffdc;
-
 
 
 }

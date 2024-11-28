@@ -35,55 +35,54 @@
 package com.pi4j.devices.mcp23xxxApplication;
 
 
+import com.pi4j.context.Context;
 import com.pi4j.devices.appConfig.AppConfigUtilities;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
 import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
-
-import java.util.HashMap;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.context.Context;
+
+import java.util.HashMap;
 
 /**
  * PinInterruptLED
- *
+ * <p>
  * Instances of this class are associated with an PinInterruptActionIntf as
  * the instance to call for effecting some action.
- *
  */
 
-public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMonitorIntf{
+public class PinInterruptLED extends PinInterruptBase implements Mcp23xxxPinMonitorIntf {
 
 
-    /**CTOR
+    /**
+     * CTOR
      *
-     * @param pi4j  Context
-     * @param pin   Pin on the  MCP23008 or MCP23017
-     * @param ffdc    logging
-     * @param mcpObj  MCP23008 or MCP23017 instance
-     * @param pinDict  pin configuration disctionary
-     * @param cfgU      utilities
-     * @param priChipName   Name of the MCP23008 or MCP23017 chip owning the 'pin'
+     * @param pi4j        Context
+     * @param pin         Pin on the  MCP23008 or MCP23017
+     * @param ffdc        logging
+     * @param mcpObj      MCP23008 or MCP23017 instance
+     * @param pinDict     pin configuration disctionary
+     * @param cfgU        utilities
+     * @param priChipName Name of the MCP23008 or MCP23017 chip owning the 'pin'
      */
-    public PinInterruptLED(Context pi4j,int pin, FfdcUtil ffdc, Mcp23xxxPinMonitorIntf mcpObj,
+    public PinInterruptLED(Context pi4j, int pin, FfdcUtil ffdc, Mcp23xxxPinMonitorIntf mcpObj,
                            HashMap<Integer, GpioPinCfgData> pinDict, AppConfigUtilities cfgU, String priChipName) {
         super(pi4j, pin, ffdc, mcpObj, pinDict, cfgU, priChipName);
 
     }
 
     /**
-     *    changeLed
+     * changeLed
      *
-     *  <p>
-     *      Use the AppConfigUtilities to determine what action to
-     *      take when a specific pin causes an interrupt.
-     *      The actions may in fact effect others pins, depended upon the
-     *      details in the GpioToApp class.
+     * <p>
+     * Use the AppConfigUtilities to determine what action to
+     * take when a specific pin causes an interrupt.
+     * The actions may in fact effect others pins, depended upon the
+     * details in the GpioToApp class.
      *
-     *
-     * @param pinNumber  effect pin
-     * @param pinState   DigitalState
+     * @param pinNumber effect pin
+     * @param pinState  DigitalState
      */
     public void changeLed(int pinNumber, DigitalState pinState) {
         ffdc.ffdcMethodEntry("changeLed pin : " + pinNumber + " pin state :" + pinState + " this instance for pin " + this.pin);
@@ -107,7 +106,7 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
                         // path
                         String ledGpio = pinDetails.get("gpioNumLED");
                         int pinNum = Character.getNumericValue(ledGpio.charAt(3)); // dionx
-                        if(ledGpio.length() == 5) {  // dioxx
+                        if (ledGpio.length() == 5) {  // dioxx
                             pinNum = pinNum * 10;
                             pinNum += Character.getNumericValue(ledGpio.charAt(4));
                         }
@@ -125,12 +124,12 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
                         ffdc.ffdcDebugEntry("PinMap details contains pin " + pinDetails.get("pin"));
                         String ledGpio = pinDetails.get("pin");
                         int pinNum = Character.getNumericValue(ledGpio.charAt(3)); // pinx
-                        if(ledGpio.length() == 5) {  // pinxx
+                        if (ledGpio.length() == 5) {  // pinxx
                             pinNum = pinNum * 10;
                             pinNum += Character.getNumericValue(ledGpio.charAt(4));
                         }
                         HashMap<String, String> target = this.cfgU.getPinMapDetails(this.priChipName,
-                                pinDetails.get("pin"));
+                            pinDetails.get("pin"));
                         this.cfgU.enableGpioPath(pinDetails.get("pin"), this.priChipName); // enable
                         // any
                         // mux
@@ -151,7 +150,7 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
                         String ledGpio = pinDetails.get("gpioNumLED");
                         BaseGpioInOut gpio = new BaseGpioInOut(this.pi4j, this.ffdc, this.pinDict);
                         int pinNum = Character.getNumericValue(ledGpio.charAt(3)); // diox
-                        if(ledGpio.length() == 5) {  // dioxx
+                        if (ledGpio.length() == 5) {  // dioxx
                             pinNum = pinNum * 10;
                             pinNum += Character.getNumericValue(ledGpio.charAt(4));
                         }
@@ -166,12 +165,12 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
                     } else if (pinDetails.containsKey("pin")) {
                         String ledGpio = pinDetails.get("pin");
                         int pinNum = Character.getNumericValue(ledGpio.charAt(3)); // pinx
-                        if(ledGpio.length() == 5) {  // pinxx
+                        if (ledGpio.length() == 5) {  // pinxx
                             pinNum = pinNum * 10;  // mov first digit to tens column
                             pinNum += Character.getNumericValue(ledGpio.charAt(4)); // last digit is ones column
                         }
                         HashMap<String, String> target = this.cfgU.getPinMapDetails(this.priChipName,
-                                pinDetails.get("pin"));
+                            pinDetails.get("pin"));
                         this.cfgU.enableGpioPath(pinDetails.get("pin"), this.priChipName); // enable
                         // any
                         // mux
@@ -198,7 +197,7 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
     private void controlChip(HashMap<String, String> chipDetail, int pinNum, String action, DigitalState pinState) {
         // TODO Auto-generated method stub
         String chipPCA = chipDetail.get("pca");
-        if ((chipPCA.equals("23017"))  || (chipPCA.equals("23008")) ) {
+        if ((chipPCA.equals("23017")) || (chipPCA.equals("23008"))) {
             int busNumber = Integer.parseInt(chipDetail.get("busNum").substring(2), 16);
             int chipAddress = Integer.parseInt(chipDetail.get("address").substring(2), 16);
             if (action.equals("hilow")) {
@@ -212,11 +211,7 @@ public class PinInterruptLED  extends PinInterruptBase implements Mcp23xxxPinMon
                 }
             } else if (action.equals("reflect")) {
                 try {
-                    if (pinState == DigitalState.HIGH) {
-                        this.mcpObj.drivePin(pinNum, true);
-                    } else {
-                        this.mcpObj.drivePin(pinNum, false);
-                    }
+                    this.mcpObj.drivePin(pinNum, pinState == DigitalState.HIGH);
                 } catch (InterruptedException | IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

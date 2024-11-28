@@ -101,16 +101,16 @@ public class MutableI2cDevice {
             this.busNum = bus;
             this.address = address;
             this.i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                    .bus(this.busNum)
-                    .device(this.address)
-                    .id(id)
-                    .name(name)
-                    .provider("linuxfs-i2c")
-                    .build();
+                .bus(this.busNum)
+                .device(this.address)
+                .id(id)
+                .name(name)
+                .provider("linuxfs-i2c")
+                .build();
         } catch (Pi4JException e) {
             String details = String.format("new config create failed bus %s   address %s  ", String.format("0X%02x: ", this.busNum), String.format("0X%02x: ", this.address));
             this.ffdc.ffdcErrorEntry(details);
-            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e.toString());
+            this.ffdc.ffdcErrorEntry(e.getMessage() + " /n" + e);
             this.ffdc.ffdcErrorExit("i2C NEW CONFIG failed", 105);
         }
         try {
@@ -150,7 +150,6 @@ public class MutableI2cDevice {
      *
      *               <p>
      *               PostCond:  Register contents returned if successful, else exception will surface
-     *
      * @throws IOException, IOReadException
      */
     protected byte readRegisterByte(int offset) throws IOException, IOReadException {

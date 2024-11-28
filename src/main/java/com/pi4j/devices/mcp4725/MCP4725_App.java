@@ -38,12 +38,8 @@ package com.pi4j.devices.mcp4725;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.mcp4725.MCP4725;
-import com.pi4j.devices.mcp4725.MCP4725_Declares;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
+
 
 public class MCP4725_App {
 
@@ -55,19 +51,6 @@ public class MCP4725_App {
 /*        var pi4j = Pi4J.newContextBuilder().add(
                 linuxfs-i2cProvider.newInstance()).build();
 */
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
 
         final Console console = new Console();
@@ -89,11 +72,11 @@ public class MCP4725_App {
         float fastVolt = 0;
 
         String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address  -t trace   \n " +
-                "  -r  reset chip  -d dumpChipData  -rde 0x???? update DAC and EEPROM \n" +
-                " -ev eeprom voltage  -fv fast voltage \n" +
-                " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " +
-                "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            "  -r  reset chip  -d dumpChipData  -rde 0x???? update DAC and EEPROM \n" +
+            " -ev eeprom voltage  -fv fast voltage \n" +
+            " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " +
+            "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -120,39 +103,39 @@ public class MCP4725_App {
                     console.println("Changing trace level invalid  : " + traceLevel);
                     System.exit(40);
                 }
-            }  else if (o.contentEquals("-r")) {
+            } else if (o.contentEquals("-r")) {
                 doReset = true;
-            }  else if (o.contentEquals("-d")) {
+            } else if (o.contentEquals("-d")) {
                 dumpChip = true;
-            }  else if (o.contentEquals("-rde")) {
+            } else if (o.contentEquals("-rde")) {
                 String a = args[i + 1];
                 i++;
-                registerData =  (Integer.parseInt(a.substring(2), 16) );
+                registerData = (Integer.parseInt(a.substring(2), 16));
                 setOutputEEPROM = true;
-                if(registerData > 0x0fff){
+                if (registerData > 0x0fff) {
                     console.println("-rde cannot exceed 0x0fff");
                     System.exit(36);
                 }
-           }  else if (o.contentEquals("-rdf")) {
+            } else if (o.contentEquals("-rdf")) {
                 String a = args[i + 1];
                 i++;
                 setOutputFast = true;
-                registerData =  (Integer.parseInt(a.substring(2), 16) );
-                if(registerData > 0x0fff){
+                registerData = (Integer.parseInt(a.substring(2), 16));
+                if (registerData > 0x0fff) {
                     console.println("-rdf cannot exceed 0x0fff");
                     System.exit(37);
                 }
-            }else if (o.contentEquals("-h")) {
+            } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
             } else if (o.contentEquals("-fv")) {  // eeprom volts
                 String a = args[i + 1];
                 i++;
-                eepromVolt =  Float.parseFloat(a);
-            }  else if (o.contentEquals("-ev")) { // fast volts
+                eepromVolt = Float.parseFloat(a);
+            } else if (o.contentEquals("-ev")) { // fast volts
                 String a = args[i + 1];
                 i++;
-                fastVolt =  Float.parseFloat(a);
+                fastVolt = Float.parseFloat(a);
             } else {
                 console.println("  !!! Invalid Parm " + args);
                 console.println(helpString);
@@ -161,19 +144,18 @@ public class MCP4725_App {
         }
 
 
-
-        if(vref == 0){
+        if (vref == 0) {
             console.println("-vref is zero");
             System.exit(50);
 
         }
-        if(eepromVolt > vref){
+        if (eepromVolt > vref) {
             console.println("-ev greater than -vref");
             System.exit(51);
 
         }
 
-        if(fastVolt > vref){
+        if (fastVolt > vref) {
             console.println("-ef greater than -vref");
             System.exit(51);
 
@@ -185,36 +167,36 @@ public class MCP4725_App {
             dacChip.resetChip();
         }
 
-        if(setOutputEEPROM){
+        if (setOutputEEPROM) {
             boolean worked = dacChip.setOutputEEPROM(registerData);
-            if(worked == false){
+            if (!worked) {
                 console.println("setOutputEEPROM failed");
             }
         }
-        if(setOutputFast){
+        if (setOutputFast) {
             boolean worked = dacChip.setOutputFast(registerData);
-            if(worked == false){
+            if (!worked) {
                 console.println("setOutputFast failed");
             }
         }
 
-        if(eepromVolt > 0){
+        if (eepromVolt > 0) {
             boolean worked = dacChip.setOutputVoltEEPROM(eepromVolt);
-            if(worked == false){
+            if (!worked) {
                 console.println("setOutputVoltEEPROM failed");
             }
         }
 
 
-        if(fastVolt > 0){
+        if (fastVolt > 0) {
             boolean worked = dacChip.setOutputVoltFast(fastVolt);
-            if(worked == false){
+            if (!worked) {
                 console.println("setOutputVoltFast failed");
             }
         }
 
 
-        if(dumpChip){
+        if (dumpChip) {
             dacChip.dumpChip();
         }
     }

@@ -47,12 +47,11 @@ import org.slf4j.LoggerFactory;
 public class PCF8574A_LCD1602A extends LCD1602A {
 
     private I2C pcfDev = null;
-    private int busNum;
-    private int address;
+    private final int busNum;
+    private final int address;
 
 
-
-    public PCF8574A_LCD1602A(Context pi4j, Console console,  String traceLevel, int bus, int address) {
+    public PCF8574A_LCD1602A(Context pi4j, Console console, String traceLevel, int bus, int address) {
         super(pi4j, console, false, traceLevel);
         this.busNum = bus;
         this.address = address;
@@ -78,11 +77,11 @@ public class PCF8574A_LCD1602A extends LCD1602A {
         this.sendCommand((byte) 0x3);
         this.sendCommand((byte) 0x2);
 
-        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func4BitsBit  | LCD1602A_Declares.func5x8TwoBit  );
+        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func4BitsBit | LCD1602A_Declares.func5x8TwoBit);
         // enable LCD with blink
-        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit   ); //| LCD1602A_Declares.dispCrsOnBit
-        this.sendCommand( LCD1602A_Declares.clearDispCMD);
-         // entry mode, cursor moves right each character
+        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit); //| LCD1602A_Declares.dispCrsOnBit
+        this.sendCommand(LCD1602A_Declares.clearDispCMD);
+        // entry mode, cursor moves right each character
         this.sendCommand(LCD1602A_Declares.entryModeCMD | LCD1602A_Declares.entryModeIncCMD);
 
         this.writeToDev((byte) LCD1602A_Declares.dispCMD);
@@ -95,26 +94,28 @@ public class PCF8574A_LCD1602A extends LCD1602A {
 
     /**
      * Write byte to actual device I2C interface
-      * @param data
+     *
+     * @param data
      */
-    private void writeToDev(byte data){
-        data |=   PCF8574A_Declares_LCD1602A.backlight_on;
-        this.logger.trace(">>> Enter: writeToDev  data: "+ String.format("%02x ", data) );
+    private void writeToDev(byte data) {
+        data |= PCF8574A_Declares_LCD1602A.backlight_on;
+        this.logger.trace(">>> Enter: writeToDev  data: " + String.format("%02x ", data));
 
         String logData = "";
-        logData += " \n    P7-DB7: "+ ((data >> 7) & 0x1) +   " P6-DB6: "+ ((data >> 6) & 0x1) + " P5-DB5: "+ ((data >> 5) & 0x1) + "  P4-DB4: "  + ((data >> 4) & 0x1) +
-                "\n    BackLight: " +   ((data >> 3) & 0x1)  +  "  EN: " + ((data >> 2) & 0x1)  + " RW: "  + ((data>>1) & 0x1) +    " RS: "  + ((data) & 0x1) +  "\n  Data : " + String.format("0X%02x: ",((data >> 4 ) &0xf));
+        logData += " \n    P7-DB7: " + ((data >> 7) & 0x1) + " P6-DB6: " + ((data >> 6) & 0x1) + " P5-DB5: " + ((data >> 5) & 0x1) + "  P4-DB4: " + ((data >> 4) & 0x1) +
+            "\n    BackLight: " + ((data >> 3) & 0x1) + "  EN: " + ((data >> 2) & 0x1) + " RW: " + ((data >> 1) & 0x1) + " RS: " + ((data) & 0x1) + "\n  Data : " + String.format("0X%02x: ", ((data >> 4) & 0xf));
         this.logger.trace(logData);
         int rc = this.pcfDev.write(data);
-        this.sleepTimeMicroS(LCD1602A_Declares.preAddressWrtSetupDelay*2);
+        this.sleepTimeMicroS(LCD1602A_Declares.preAddressWrtSetupDelay * 2);
 
-        this.logger.trace("Exit: writeToDev  RC : "  + rc);
+        this.logger.trace("Exit: writeToDev  RC : " + rc);
     }
 
     /**
-     *  Set EN bit low
+     * Set EN bit low
+     *
      * @param b byte
-     * @return  modified byte
+     * @return modified byte
      */
     private byte setEnLow(byte b) {
         this.logger.trace(">>> Enter: setEnLow");
@@ -126,72 +127,78 @@ public class PCF8574A_LCD1602A extends LCD1602A {
 
 
     /**
-     *  Set EN bit high
+     * Set EN bit high
+     *
      * @param b byte
-     * @return  modified byte
+     * @return modified byte
      */
     private byte setEnHigh(byte b) {
         this.logger.trace(">>> Enter: setEnHigh");
-        b  &= PCF8574A_Declares_LCD1602A.E_bit_mask_off;
+        b &= PCF8574A_Declares_LCD1602A.E_bit_mask_off;
         b |= PCF8574A_Declares_LCD1602A.E_high;
         this.logger.trace("<<< Exit: setEnHigh");
-        return(b);
+        return (b);
     }
 
 
     /**
-     *  Set RS bit low
+     * Set RS bit low
+     *
      * @param b byte
-     * @return  modified byte
+     * @return modified byte
      */
     private byte setRSLow(byte b) {
         this.logger.trace(">>> Enter: setRSLow");
-        b  &= PCF8574A_Declares_LCD1602A.RS_bit_mask_off;
+        b &= PCF8574A_Declares_LCD1602A.RS_bit_mask_off;
         b |= PCF8574A_Declares_LCD1602A.RS_low;
         this.logger.trace("<<< Exit: setRSLow");
-        return(b);
+        return (b);
     }
 
 
     /**
-     *  Set RS bit high
+     * Set RS bit high
+     *
      * @param b byte
-     * @return  modified byte
+     * @return modified byte
      */
-    private  byte setRSHigh(byte b) {
+    private byte setRSHigh(byte b) {
         this.logger.trace(">>> Enter: setRSHigh");
-        b  &= PCF8574A_Declares_LCD1602A.RS_bit_mask_off;
-        b  |= PCF8574A_Declares_LCD1602A.RS_high;
+        b &= PCF8574A_Declares_LCD1602A.RS_bit_mask_off;
+        b |= PCF8574A_Declares_LCD1602A.RS_high;
         this.logger.trace("<<< Exit: setRSHigh");
-        return(b);
+        return (b);
     }
 
     /**
-     *  Set RW bit low
+     * Set RW bit low
+     *
      * @param b byte
-     * @return  modified byte
+     * @return modified byte
      */
     private byte setRWLow(byte b) {
         this.logger.trace(">>> Enter: setRWLow");
-        b  &= PCF8574A_Declares_LCD1602A.RW_bit_mask_off;
-        b  |= PCF8574A_Declares_LCD1602A.RW_low;
+        b &= PCF8574A_Declares_LCD1602A.RW_bit_mask_off;
+        b |= PCF8574A_Declares_LCD1602A.RW_low;
         this.logger.trace("<<< Exit: setRWLow");
-        return(b);
+        return (b);
     }
 
 
     /**
-     *  Set RW bit high
+     * Set RW bit high
+     *
      * @param b byte
-     * @return  modified byte
+     * @return modified byte
      */
     private byte setRWHigh(byte b) {
         this.logger.trace(">>> Enter: setRWHigh");
-        b  &= PCF8574A_Declares_LCD1602A.RW_bit_mask_off;
-        b  |= PCF8574A_Declares_LCD1602A.RW_high;
+        b &= PCF8574A_Declares_LCD1602A.RW_bit_mask_off;
+        b |= PCF8574A_Declares_LCD1602A.RW_high;
         this.logger.trace("<<< Exit: setRWHigh");
-        return(b);
+        return (b);
     }
+
     private void createI2cDevice() {
         this.logger.trace(">>> Enter:createI2cDevice   bus  " + this.busNum + "  address " + this.address);
 
@@ -201,41 +208,41 @@ public class PCF8574A_LCD1602A extends LCD1602A {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
         var i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                .bus(bus)
-                .device(address)
-                .id(id + " " + name)
-                .name(name)
-                .provider("linuxfs-i2c")
-                .build();
+            .bus(bus)
+            .device(address)
+            .id(id + " " + name)
+            .name(name)
+            .provider("linuxfs-i2c")
+            .build();
         this.pcfDev = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("<<< Exit:createI2cDevice  ");
     }
 
     /**
      * Write byte to device P4-P7, then pulse EN pin so P4-P7 are read into LCD
+     *
      * @param b
      */
     protected void writeFourBits(byte b) {
-        this.logger.trace(">>> Enter: writeFourBits   : " +  b + String.format("    0X%02x: ", (int)b));
-        this.writeToDev((byte) (b));
+        this.logger.trace(">>> Enter: writeFourBits   : " + b + String.format("    0X%02x: ", (int) b));
+        this.writeToDev(b);
         this.pulseEnable(b);
         this.logger.trace("<<<  Exit: writeFourBits  ");
     }
 
 
-
-
     /**
      * Set RS bit high and write high then low nibble to device
+     *
      * @param data
      */
     protected void sendChar(char data) {
-        this.logger.trace(">>> Enter: sendChar   : " +  data + String.format("    0X%02x: ", (int)data));
+        this.logger.trace(">>> Enter: sendChar   : " + data + String.format("    0X%02x: ", (int) data));
 
         if (this.lcdAvailable()) {
-            byte c= this.setRSHigh((byte) (data & 0xf0));
+            byte c = this.setRSHigh((byte) (data & 0xf0));
             this.writeFourBits(c);
-            c = this.setRSHigh((byte)((data << 4) & 0xF0));
+            c = this.setRSHigh((byte) ((data << 4) & 0xF0));
             this.writeFourBits(c);
         } else {
             this.logger.trace("LCD in busy state, request not possible");
@@ -247,6 +254,7 @@ public class PCF8574A_LCD1602A extends LCD1602A {
 
     /**
      * Set RS bit low and write high then low nibble to device
+     *
      * @param data
      */
     protected void sendCommand(int data) {
@@ -265,14 +273,13 @@ public class PCF8574A_LCD1602A extends LCD1602A {
 
     /**
      * Modify data byte to set EN bit, write to device.
-     *  Wait
+     * Wait
      * Clear bit and write to device
      *
      * @param b
-     *
      */
 
-    protected void pulseEnable(byte b){
+    protected void pulseEnable(byte b) {
         this.logger.trace(">>> Enter: pulseEnable  ");
         b = this.setEnHigh(b);
         this.writeToDev(b);

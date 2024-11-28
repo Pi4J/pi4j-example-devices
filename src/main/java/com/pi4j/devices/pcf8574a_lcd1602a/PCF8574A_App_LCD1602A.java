@@ -39,7 +39,6 @@ package com.pi4j.devices.pcf8574a_lcd1602a;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.devices.bmp280.BMP280Declares;
-
 import com.pi4j.io.exception.IOException;
 import com.pi4j.util.Console;
 
@@ -72,10 +71,10 @@ public class PCF8574A_App_LCD1602A {
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "HD44780U_App");
         String helpString = " parms: HD44780U   -b hex value bus    -a hex value address -t trace \n  " +
-                "  -line1 LcdString,-line1Offset offset ," +
-                " -line2 LcdString, -line2Offset offset, -shiftL left shift -clearLCD  \n" +
-                "-t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            "  -line1 LcdString,-line1Offset offset ," +
+            " -line2 LcdString, -line2Offset offset, -shiftL left shift -clearLCD  \n" +
+            "-t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -88,7 +87,7 @@ public class PCF8574A_App_LCD1602A {
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-            } else  if(o.contentEquals("-line1")) {
+            } else if (o.contentEquals("-line1")) {
                 String a = args[i + 1];
                 lineOne = a;
                 i++;
@@ -142,7 +141,7 @@ public class PCF8574A_App_LCD1602A {
 
 
         if (lineOne.length() > 0) {
-            dispObj.sendStringLineX(lineOne,1, lineOneOffset);
+            dispObj.sendStringLineX(lineOne, 1, lineOneOffset);
         }
 
 
@@ -155,14 +154,13 @@ public class PCF8574A_App_LCD1602A {
         dispObj.shiftLeft(shiftLeftCount);
         Thread.sleep(5000);
 
-        if(clearLCD) {
+        if (clearLCD) {
             dispObj.clearDisplay();
         }
         Thread.sleep(5000);
-       // dispObj.sendStringLineX("HelloWorld" , 1, 5);
+        // dispObj.sendStringLineX("HelloWorld" , 1, 5);
 
     }
-
 
 
 }

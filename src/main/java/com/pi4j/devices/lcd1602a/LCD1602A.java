@@ -38,7 +38,6 @@ package com.pi4j.devices.lcd1602a;
 
 
 import com.pi4j.context.Context;
-
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 
@@ -89,15 +88,14 @@ public abstract class LCD1602A {
     }
 
     /**
-     *
-     * @param str  What to display
-     * @param line    line of display, 1,2...
-     * @param offset   offset within the line
+     * @param str    What to display
+     * @param line   line of display, 1,2...
+     * @param offset offset within the line
      */
-    public void sendStringLineX(String str, int line,int offset) {
+    public void sendStringLineX(String str, int line, int offset) {
         this.logger.trace(">>> Enter: sendStringLineOne   : " + str + "    line : " + line + "  Offset  : " + offset);
         char[] chars = str.toCharArray();
-        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | ( 0x40 *(line-1)) | offset);
+        this.sendCommand(LCD1602A_Declares.setDDRAMCMD | (0x40 * (line - 1)) | offset);
         for (int i = 0; i < chars.length; i++) {
             this.sendChar(chars[i]);
         }
@@ -105,13 +103,12 @@ public abstract class LCD1602A {
     }
 
 
-
     protected boolean lcdAvailable() {
         int c = 0;
         this.logger.trace(">>> Enter: lcdAvailable  ");
         this.sleepTimeMilliS(10);
         boolean rval = this.isBfLow();
-        while (rval == false) {
+        while (!rval) {
             this.logger.info("\n\n\n !!!!!   BF was busy  \n\n");
             this.sleepTimeMilliS(400);
             c++;
@@ -133,7 +130,7 @@ public abstract class LCD1602A {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-      
+
 
     }
 
@@ -167,6 +164,7 @@ public abstract class LCD1602A {
         this.logger.trace(">>> Enter: sendChar   : " + c);
         this.logger.trace("<<<  Exit: sendChar  ");
     }
+
     // do required gpio->LCD_input dance before and after actual LCD pin update
     protected void sendCommand(int cmd) {
         this.logger.trace(">>> Enter: sendCommand   ");
@@ -183,10 +181,10 @@ public abstract class LCD1602A {
      *
      * @return bit value of DB7
      */
-    protected boolean isBfLow(){
+    protected boolean isBfLow() {
         this.logger.trace(">>> Enter: isBfLow   ");
         this.logger.trace("<<< Exit: isBfLow   ");
-        return(true);
+        return (true);
     }
 
 

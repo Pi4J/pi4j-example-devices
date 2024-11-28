@@ -203,12 +203,12 @@ public class SSD1306 {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
         var i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                .bus(bus)
-                .device(address)
-                .id(id + " " + name)
-                .name(name)
-                .provider("linuxfs-i2c")
-                .build();
+            .bus(bus)
+            .device(address)
+            .id(id + " " + name)
+            .name(name)
+            .provider("linuxfs-i2c")
+            .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);
         this.logger.info("Exit:createI2cDevice  ");

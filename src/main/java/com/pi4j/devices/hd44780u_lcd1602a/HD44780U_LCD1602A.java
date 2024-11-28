@@ -38,29 +38,29 @@ package com.pi4j.devices.hd44780u_lcd1602a;
 
 
 import com.pi4j.context.Context;
+import com.pi4j.devices.lcd1602a.LCD1602A;
+import com.pi4j.devices.lcd1602a.LCD1602A_Declares;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
 import org.slf4j.LoggerFactory;
-import com.pi4j.devices.lcd1602a.LCD1602A;
-import com.pi4j.devices.lcd1602a.LCD1602A_Declares;
 
-public class HD44780U_LCD1602A extends LCD1602A{
+public class HD44780U_LCD1602A extends LCD1602A {
 
 
     private DigitalOutput RsPin = null;
     private DigitalOutput EnPin = null;   //
 
-      private int RsPinNum = 0xff;
+    private int RsPinNum = 0xff;
     private int EnPinNum = 0xff;
 
-    private String traceLevel;
+    private final String traceLevel;
 
 
-    private HD44780U_Interface_LCD1602A D0_D7;
+    private final HD44780U_Interface_LCD1602A D0_D7;
 
     public HD44780U_LCD1602A(Context pi4j, Console console, HD44780U_Interface_LCD1602A d0_d7, int rsGpio, int enGpio, boolean clearIt, String traceLevel) {
-        super(pi4j,  console,  clearIt, traceLevel);
+        super(pi4j, console, clearIt, traceLevel);
         this.D0_D7 = d0_d7;
         this.RsPinNum = rsGpio;
         this.EnPinNum = enGpio;
@@ -79,14 +79,13 @@ public class HD44780U_LCD1602A extends LCD1602A{
         this.logger.trace("EN Pin  " + this.EnPinNum);
 
 
-
         var outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("RS_pin")
-                .name("Enable")
-                .address(this.RsPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+            .id("RS_pin")
+            .name("Enable")
+            .address(this.RsPinNum)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("gpiod-digital-output");
         try {
             this.RsPin = pi4j.create(outputConfig1);
         } catch (Exception e) {
@@ -96,12 +95,12 @@ public class HD44780U_LCD1602A extends LCD1602A{
         }
 
         var outputConfig3 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("EN_pin")
-                .name("EN")
-                .address(this.EnPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+            .id("EN_pin")
+            .name("EN")
+            .address(this.EnPinNum)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("gpiod-digital-output");
         try {
             this.EnPin = pi4j.create(outputConfig3);
         } catch (Exception e) {
@@ -111,19 +110,18 @@ public class HD44780U_LCD1602A extends LCD1602A{
         }
 
 
-
         this.D0_D7.sendCommand(0x00); // ensure all pins are low
 
         this.EnPin.low();
         this.sleepTimeNanoS(LCD1602A_Declares.postWrtEnableCycleDelay);
-          // enable LCD with blink
-        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit| LCD1602A_Declares.dispBlnkOnBit | LCD1602A_Declares.dispCrsOnBit );
+        // enable LCD with blink
+        this.sendCommand(LCD1602A_Declares.dispCMD | LCD1602A_Declares.dispOnBit | LCD1602A_Declares.dispBlnkOnBit | LCD1602A_Declares.dispCrsOnBit);
         // entry mode, cursor moves right each character
 
         this.sendCommand(LCD1602A_Declares.entryModeCMD | LCD1602A_Declares.entryModeIncCMD);
 
-        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func8BitsBit  | LCD1602A_Declares.func5x8TwoBit);
-        if(this.clearDisplay){
+        this.sendCommand(LCD1602A_Declares.funcSetCMD | LCD1602A_Declares.func8BitsBit | LCD1602A_Declares.func5x8TwoBit);
+        if (this.clearDisplay) {
             this.logger.trace("Clear Display");
             this.clearDisplay();
         }
@@ -134,17 +132,11 @@ public class HD44780U_LCD1602A extends LCD1602A{
     }
 
 
-
-
-
-
-
-
     protected void sendChar(char c) {
-         this.logger.trace(">>> Enter: sendChar   : " + c );
+        this.logger.trace(">>> Enter: sendChar   : " + c);
         if (this.lcdAvailable()) {
             this.RsPin.high();
-             this.sleepTimeNanoS(LCD1602A_Declares.dataWrtSetupDuration);
+            this.sleepTimeNanoS(LCD1602A_Declares.dataWrtSetupDuration);
             this.D0_D7.sendCommand(c);
             this.sleepTimeNanoS(LCD1602A_Declares.postAddressWrtSetupDelay);
             this.pulseEnable();
@@ -153,32 +145,31 @@ public class HD44780U_LCD1602A extends LCD1602A{
         }
         this.logger.trace("<<<  Exit: sendChar  ");
     }
+
     // do required gpio->LCD_input dance before and after actual LCD pin update
-    protected void sendCommand(int cmd){
+    protected void sendCommand(int cmd) {
         this.logger.trace(">>> Enter: sendCommand   ");
-            if(this.lcdAvailable()){
-                this.RsPin.low();
-                this.sleepTimeNanoS(LCD1602A_Declares.dataWrtSetupDuration);
-                this.D0_D7.sendCommand(cmd);
-                this.sleepTimeNanoS(LCD1602A_Declares.postAddressWrtSetupDelay);
-                this.pulseEnable();
-            }else {
-                this.logger.info("LCD in busy state, request not possible");
-            }
+        if (this.lcdAvailable()) {
+            this.RsPin.low();
+            this.sleepTimeNanoS(LCD1602A_Declares.dataWrtSetupDuration);
+            this.D0_D7.sendCommand(cmd);
+            this.sleepTimeNanoS(LCD1602A_Declares.postAddressWrtSetupDelay);
+            this.pulseEnable();
+        } else {
+            this.logger.info("LCD in busy state, request not possible");
+        }
         this.logger.trace("<<< Exit: sendCommand   ");
     }
 
 
     /**
-     *   Value of 0 indicates the device is not performing internal
-     *   operations and will accept commands
-     *   Not possible with the Pi GPIOs. Later if the D0_D7 interface is on an
-     *   MCP230xx, this maybe possible.  For present time, use timing values
-     *   documented in datasheet
-     * @return  bit value of DB7
+     * Value of 0 indicates the device is not performing internal
+     * operations and will accept commands
+     * Not possible with the Pi GPIOs. Later if the D0_D7 interface is on an
+     * MCP230xx, this maybe possible.  For present time, use timing values
+     * documented in datasheet
+     *
      */
-
-
     protected void pulseEnable() {
         this.logger.trace(">>> Enter: pulseEnable  ");
         this.EnPin.high();
@@ -187,8 +178,6 @@ public class HD44780U_LCD1602A extends LCD1602A{
         this.sleepTimeNanoS(LCD1602A_Declares.postWrtEnableCycleDelay);
         this.logger.trace("<<< Exit: pulseEnable  ");
     }
-
-
 
 
 }

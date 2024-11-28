@@ -34,15 +34,10 @@
 
 package com.pi4j.devices.tca9548;
 
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.util.Console;
-
-import com.pi4j.devices.tca9548.Tca9548;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 /**
  * SampleTca9548App
@@ -64,9 +59,9 @@ public class SampleTca9548App {
      */
     static private void usage() {
         System.out.println(
-                "options   -h 'help', -b bus, -a address," + "-n number of bytes  -s sysCfg  " +
-                        " -f ffdc_lvl :1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   " +
-                        "   -e busToEnabled  -d busToDisabled -l displayEnableReg  -r resetChip GPIO# \n ");
+            "options   -h 'help', -b bus, -a address," + "-n number of bytes  -s sysCfg  " +
+                " -f ffdc_lvl :1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   " +
+                "   -e busToEnabled  -d busToDisabled -l displayEnableReg  -r resetChip GPIO# \n ");
     }
 
     /**
@@ -167,20 +162,6 @@ public class SampleTca9548App {
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, ffdcControlLevel, Tca9548.class);
         var tcaMux = new Tca9548(pi4j, ffdc, busNum, address, console);
 
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                ffdc.ffdcFlushShutdown(); // push all logs to the file
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         // Based upon parms the user supplied, call Tca9548 methods
         if (showUsage) {
@@ -197,7 +178,7 @@ public class SampleTca9548App {
 
         //  Set controls for the log4j logging
         if (setFfdcLvl) {
-            if (ffdc.setLevel(ffdcControlLevel) == false) {
+            if (!ffdc.setLevel(ffdcControlLevel)) {
                 console.println("FFDC level invalid :" + ffdcControlLevel);
                 // recovery code needed
             }
@@ -208,14 +189,14 @@ public class SampleTca9548App {
         }
         // enable a bus
         if (enableBus) {
-            if (tcaMux.enableBus(muxBusNumber) == false) {
+            if (!tcaMux.enableBus(muxBusNumber)) {
                 console.println("enable bus failed. -e was :" + muxBusNumber);
                 //  Recovery code to use correct bus number ? Maybe error exit
             }
         }
         // disable a bus
         if (disableBus) {
-            if (tcaMux.disableBus(muxBusNumber) == false) {
+            if (!tcaMux.disableBus(muxBusNumber)) {
                 console.println("enable bus failed. -e was :" + muxBusNumber);
                 //  Recovery code to use correct bus number ? Maybe error exit
             }

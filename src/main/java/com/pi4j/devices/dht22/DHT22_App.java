@@ -38,11 +38,8 @@ package com.pi4j.devices.dht22;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 public class DHT22_App {
 
@@ -56,18 +53,6 @@ public class DHT22_App {
             " \n -t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
             " or \"off\"  Default \"info\"";
 
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                // Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         for (int i = 0; i < args.length; i++) {
             String o = args[i];

@@ -34,7 +34,7 @@
 
 package com.pi4j.devices.tca9548;
 
-import com.pi4j.devices.base_util.ffdc.*;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 
 /**
  * Class contains chip specific values.Details found in the chip Data Sheet.

@@ -41,34 +41,38 @@ import com.pi4j.io.exception.IOException;
  */
 public interface Mcp23xxxPinMonitorIntf {
 
-     /**
-      *  drivePin
-      * @param pin  pin number, its data and device object contained
-      *             in the pinDict
-      * @param pinOn  Whether to drive pin high (true) or low (false),
-      * @throws InterruptedException
-      * @throws IOException
-      */
-     default void drivePin(int pin, boolean pinOn)
-            throws InterruptedException, IOException{} ;
+    /**
+     * drivePin
+     *
+     * @param pin   pin number, its data and device object contained
+     *              in the pinDict
+     * @param pinOn Whether to drive pin high (true) or low (false),
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    default void drivePin(int pin, boolean pinOn)
+        throws InterruptedException, IOException {
+    }
 
 
-     /**
-      * readInput
-      *  <p>
-      *      Used to log the pin state and print the state to the screen.
-      *  </p>
-      * @param pin pin number, its data and device object contained
-      *            in the pinDict
-      *  <p>
-      *    PreCond: pin   pin number, its data and device object contained
-      *                       in the pinDict
-      *  </p>
-      * @throws InterruptedException
-      * @throws IOException
-      */
-     default void readInput(int pin)
-            throws InterruptedException, IOException{} ;
+    /**
+     * readInput
+     * <p>
+     * Used to log the pin state and print the state to the screen.
+     * </p>
+     *
+     * @param pin pin number, its data and device object contained
+     *            in the pinDict
+     *            <p>
+     *            PreCond: pin   pin number, its data and device object contained
+     *            in the pinDict
+     *            </p>
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    default void readInput(int pin)
+        throws InterruptedException, IOException {
+    }
 
 
 }

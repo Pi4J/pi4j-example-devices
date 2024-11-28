@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SN74HC595 8 Bit shift register. Serial device.  Uses GPIOs line manipulation to clock data into the device
- *
  */
 public class SN74HC595 implements HD44780U_Interface_LCD1602A {
     private final Console console;
@@ -66,22 +65,18 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
     int DSPinNum = 0xff;
 
 
-
     /**
-     *
      * @param pi4j
-     * @param console
-     *     GPIO output lines from Pi, all are input signals to the chip
-     *     The param name matches the spec.  Three of the params document the
-     *     state name used with in the source code. This rename makes their usage more obvious
-     * @param dsGpio   DataPin sending from Pi to the chip
+     * @param console      GPIO output lines from Pi, all are input signals to the chip
+     *                     The param name matches the spec.  Three of the params document the
+     *                     state name used with in the source code. This rename makes their usage more obvious
+     * @param dsGpio       DataPin sending from Pi to the chip
      * @param oeGpio
-     * @param stcpGpio  Latch control
-     * @param shcpGpio  Clock signal
+     * @param stcpGpio     Latch control
+     * @param shcpGpio     Clock signal
      * @param mrGpio
-     *
-     * @param registerData   8 bita, each representing the intended state of the output lines.  QH------Qa
-     * @param traceLevel    slf4j log level
+     * @param registerData 8 bita, each representing the intended state of the output lines.  QH------Qa
+     * @param traceLevel   slf4j log level
      */
     public SN74HC595(Context pi4j, Console console, int dsGpio, int oeGpio, int stcpGpio, int shcpGpio, int mrGpio, byte registerData, String traceLevel) {
         super();
@@ -98,8 +93,8 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
     }
 
     /**
-     *   Create the five output pins
-     *   Reset the chip, output enable the pins QH------Qa
+     * Create the five output pins
+     * Reset the chip, output enable the pins QH------Qa
      */
     void init() {
 
@@ -114,12 +109,12 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
         this.logger.trace("SHCP Pin  " + this.SHCPPinNum);
 
         var outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("OE_pin")
-                .name("Enable")
-                .address(this.OEPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+            .id("OE_pin")
+            .name("Enable")
+            .address(this.OEPinNum)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("gpiod-digital-output");
         try {
             this.oeGpio = pi4j.create(outputConfig1);
         } catch (Exception e) {
@@ -128,12 +123,12 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
             System.exit(201);
         }
         var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("STCP_pin")
-                .name("STCP")
-                .address(this.STCPPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("gpiod-digital-output");
+            .id("STCP_pin")
+            .name("STCP")
+            .address(this.STCPPinNum)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH)
+            .provider("gpiod-digital-output");
         try {
             this.latchPin = pi4j.create(outputConfig2);
         } catch (Exception e) {
@@ -142,12 +137,12 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
             System.exit(201);
         }
         var outputConfig3 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("SHCP_pin")
-                .name("SHCP")
-                .address(this.SHCPPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+            .id("SHCP_pin")
+            .name("SHCP")
+            .address(this.SHCPPinNum)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("gpiod-digital-output");
         try {
             this.clockPin = pi4j.create(outputConfig3);
         } catch (Exception e) {
@@ -156,12 +151,12 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
             System.exit(201);
         }
         var outputConfig4 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("MR_pin")
-                .name("MR")
-                .address(this.MRPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("gpiod-digital-output");
+            .id("MR_pin")
+            .name("MR")
+            .address(this.MRPinNum)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH)
+            .provider("gpiod-digital-output");
         try {
             this.mrGpio = pi4j.create(outputConfig4);
         } catch (Exception e) {
@@ -170,12 +165,12 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
             System.exit(201);
         }
         var outputConfig5 = DigitalOutput.newConfigBuilder(pi4j)
-                .id("DS_pin")
-                .name("DS")
-                .address(this.DSPinNum)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+            .id("DS_pin")
+            .name("DS")
+            .address(this.DSPinNum)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("gpiod-digital-output");
         try {
             this.dataPin = pi4j.create(outputConfig5);
         } catch (Exception e) {
@@ -222,34 +217,32 @@ public class SN74HC595 implements HD44780U_Interface_LCD1602A {
 
     @Override
     public void sendCommand(int cmd) {
-            String binaryString = Integer.toBinaryString(cmd & 0xff);
-            String withLeadingZeros = String.format("%8s", binaryString).replace(' ', '0');
-            this.logger.trace(">>> Enter: sendCommand  shift data  " + withLeadingZeros);
+        String binaryString = Integer.toBinaryString(cmd & 0xff);
+        String withLeadingZeros = String.format("%8s", binaryString).replace(' ', '0');
+        this.logger.trace(">>> Enter: sendCommand  shift data  " + withLeadingZeros);
 
-            // walk through the byte of shift data, LSB to MSB
-            // Set the dataPin same as the shift bit. For each bit toggle the clockPin.
-            // After all bits processed, Toggle latchPin
-            this.latchPin.low();      // make certain chip is quiet
+        // walk through the byte of shift data, LSB to MSB
+        // Set the dataPin same as the shift bit. For each bit toggle the clockPin.
+        // After all bits processed, Toggle latchPin
+        this.latchPin.low();      // make certain chip is quiet
+        this.clockPin.low();
+        this.dataPin.low();
+        for (int i = 7; i >= 0; i--) {
             this.clockPin.low();
-            this.dataPin.low();
-            for (int i = 7; i >= 0; i--) {
-                this.clockPin.low();
-                int compareBit = 1;
-                compareBit = compareBit << i;
-                boolean bitSet = ((cmd & compareBit) > 0);
-                if (bitSet) {
-                    this.dataPin.high();
-                } else {
-                    this.dataPin.low();
-                }
-                this.clockPin.high();
+            int compareBit = 1;
+            compareBit = compareBit << i;
+            boolean bitSet = ((cmd & compareBit) > 0);
+            if (bitSet) {
+                this.dataPin.high();
+            } else {
                 this.dataPin.low();
-                ;
-
             }
-            this.clockPin.low();
-            this.latchPin.high();
+            this.clockPin.high();
+            this.dataPin.low();
 
+        }
+        this.clockPin.low();
+        this.latchPin.high();
 
 
         this.logger.trace("<<< Exit: sendCommand");

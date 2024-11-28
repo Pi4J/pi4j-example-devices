@@ -35,17 +35,13 @@
 package com.pi4j.devices.base_util.gpio;
 
 
-import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalInput;
-
-import com.pi4j.io.gpio.digital.PullResistance;
-
-import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.DigitalOutput;
 
 /**
  * GpioPinCfgData
  * <p>
- *     Definitions used by the gpio package
+ * Definitions used by the gpio package
  * </p>
  */
 

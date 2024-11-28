@@ -44,14 +44,11 @@ import com.pi4j.devices.base_util.mapUtil.MapUtil;
 import com.pi4j.devices.mcp23xxxApplication.Mcp23xxxParms;
 import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
 import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.util.HashMap;
 
-public class Mcp23008App extends Mcp23008{
+public class Mcp23008App extends Mcp23008 {
 
 
     /**
@@ -69,27 +66,28 @@ public class Mcp23008App extends Mcp23008{
 
     /**
      * <p>
-     *     Invoke various methods on MCP23008 instance
+     * Invoke various methods on MCP23008 instance
      * </p>
-     * @param args       user params
+     *
+     * @param args user params
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         var console = new Console();
-        Context pi4j =  Pi4J.newAutoContext();
+        Context pi4j = Pi4J.newAutoContext();
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008App");
 
         HashMap<Integer, GpioPinCfgData> dioPinData = new HashMap<Integer, GpioPinCfgData>();
 
-        Mcp23xxxParms parmsObj = Mcp23xxxUtil.processMain(pi4j,args,false, dioPinData, console);
+        Mcp23xxxParms parmsObj = Mcp23xxxUtil.processMain(pi4j, args, false, dioPinData, console);
 
-        FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel , Mcp23008.class);
+        FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel, Mcp23008.class);
 
         ffdc.ffdcDebugEntry("mcp23008App : Arg processing completed...\n");
 
 
-        Mcp23008App mcpObj = new Mcp23008App(parmsObj.pi4j, parmsObj, ffdc,  dioPinData, console);
+        Mcp23008App mcpObj = new Mcp23008App(parmsObj.pi4j, parmsObj, ffdc, dioPinData, console);
 
         BaseGpioInOut gpio = new BaseGpioInOut(parmsObj.pi4j, mcpObj.ffdc, mcpObj.dioPinData);
         mcpObj.gpio = gpio;
@@ -100,25 +98,10 @@ public class Mcp23008App extends Mcp23008{
         mcpObj.mapUtils = new MapUtil(mcpObj.ffdc, mcpObj.gpio);
 
 
-
         mcpObj.cfgData = new McpConfigData(ffdc);
 
-        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc,  parmsObj.busNum, parmsObj.address, mcpObj.cfgData, mcpObj, console);
+        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc, parmsObj.busNum, parmsObj.address, mcpObj.cfgData, mcpObj, console);
 
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                ffdc.ffdcFlushShutdown(); // push all logs to the file
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         if (parmsObj.hasFullKeyedData) { // -g
             HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.fullKeyedData);
@@ -148,7 +131,7 @@ public class Mcp23008App extends Mcp23008{
 
         console.print("Chip register configurations completed");
 
-        mcpObj.reinit("Mcp23008", "Mcp23008",parmsObj.busNum, parmsObj.address);
+        mcpObj.reinit("Mcp23008", "Mcp23008", parmsObj.busNum, parmsObj.address);
 
         if (parmsObj.dumpRegs) {
             mcpObj.dumpRegs();
@@ -161,11 +144,9 @@ public class Mcp23008App extends Mcp23008{
         }
 
 
-
         if (parmsObj.readPin) {
             mcpObj.readInput(parmsObj.pin);
         }
-
 
 
         mcpObj.ffdc.ffdcDebugEntry("program ending normal");

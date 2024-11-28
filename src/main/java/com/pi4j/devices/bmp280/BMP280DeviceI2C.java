@@ -43,7 +43,7 @@ import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BMP280DeviceI2C extends BMP280Device{
+public class BMP280DeviceI2C extends BMP280Device {
 
     protected int busNum = BMP280Declares.DEFAULT_BUS;
     protected int address = BMP280Declares.DEFAULT_ADDRESS;
@@ -68,7 +68,7 @@ public class BMP280DeviceI2C extends BMP280Device{
         this.address = address;
         this.busNum = bus;
         this.console = console;
-       // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
+        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
         //  encounters if using the defaultLogLevel
         System.setProperty("org.slf4j.simpleLogger.log." + BMP280DeviceI2C.class.getName(), traceLevel);
@@ -77,19 +77,19 @@ public class BMP280DeviceI2C extends BMP280Device{
         this.createI2cDevice(); // will set start this.i2c
     }
 
-        /**
-          * @param console Context instance used across application
-          * @param bus     Pi bus
-          * @param address Device address
-          * @param logger  Instantiated Logger
-          */
-      public BMP280DeviceI2C(Context pi4j, Console console, int bus, int address, Logger logger) {
-                super(pi4j, console, "info");
-                this.address = address;
-                this.busNum = bus;
-                this.logger = logger;
-                this.createI2cDevice(); // will set start this.i2c
-         }
+    /**
+     * @param console Context instance used across application
+     * @param bus     Pi bus
+     * @param address Device address
+     * @param logger  Instantiated Logger
+     */
+    public BMP280DeviceI2C(Context pi4j, Console console, int bus, int address, Logger logger) {
+        super(pi4j, console, "info");
+        this.address = address;
+        this.busNum = bus;
+        this.logger = logger;
+        this.createI2cDevice(); // will set start this.i2c
+    }
 
     /**
      * @param device Set i2c state
@@ -125,12 +125,12 @@ public class BMP280DeviceI2C extends BMP280Device{
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
         var i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                .bus(bus)
-                .device(address)
-                .id(id + " " + name)
-                .name(name)
-                .provider("linuxfs-i2c")
-                .build();
+            .bus(bus)
+            .device(address)
+            .id(id + " " + name)
+            .name(name)
+            .provider("linuxfs-i2c")
+            .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);
         this.logger.info("Exit:createI2cDevice  ");
@@ -158,42 +158,37 @@ public class BMP280DeviceI2C extends BMP280Device{
     }
 
     /**
-     *
-     * @param   register
-     * @return  8bit value read from register
+     * @param register
+     * @return 8bit value read from register
      */
-    public int readRegister(int register){
+    public int readRegister(int register) {
         int rval = 0;
-        rval =this.i2c.readRegister(register);
-        return(rval);
+        rval = this.i2c.readRegister(register);
+        return (rval);
 
     }
 
     /**
-     *
-     * @param register   register address
-     * @param buffer     Buffer to return read data
+     * @param register register address
+     * @param buffer   Buffer to return read data
      * @return count     number bytes read or fail -1
      */
-    public int readRegister(int register, byte[] buffer){
+    public int readRegister(int register, byte[] buffer) {
         int rval = 0;
-        rval =this.i2c.readRegister(register, buffer);
-        return(rval);
+        rval = this.i2c.readRegister(register, buffer);
+        return (rval);
     }
 
 
-
-
     /**
-     *
-     * @param register  register
-     * @param data      byte to write
+     * @param register register
+     * @param data     byte to write
      * @return bytes written, else -1
      */
-    public int writeRegister(int register, int data){
+    public int writeRegister(int register, int data) {
         int rval = 0;
         rval = this.i2c.writeRegister(register, data);
-        return(rval);
+        return (rval);
     }
 
 

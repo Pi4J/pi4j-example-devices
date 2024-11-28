@@ -38,7 +38,6 @@ package com.pi4j.devices.mcp4725;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2C;
-import com.pi4j.io.i2c.I2CRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,17 +80,17 @@ public class MCP4725 {
     I2C createI2cDevice(int bus, int address) {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
-        this.logger.trace("Enter: createI2cDevice MCP4725 DAC " + id + "" + name);
+        this.logger.trace("Enter: createI2cDevice MCP4725 DAC " + id + name);
         I2C rval = null;
         var i2cDeviceConfig = I2C.newConfigBuilder(this.pi4j)
-                .bus(bus)
-                .device(address)
-                .id("MCP4725_DAC  " + id + " " + name)
-                .name(name)
-                .provider("linuxfs-i2c")
-                .build();
+            .bus(bus)
+            .device(address)
+            .id("MCP4725_DAC  " + id + " " + name)
+            .name(name)
+            .provider("linuxfs-i2c")
+            .build();
         rval = this.pi4j.create(i2cDeviceConfig);
-        this.logger.trace("Exit: createI2cDevice MCP4725 DAC " + id + "" + name);
+        this.logger.trace("Exit: createI2cDevice MCP4725 DAC " + id + name);
         return (rval);
 
     }
@@ -124,20 +123,20 @@ public class MCP4725 {
     boolean setOutputVoltEEPROM(float twelveBitData) {
         this.logger.trace(">>> Enter: setOutputVoltEEPROM  data :  " + twelveBitData);
         boolean rval = false;
-        int twelveBit = (int) Math.round((twelveBitData *4096)/ this.vref) - 1;
+        int twelveBit = (int) Math.round((twelveBitData * 4096) / this.vref) - 1;
         rval = this.setOutputEEPROM(twelveBit);
         this.logger.trace("<<< Exit: setOutputVoltEEPROM  : " + rval);
         return (rval);
     }
 
-        boolean setOutputEEPROM(int twelveBitData) {
+    boolean setOutputEEPROM(int twelveBitData) {
         boolean rval = false;
         this.registerData = twelveBitData;
         String binaryString = Integer.toBinaryString(this.registerData & 0xff);
         String withLeadingZeros = String.format("0b%12s", binaryString).replace(' ', '0');
         this.logger.trace(">>> Enter: setOutputEEPROM  data :  " + withLeadingZeros + "   " + this.registerData);
         if (this.chipIdle()) {
-            byte data[] = new byte[MCP4725_Declares._MCP4725_SET_EEPROM_SIZE];
+            byte[] data = new byte[MCP4725_Declares._MCP4725_SET_EEPROM_SIZE];
             data[0] = (byte) (data[0] | MCP4725_Declares._MCP4725_WRITE_CMD_DAC_EEPROM | MCP4725_Declares._MCP4725_PD_MODE_NORMAL);
             data[1] = (byte) ((this.registerData & 0x0ff0) >> 4);
             data[2] = (byte) ((this.registerData & 0x000f) << 4);
@@ -149,14 +148,14 @@ public class MCP4725 {
         } else {
             this.logger.info("setOutputEEPROM not possible, chip BSY  ");
         }
-        this.logger.trace("<<< Exit: setOutputEEPROM  :"  + rval);
+        this.logger.trace("<<< Exit: setOutputEEPROM  :" + rval);
         return (rval);
     }
 
     boolean setOutputVoltFast(float twelveBitData) {
         this.logger.trace(">>> Enter: setOutputVoltFast  data :  " + twelveBitData);
         boolean rval = false;
-        int twelveBit = (int) Math.round((twelveBitData *4096)/ this.vref) - 1;
+        int twelveBit = (int) Math.round((twelveBitData * 4096) / this.vref) - 1;
         rval = this.setOutputFast(twelveBit);
         this.logger.trace("<<< Exit: setOutputVoltFast  : " + rval);
         return (rval);
@@ -169,7 +168,7 @@ public class MCP4725 {
         String withLeadingZeros = String.format("0b%12s", binaryString).replace(' ', '0');
         this.logger.trace(">>> Enter: setOutputFast  data :  " + withLeadingZeros + "   " + this.registerData);
         if (this.chipIdle()) {
-            byte data[] = new byte[MCP4725_Declares._MCP4725_SET_FAST_SIZE];
+            byte[] data = new byte[MCP4725_Declares._MCP4725_SET_FAST_SIZE];
             data[0] = (byte) (data[0] | MCP4725_Declares._MCP4725_WRITE_CMD_FAST | MCP4725_Declares._MCP4725_PD_MODE_NORMAL);
             data[0] = (byte) (data[0] | (byte) ((this.registerData & 0x0f00) >> 8));
             data[1] = (byte) (this.registerData & 0x00ff);
@@ -203,9 +202,9 @@ public class MCP4725 {
 
     void dumpChip() {
         this.logger.trace(">>> Enter: dumpChip ");
-        int data[];
+        int[] data;
         // allow time for a possible EEPROM update to complete
-        if (this.chipIdle() == false) {
+        if (!this.chipIdle()) {
             this.logger.trace("Wait for EEPROM to complete and test COMPLETED one more time ");
             this.sleepMS(55);
         }
@@ -213,14 +212,14 @@ public class MCP4725 {
         if (this.chipIdle()) {
             data = this.readBuffer(MCP4725_Declares._MCP4725_CHIP_READ_SIZE);
             String info = " RAW chip data  \n";
-            for (int i = 0; i < data.length; i++){
-                info = info + String.format("0x%08x ", data[i])  +"  ";
+            for (int i = 0; i < data.length; i++) {
+                info = info + String.format("0x%08x ", data[i]) + "  ";
             }
             // possibly class was instantiated with registerData of 0. If so, we need to
             // prime this state for possible dump procedure
-            if(this.registerData == 0 ){
+            if (this.registerData == 0) {
                 this.logger.trace("Prime registerData  state");
-                this.registerData = ((data[1] & 0xff)<<4) + ((data[2]&0xf0) >> 4);
+                this.registerData = ((data[1] & 0xff) << 4) + ((data[2] & 0xf0) >> 4);
             }
             info = info + "\n";
             this.logger.info(info);
@@ -242,27 +241,27 @@ public class MCP4725 {
                 outP = outP + "     chip Incomplete state \n";
             }
             outP = outP + "     PD1: " + (data[0] & MCP4725_Declares._MCP4725_DAC_PD1_MODE_MASK)
-             + "    PD0:  " + (data[0] & MCP4725_Declares._MCP4725_DAC_PD0_MODE_MASK) + " \n";
+                + "    PD0:  " + (data[0] & MCP4725_Declares._MCP4725_DAC_PD0_MODE_MASK) + " \n";
 
             String binaryString = Integer.toBinaryString(data[1] & 0xff);
             String withLeadingZeros = String.format("%8s", binaryString).replace(' ', '0');
-            outP = outP + " Second byte DAC  D11...D4 :  "+ withLeadingZeros + " \n";
+            outP = outP + " Second byte DAC  D11...D4 :  " + withLeadingZeros + " \n";
 
             String binaryString2 = Integer.toBinaryString((data[2] & 0xf0) >> 4);
             String withLeadingZeros2 = String.format("%4s", binaryString2).replace(' ', '0');
             outP = outP + " Third byte DAC D3...D0  :  " + withLeadingZeros2 + " \n";
 
             int a1 = ((data[2] & 0xf0) >> 4);
-            int b1 =  ((data[1] & 0xff) << 4);
+            int b1 = ((data[1] & 0xff) << 4);
             int c1 = a1 + b1;
-            outP = outP + "       12bit DAC :" +  String.format("%04x ",  c1)   + " \n";
-            if(this.vref > 0){
-                outP = outP +  "       Calculated DAC output voltage : "+  ((this.vref*this.registerData)/4096 + " \n");
+            outP = outP + "       12bit DAC :" + String.format("%04x ", c1) + " \n";
+            if (this.vref > 0) {
+                outP = outP + "       Calculated DAC output voltage : " + ((this.vref * this.registerData) / 4096 + " \n");
             }
 
             outP = outP + " First byte EEPROM  \n";
             outP = outP + "     PD1: " + (data[3] & MCP4725_Declares._MCP4725_EEPROM_PD1_MODE_MASK)
-                    + "    PD0:  " + (data[3] & MCP4725_Declares._MCP4725_EEPROM_PD0_MODE_MASK) + " \n";
+                + "    PD0:  " + (data[3] & MCP4725_Declares._MCP4725_EEPROM_PD0_MODE_MASK) + " \n";
 
 
             String binaryString3 = Integer.toBinaryString(data[3] & 0x0f);
@@ -272,19 +271,17 @@ public class MCP4725 {
             String withLeadingZeros4 = String.format("%8s", binaryString4).replace(' ', '0');
             outP = outP + "       Third byte EEPROM D7...D0  :  " + withLeadingZeros4 + " \n";
             int a = (data[4] & 0xff);
-            int b = ((data[3] & 0x0f)<<8);
+            int b = ((data[3] & 0x0f) << 8);
             int c = a + b;
-            outP = outP + "       12bit EEPROM : " + String.format("%04x ",  c) + "\n" ;
-            if(this.vref > 0){
-                outP = outP +  "       Calculated EEPROM output voltage : "+  ((this.vref * c)/4096 + " \n");
+            outP = outP + "       12bit EEPROM : " + String.format("%04x ", c) + "\n";
+            if (this.vref > 0) {
+                outP = outP + "       Calculated EEPROM output voltage : " + ((this.vref * c) / 4096 + " \n");
             }
 
             this.logger.info(outP);
         }
         this.logger.info("<<< Exit : prettyPrint ");
     }
-
-
 
 
     /**
@@ -317,14 +314,10 @@ public class MCP4725 {
     }
 
 
-
-
-
-
     private final Context pi4j;
     private final int bus;
     private final int address;
-    private I2C device;
+    private final I2C device;
     private final Logger logger;
     private final String traceLevel;
 

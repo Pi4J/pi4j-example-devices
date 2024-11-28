@@ -38,12 +38,8 @@ package com.pi4j.devices.cp2102n;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.vl53L0X.VL53L0X_Device;
-import com.pi4j.devices.vl53L0X.Vl53L0X_Declares;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
+
 
 public class CP2102N_App {
 
@@ -55,19 +51,6 @@ public class CP2102N_App {
 /*        var pi4j = Pi4J.newContextBuilder().add(
                 linuxfs-i2cProvider.newInstance()).build();
 */
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
 
         final Console console = new Console();
@@ -81,14 +64,14 @@ public class CP2102N_App {
         int gpioReset = 0;
 
         String helpString = " parms:  -t trace   \n " +
-                "  -r  reset integer value GPIO \n " +
-                "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            "  -r  reset integer value GPIO \n " +
+            "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if  (o.contentEquals("-t")) { // device address
+            if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
                 i++;
                 traceLevel = a;
@@ -98,7 +81,7 @@ public class CP2102N_App {
                     console.println("Changing trace level invalid  : " + traceLevel);
                     System.exit(40);
                 }
-            }  else if (o.contentEquals("-r")) {
+            } else if (o.contentEquals("-r")) {
                 String a = args[i + 1];
                 doReset = true;
                 gpioReset = Integer.parseInt(a);
@@ -112,7 +95,7 @@ public class CP2102N_App {
                 System.exit(42);
             }
         }
-        if (doReset ) {
+        if (doReset) {
             // TODO
             //use gpioReset
             System.exit(43);

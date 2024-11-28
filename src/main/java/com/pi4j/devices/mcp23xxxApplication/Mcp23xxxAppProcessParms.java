@@ -34,26 +34,28 @@
 
 package com.pi4j.devices.mcp23xxxApplication;
 
+import com.pi4j.context.Context;
 import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.util.Console;
-import com.pi4j.context.Context;
+
 import java.util.HashMap;
 
 /**
  * Mcp23xxxAppProcessParms
  * <p>
- *     Common code the process the many arguments passed into the
- *     MCP23008 and MCP23017 application
+ * Common code the process the many arguments passed into the
+ * MCP23008 and MCP23017 application
  * </p>
  */
 public class Mcp23xxxAppProcessParms {
     private final Console console;
 
     /**
-     *  Class CTOR
+     * Class CTOR
+     *
      * @param console Console
      */
-    public Mcp23xxxAppProcessParms(Console console){
+    public Mcp23xxxAppProcessParms(Console console) {
         super();
         this.console = console;
 
@@ -61,17 +63,18 @@ public class Mcp23xxxAppProcessParms {
 
 
     /**
-     *   processMain
-     * @param pi4j  Context
-     * @param args  Arguments passed in by application caller.
-     * @param bankCapable  Whether this chip CAN be banked. MCP23008 can't, the
-     *                      MCP23017 can. This determines the chip register mapping
-     * @param dioPinData    Chip Pin data
+     * processMain
+     *
+     * @param pi4j           Context
+     * @param args           Arguments passed in by application caller.
+     * @param bankCapable    Whether this chip CAN be banked. MCP23008 can't, the
+     *                       MCP23017 can. This determines the chip register mapping
+     * @param dioPinData     Chip Pin data
      * @param generalConsole Console
-     * @return  Mcp23xxx Parms instance whose state contains the details pass
+     * @return Mcp23xxx Parms instance whose state contains the details pass
      * in by application caller.
      */
-    public static Mcp23xxxParms processMain(Context pi4j,String[] args,boolean bankCapable, HashMap<Integer, GpioPinCfgData> dioPinData , Console generalConsole) {
+    public static Mcp23xxxParms processMain(Context pi4j, String[] args, boolean bankCapable, HashMap<Integer, GpioPinCfgData> dioPinData, Console generalConsole) {
         var console = generalConsole;
         Mcp23xxxParms parmsObj = new Mcp23xxxParms(console);
         parmsObj.pi4j = pi4j;
@@ -92,11 +95,11 @@ public class Mcp23xxxAppProcessParms {
                 parmsObj.ffdcControlLevel = Integer.parseInt(a);
             } else if (o.contentEquals("-y")) {
                 parmsObj.dumpRegs = true;
-             }  else if (o.contentEquals("-b")) { // bus
+            } else if (o.contentEquals("-b")) { // bus
                 String a = args[i + 1];
                 parmsObj.busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
-            }  else if (o.contentEquals("-a")) { // device address
+            } else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
                 i++;
                 parmsObj.address = Integer.parseInt(a.substring(2), 16);
@@ -107,7 +110,7 @@ public class Mcp23xxxAppProcessParms {
                 parmsObj.monitorIntrp = true;
                 parmsObj.offOn = args[i + 1];
                 i++;
-            }  else if (o.contentEquals("-g")) {
+            } else if (o.contentEquals("-g")) {
                 String a = args[i + 1];
                 parmsObj.gpioNum = Integer.parseInt(a);
                 i++;
@@ -124,7 +127,7 @@ public class Mcp23xxxAppProcessParms {
                 if ((parmsObj.bankCapable) && (parmsObj.pin > 15)) {
                     badParmDetail = ("Pin too large, MAX of 15");
                     badParm = true;
-                } else if ((parmsObj.bankCapable == false) && (parmsObj.pin > 7)) {
+                } else if ((!parmsObj.bankCapable) && (parmsObj.pin > 7)) {
                     badParmDetail = ("Pin too large, MAX of 7 ");
                     badParm = true;
                 } else {
@@ -138,7 +141,7 @@ public class Mcp23xxxAppProcessParms {
              * i++; parmsObj.address = Integer.parseInt(a.substring(2), 16);
              * haveAddress = true; // displayMain.address =
              * Integer.parseInt(a, 16); }
-             */else if (o.contentEquals("-z")) {
+             */ else if (o.contentEquals("-z")) {
                 parmsObj.hasFullKeyedData = true;
                 parmsObj.fullKeyedData = args[i + 1];
                 i++;
@@ -150,7 +153,7 @@ public class Mcp23xxxAppProcessParms {
                 parmsObj.hasIOCONKeyedData = true;
                 parmsObj.IOCONKeyedData = args[i + 1];
                 i++;
-            }  else if (o.contentEquals("-r")) {
+            } else if (o.contentEquals("-r")) {
                 String a = args[i + 1];
                 i++;
                 // needs work
@@ -158,7 +161,7 @@ public class Mcp23xxxAppProcessParms {
                 if ((parmsObj.bankCapable) && (parmsObj.pin > 15)) {
                     badParmDetail = ("Pin too large, MAX of 15");
                     badParm = true;
-                } else if ((parmsObj.bankCapable == false) && (parmsObj.pin > 7)) {
+                } else if ((!parmsObj.bankCapable) && (parmsObj.pin > 7)) {
                     badParmDetail = ("Pin too large, MAX of 7");
                     badParm = true;
                 } else {
@@ -189,7 +192,7 @@ public class Mcp23xxxAppProcessParms {
                 parmsObj.mainChip = args[i + 1];
                 i++;
             } else {
-                console.print("Invalid parm : " + o  + "  ");
+                console.print("Invalid parm : " + o + "  ");
                 parmsObj.usage();
                 System.exit(2);
             }
@@ -199,7 +202,7 @@ public class Mcp23xxxAppProcessParms {
                 System.exit(701);
             }
         }
-    return(parmsObj);
+        return (parmsObj);
     }
 
 }
