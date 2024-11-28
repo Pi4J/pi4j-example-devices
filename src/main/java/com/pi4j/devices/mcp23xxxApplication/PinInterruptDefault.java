@@ -34,42 +34,44 @@
 
 package com.pi4j.devices.mcp23xxxApplication;
 
+import com.pi4j.context.Context;
 import com.pi4j.devices.appConfig.AppConfigUtilities;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
-import com.pi4j.context.Context;
-import java.util.HashMap;
 import com.pi4j.io.gpio.digital.DigitalState;
+
+import java.util.HashMap;
 
 /**
  * PinInterruptDefault
- *
+ * <p>
  * Instances of this class are associated with an PinInterruptActionIntf as
  * the instance to call for effecting some action.
- *
-  */
+ */
 
-public class PinInterruptDefault   extends PinInterruptBase {
+public class PinInterruptDefault extends PinInterruptBase {
 
-    /**CTOR
+    /**
+     * CTOR
      *
-     * @param pi4j  Context
-     * @param pin   Pin on the  MCP23008 or MCP23017
-     * @param ffdc    logging
-     * @param mcpObj  MCP23008 or MCP23017 instance
-     * @param pinDict  pin configuration disctionary
-     * @param cfgU      utilities
-     * @param priChipName   Name of the MCP23008 or MCP23017 chip owning the 'pin'
+     * @param pi4j        Context
+     * @param pin         Pin on the  MCP23008 or MCP23017
+     * @param ffdc        logging
+     * @param mcpObj      MCP23008 or MCP23017 instance
+     * @param pinDict     pin configuration disctionary
+     * @param cfgU        utilities
+     * @param priChipName Name of the MCP23008 or MCP23017 chip owning the 'pin'
      */
     public PinInterruptDefault(Context pi4j, int pin, FfdcUtil ffdc, Mcp23xxxPinMonitorIntf mcpObj,
                                HashMap<Integer, GpioPinCfgData> pinDict, AppConfigUtilities cfgU, String priChipName) {
-        super(pi4j, pin, ffdc,  mcpObj, pinDict, cfgU, priChipName);
+        super(pi4j, pin, ffdc, mcpObj, pinDict, cfgU, priChipName);
     }
 
     /**
-     *    dummyAct
-     * @param pinNumber  effect pin
-     * @param pinState   DigitalState
+     * dummyAct
+     *
+     * @param pinNumber effect pin
+     * @param pinState  DigitalState
      */
     public void dummyAct(int pinNumber, DigitalState pinState) {
         System.out.println("Dummy action for pin: " + pinNumber + "  pin state: " + pinState);

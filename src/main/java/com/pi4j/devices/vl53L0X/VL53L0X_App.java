@@ -36,10 +36,7 @@ package com.pi4j.devices.vl53L0X;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 
 /**
@@ -55,19 +52,6 @@ public class VL53L0X_App {
 /*        var pi4j = Pi4J.newContextBuilder().add(
                 linuxfs-i2cProvider.newInstance()).build();
 */
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
 
         final Console console = new Console();
@@ -85,9 +69,9 @@ public class VL53L0X_App {
         int gpioReset = 0;
 
         String helpString = " parms: -b hex value bus    -a hex value address  -t trace   \n " +
-                "  -r  reset integer value GPIO  -x hex value address prior to reset  \n " +
-                "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            "  -r  reset integer value GPIO  -x hex value address prior to reset  \n " +
+            "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -129,7 +113,7 @@ public class VL53L0X_App {
                 System.exit(42);
             }
         }
-        if ((doReset && (existingSet == false)) || ((doReset == false) && (existingSet))) {
+        if ((doReset && (!existingSet)) || ((!doReset) && (existingSet))) {
             console.println("  !!! Invalid Parm combination, if either  -r or -x  is used, requires both");
             console.println(" parms: -b hex value bus    -a hex value address  -r  reset integer value GPIO  -x hex value existing address prior to reset ");
             System.exit(43);

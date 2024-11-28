@@ -46,18 +46,16 @@ import org.slf4j.LoggerFactory;
 //import com.pi4j.io.gpio.Pin;
 
 
-
-
 public class Is31Fl37_matrix_app {
 
-    private  DigitalOutput processGPIO;
-    private  DigitalOutput warnGPIO;
+    private DigitalOutput processGPIO;
+    private DigitalOutput warnGPIO;
     private Context pi4j = null;
     private int address;
     private int bmp_address;
     private int bus_num;
     private int bmp_bus;
-    private boolean verbose = false;
+    private final boolean verbose = false;
     private int loop_count = 0;
     private int repeat_count;
     private int led_blink = 0;
@@ -70,7 +68,6 @@ public class Is31Fl37_matrix_app {
 
     //GpioUtil gpioUtil;
 
-  
 
     public Is31Fl37_matrix_app() {
         System.out.println(" default ctor");
@@ -113,15 +110,15 @@ public class Is31Fl37_matrix_app {
          * this.led_blink);
          */
         this.logger.info(" print_state()   Matrix address: " + String.format("0x%02X", this.address) + " Matrix bus_num: "
-                + this.bus_num +   "  BMP address: " + String.format("0x%02X", this.bmp_address) + " BMP bus_num: "
-                + this.bmp_bus +" traceLevel: " + this.traceLevel + " loop_count: " + this.loop_count
-                + " repeat_count: " + this.repeat_count + " led_blink: " + this.led_blink);
+            + this.bus_num + "  BMP address: " + String.format("0x%02X", this.bmp_address) + " BMP bus_num: "
+            + this.bmp_bus + " traceLevel: " + this.traceLevel + " loop_count: " + this.loop_count
+            + " repeat_count: " + this.repeat_count + " led_blink: " + this.led_blink);
 
     }
 
     public void clearGpioCfg() {
-       // final GpioController gpio = GpioFactory.getInstance();
-       // gpio.shutdown();
+        // final GpioController gpio = GpioFactory.getInstance();
+        // gpio.shutdown();
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -156,10 +153,9 @@ public class Is31Fl37_matrix_app {
         String mainChip = null;
         boolean doReset = false;
 
-  
+
         final Console console = new Console();
         Context pi4j = Pi4J.newAutoContext();
-
 
 
         console.println("Is31fl37_matrix_app entered   :  ");
@@ -178,10 +174,10 @@ public class Is31Fl37_matrix_app {
                 }
             } else if (o.contentEquals("-h")) {
                 console.println(
-                        " java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31fl37_matrix_app  -b 0x1 -a 0x74 <matrix> " +
-                                " -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address  -g  GPIO processing LED      -w GPIO warning LED  " +
-                                "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -s log  -r resetGpio -z monitorGpio#  " +
-                                "-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\""  );
+                    " java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31fl37_matrix_app  -b 0x1 -a 0x74 <matrix> " +
+                        " -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address  -g  GPIO processing LED      -w GPIO warning LED  " +
+                        "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -s log  -r resetGpio -z monitorGpio#  " +
+                        "-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"");
                 System.exit(0);
             } else if (o.contentEquals("-r")) {
                 String a = args[i + 1];
@@ -194,15 +190,15 @@ public class Is31Fl37_matrix_app {
                 monitorPinNum = Integer.parseInt(a);
                 console.println("monitorPin  " + monitorPinNum);
                 i++;
-            }  else if (o.contentEquals("-b")) {
+            } else if (o.contentEquals("-b")) {
                 String a = args[i + 1];
                 bus_num = Integer.parseInt(a.substring(2), 16);
                 i++;
-            }  else if (o.contentEquals("-bmpB")) {
+            } else if (o.contentEquals("-bmpB")) {
                 String a = args[i + 1];
                 bmp_bus = Integer.parseInt(a.substring(2), 16);
                 i++;
-            }else if (o.contentEquals("-l")) {
+            } else if (o.contentEquals("-l")) {
                 String a = args[i + 1];
                 i++;
                 int num = Integer.parseInt(a);
@@ -229,7 +225,7 @@ public class Is31Fl37_matrix_app {
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
                 // display_app.address = Integer.parseInt(a, 16);
-            }else if (o.contentEquals("-bmpA")) {
+            } else if (o.contentEquals("-bmpA")) {
                 String a = args[i + 1];
                 i++;
                 bmp_address = Integer.parseInt(a.substring(2), 16);
@@ -244,10 +240,10 @@ public class Is31Fl37_matrix_app {
                     console.println("Changing trace level invalid  : " + traceLevel);
                     System.exit(41);
                 }
-              } else if (o.contentEquals("-c")) {
+            } else if (o.contentEquals("-c")) {
                 String a = args[i + 1];
                 i++;
-                repeat_count = Integer.parseInt(a.substring(0));
+                repeat_count = Integer.parseInt(a);
             } else if (o.contentEquals("-s")) {
                 tmpFileUse = true;
 
@@ -256,7 +252,7 @@ public class Is31Fl37_matrix_app {
 
                 // >>>tcaObj.bus_num = Integer.parseInt(a.substring(2), 16);
                 i++;
-            }else if (o.contentEquals("-g")) {
+            } else if (o.contentEquals("-g")) {
                 String a = args[i + 1];
                 createProcessPin = true;
                 processGPIO = Integer.parseInt(a);
@@ -268,23 +264,21 @@ public class Is31Fl37_matrix_app {
                 warnGPIO = Integer.parseInt(a);
                 console.println("warnLED pin  " + warnGPIO);
                 i++;
-            }  else {
+            } else {
                 badParm = o;
                 parmsOk = false;
             }
         }
 
 
-
-
         // create the required GPIOs
         var ledConfigIntr = DigitalInput.newConfigBuilder(pi4j)
-                .id("MatrixInterrupt")
-                .name("MatrixInterrupt")
-                .address(monitorPinNum)
-                .pull(PullResistance.PULL_UP)
-                .debounce(4000L)
-                .provider("gpiod-digital-input");
+            .id("MatrixInterrupt")
+            .name("MatrixInterrupt")
+            .address(monitorPinNum)
+            .pull(PullResistance.PULL_UP)
+            .debounce(4000L)
+            .provider("gpiod-digital-input");
         try {
             monitorPin = pi4j.create(ledConfigIntr);
         } catch (Exception e) {
@@ -293,12 +287,12 @@ public class Is31Fl37_matrix_app {
             System.exit(200);
         }
         var ledConfigReset = DigitalOutput.newConfigBuilder(pi4j)
-                .id("MatrixReset")
-                .name("MatrixReset")
-                .address(resetPinNum)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("gpiod-digital-output");
+            .id("MatrixReset")
+            .name("MatrixReset")
+            .address(resetPinNum)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH)
+            .provider("gpiod-digital-output");
         try {
             resetPin = pi4j.create(ledConfigReset);
         } catch (Exception e) {
@@ -307,14 +301,14 @@ public class Is31Fl37_matrix_app {
             System.exit(201);
         }
 
-        if(createProcessPin) {
+        if (createProcessPin) {
             var ledConfigGreen = DigitalOutput.newConfigBuilder(pi4j)
-                    .id("ProcessLED")
-                    .name("ProcessLED")
-                    .address(processGPIO)
-                    .shutdown(DigitalState.LOW)
-                    .initial(DigitalState.LOW)
-                    .provider("gpiod-digital-output");
+                .id("ProcessLED")
+                .name("ProcessLED")
+                .address(processGPIO)
+                .shutdown(DigitalState.LOW)
+                .initial(DigitalState.LOW)
+                .provider("gpiod-digital-output");
             try {
                 processPin = pi4j.create(ledConfigGreen);
             } catch (Exception e) {
@@ -324,14 +318,14 @@ public class Is31Fl37_matrix_app {
             }
         }
 
-        if(createWarnPin) {
+        if (createWarnPin) {
             var ledConfigRed = DigitalOutput.newConfigBuilder(pi4j)
-                    .id("WarnLED")
-                    .name("WarnLED")
-                    .address(warnGPIO)
-                    .shutdown(DigitalState.LOW)
-                    .initial(DigitalState.LOW)
-                    .provider("gpiod-digital-output");
+                .id("WarnLED")
+                .name("WarnLED")
+                .address(warnGPIO)
+                .shutdown(DigitalState.LOW)
+                .initial(DigitalState.LOW)
+                .provider("gpiod-digital-output");
             try {
                 warnPin = pi4j.create(ledConfigRed);
             } catch (Exception e) {
@@ -341,23 +335,23 @@ public class Is31Fl37_matrix_app {
             }
         }
 
-        if(doReset){
+        if (doReset) {
             console.println("Do chip reset");
             resetPin.low();
             Thread.sleep(600);
             resetPin.high();
         }
-        Is31Fl37_matrix_app display_app = new Is31Fl37_matrix_app(pi4j,console, bus_num, address, bmp_bus, bmp_address, loop_count,
-                repeat_count, led_blink, traceLevel, resetPin,  monitorPin, warnPin, processPin);
+        Is31Fl37_matrix_app display_app = new Is31Fl37_matrix_app(pi4j, console, bus_num, address, bmp_bus, bmp_address, loop_count,
+            repeat_count, led_blink, traceLevel, resetPin, monitorPin, warnPin, processPin);
 
 
-        if (parmsOk == false) {
+        if (!parmsOk) {
             console.println("Invalid parm : " + badParm);
             console.println(
-                    " java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31fl37_matrix_app  -b 0x1 -a 0x74 <matrix> " +
-                            " -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address  -g  GPIO processing LED      -w GPIO warning LED  " +
-                            "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -s log  -r resetGpio -z monitorGpio#  " +
-                            "-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\""  );
+                " java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31fl37_matrix_app  -b 0x1 -a 0x74 <matrix> " +
+                    " -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address  -g  GPIO processing LED      -w GPIO warning LED  " +
+                    "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -s log  -r resetGpio -z monitorGpio#  " +
+                    "-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"");
             System.exit(0x42);
         }
 
@@ -368,9 +362,9 @@ public class Is31Fl37_matrix_app {
 
         try {
             Is31Fl37Matrix matrix = new Is31Fl37Matrix(display_app.bus_num, display_app.address,
-                    display_app.bmp_address, display_app.logger, display_app.monitorPin, display_app.pi4j);
+                display_app.bmp_address, display_app.logger, display_app.monitorPin, display_app.pi4j);
             DisplayTemp display = new DisplayTemp(display_app.pi4j, display_app.console, matrix, display_app.logger);
-            ControlLeds pin_monitor = new ControlLeds(display_app.pi4j, display_app.console,display_app.warnGPIO, display_app.processGPIO,  matrix, display_app.logger);
+            ControlLeds pin_monitor = new ControlLeds(display_app.pi4j, display_app.console, display_app.warnGPIO, display_app.processGPIO, matrix, display_app.logger);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -388,7 +382,7 @@ public class Is31Fl37_matrix_app {
                     // cfgU.runCli();
 
                     display.process_bmp_data(pin_monitor,
-                            display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
+                        display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
                     // Thread.sleep(2000);
 
                     // clear the matrix
@@ -397,8 +391,8 @@ public class Is31Fl37_matrix_app {
                     }
                     // future //eChip = cfgU.enableChipPath(mainChip);
                     display.show_time(pin_monitor, display_app.led_blink,
-                            display_app.loop_count);
-                   // clear the matrix
+                        display_app.loop_count);
+                    // clear the matrix
                     for (c = 0; c < 8; c++) {
                         matrix.fill(0, (byte) 0, 0);
                     }
@@ -408,11 +402,11 @@ public class Is31Fl37_matrix_app {
                 for (c = 0; c < 8; c++) {
                     matrix.fill(0, (byte) 0, 0);
                 }
-             } else {  // else leg continuously displays temperature/time
+            } else {  // else leg continuously displays temperature/time
                 while (true) {
                     // future // eChip = cfgU.enableChipPath(mainChip);
                     display.process_bmp_data(pin_monitor,
-                            display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
+                        display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
                     Thread.sleep(2000);
                     // clear the matrix
                     for (c = 0; c < 8; c++) {
@@ -420,7 +414,7 @@ public class Is31Fl37_matrix_app {
                     }
                     // future  //eChip = cfgU.enableChipPath(mainChip);
                     display.show_time(pin_monitor, display_app.led_blink,
-                            display_app.loop_count);
+                        display_app.loop_count);
                     Thread.sleep(2000);
                     // clear the matrix
                     for (c = 0; c < 8; c++) {

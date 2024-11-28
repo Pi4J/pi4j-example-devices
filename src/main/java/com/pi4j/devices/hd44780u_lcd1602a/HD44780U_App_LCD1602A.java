@@ -69,12 +69,12 @@ public class HD44780U_App_LCD1602A {
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "HD44780U_App");
         String helpString = " parms: HD44780U  \n  " +
-                "  -rs STCP gpio,  -en SHCP gpio,  -line1 LcdString,-line1Offset offset ," +
-                " -line2 LcdString, -line2Offset offset, -shiftL left shift -clearLCD  \n" +
-                "  parms :  HD44780U_interface  \n" +
-                " -ds HEX DS gpio -oe OE gpio,  -st STCP gpio,  -sh SHCP gpio, -mr MR gpio  " +
-                "-t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            "  -rs STCP gpio,  -en SHCP gpio,  -line1 LcdString,-line1Offset offset ," +
+            " -line2 LcdString, -line2Offset offset, -shiftL left shift -clearLCD  \n" +
+            "  parms :  HD44780U_interface  \n" +
+            " -ds HEX DS gpio -oe OE gpio,  -st STCP gpio,  -sh SHCP gpio, -mr MR gpio  " +
+            "-t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -99,19 +99,19 @@ public class HD44780U_App_LCD1602A {
                 String a = args[i + 1];
                 MRPinNum = Integer.parseInt(a);
                 i++;
-            }  else if (o.contentEquals("-rd")) {
+            } else if (o.contentEquals("-rd")) {
                 String a = args[i + 1];
                 i++;
                 registerData = (byte) (Integer.parseInt(a.substring(2), 16) & 0xff);
-            }else if (o.contentEquals("-rs")) {
+            } else if (o.contentEquals("-rs")) {
                 String a = args[i + 1];
                 rsPinNum = Integer.parseInt(a);
                 i++;
-            }  else if (o.contentEquals("-en")) {
+            } else if (o.contentEquals("-en")) {
                 String a = args[i + 1];
                 enPinNum = Integer.parseInt(a);
                 i++;
-            }else if (o.contentEquals("-line1")) {
+            } else if (o.contentEquals("-line1")) {
                 String a = args[i + 1];
                 lineOne = a;
                 i++;
@@ -119,21 +119,21 @@ public class HD44780U_App_LCD1602A {
                 String a = args[i + 1];
                 lineOneOffset = Integer.parseInt(a);
                 i++;
-            }else if (o.contentEquals("-line2")) {
+            } else if (o.contentEquals("-line2")) {
                 String a = args[i + 1];
                 lineTwo = a;
                 i++;
-            }else if (o.contentEquals("-line2Offset")) {
+            } else if (o.contentEquals("-line2Offset")) {
                 String a = args[i + 1];
                 lineTwoOffset = Integer.parseInt(a);
                 i++;
-            }else if (o.contentEquals("-shiftL")) {
+            } else if (o.contentEquals("-shiftL")) {
                 String a = args[i + 1];
                 shiftLeftCount = Integer.parseInt(a);
                 i++;
             } else if (o.contentEquals("-clearLCD")) {
-                 clearLCD = true;
-            }else if (o.contentEquals("-t")) {
+                clearLCD = true;
+            } else if (o.contentEquals("-t")) {
                 String a = args[i + 1];
                 i++;
                 traceLevel = a;
@@ -161,17 +161,17 @@ public class HD44780U_App_LCD1602A {
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
 
-        var d0_d7 = new SN74HC595(pi4j, console,  DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);
-        HD44780U_LCD1602A dispObj = new HD44780U_LCD1602A(pi4j, console, d0_d7, rsPinNum, enPinNum,  clearLCD, traceLevel);
+        var d0_d7 = new SN74HC595(pi4j, console, DSPinNum, OEPinNum, STCPPinNum, SHCPPinNum, MRPinNum, registerData, traceLevel);
+        HD44780U_LCD1602A dispObj = new HD44780U_LCD1602A(pi4j, console, d0_d7, rsPinNum, enPinNum, clearLCD, traceLevel);
 
 
-        if(lineOne.length() >0) {
+        if (lineOne.length() > 0) {
             dispObj.sendStringLineX(lineOne, 1, lineOneOffset);
         }
 
 
-        if(lineTwo.length() >0) {
-            dispObj.sendStringLineX(lineTwo, 2,  lineTwoOffset);
+        if (lineTwo.length() > 0) {
+            dispObj.sendStringLineX(lineTwo, 2, lineTwoOffset);
         }
 
         Thread.sleep(5000);
@@ -180,7 +180,7 @@ public class HD44780U_App_LCD1602A {
 
         Thread.sleep(5000);
 
-        if(clearLCD) {
+        if (clearLCD) {
             dispObj.clearDisplay();
         }
     }

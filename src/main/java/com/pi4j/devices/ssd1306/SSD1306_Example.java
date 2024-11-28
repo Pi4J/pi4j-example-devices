@@ -38,11 +38,7 @@ package com.pi4j.devices.ssd1306;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
-import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.util.Arrays;
 
@@ -80,8 +76,7 @@ public class SSD1306_Example {
         // may include 'Platforms' and 'I/O Providers'
 
 
-
-         Context pi4j =  Pi4J.newAutoContext();
+        Context pi4j = Pi4J.newAutoContext();
 
         // print installed providers
         System.out.println("----------------------------------------------------------");
@@ -89,19 +84,6 @@ public class SSD1306_Example {
         System.out.println("----------------------------------------------------------");
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
 
         final Console console = new Console();
@@ -111,7 +93,7 @@ public class SSD1306_Example {
 
 
         String helpString = " parms: -b hex value bus    -a hex value address  -t trace \n " +
-                " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
+            " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];

@@ -32,11 +32,8 @@ package com.pi4j.devices.bmp280;
 
 
 import com.pi4j.context.Context;
-import com.pi4j.io.i2c.I2C;
-import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 
@@ -64,8 +61,6 @@ public abstract class BMP280Device implements BMP280Interface {
     public static final String ID = "BMP280";
 
 
-  
-
     private static final int t1 = 0;
     private static final int t2 = 1;
     private static final int t3 = 2;
@@ -84,16 +79,14 @@ public abstract class BMP280Device implements BMP280Interface {
     protected String traceLevel;
 
 
- 
     protected Context pi4j = null;
 
     protected Console console = null;
 
-  
 
     /**
-     * @param pi4j Context instance used across application
-     * @param console 
+     * @param pi4j       Context instance used across application
+     * @param console
      * @param traceLevel for Logger
      */
     public BMP280Device(Context pi4j, Console console, String traceLevel) {
@@ -101,12 +94,9 @@ public abstract class BMP280Device implements BMP280Interface {
         this.pi4j = pi4j;
         this.console = console;
         this.traceLevel = traceLevel;
-    
+
     }
 
-
- 
-  
 
     /**
      * @param read 8 bits data
@@ -146,7 +136,6 @@ public abstract class BMP280Device implements BMP280Interface {
     }
 
 
-
     /**
      * Reset BMP280 chip to remove any previous applications configuration details.
      * <p>
@@ -176,9 +165,9 @@ public abstract class BMP280Device implements BMP280Interface {
         ctlVal[0] = (byte) ctlReg;
 
 
-        this.writeRegister(BMP280Declares.ctrl_meas,ctlVal[0]);
+        this.writeRegister(BMP280Declares.ctrl_meas, ctlVal[0]);
 
-      //  this.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
+        //  this.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
 
 
         // Next delay for 100 ms to provide chip time to perform measurements
@@ -193,9 +182,9 @@ public abstract class BMP280Device implements BMP280Interface {
         byte[] compVal = new byte[2];
 
 
-       this.readRegister(BMP280Declares.reg_dig_t1, compVal);
+        this.readRegister(BMP280Declares.reg_dig_t1, compVal);
 
-       long dig_t1 = castOffSignInt(compVal);
+        long dig_t1 = castOffSignInt(compVal);
 
         this.readRegister(BMP280Declares.reg_dig_t2, compVal);
         int dig_t2 = signedInt(compVal);
@@ -254,7 +243,7 @@ public abstract class BMP280Device implements BMP280Interface {
         double var1, var2, T, P;
         var1 = (((double) adc_T) / 16384.0 - ((double) dig_t1) / 1024.0) * ((double) dig_t2);
         var2 = ((((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0) *
-                (((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0)) * ((double) dig_t3);
+            (((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0)) * ((double) dig_t3);
         t_fine = (int) (var1 + var2);
         T = (var1 + var2) / 5120.0;
 
@@ -350,7 +339,7 @@ public abstract class BMP280Device implements BMP280Interface {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.logger.trace("exit: resetSensor rc : "  + rc);
+        this.logger.trace("exit: resetSensor rc : " + rc);
     }
 
 
@@ -364,9 +353,9 @@ public abstract class BMP280Device implements BMP280Interface {
         this.resetSensor();
         // read 0xD0 validate data equal 0x58 or 0x60
         int id = this.readRegister(BMP280Declares.chipId);
-        if((id == BMP280Declares.idValueMskBMP) || (id == BMP280Declares.idValueMskBME))  {
+        if ((id == BMP280Declares.idValueMskBMP) || (id == BMP280Declares.idValueMskBME)) {
             this.logger.trace("Correct chip ID read");
-        }else{
+        } else {
             System.out.println("Incorrect chip ID read");
             System.exit(42);
         }

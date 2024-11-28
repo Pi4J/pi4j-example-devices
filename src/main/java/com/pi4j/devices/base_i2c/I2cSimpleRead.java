@@ -93,7 +93,7 @@ public class I2cSimpleRead extends BasicI2cDevice {
         var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
         details = details + String.format("%02x: ", 0);
         byte[] buffer = new byte[this.numBytes];
-        if (this.writeRestart == false) {
+        if (!this.writeRestart) {
             this.ffdc.ffdcDebugEntry("Read chip from its present offset");
             for (int i = 0; i < this.numBytes; i++) {
                 byte data = this.readRegisterByte(i);
@@ -118,10 +118,10 @@ public class I2cSimpleRead extends BasicI2cDevice {
         this.ffdc.ffdcDebugEntry(details);
         this.ffdc.ffdcMethodExit(this.getMethodName());
     }
+
     int numBytes = 0;
     int deviceOffset;
     boolean writeRestart = false;
-
 
 
     /**
@@ -132,9 +132,9 @@ public class I2cSimpleRead extends BasicI2cDevice {
      */
     protected void usage() {
         System.out.println(
-                "options   -h 'help', -b bus, -a address, \n" +
-                        " -r deviceRegister, -n  number of bytes  -f ffdc_lvl -s sysCfg   \n" +
-                        "-f :0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   ");
+            "options   -h 'help', -b bus, -a address, \n" +
+                " -r deviceRegister, -n  number of bytes  -f ffdc_lvl -s sysCfg   \n" +
+                "-f :0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF   ");
     }
 
     /**

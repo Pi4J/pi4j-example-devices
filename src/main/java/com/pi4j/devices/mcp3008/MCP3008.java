@@ -31,20 +31,21 @@ public class MCP3008 {
 
     }
 
-    private void init(){
+    private void init() {
         var spiConfig = Spi.newConfigBuilder(pi4j)
-                .id("SPI" + spiBus + " " + chipSelect)
-                .name("A/D converter")
-                .bus(spiBus)
-                .chipSelect(chipSelect)
-                .flags(0b0000000000000000000000L)
-                .baud(Spi.DEFAULT_BAUD)
-                .mode(SpiMode.MODE_0)
-                .provider("pigpio-spi")
-                .build();
+            .id("SPI" + spiBus + " " + chipSelect)
+            .name("A/D converter")
+            .bus(spiBus)
+            .chipSelect(chipSelect)
+            .flags(0b0000000000000000000000L)
+            .baud(Spi.DEFAULT_BAUD)
+            .mode(SpiMode.MODE_0)
+            .provider("pigpio-spi")
+            .build();
         this.spi = this.pi4j.create(spiConfig);
 
     }
+
     public void displayProgramID() {
         // print program title/header
         this.logger.trace(">>> Enter displayProgramID");
@@ -127,18 +128,18 @@ public class MCP3008 {
         this.logger.trace(">>> Enter getConversionValue  channel : " + channel);
 
         // create a data buffer and initialize a conversion request payload
-        byte data[] = new byte[]{(byte) 0b00000001, // first byte, start bit
-                (byte) (0b10000000 | (((channel & 7) << 4))), // second byte
-                // transmitted
-                // -> (SGL/DIF =
-                // 1,
-                // D2=D1=D0=0)
-                (byte) 0b00000000 // third byte transmitted....don't care
+        byte[] data = new byte[]{(byte) 0b00000001, // first byte, start bit
+            (byte) (0b10000000 | (((channel & 7) << 4))), // second byte
+            // transmitted
+            // -> (SGL/DIF =
+            // 1,
+            // D2=D1=D0=0)
+            (byte) 0b00000000 // third byte transmitted....don't care
         };
 
         // send conversion request to ADC chip via SPI channel
         //int bytesWritten = this.spi.write(data);
-        byte value[] = new byte[3];
+        byte[] value = new byte[3];
         int bytesRead = this.spi.transfer(data, 0, value, 0, 3);
 
 
@@ -147,7 +148,8 @@ public class MCP3008 {
         // to get 10-bit result
         result |= (value[2] & 0xff);
         this.logger.info("Channel : " + channel + "   Bytes read : " + bytesRead + "  Value : " + result);
-        if(this.vref > 0){this.logger.info("A/D read input voltage : "+  ((result * this.vref )/1024 + " \n"));
+        if (this.vref > 0) {
+            this.logger.info("A/D read input voltage : " + ((result * this.vref) / 1024 + " \n"));
         }
         this.logger.trace("<<< Exit getConversionValue ");
 
@@ -163,7 +165,7 @@ public class MCP3008 {
     private boolean doallChannels = false;
     private short channel;
     private Spi spi;
-    private Console console;
+    private final Console console;
     private final String traceLevel;
     private final Logger logger;
 
@@ -171,7 +173,7 @@ public class MCP3008 {
     private final SpiChipSelect chipSelect;
     private final SpiBus spiBus;
 
-    private Context pi4j;
+    private final Context pi4j;
 
 }
 

@@ -44,10 +44,7 @@ import com.pi4j.devices.base_util.mapUtil.MapUtil;
 import com.pi4j.devices.mcp23xxxApplication.Mcp23xxxParms;
 import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
 import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.util.HashMap;
 
@@ -74,7 +71,6 @@ public class Mcp23017App extends Mcp23017 {
      * </p>
      *
      * @param args user params
-     *
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
@@ -107,20 +103,6 @@ public class Mcp23017App extends Mcp23017 {
 
         Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc, parmsObj.busNum, parmsObj.address, mcpObj.cfgData, mcpObj, console);
 
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                ffdc.ffdcFlushShutdown(); // push all logs to the file
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         if (parmsObj.hasFullKeyedData) { // -g
             HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.fullKeyedData);

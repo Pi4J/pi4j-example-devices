@@ -1,17 +1,18 @@
 package com.pi4j.devices.is31Fl37Matrix;
 
 import com.pi4j.Pi4J;
-import com.pi4j.io.gpio.digital.*;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.DigitalStateChangeEvent;
+import com.pi4j.io.gpio.digital.DigitalStateChangeListener;
 import com.pi4j.util.Console;
-
-import java.util.Properties;
 
 public class CreateInterrupt {
 
 
     /**
      * <p>Constructor for CreateInterrupt.</p>
-     *
+     * <p>
      * Sole purpose is unit testing.  Pi4 with Pi OS 64bit
      * missing short duration interrupt. This program allows
      * controlling the interrupt duration.
@@ -61,7 +62,7 @@ public class CreateInterrupt {
                 countLoops = Integer.parseInt(a);
                 console.println("Process  " + countLoops + " half second loops");
                 i++;
-            }else if (o.contentEquals("-m")) {
+            } else if (o.contentEquals("-m")) {
                 String a = args[i + 1];
                 milliSecDelay = Integer.parseInt(a);
                 console.println("MilliSecond  " + countLoops + " interrupt duration");
@@ -70,11 +71,11 @@ public class CreateInterrupt {
                 firstDirection = args[i + 1];
                 if (firstDirection.contentEquals("HIGH") | firstDirection.contentEquals("LOW")) {
                     i++;
-                    if(firstDirection.contentEquals("LOW")){
-                        initialState=DigitalState.HIGH;
+                    if (firstDirection.contentEquals("LOW")) {
+                        initialState = DigitalState.HIGH;
                         interruptLevelLow = true;
-                    }else{
-                        initialState=DigitalState.LOW;
+                    } else {
+                        initialState = DigitalState.LOW;
                         interruptLevelLow = false;
                     }
                 } else {
@@ -87,14 +88,13 @@ public class CreateInterrupt {
         }
 
 
-
         var interruptConfig = DigitalOutput.newConfigBuilder(pi4j)
-                .id("Interrupt")
-                .name("Interrupt")
-                .address(interruptPinNum)
-                .shutdown(initialState)
-                .initial(initialState)
-                .provider("gpiod-digital-output");
+            .id("Interrupt")
+            .name("Interrupt")
+            .address(interruptPinNum)
+            .shutdown(initialState)
+            .initial(initialState)
+            .provider("gpiod-digital-output");
         try {
             interruptPin = pi4j.create(interruptConfig);
         } catch (Exception e) {
@@ -105,19 +105,19 @@ public class CreateInterrupt {
         interruptPin.addListener(new MonitorInterrupt.MatrixGpioListener());
 
 
-           console.println();
+        console.println();
         console.println("CHANGE OUTPUT STATES VIA I/O HARDWARE AND CHANGE EVENTS WILL BE PRINTED BELOW:");
 
         /*for(int c = 0; c < countLoops; c++){
             Thread.sleep(500);
         }*/
         // wait (block) for user to exit program using CTRL-C
-        if(interruptLevelLow){
+        if (interruptLevelLow) {
             console.println("Interrupt LOW wait " + milliSecDelay + "MS, then HIGH");
             interruptPin.low();
             Thread.sleep(milliSecDelay);
             interruptPin.high();
-        }else{
+        } else {
             console.println("Interrupt HIGH wait " + milliSecDelay + "MS, then LOW");
             interruptPin.high();
             Thread.sleep(milliSecDelay);
@@ -131,7 +131,6 @@ public class CreateInterrupt {
     }
 
     public static class MatrixGpioListener implements DigitalStateChangeListener {
-        ;
 
         public MatrixGpioListener() {
             Runtime.getRuntime().addShutdownHook(new Thread() {

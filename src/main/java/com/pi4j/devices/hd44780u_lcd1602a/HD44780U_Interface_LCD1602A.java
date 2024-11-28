@@ -41,9 +41,4 @@ public interface HD44780U_Interface_LCD1602A {
     void sendCommand(int cmd);
 
 
-
-
-
-
-
 }

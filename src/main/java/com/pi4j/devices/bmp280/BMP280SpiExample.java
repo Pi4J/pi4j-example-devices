@@ -38,15 +38,12 @@ package com.pi4j.devices.bmp280;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
+
 
 public class BMP280SpiExample {
-
 
 
     /**
@@ -78,7 +75,7 @@ public class BMP280SpiExample {
         // extensions found in the application's classpath which
         // may include 'Platforms' and 'I/O Providers'
 
-        Context pi4j =  Pi4J.newAutoContext();
+        Context pi4j = Pi4J.newAutoContext();
 
         // print installed providers
         System.out.println("----------------------------------------------------------");
@@ -86,19 +83,6 @@ public class BMP280SpiExample {
         System.out.println("----------------------------------------------------------");
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
 
         final Console console = new Console();
@@ -108,15 +92,15 @@ public class BMP280SpiExample {
 
 
         String helpString = " parms:   -t trace    -csp  chipSelectGPIO    \n " +
-                " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
+            " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
             if (o.contentEquals("-csp")) { // device address
-            String a = args[i + 1];
-            i++;
-            csPin = Integer.parseInt(a);
-           }  else if (o.contentEquals("-t")) { // device address
+                String a = args[i + 1];
+                i++;
+                csPin = Integer.parseInt(a);
+            } else if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
                 i++;
                 traceLevel = a;
@@ -139,15 +123,12 @@ public class BMP280SpiExample {
         var bmpDev = new BMP280DeviceSPI(pi4j, console, spiBus, chipSelect, csPin, traceLevel);
 
 
-
-
-
         bmpDev.initSensor();
 
         console.println("  Setup ----------------------------------------------------------");
 
 
-         double reading1 = bmpDev.temperatureC();
+        double reading1 = bmpDev.temperatureC();
         console.println(" Temperatue C = " + reading1);
 
         double reading2 = bmpDev.temperatureF();

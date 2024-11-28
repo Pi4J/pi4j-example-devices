@@ -38,10 +38,7 @@ package com.pi4j.devices.sn74hc595;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 
 /**
@@ -69,21 +66,6 @@ public class SN74HC595App {
         Context pi4j = Pi4J.newAutoContext();
 
 
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
-
-
         final Console console = new Console();
         console.print("==============================================================");
         console.print("startup  SN74HC595App  ");
@@ -91,9 +73,9 @@ public class SN74HC595App {
 
 
         String helpString = " parms:   -t trace   -ds HEX DS gpio\n" +
-                " -oe OE gpio,  -st STCP gpio,  -sh SHCP gpio, -mr MR gpio -rd HEX  registerData  \n" +
-                "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            " -oe OE gpio,  -st STCP gpio,  -sh SHCP gpio, -mr MR gpio -rd HEX  registerData  \n" +
+            "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -118,7 +100,7 @@ public class SN74HC595App {
                 String a = args[i + 1];
                 MRPinNum = Integer.parseInt(a);
                 i++;
-            }  else if (o.contentEquals("-rd")) {
+            } else if (o.contentEquals("-rd")) {
                 String a = args[i + 1];
                 i++;
                 registerData = (byte) (Integer.parseInt(a.substring(2), 16) & 0xff);

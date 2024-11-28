@@ -34,23 +34,24 @@
 
 package com.pi4j.devices.mcp23xxxApplication;
 
+import com.pi4j.context.Context;
 import com.pi4j.devices.appConfig.AppConfigUtilities;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
-import com.pi4j.context.Context;
+
 import java.util.HashMap;
 
 /**
  * PinInterruptBase
- *
+ * <p>
  * Instances of this class are associated with an PinInterruptActionIntf as
  * the instance to call for effecting some action.
- *
+ * <p>
  * Subclasses can take unique and specific steps when the interrupt occurs.
  */
 public class PinInterruptBase {
 
-    public PinInterruptBase(Context pi4j,int pin, FfdcUtil ffdc, Mcp23xxxPinMonitorIntf mcpObj,
+    public PinInterruptBase(Context pi4j, int pin, FfdcUtil ffdc, Mcp23xxxPinMonitorIntf mcpObj,
                             HashMap<Integer, GpioPinCfgData> pinDict, AppConfigUtilities cfgU, String priChipName) {
 
 
@@ -70,8 +71,6 @@ public class PinInterruptBase {
     String priChipName;
     public HashMap<Integer, GpioPinCfgData> pinDict;
     Context pi4j;
-
-
 
 
 }

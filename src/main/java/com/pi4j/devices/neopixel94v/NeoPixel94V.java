@@ -59,7 +59,7 @@ public class NeoPixel94V extends Component {
 
     PixelColor pixel;
 
-    private String traceLevel;
+    private final String traceLevel;
     /**
      * Default Channel of the SPI Pins
      */
@@ -113,7 +113,7 @@ public class NeoPixel94V extends Component {
      */
     private final byte Bit_0 = (byte) 0b11000000; // 192 in Decimal
     private final byte Bit_1 = (byte) 0b11111000;// 248 in Decimal
-     /**
+    /**
      * Brightness value between 0 and 1
      */
     private double brightness;
@@ -189,14 +189,14 @@ public class NeoPixel94V extends Component {
      */
     private SpiConfig buildSpiConfig(Context pi4j, int channel, int frequency) {
         return Spi.newConfigBuilder(pi4j)
-                .id("SPI" + 1)
-                .name("LED Matrix")
-                .bus(SpiBus.BUS_1)
-                .address(channel)
-                .mode(SpiMode.MODE_0)
-                .baud(8 * DEFAULT_FREQUENCY_PI4) //     bit-banging from Bit to SPI-Byte
-                .provider("pigpio-spi")
-                .build();
+            .id("SPI" + 1)
+            .name("LED Matrix")
+            .bus(SpiBus.BUS_1)
+            .address(channel)
+            .mode(SpiMode.MODE_0)
+            .baud(8 * DEFAULT_FREQUENCY_PI4) //     bit-banging from Bit to SPI-Byte
+            .provider("pigpio-spi")
+            .build();
 
     }
 
@@ -432,7 +432,7 @@ public class NeoPixel94V extends Component {
          */
         public int createColorRGB(float red, float green, float blue) {
             return createColorRGB(round(Color_COMPONENT_MAX * red),
-                    round(Color_COMPONENT_MAX * green), round(Color_COMPONENT_MAX * blue));
+                round(Color_COMPONENT_MAX * green), round(Color_COMPONENT_MAX * blue));
         }
 
         /**
@@ -537,7 +537,7 @@ public class NeoPixel94V extends Component {
         public void validateColorComponent(String color, int value) {
             if (value < 0 || value >= 256) {
                 throw new IllegalArgumentException("Illegal Color value (" + value +
-                        ") for '" + color + "' - must be 0.." + Color_COMPONENT_MAX);
+                    ") for '" + color + "' - must be 0.." + Color_COMPONENT_MAX);
             }
         }
 

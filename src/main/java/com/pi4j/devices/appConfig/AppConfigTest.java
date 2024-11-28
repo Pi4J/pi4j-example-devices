@@ -21,7 +21,7 @@ import java.util.HashMap;
 /**
  * Testcase
  */
-public class AppConfigTest extends AppConfigUtilities{
+public class AppConfigTest extends AppConfigUtilities {
 
     /**
      * CTOR.
@@ -37,19 +37,19 @@ public class AppConfigTest extends AppConfigUtilities{
      * <p>
      * PostCond:  Class methods are now accessable
      */
-    public AppConfigTest(Context pi4j, FfdcUtil ffdc,  BaseGpioInOut gUtil, Console console) {
-        super(pi4j, ffdc,gUtil, console);
+    public AppConfigTest(Context pi4j, FfdcUtil ffdc, BaseGpioInOut gUtil, Console console) {
+        super(pi4j, ffdc, gUtil, console);
     }
 
 
     /**
      * usage    Display help text for using this program
      * <p>
-     *  PreCond: AppConfigUtilities instance initialized.  See CTOR
+     * PreCond: AppConfigUtilities instance initialized.  See CTOR
      */
     public void usage() {
         System.out.println("options   -h 'help', -b bus, -a address, -z mainChip " + "-c chipName  -p  pinName   "
-                + "  -x reset-chip  -n reset GPIO -f ffdcLvl -g gpiodict   -m mcp23xx_pin_onfig   -s log");
+            + "  -x reset-chip  -n reset GPIO -f ffdcLvl -g gpiodict   -m mcp23xx_pin_onfig   -s log");
     }
 
 
@@ -78,7 +78,7 @@ public class AppConfigTest extends AppConfigUtilities{
         gUtil.dumpHashMap();
 
         MapUtil mapUtils = new MapUtil(ffdc, gUtil);
-        AppConfigTest cfgU = new AppConfigTest(pi4j, ffdc,  gUtil, console);
+        AppConfigTest cfgU = new AppConfigTest(pi4j, ffdc, gUtil, console);
         // later in this function, the device address and bus number will be properly set
 
         boolean returned = false;
@@ -144,10 +144,7 @@ public class AppConfigTest extends AppConfigUtilities{
         String chipBus = chipD.get("busNum");
         String chipAddr = chipD.get("address");
 
-        boolean isBanked = false;
-        if (banked.equalsIgnoreCase("y")) {
-            isBanked = true;
-        }
+        boolean isBanked = banked.equalsIgnoreCase("y");
         int chipAddrInt = Integer.parseInt(chipAddr.substring(2), 16);
         McpConfigData mcpcfgD = new McpConfigData(cfgU.ffdc);
         Mcp23xxxParms parmsObj = Mcp23xxxAppProcessParms.processMain(pi4j, args, true, dioPinData, console);
@@ -160,7 +157,7 @@ public class AppConfigTest extends AppConfigUtilities{
         }
 
         Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(pi4j, cfgU.ffdc, Integer.parseInt(initialChipBus.substring(2), 16),
-                chipAddrInt, mcpcfgD, mcpObj, console);
+            chipAddrInt, mcpcfgD, mcpObj, console);
         if (cfgU.hasFullKeyedData) {
             cfgU.ffdc.ffdcDebugEntry("Start of hasFullKeyedData");
             HashMap<String, HashMap<String, String>> outerMap = cfgU.mapUtils.createFullMap(cfgU.fullKeyedData);
@@ -280,10 +277,7 @@ public class AppConfigTest extends AppConfigUtilities{
         String chipBus2 = chipD2.get("busNum");
         String chipAddr2 = chipD2.get("address");
 
-        boolean isBanked2 = false;
-        if (banked2.equalsIgnoreCase("y")) {
-            isBanked2 = true;
-        }
+        boolean isBanked2 = banked2.equalsIgnoreCase("y");
         if (isBanked2) {
             console.println("Drive pin15 high");
             mcpUtil.drivePin(15, true);
@@ -318,7 +312,7 @@ public class AppConfigTest extends AppConfigUtilities{
         cfgU.disableBus(7, mainBus, mainChip);
         //
 
-        if (isBanked == false) {
+        if (!isBanked) {
             boolean eChip = cfgU.enableChipPath("matrix#1");
             console.println("matrix#1  bus 7");
             cfgU.displayEnableReg(mainBus, mainChip);

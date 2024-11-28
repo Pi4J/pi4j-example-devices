@@ -37,8 +37,6 @@
 package com.pi4j.devices.cp2102n;
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.vl53L0X.VL53L0X_Device;
-import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.serial.FlowControl;
 import com.pi4j.io.serial.Parity;
 import com.pi4j.io.serial.Serial;
@@ -63,23 +61,23 @@ public class CP2102N {
 
 
     Serial createSerialDevice() {
-        String id = String.format("CP2102N");
-        String name = String.format("Serial-USB");
-        this.logger.info("Enter: createSerialDevice CP2102N" + id + "" + name);
+        String id = "CP2102N";
+        String name = "Serial-USB";
+        this.logger.info("Enter: createSerialDevice CP2102N" + id + name);
         Serial rval = null;
-        rval =pi4j.create(Serial.newConfigBuilder(pi4j)
-                .use_9600_N81()
-                .dataBits_8()
-                .parity(Parity.NONE) //or ODD or EVEN
-                .stopBits(StopBits._1)
-                .flowControl(FlowControl.NONE)
-                .id(id)
-                .name(name)
-                .device("/dev/ttyAMA0")
-                .provider("linuxfsserial")
-                .build());
+        rval = pi4j.create(Serial.newConfigBuilder(pi4j)
+            .use_9600_N81()
+            .dataBits_8()
+            .parity(Parity.NONE) //or ODD or EVEN
+            .stopBits(StopBits._1)
+            .flowControl(FlowControl.NONE)
+            .id(id)
+            .name(name)
+            .device("/dev/ttyAMA0")
+            .provider("linuxfsserial")
+            .build());
 
-        this.logger.info("Exit: createSerialDevice CP2102N" + id + "" + name);
+        this.logger.info("Exit: createSerialDevice CP2102N" + id + name);
         return (rval);
     }
 
@@ -92,13 +90,13 @@ public class CP2102N {
 
     public void sendData(String s) {
         this.logger.info("Enter:sendData  data : " + s);
-        if(this.device.isOpen() == false){
+        if (!this.device.isOpen()) {
             this.logger.error("Serial device not open");
             System.exit(43);
         }
         byte[] command = s.getBytes();
         for (int c = 0; c < command.length; c++) {
-            this.logger.trace("Uart send byte "  + c  + "  :" +String.format("%02X ", command[c]));
+            this.logger.trace("Uart send byte " + c + "  :" + String.format("%02X ", command[c]));
         }
         this.logger.trace(command.toString());
         this.device.write(command);
@@ -106,10 +104,9 @@ public class CP2102N {
     }
 
 
-
     private final Context pi4j;
     private final Logger logger;
-    private Serial device;
+    private final Serial device;
     private final String traceLevel;
 
 

@@ -51,23 +51,23 @@ import java.util.Set;
  * Mcp23xxxUtil
  *
  * <p>
- *     Utilities common to the MCP23008 and MCP23017
+ * Utilities common to the MCP23008 and MCP23017
  * </p>
  */
-public class Mcp23xxxUtil extends BasicI2cDevice{
+public class Mcp23xxxUtil extends BasicI2cDevice {
 
     /**
-     *   CTOR
+     * CTOR
      *
-     * @param pi4j   Context
-     * @param ffdc       logging
-     * @param busNum    Pi bus number
-     * @param address    Chip device address
-     * @param cfgData    Chip defines/constants
-     * @param mcpObj     MCP23008 and MCP23017 instance
-     * @param console    Context
+     * @param pi4j    Context
+     * @param ffdc    logging
+     * @param busNum  Pi bus number
+     * @param address Chip device address
+     * @param cfgData Chip defines/constants
+     * @param mcpObj  MCP23008 and MCP23017 instance
+     * @param console Context
      */
-    public Mcp23xxxUtil(Context pi4j,  FfdcUtil ffdc, int busNum, int address, McpConfigData cfgData, McpBase mcpObj, Console console) {
+    public Mcp23xxxUtil(Context pi4j, FfdcUtil ffdc, int busNum, int address, McpConfigData cfgData, McpBase mcpObj, Console console) {
         super(pi4j, ffdc, busNum, address, console);
         this.ffdc = ffdc;
         this.cfgData = cfgData;
@@ -75,13 +75,12 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
     }
 
     /**
-     *
-     * @param pin       number of pin on MCPxxxxx chip
-     * @param pinOn   drive pin high if true, else low
-     *                 <p>
-     *                     Use overloaded getAddrMapFirst8
-     *                 and getAddrMapSecond8 to obtain correct register address
-     *                 </p>
+     * @param pin   number of pin on MCPxxxxx chip
+     * @param pinOn drive pin high if true, else low
+     *              <p>
+     *              Use overloaded getAddrMapFirst8
+     *              and getAddrMapSecond8 to obtain correct register address
+     *              </p>
      */
     public void drivePin(int pin, boolean pinOn) {
         // get the regs and make sure the desired pin is configed as output. Log
@@ -105,12 +104,12 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
 
         this.ffdc.ffdcMethodEntry("drivePin  pin" + String.format("0x%02X", pin) + " pinOn : " + pinOn);
         this.ffdc.ffdcMethodEntry(
-                "drivePin banked capable " + this.mcpB.bankCapable + " banked  : " + this.mcpB.banked);
+            "drivePin banked capable " + this.mcpB.bankCapable + " banked  : " + this.mcpB.banked);
 
         configed = (byte) this.readRegister(thisOffsetIOD);
 
         if ((configed & (1 << absPin)) > 0) {
-            this.ffdc.ffdcErrorExit("Pin" + pin + "  not configured for output",500);
+            this.ffdc.ffdcErrorExit("Pin" + pin + "  not configured for output", 500);
         }
         reg = (byte) this.readRegister(thisOffsetGPI);
         if (pinOn) {
@@ -124,9 +123,9 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
             reg = (byte) (reg & b);
         }
 
-        this.writeByte( thisOffsetGPI, reg);
+        this.writeByte(thisOffsetGPI, reg);
 
-       if (pinOn) {
+        if (pinOn) {
             Integer integerObject;
             integerObject = (1 << absPin);
             b = integerObject.byteValue();
@@ -137,19 +136,18 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
             b = integerObject.byteValue();
             reg = (byte) (reg & b);
         }
-      this.ffdc.ffdcMethodExit("drivePin");
+        this.ffdc.ffdcMethodExit("drivePin");
     }
 
     /**
-     *
-     * @param pin       number of pin on MCPxxxxx chip
-     *                 <p>
-     *                     Use overloaded getAddrMapFirst8
-     *                 and getAddrMapSecond8 to obtain correct register address
-     *                  <p>
-     *                  Read and display pin state high/low
-     *                  </p>
-     *                 </p>
+     * @param pin number of pin on MCPxxxxx chip
+     *            <p>
+     *            Use overloaded getAddrMapFirst8
+     *            and getAddrMapSecond8 to obtain correct register address
+     *            <p>
+     *            Read and display pin state high/low
+     *            </p>
+     *            </p>
      */
     public void readInput(int pin) {
         // # get the regs and make sure the desired pin is configed as input.
@@ -170,13 +168,13 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
 
         this.ffdc.ffdcMethodEntry(" readInput  pin " + String.format("0x%02X", pin));
         this.ffdc.ffdcMethodEntry(
-                "drivePin banked capable " + this.mcpB.bankCapable + " banked  : " + this.mcpB.banked);
+            "drivePin banked capable " + this.mcpB.bankCapable + " banked  : " + this.mcpB.banked);
 
         configed = this.readRegister(thisOffsetIOD);
         this.examineReturnRead(reg);
 
         if ((configed & (1 << absPin)) == 0) {
-            this.ffdc.ffdcErrorExit("Pin" + String.format("0x%02X", pin) + "  not configured for input",510);
+            this.ffdc.ffdcErrorExit("Pin" + String.format("0x%02X", pin) + "  not configured for input", 510);
         }
 
         reg = this.readRegister(thisOffsetGPI);
@@ -190,7 +188,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
     }
 
 
-  public void processKeyedData() {
+    public void processKeyedData() {
         // this.cfgData;
         // this.keyedData;
         this.ffdc.ffdcMethodEntry("processKeyedData ");
@@ -200,19 +198,19 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
         Set outerSet = outerMap.entrySet();
         Iterator<Map.Entry<String, Map<String, String>>> outerIterator = outerSet.iterator();
         while (outerIterator.hasNext()) {
-            Map.Entry<String, Map<String, String>> mentry = (Map.Entry) outerIterator.next();
+            Map.Entry<String, Map<String, String>> mentry = outerIterator.next();
             // iterate inner map
             HashMap<String, String> innerMap = new HashMap<String, String>();
             Iterator<Map.Entry<String, String>> child = (mentry.getValue()).entrySet().iterator();
             while (child.hasNext()) {
                 Entry<String, String> childPair = child.next();
-                String key =  childPair.getKey();
+                String key = childPair.getKey();
                 byte[] first8 = this.mcpB.getAddrMapFirst8();
                 byte regValOffset = first8[this.cfgData._IOCON];
                 if (key.equals("act")) {
                     byte ioconReg;
                     ioconReg = (byte) this.readRegister(regValOffset);
-                    String level =  childPair.getValue();
+                    String level = childPair.getValue();
                     if (level.contains("low")) {
                         ioconReg = (byte) (ioconReg & (~2));
                     } else if (level.contains("high")) {
@@ -221,8 +219,8 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                     this.writeByte(regValOffset, ioconReg);
                 }
             }
-            String[] pinList = { "pin0", "pin1", "pin2", "pin3", "pin4", "pin5", "pin6", "pin7", "pin8", "pin9",
-                    "pin10", "pin11", "pin12", "pin13", "pin14", "pin15" };
+            String[] pinList = {"pin0", "pin1", "pin2", "pin3", "pin4", "pin5", "pin6", "pin7", "pin8", "pin9",
+                "pin10", "pin11", "pin12", "pin13", "pin14", "pin15"};
             for (int i = 0; i < pinList.length; i++) {
                 if (outerMap.containsKey(pinList[i])) {
                     this.processPinData(i, pinList[i], outerMap.get(pinList[i]));
@@ -237,9 +235,9 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
     public void processPinData(int pin_num, String pin, HashMap<String, String> innerData) {
         // this.cfgData;
         this.ffdc.ffdcMethodEntry("processPinData  pinNum : " + String.format("0x%02X", pin_num) + "  " + pin
-                + "  innerData : " + innerData);
+            + "  innerData : " + innerData);
         String value;
-        String[] opt_list = { "dir", "pull", "default", "do_compare", "int_ena" };
+        String[] opt_list = {"dir", "pull", "default", "do_compare", "int_ena"};
         for (int c = 0; c < opt_list.length; c++) {
             // System.out.println("pin_list[i] " + pin_list[i] + " \n outerMap "
             // + outerMap);
@@ -251,7 +249,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
         this.ffdc.ffdcMethodExit("processPinData");
     }
 
-    public void processOptData(int pin, String key, String value){
+    public void processOptData(int pin, String key, String value) {
         this.ffdc.ffdcMethodEntry(" processOptData  pin " + pin + "  key " + key + "  value " + value);
         byte reg;
         byte b;
@@ -267,8 +265,8 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
 
             // # read return a list, get the single entry [0]
             this.ffdc.ffdcDebugEntry(" I2cDevice on bus  " + this.busNum + "   Chip address :   "
-                    + String.format("0x%02X", this.address) + " offset  " + thisOffset);
-           // TODO  Must we ever remap the bus/address ???
+                + String.format("0x%02X", this.address) + " offset  " + thisOffset);
+            // TODO  Must we ever remap the bus/address ???
             reg = (byte) this.readRegister(thisOffset);
             this.ffdc.ffdcDebugEntry(" Read returned : " + String.format("0x%02X", reg));
             if (value.contains("in")) {
@@ -280,7 +278,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 b = integerObject.byteValue();
                 reg = (byte) (reg & b);
             }
-            this.writeByte( thisOffset, reg);
+            this.writeByte(thisOffset, reg);
         } else if (key.contains("pull")) {
             byte[] first8 = this.mcpB.getAddrMapFirst8();
             byte thisOffset = first8[this.cfgData._GPPU];
@@ -290,7 +288,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 thisOffset = second8[this.cfgData._GPPUB];
             }
             // # read return a list, get the single entry [0]
-            reg = (byte) this.readRegister( thisOffset);
+            reg = (byte) this.readRegister(thisOffset);
             this.ffdc.ffdcDebugEntry(" Read returned : " + String.format("0x%02X", reg));
             if (value.contains("up")) {
                 Integer integerObject = (1 << absPin);
@@ -301,7 +299,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 b = integerObject.byteValue();
                 reg = (byte) (reg & b);
             }
-            this.writeByte( thisOffset, reg);
+            this.writeByte(thisOffset, reg);
         } else if (key.contains("default")) {
             byte[] first8 = this.mcpB.getAddrMapFirst8();
             byte thisOffset = first8[this.cfgData._DEFVAL];
@@ -325,15 +323,15 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
             }
             this.writeByte(thisOffset, reg);
         } else if (key.contains("do_compare")) {
-            byte first8[] = this.mcpB.getAddrMapFirst8();
+            byte[] first8 = this.mcpB.getAddrMapFirst8();
             byte thisOffset = first8[this.cfgData._INTCON];
             if (pin > 7) {
                 absPin = absPin - 8;
-                byte second8[] = this.mcpB.getAddrMapSecond8();
+                byte[] second8 = this.mcpB.getAddrMapSecond8();
                 thisOffset = second8[this.cfgData._INTCON];
             }
             // # read return a list, get the single entry [0]
-            reg = (byte) this.readRegister(thisOffset );
+            reg = (byte) this.readRegister(thisOffset);
             this.ffdc.ffdcDebugEntry(" Read returned : " + String.format("0x%02X", reg));
             if (value.contains("yes")) {
                 Integer integerObject = (1 << absPin);
@@ -345,17 +343,17 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 b = integerObject.byteValue();
                 reg = (byte) (reg & b);
             }
-            this.writeByte( thisOffset, reg);
+            this.writeByte(thisOffset, reg);
         } else if (key.contains("invert")) {
-            byte first8[] = this.mcpB.getAddrMapFirst8();
+            byte[] first8 = this.mcpB.getAddrMapFirst8();
             byte thisOffset = first8[this.cfgData._IPOL];
             if (pin > 7) {
                 absPin = absPin - 8;
-                byte second8[] = this.mcpB.getAddrMapSecond8();
+                byte[] second8 = this.mcpB.getAddrMapSecond8();
                 thisOffset = second8[this.cfgData._IPOLB];
             }
             // # read return a list, get the single entry [0]
-            reg = (byte)this.readRegister( thisOffset);
+            reg = (byte) this.readRegister(thisOffset);
             this.ffdc.ffdcDebugEntry(" Read returned : " + String.format("0x%02X", reg));
             if (value.contains("yes")) {
                 Integer integerObject;
@@ -367,17 +365,17 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 b = integerObject.byteValue();
                 reg = (byte) (reg & b);
             }
-            this.writeByte( thisOffset, reg);
+            this.writeByte(thisOffset, reg);
         } else if (key.contains("int_ena")) {
-            byte first8[] = this.mcpB.getAddrMapFirst8();
+            byte[] first8 = this.mcpB.getAddrMapFirst8();
             byte thisOffset = first8[this.cfgData._GPINTEN];
             if (pin > 7) {
                 absPin = absPin - 8;
-                byte second8[] = this.mcpB.getAddrMapSecond8();
+                byte[] second8 = this.mcpB.getAddrMapSecond8();
                 thisOffset = second8[this.cfgData._GPINTENB];
             }
             // # read return a list, get the single entry [0]
-            reg = (byte) this.readRegister( thisOffset);
+            reg = (byte) this.readRegister(thisOffset);
             this.ffdc.ffdcDebugEntry(" Read returned : " + String.format("0x%02X", reg));
             if (value.contains("yes")) {
                 Integer integerObject = (1 << absPin);
@@ -399,8 +397,6 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
     McpBase mcpB;
 
     /**
-     *
-     *
      * @param pi4j
      * @param args
      * @param bankCapable
@@ -409,7 +405,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
      * @return
      */
 
-    public static Mcp23xxxParms processMain(Context pi4j, String[] args, boolean bankCapable, HashMap<Integer, GpioPinCfgData> dioPinData , Console generalConsole) {
+    public static Mcp23xxxParms processMain(Context pi4j, String[] args, boolean bankCapable, HashMap<Integer, GpioPinCfgData> dioPinData, Console generalConsole) {
         // TODO Auto-generated method stub
 
         var console = generalConsole;
@@ -438,11 +434,11 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 parmsObj.ffdcControlLevel = Integer.parseInt(a);
             } else if (o.contentEquals("-y")) {
                 parmsObj.dumpRegs = true;
-            }  else if (o.contentEquals("-b")) { // bus
+            } else if (o.contentEquals("-b")) { // bus
                 String a = args[i + 1];
                 parmsObj.busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
-            }  else if (o.contentEquals("-a")) { // device address
+            } else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
                 i++;
                 parmsObj.address = Integer.parseInt(a.substring(2), 16);
@@ -450,7 +446,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
             } else if (o.contentEquals("-h")) {
                 parmsObj.usage();
                 System.exit(0);
-            }  else if (o.contentEquals("-x")) {
+            } else if (o.contentEquals("-x")) {
                 String a = args[i + 1];
                 parmsObj.doReset = true;
                 parmsObj.gpioReset = Integer.parseInt(a);
@@ -463,13 +459,13 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 if ((parmsObj.bankCapable) && (parmsObj.pin > 15)) {
                     badParmDetail = ("Pin too large, MAX of 15");
                     badParm = true;
-                } else if ((parmsObj.bankCapable == false) && (parmsObj.pin > 7)) {
+                } else if ((!parmsObj.bankCapable) && (parmsObj.pin > 7)) {
                     badParmDetail = ("Pin too large, MAX of 7 ");
                     badParm = true;
                 } else {
                     parmsObj.setPin = true;
                 }
-            }  else if (o.contentEquals("-z")) {
+            } else if (o.contentEquals("-z")) {
                 parmsObj.hasFullKeyedData = true;
                 parmsObj.fullKeyedData = args[i + 1];
                 i++;
@@ -481,7 +477,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 parmsObj.hasIOCONKeyedData = true;
                 parmsObj.IOCONKeyedData = args[i + 1];
                 i++;
-            }  else if (o.contentEquals("-r")) {
+            } else if (o.contentEquals("-r")) {
                 String a = args[i + 1];
                 i++;
                 // needs work
@@ -489,7 +485,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 if ((parmsObj.bankCapable) && (parmsObj.pin > 15)) {
                     badParmDetail = ("Pin too large, MAX of 15");
                     badParm = true;
-                } else if ((parmsObj.bankCapable == false) && (parmsObj.pin > 7)) {
+                } else if ((!parmsObj.bankCapable) && (parmsObj.pin > 7)) {
                     badParmDetail = ("Pin too large, MAX of 7");
                     badParm = true;
                 } else {
@@ -507,7 +503,7 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                     badParm = true;
                 }
             } else {
-                console.print("Invalid parm : " + o  + "  ");
+                console.print("Invalid parm : " + o + "  ");
                 parmsObj.usage();
                 System.exit(2);
             }
@@ -517,18 +513,18 @@ public class Mcp23xxxUtil extends BasicI2cDevice{
                 System.exit(701);
             }
         }
-        return(parmsObj);
+        return (parmsObj);
     }
 
     public static void usage() {
         System.out.println("options   -h 'help', -d drive-pin with -o ON/OFF, \n"
-                + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r) \n"
-                + "   -b bus     -a address  \n"
-                + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\" \n"
-                + "-c primary chip     -p primary pin \n"
-                + "-z  gpios config dict     -q mainChip \n"
-                + "-x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs \n"
-                + "ffdc_lvl 0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF    ");
+            + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r) \n"
+            + "   -b bus     -a address  \n"
+            + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\" \n"
+            + "-c primary chip     -p primary pin \n"
+            + "-z  gpios config dict     -q mainChip \n"
+            + "-x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs \n"
+            + "ffdc_lvl 0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF    ");
     }
 
 }

@@ -36,21 +36,20 @@ package com.pi4j.devices.bme280;
  */
 
 
-
 import com.pi4j.Pi4J;
-import com.pi4j.util.Console;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
+import com.pi4j.util.Console;
 
 import java.text.DecimalFormat;
 
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
- *
+ * <p>
  * This example can be executed without sudo with:
  * jbang Pi4JTempHumPressI2C.java
- *
+ * <p>
  * Based on:
  *
  * <ul>
@@ -58,7 +57,7 @@ import java.text.DecimalFormat;
  *  <li>https://www.adafruit.com/product/2652</li>
  *  <li>https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts</li>
  * </ul>
- *
+ * <p>
  * I2C Wiring
  *
  * <ul>
@@ -68,11 +67,11 @@ import java.text.DecimalFormat;
  *  <li>SDI to I2C data SDA (pin 3)</li>
  *  <li>CS to 3.3v</li>
  * </ul>
- *
+ * <p>
  * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
- *
+ * <p>
  * Check that the sensor is detected on address 0x77 with ``.
- *
+ * <p>
  * $ i2cdetect -y 1
  *      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
  * 00:                         -- -- -- -- -- -- -- --
@@ -83,7 +82,6 @@ import java.text.DecimalFormat;
  * 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
  * 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
  * 70: -- -- -- -- -- -- -- 77
- *
  */
 public class BME280DeviceI2C {
     private static final Console console = new Console(); // Pi4J Logger helper
@@ -115,10 +113,10 @@ public class BME280DeviceI2C {
         console.println("Initializing the sensor via I2C");
         I2CProvider i2CProvider = pi4j.provider("linuxfs-i2c");
         I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
-                .id("BME280")
-                .bus(I2C_BUS)
-                .device(address)
-                .build();
+            .id("BME280")
+            .bus(I2C_BUS)
+            .device(address)
+            .build();
 
         // Read values 10 times
         try (I2C bme280 = i2CProvider.create(i2cConfig)) {
@@ -147,6 +145,7 @@ public class BME280DeviceI2C {
      * The chip will be reset, forcing the POR (PowerOnReset)
      * steps to occur. Once completes the chip will be configured
      * to operate 'forced' mode and single sample.
+     *
      * @param device
      * @throws Exception
      */
@@ -156,7 +155,7 @@ public class BME280DeviceI2C {
         // The sensor needs some time to complete POR steps
         Thread.sleep(300);
         int id = device.readRegister(BMP280Declares.chipId);
-        if(id != BMP280Declares.idValueMskBME)  {
+        if (id != BMP280Declares.idValueMskBME) {
             console.println("Incorrect chip ID, NOT BME280");
             System.exit(42);
         }
@@ -177,7 +176,7 @@ public class BME280DeviceI2C {
         ctlReg |= BMP280Declares.ctl_pressSamp1;   //  Pressure oversample 1
 
         byte[] regVal = new byte[1];
-        regVal[0] = (byte)(BMP280Declares.ctrl_meas);
+        regVal[0] = (byte) (BMP280Declares.ctrl_meas);
         byte[] ctlVal = new byte[1];
         ctlVal[0] = (byte) ctlReg;
 
@@ -188,13 +187,14 @@ public class BME280DeviceI2C {
      * Three register sets containing the readings are read, then all factory
      * compensation registers are read. The compensated reading are calculated and
      * displayed.
+     *
      * @param device
      */
     private static void getMeasurements(I2C device) {
         byte[] buff = new byte[6];
         device.readRegister(BMP280Declares.press_msb, buff);
-        long adc_T =  (long)  ((buff[3] & 0xFF) << 12) |  (long)  ((buff[4] & 0xFF) << 4) |  (long) ((buff[5] & 0x0F) >> 4);
-        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F)>> 4);
+        long adc_T = (long) ((buff[3] & 0xFF) << 12) | (long) ((buff[4] & 0xFF) << 4) | (long) ((buff[5] & 0x0F) >> 4);
+        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F) >> 4);
 
         byte[] buffHum = new byte[2];
         device.readRegister(BMP280Declares.hum_msb, buffHum);
@@ -218,12 +218,12 @@ public class BME280DeviceI2C {
 
         double var1 = (((double) adc_T) / 16384.0 - ((double) dig_t1) / 1024.0) * ((double) dig_t2);
         double var2 = ((((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0) *
-                (((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0)) * ((double) dig_t3);
+            (((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0)) * ((double) dig_t3);
         double t_fine = (int) (var1 + var2);
         double temperature = (var1 + var2) / 5120.0;
 
         console.println("Temperature: " + df.format(temperature) + " °C");
-        console.println("Temperature: " + df.format(temperature* 1.8 + 32) + " °F ");
+        console.println("Temperature: " + df.format(temperature * 1.8 + 32) + " °F ");
 
         // Pressure
         device.readRegister(BMP280Declares.reg_dig_p1, compVal);
@@ -254,8 +254,7 @@ public class BME280DeviceI2C {
         int dig_p9 = signedInt(compVal);
 
 
-
-        var1 = ((double) t_fine / 2.0) - 64000.0;
+        var1 = (t_fine / 2.0) - 64000.0;
         var2 = var1 * var1 * ((double) dig_p6) / 32768.0;
         var2 = var2 + var1 * ((double) dig_p5) * 2.0;
         var2 = (var2 / 4.0) + (((double) dig_p4) * 65536.0);
@@ -286,33 +285,32 @@ public class BME280DeviceI2C {
         long dig_h1 = castOffSignByte(charVal[0]);
 
         device.readRegister(BMP280Declares.reg_dig_h2, compVal);
-        int dig_h2 =  signedInt(compVal);
+        int dig_h2 = signedInt(compVal);
 
         device.readRegister(BMP280Declares.reg_dig_h3, charVal);
         long dig_h3 = castOffSignByte(charVal[0]);
 
         device.readRegister(BMP280Declares.reg_dig_h4, compVal);
         // get the bits
-        int dig_h4 = ((compVal[0]&0xff) << 4)  | (compVal[1] & 0x0f) ;
+        int dig_h4 = ((compVal[0] & 0xff) << 4) | (compVal[1] & 0x0f);
 
         device.readRegister(BMP280Declares.reg_dig_h5, compVal);
         // get the bits
-        int dig_h5 = (compVal[0]&0x0f) | ((compVal[1] & 0xff) << 4);
+        int dig_h5 = (compVal[0] & 0x0f) | ((compVal[1] & 0xff) << 4);
 
         device.readRegister(BMP280Declares.reg_dig_h6, charVal);
         long dig_h6 = signedByte(charVal);
 
-        double humidity = (double)t_fine - 76800.0;
-        humidity = (adc_H -(((double)dig_h4) * 64.0 + ((double)dig_h5)/16384.0  * humidity)) * (((double)dig_h2)/65536.0 * (1.0 + ((double)dig_h6) /67108864.0 * humidity * (1.0 + ((double)dig_h3)/67108864.0 * humidity)));
-        humidity = humidity * (1.0 - ((double) dig_h1) * humidity/524288.0);
-        if(humidity > 100.0){
+        double humidity = t_fine - 76800.0;
+        humidity = (adc_H - (((double) dig_h4) * 64.0 + ((double) dig_h5) / 16384.0 * humidity)) * (((double) dig_h2) / 65536.0 * (1.0 + ((double) dig_h6) / 67108864.0 * humidity * (1.0 + ((double) dig_h3) / 67108864.0 * humidity)));
+        humidity = humidity * (1.0 - ((double) dig_h1) * humidity / 524288.0);
+        if (humidity > 100.0) {
             humidity = 100.0;
-        }else if(humidity < 0.0){
+        } else if (humidity < 0.0) {
             humidity = 0.0;
         }
 
         console.println("Humidity: " + df.format(humidity) + " %");
-
 
 
     }
@@ -326,12 +324,11 @@ public class BME280DeviceI2C {
     }
 
     /**
-     *
      * @param read 8 bits data
      * @return signed value
      */
     private static int signedByte(byte[] read) {
-        return ((int)read[0] );
+        return read[0];
     }
 
     /**
@@ -398,7 +395,6 @@ public class BME280DeviceI2C {
         static int reg_dig_h4 = 0xE4;  // 11:4  3:0
         static int reg_dig_h5 = 0xE5;    // 3:0   11:4
         static int reg_dig_h6 = 0xE7;    // 3:0   11:4
-
 
 
         // register contents

@@ -38,27 +38,22 @@ package com.pi4j.devices.at24c512;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Declares;
-import com.pi4j.devices.bmp280.BMP280Device;
-import com.pi4j.exception.LifecycleException;
-import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
+
 
 public class AT24C512_App {
 
 
-        /**
-         * Sample application using AT24C512 SEEPROM.
-         *
-         * @param args an array of {@link java.lang.String} objects.
-         *             Parms are not required. if 'any' parameter value is supplied,
-         *             the example uses the create pattern for device instantiation,
-         *             otherwise provider setup is used
-         * @throws java.lang.Exception if any.
-         */
-        public static void main(String[] args) throws Exception {
+    /**
+     * Sample application using AT24C512 SEEPROM.
+     *
+     * @param args an array of {@link java.lang.String} objects.
+     *             Parms are not required. if 'any' parameter value is supplied,
+     *             the example uses the create pattern for device instantiation,
+     *             otherwise provider setup is used
+     * @throws java.lang.Exception if any.
+     */
+    public static void main(String[] args) throws Exception {
 
 
         int busNum = 0x01;
@@ -71,7 +66,7 @@ public class AT24C512_App {
         String writeData = "";
         boolean doWrite = false;
         int writeDataLen = 0;
-        
+
         // ------------------------------------------------------------
         // Initialize the Pi4J Runtime Context
         // ------------------------------------------------------------
@@ -95,20 +90,6 @@ public class AT24C512_App {
         System.out.println("----------------------------------------------------------");
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
-
 
         final Console console = new Console();
         console.print("==============================================================");
@@ -117,9 +98,9 @@ public class AT24C512_App {
 
 
         String helpString = " parms: -b hex value bus    -a hex value address  \n" +
-                "-n numBytes <hex> -r readReg <hex> -rr read current addr NoData  -w writeReg <hex> -d  data <Hex Hex...> -t trace\n" +
-                "-r not permitted with args -d -w, either read data or write data \n " +
-                " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
+            "-n numBytes <hex> -r readReg <hex> -rr read current addr NoData  -w writeReg <hex> -d  data <Hex Hex...> -t trace\n" +
+            "-r not permitted with args -d -w, either read data or write data \n " +
+            " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -131,26 +112,26 @@ public class AT24C512_App {
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-            }else if (o.contentEquals("-n")) { // device address
+            } else if (o.contentEquals("-n")) { // device address
                 String a = args[i + 1];
                 i++;
                 numBytes = Integer.parseInt(a.substring(2), 16);
-            }else if (o.contentEquals("-rr")) { // current chip pointer used
+            } else if (o.contentEquals("-rr")) { // current chip pointer used
                 doCurrentRead = true;
-            }else if (o.contentEquals("-r")) { // read specific reg
+            } else if (o.contentEquals("-r")) { // read specific reg
                 String a = args[i + 1];
                 i++;
                 doRead = true;
                 readReg = Long.parseLong(a.substring(2), 16);
-            }else if (o.contentEquals("-w")) { // write specific reg
+            } else if (o.contentEquals("-w")) { // write specific reg
                 String a = args[i + 1];
                 i++;
                 doWrite = true;
                 writeReg = Long.parseLong(a.substring(2), 16);
-            }else if (o.contentEquals("-d")) { // write reg
+            } else if (o.contentEquals("-d")) { // write reg
                 String a = args[i + 1];
                 i++;
-                writeDataLen = (a.length()-2)/2;  // subtract 0X from the string
+                writeDataLen = (a.length() - 2) / 2;  // subtract 0X from the string
                 writeData = a.substring(2);
             } else if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
@@ -172,7 +153,7 @@ public class AT24C512_App {
             }
         }
 
-        if(doRead & doWrite){
+        if (doRead & doWrite) {
             console.println("  !!! Invalid Parms, -r -w mutually exclusive");
             console.println(helpString);
             System.exit(43);
@@ -180,7 +161,7 @@ public class AT24C512_App {
         }
 
         var seeDev = new AT24C512(pi4j, console, busNum, address, traceLevel);
-        console.println("  Dev I2C detail    " +  seeDev.i2cDetail());
+        console.println("  Dev I2C detail    " + seeDev.i2cDetail());
         console.println("  Setup ----------------------------------------------------------");
 
 
@@ -188,7 +169,7 @@ public class AT24C512_App {
 
 
         byte[] toRead;
-        if(doWrite) {
+        if (doWrite) {
             if (numBytes != writeDataLen) {
                 console.println("  !!! -n NOT equal to length of -d data ");
                 console.println(helpString);
@@ -198,31 +179,31 @@ public class AT24C512_App {
             int toOffset = 0;
             int singleInt = 0;
             for (int i = 0; i < writeDataLen * 2; i += 2) {
-            try {
+                try {
                     singleInt = Integer.parseInt(writeData.substring(i, i + 2), 16);
-            } catch (NumberFormatException nfe) {
-                // not a valid hex
-                console.println("Invalid:  parm -d not a valid hex \n");
-                System.exit(45);
-            }
-            bytesToWrite[toOffset] = (byte) (bytesToWrite[toOffset] | (byte) (singleInt & 0xff));
+                } catch (NumberFormatException nfe) {
+                    // not a valid hex
+                    console.println("Invalid:  parm -d not a valid hex \n");
+                    System.exit(45);
+                }
+                bytesToWrite[toOffset] = (byte) (bytesToWrite[toOffset] | (byte) (singleInt & 0xff));
                 toOffset++;
             }
             int bWritten = seeDev.writeEEPROM(writeReg, writeDataLen, bytesToWrite);
             console.println("Wrote " + bWritten + " bytes, expected : " + writeDataLen);
-        } else if(doRead) {
+        } else if (doRead) {
             toRead = seeDev.readEEPROM(readReg, numBytes);
             var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
             details = details + String.format(" %02x: ", 0);
             for (int i = 0; i < numBytes; i++) {
                 details = details + String.format("%02x ", toRead[i]) + " ";
-                if (((i > 0) && ((i + 1) % 16) == 0) || (i == 15) ){
+                if (((i > 0) && ((i + 1) % 16) == 0) || (i == 15)) {
                     details = details + "\n";
                     details = details + String.format(" %02x: ", i + 1);
                 }
             }
-            console.println("Read "  + numBytes + "  bytes   "  + details);
-        }else if(doCurrentRead) {
+            console.println("Read " + numBytes + "  bytes   " + details);
+        } else if (doCurrentRead) {
             toRead = seeDev.readCurrentAddrEEPROM(numBytes);
             var details = "\n     0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f \n";
             details = details + String.format(" %02x: ", 0);
@@ -233,7 +214,7 @@ public class AT24C512_App {
                     details = details + String.format(" %02x: ", i + 1);
                 }
             }
-            console.println("Read "  + numBytes + "  bytes   "  + details);
+            console.println("Read " + numBytes + "  bytes   " + details);
         }
         // Shutdown Pi4J
         pi4j.shutdown();

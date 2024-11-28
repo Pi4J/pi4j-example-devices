@@ -64,7 +64,7 @@ public class HCSR04 {
     /**
      * Constructs an HCSR04 object with the specified GPIO pin numbers for trigger and echo.
      *
-     * @param pi4jContext the Pi4J context used to initialize GPIO pins
+     * @param pi4jContext   the Pi4J context used to initialize GPIO pins
      * @param trigPinNumber the GPIO pin number used for the trigger signal
      * @param echoPinNumber the GPIO pin number used for the echo signal
      */
@@ -105,7 +105,7 @@ public class HCSR04 {
      * on the duration of the echo pulse.
      *
      * @return the calculated distance to the object in centimeters, or -1 if the
-     *         measurement is invalid (out of range).
+     * measurement is invalid (out of range).
      */
     public double measureDistance() {
         try {
@@ -157,9 +157,9 @@ public class HCSR04 {
      * centimeters and accounts for the round-trip of the signal (to the object and back).
      *
      * @param pulseStartTime the start time of the echo pulse in nanoseconds
-     * @param pulseEndTime the end time of the echo pulse in nanoseconds
+     * @param pulseEndTime   the end time of the echo pulse in nanoseconds
      * @return the calculated distance to the object in centimeters, or -1 if the
-     *         pulse duration is outside expected bounds (handled in measureDistance).
+     * pulse duration is outside expected bounds (handled in measureDistance).
      */
     private double calculateDistance(long pulseStartTime, long pulseEndTime) {
         long pulseDuration = pulseEndTime - pulseStartTime; // Duration in nanoseconds

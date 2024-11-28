@@ -47,7 +47,7 @@ public class DAC8552App {
     public static void main(String[] args) throws InterruptedException, IOException {
         var console = new Console();
         Context pi4j = Pi4J.newAutoContext();
-       int csPin = 0;
+        int csPin = 0;
         double vref = 0.0;
         double voutput = 0.0;
         boolean hasVref = false;
@@ -55,9 +55,9 @@ public class DAC8552App {
         String channel = "";
         console.title("<-- The Pi4J V2 Project Extension  -->", "DAC8552App \n");
         String helpString = " parms:   -cs chip select GPIO -s HEX value SPI #  -t  trace  \n" +
-                "-chn  channel, -vout voltage out  -vref reference voltage\n" +
-                " Tracevalues : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-                " or \"off\"  Default \"info\"";
+            "-chn  channel, -vout voltage out  -vref reference voltage\n" +
+            " Tracevalues : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
+            " or \"off\"  Default \"info\"";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {

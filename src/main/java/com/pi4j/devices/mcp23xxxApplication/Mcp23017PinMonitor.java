@@ -35,21 +35,17 @@
 package com.pi4j.devices.mcp23xxxApplication;
 
 import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import com.pi4j.devices.appConfig.AppConfigUtilities;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
+import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.devices.base_util.mapUtil.MapUtil;
 import com.pi4j.devices.mcp23017.Mcp23017;
-
-import com.pi4j.context.Context;
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
-import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
 import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.util.HashMap;
 
@@ -95,7 +91,7 @@ public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIn
         for (int i = 0; i < 7; i++) {
             System.out.println();
             PinInterruptDefault dummy = new PinInterruptDefault(this.pi4j, this.pin, this.ffdc, this,
-                    this.dioPinData, this.cfgU, this.priChipName);
+                this.dioPinData, this.cfgU, this.priChipName);
             this.jumpTable[i] = new PinInterruptActionIntf() {
                 public void interruptAction(int pinNumber, DigitalState pinState) {
                     dummy.dummyAct(pinNumber, pinState);
@@ -104,7 +100,7 @@ public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIn
         }
 
         PinInterruptLED action = new PinInterruptLED(this.pi4j, this.pin, this.ffdc, this, this.dioPinData, cfgU,
-                this.priChipName);
+            this.priChipName);
         this.jumpTable[3] = new PinInterruptActionIntf() {
             public void interruptAction(int pinNumber, DigitalState pinState) {
                 action.changeLed(pinNumber, pinState);
@@ -120,7 +116,7 @@ public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIn
         for (int i = 8; i < 16; i++) {
             System.out.println();
             PinInterruptDefault dummy = new PinInterruptDefault(this.pi4j, this.pin, this.ffdc, this,
-                    this.dioPinData, cfgU, this.priChipName);
+                this.dioPinData, cfgU, this.priChipName);
             this.jumpTable[i] = new PinInterruptActionIntf() {
                 public void interruptAction(int pinNumber, DigitalState pinState) {
                     dummy.dummyAct(pinNumber, pinState);
@@ -128,7 +124,7 @@ public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIn
             };
         }
         PinInterruptLED ledAction = new PinInterruptLED(this.pi4j, this.pin, this.ffdc, this, this.dioPinData,
-                cfgU, this.priChipName);
+            cfgU, this.priChipName);
         this.jumpTable[15] = new PinInterruptActionIntf() {
             public void interruptAction(int pinNumber, DigitalState pinState) {
                 ledAction.changeLed(pinNumber, pinState);
@@ -193,8 +189,7 @@ public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIn
 
         FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel, Mcp23017PinMonitor.class);
 
-        ffdc.ffdcDebugEntry("mcp23017PinMonitor : Arg processing completed...\n" +
-                "");
+        ffdc.ffdcDebugEntry("mcp23017PinMonitor : Arg processing completed...\n");
 
         Mcp23017PinMonitor mcpObj = new Mcp23017PinMonitor(parmsObj.pi4j, parmsObj, ffdc, dioPinData, console);
 
@@ -249,21 +244,6 @@ public class Mcp23017PinMonitor extends Mcp23017 implements Mcp23xxxPinMonitorIn
         // If behind mux that was accounted for in the above call
         // cfgU.enableGpioPath
         Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc, parmsObj.busNum, parmsObj.priChipAddress, mcpObj.cfgData, mcpObj, console);
-
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                ffdc.ffdcFlushShutdown(); // push all logs to the file
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
 
         if (parmsObj.hasFullKeyedData) { // -z

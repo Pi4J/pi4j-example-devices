@@ -35,21 +35,20 @@
 package com.pi4j.devices.base_util.gpio;
 
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
+import com.pi4j.context.Context;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.PullResistance;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
-
-import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.PullResistance;
 
 /**
  * BaseGpioInOut
@@ -455,10 +454,10 @@ public class BaseGpioInOut implements GpioBasics {
         Set outerSet = outerMap.entrySet();
         Iterator<Map.Entry<String, Map<String, String>>> outerIterator = outerSet.iterator();
         while (outerIterator.hasNext()) {
-            Map.Entry<String, Map<String, String>> mentry = (Map.Entry) outerIterator.next();
+            Map.Entry<String, Map<String, String>> mentry = outerIterator.next();
             System.out.println("mentry  " + mentry);
             String pinName = mentry.getKey();
-            if (pinName.startsWith("gpio") == false) {
+            if (!pinName.startsWith("gpio")) {
                 this.ffdc.ffdcErrorExit("illegal name prefix :" + pinName, 1001);
             }
             int pinNumber = Integer.parseInt(pinName.substring(4));

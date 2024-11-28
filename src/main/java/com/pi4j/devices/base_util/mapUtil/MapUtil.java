@@ -34,16 +34,10 @@
 
 package com.pi4j.devices.base_util.mapUtil;
 
-import com.pi4j.io.gpio.digital.DigitalState;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
-import com.pi4j.devices.base_util.gpio.GpioBasics;
 import com.pi4j.devices.base_util.ffdc.FfdcUtil;
-import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
-import com.pi4j.io.gpio.digital.PullResistance;
+import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
+
+import java.util.HashMap;
 
 
 /**
@@ -78,12 +72,12 @@ public class MapUtil {
 
     /**
      * createMap
-     *  <p>
+     * <p>
      * PreCond: AppMapUtils instance initialized.  See CTOR
-     * @param pin number for the string data
-     * @param dataStr   String to converted to a dictionary
-     * @return  Dictionary of details for the 'pin'
      *
+     * @param pin     number for the string data
+     * @param dataStr String to converted to a dictionary
+     * @return Dictionary of details for the 'pin'
      */
     public HashMap<String, HashMap<String, String>> createMap(int pin, String dataStr) {
         this.ffdc.ffdcMethodEntry("mcpConfigure::createMap");
@@ -92,7 +86,7 @@ public class MapUtil {
         HashMap<String, String> innerMap;
         outerMap = new HashMap<String, HashMap<String, String>>();
         innerMap = new HashMap<String, String>();
-        String result = new String();
+        String result = "";
         // remove {}
         result = dataStr.replace("{", "");
         result = result.replace("}", "");
@@ -103,7 +97,7 @@ public class MapUtil {
         // split on ,
         result = result.trim();
 
-        String arrayDict[] = result.split(",", 0);
+        String[] arrayDict = result.split(",", 0);
         for (String temp1 : arrayDict) {
             String key = temp1.substring(0, temp1.indexOf(":"));
             String val = temp1.substring(temp1.indexOf(":") + 1);
@@ -116,11 +110,11 @@ public class MapUtil {
 
     /**
      * createXtraFullMap
-     *  <p>
+     * <p>
      * PreCond: AppMapUtils instance initialized.  See CTOR
-     * @param fullDataStr   String to converted to a dictionary
-     * @return  Dictionary of details for the 'pin'
      *
+     * @param fullDataStr String to converted to a dictionary
+     * @return Dictionary of details for the 'pin'
      */
     public HashMap<String, HashMap<String, HashMap<String, String>>> createXtraFullMap(String fullDataStr) {
 
@@ -130,7 +124,7 @@ public class MapUtil {
         rMap = new HashMap<String, HashMap<String, HashMap<String, String>>>();
         HashMap<String, HashMap<String, String>> internalDetailMap;
         internalDetailMap = new HashMap<String, HashMap<String, String>>();
-        String result = new String();
+        String result = "";
         result = fullDataStr.trim();
         // remove '
         result = result.replace("'", "");
@@ -142,7 +136,7 @@ public class MapUtil {
         // int cardIdStart = result.indexOf("{{", offset);
         // int cardIdEnd = result.indexOf(":" , offset) -1 ;
         // String cardName = result.substring( cardIdStart, cardIdEnd);
-        String rawText = new String();
+        String rawText = "";
 
         // int valueEnd = result.indexOf("}}}", cardIdStart); // end of this
         // cards
@@ -170,11 +164,11 @@ public class MapUtil {
 
     /**
      * createFullMap
-     *  <p>
+     * <p>
      * PreCond: AppMapUtils instance initialized.  See CTOR
-     * @param fullDataStr   String to converted to a dictionary
-     * @return  Dictionary of details for the 'pin'
      *
+     * @param fullDataStr String to converted to a dictionary
+     * @return Dictionary of details for the 'pin'
      */
     public HashMap<String, HashMap<String, String>> createFullMap(String fullDataStr) {
         // public void createFullMap(String FullDataStr) {
@@ -184,7 +178,7 @@ public class MapUtil {
         HashMap<String, HashMap<String, String>> tempMap;
         outerMap = new HashMap<String, HashMap<String, String>>();
         innerMap = new HashMap<String, String>();
-        String result = new String();
+        String result = "";
         result = fullDataStr.trim();
         // remove '
         result = result.replace("'", "");
@@ -225,7 +219,7 @@ public class MapUtil {
                 majorKey = prepend + pinNum;
             }
 
-            String value = new String();
+            String value = "";
             endOfValue = ((result.indexOf("}", valueStart)));
             // starting at the inner brace, get all K/V's and the closing brace
             value = result.substring(result.indexOf("{", valueStart), (endOfValue + 1));
@@ -251,27 +245,27 @@ public class MapUtil {
 
     /**
      * createMap
-     *  <p>
-     *      Create HashMap using the two strings supplied as params
-     *          pin5  {'dir':'out','int_ena':'no'}
+     * <p>
+     * Create HashMap using the two strings supplied as params
+     * pin5  {'dir':'out','int_ena':'no'}
      *
-     *      </p>
-     *      <p>
+     * </p>
+     * <p>
      * PreCond: AppMapUtils instance initialized.  See CTOR
-     *      </p>
-     * @param majorKey   String to converted to a dictionary key
-     * @param  dataStr    String to convert to a HashMap value
-     * @return  Dictionary of details for the  majorkey
+     * </p>
      *
+     * @param majorKey String to converted to a dictionary key
+     * @param dataStr  String to convert to a HashMap value
+     * @return Dictionary of details for the  majorkey
      */
-   public HashMap<String, HashMap<String, String>> createMap(String majorKey, String dataStr) {
+    public HashMap<String, HashMap<String, String>> createMap(String majorKey, String dataStr) {
         this.ffdc.ffdcMethodEntry("mcpConfigure::createMap");
         // System.out.println(" dataStr : " + dataStr);
         HashMap<String, HashMap<String, String>> outerMap;
         HashMap<String, String> innerMap;
         outerMap = new HashMap<String, HashMap<String, String>>();
         innerMap = new HashMap<String, String>();
-        String result = new String();
+        String result = "";
         // remove {}
         result = dataStr.replace("{", "");
         result = result.replace("}", "");
@@ -282,7 +276,7 @@ public class MapUtil {
         // split on ,
         result = result.trim();
 
-        String arrayDict[] = result.split(",", 0);
+        String[] arrayDict = result.split(",", 0);
         for (String temp1 : arrayDict) {
             String key = temp1.substring(0, temp1.indexOf(":"));
             String val = temp1.substring(temp1.indexOf(":") + 1);

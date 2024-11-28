@@ -80,9 +80,8 @@ public interface BMP280Interface {
     double pressureMb();
 
     /**
-     *
-     * @param   register
-     * @return  8bit value read from register
+     * @param register
+     * @return 8bit value read from register
      */
     int readRegister(int register);
 
@@ -92,12 +91,11 @@ public interface BMP280Interface {
      * @param buffer     Buffer to return read data
      * @return count     number bytes read or fail -1
      */
- //   int readRegister(byte[] register, byte[] buffer);
+    //   int readRegister(byte[] register, byte[] buffer);
 
     /**
-     *
-     * @param register   register address
-     * @param buffer     Buffer to return read data
+     * @param register register address
+     * @param buffer   Buffer to return read data
      * @return count     number bytes read or fail -1
      */
     int readRegister(int register, byte[] buffer);
@@ -109,13 +107,12 @@ public interface BMP280Interface {
      * @param dataLength  lentgh of data to write
      * @return bytes written, else -1
      */
- //   int writeRegister(byte[] register, byte[] data, int dataLength);
+    //   int writeRegister(byte[] register, byte[] data, int dataLength);
 
 
     /**
-     *
-     * @param register  byte register
-     * @param data      byte data to write
+     * @param register byte register
+     * @param data     byte data to write
      * @return bytes written, else -1
      */
     int writeRegister(int register, int data);

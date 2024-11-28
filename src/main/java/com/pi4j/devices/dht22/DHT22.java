@@ -61,7 +61,7 @@ public class DHT22 {
 
     private final Console console;
     private final Context pi4j;
-    private DigitalOutput oeGpio = null;
+    private final DigitalOutput oeGpio = null;
     private int dataPinNum = 0xff;
     private final String traceLevel;
     private Logger logger;
@@ -156,7 +156,8 @@ public class DHT22 {
     }
 
 
-    public void readAndDisplayData() {
+    public void
+    readAndDisplayData() {
         {
             double temperature, humidity;
 
@@ -211,7 +212,7 @@ public class DHT22 {
             }
         }
         this.idleInputPin();
-        double rval[] = null;
+        double[] rval = null;
         double temperature = 0.0;
         double humidity = 0.0;
         //should be 40 but the first few bits are often missed and often equal 0
@@ -250,7 +251,6 @@ public class DHT22 {
         this.createOutputPin();
         this.dataOut.low();
         while (System.nanoTime() - now < 2000000) {
-            ;
         }
         this.dataOut.high();
         this.idleOutputPin();

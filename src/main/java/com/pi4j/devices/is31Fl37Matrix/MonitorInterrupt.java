@@ -1,7 +1,6 @@
 package com.pi4j.devices.is31Fl37Matrix;
 
 
-
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.util.Console;
@@ -15,19 +14,18 @@ import java.util.Properties;
  * This is coded specifically to the manner in which the IS31FL3731 chip
  * toggles the INTB pin.  Used in debugging the Pi OS missing short
  * duration level changes on a GPIO
- *        It Is NOT a generic monitor program.
- *
+ * It Is NOT a generic monitor program.
+ * <p>
  * Sole purpose is unit testing.  Pi4 with Pi OS 64bit
  * missing short duration interrupt. This program allows
  * measuring the interrupt duration.
- *   is31Fl37Matrix.MonitorInterrupt -p 25 -d DOWN
+ * is31Fl37Matrix.MonitorInterrupt -p 25 -d DOWN
  */
 public class MonitorInterrupt {
 
 
     /**
      * <p>Constructor for MonitorInterrupt.</p>
-     *
      */
     public MonitorInterrupt() {
     }
@@ -78,13 +76,13 @@ public class MonitorInterrupt {
                 if (pullDirection.contentEquals("UP")) {
                     i++;
                     pd = PullResistance.PULL_UP;
-                }else if (pullDirection.contentEquals("DOWN")) {
+                } else if (pullDirection.contentEquals("DOWN")) {
                     i++;
                     pd = PullResistance.PULL_UP;
-                }else if (pullDirection.contentEquals("OFF")) {
+                } else if (pullDirection.contentEquals("OFF")) {
                     i++;
                     pd = PullResistance.PULL_UP;
-                } else{
+                } else {
                     console.println("INVALID Parms -p pin to monitor interrupt, -d direction of pull <UP DOWN OFF>");
                 }
             }
@@ -100,13 +98,12 @@ public class MonitorInterrupt {
         // create a digital input instance using the default digital input provider
         // we will use the PULL_DOWN argument to set the pin pull-down resistance on this GPIO pin
         var config = DigitalInput.newConfigBuilder(pi4j)
-                .load(properties)
-                .provider("gpiod-digital-input") // linuxfs   pigpio
-                .build();
+            .load(properties)
+            .provider("gpiod-digital-input") // linuxfs   pigpio
+            .build();
 
         monitorPin = pi4j.create(config);
         monitorPin.addListener(new MatrixGpioListener());
-
 
 
         // lets read the digital output state
@@ -123,7 +120,7 @@ public class MonitorInterrupt {
         console.println();
         console.println("CHANGE INPUT STATES VIA I/O HARDWARE AND CHANGE EVENTS WILL BE PRINTED BELOW:");
 
-        for(int c = 0; c < countLoops; c++){
+        for (int c = 0; c < countLoops; c++) {
             Thread.sleep(500);
             console.println(monitorPin.state() + "state");
         }
@@ -139,7 +136,8 @@ public class MonitorInterrupt {
 
         Instant startInstant;
         Instant endInstant;
-          public MatrixGpioListener() {
+
+        public MatrixGpioListener() {
            /* Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     System.out.println("MatrixGpioListener: Performing ctl-C shutdown");
@@ -160,7 +158,7 @@ public class MonitorInterrupt {
                 start = System.currentTimeMillis();
                 startInstant = Instant.now();
                 System.out.println("onDigitalStateChange Pin went low");
-            }else if (event.state() == DigitalState.HIGH) {
+            } else if (event.state() == DigitalState.HIGH) {
                 end = System.currentTimeMillis();
                 Instant endInstant = Instant.now();
                 System.out.println("onDigitalStateChange Pin went high");
@@ -171,7 +169,7 @@ public class MonitorInterrupt {
                 }
                 Duration timeElapsed = Duration.between(startInstant, endInstant);
                 System.out.println("timeElapsed time MS " + timeElapsed.toMillis());
-            }else{
+            } else {
                 System.out.println("Strange event state  " + event.state());
             }
         }

@@ -40,7 +40,7 @@ import com.pi4j.util.Console;
 
 /**
  * Mcp23xxxParms
- *
+ * <p>
  * State only class, used to pass may variable to the various methods.
  */
 
@@ -48,9 +48,10 @@ public class Mcp23xxxParms {
 
     /**
      * CTOR
+     *
      * @param console Console object
      */
-    public Mcp23xxxParms(Console console){
+    public Mcp23xxxParms(Console console) {
         super();
         this.console = console;
 
@@ -100,12 +101,12 @@ public class Mcp23xxxParms {
     // , -b bus, -a address
     public void usage() {
         System.out.println("options   -h 'help', -d drive-pin with -o ON/OFF, \n"
-                + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r) \n"
-                + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\"\n"
-                + "-c primary chip     -p primary pin \n"
-                + "-z  gpios config dict    -i interript monitor on/off -q mainChip \n"
-                + "-g gpio,   -x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs  \n"
-                + "     ffdc_lvl 0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF  \n");
+            + "-r read-pin , -k \"{'dir':'out','int_ena':'no'}\" (using -d or -r) \n"
+            + "-m \"{'pin1':{'dir':'in','pull':'down','default':'0','do_compare':'yes','int_ena':'yes','act':'high'}}\"\n"
+            + "-c primary chip     -p primary pin \n"
+            + "-z  gpios config dict    -i interript monitor on/off -q mainChip \n"
+            + "-g gpio,   -x reset-chip GPIO# -n resetPin -f ffdc_lvl  -y dumpRegs  \n"
+            + "     ffdc_lvl 0 < TRACE 1 DEBUG < 2 INFO < 3 WARN < 4 ERROR < 5 FATAL < 6 OFF  \n");
     }
 
 }

@@ -40,25 +40,19 @@ package com.pi4j.devices.mcp23xxxApplication;
 
 
 import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import com.pi4j.devices.appConfig.AppConfigUtilities;
+import com.pi4j.devices.base_util.ffdc.FfdcUtil;
 import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
+import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.devices.base_util.mapUtil.MapUtil;
 import com.pi4j.devices.mcp23008.Mcp23008;
-
-import com.pi4j.context.Context;
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
-import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
 import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
 import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.util.Console;
 
 import java.util.HashMap;
-
-
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 /**
  * Mcp23008PinMonitor
@@ -101,9 +95,9 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         this.ffdc.ffdcMethodEntry("installInterruptHandler");
 
         for (int i = 0; i < 7; i++) {
-            System.out.println("");
+            System.out.println();
             PinInterruptDefault dummy = new PinInterruptDefault(this.pi4j, this.pin, this.ffdc, this,
-                    this.dioPinData, this.cfgU, this.priChipName);
+                this.dioPinData, this.cfgU, this.priChipName);
             this.jumpTable[i] = new PinInterruptActionIntf() {
                 public void interruptAction(int pinNumber, DigitalState pinState) {
                     dummy.dummyAct(pinNumber, pinState);
@@ -112,7 +106,7 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         }
 
         PinInterruptLED action = new PinInterruptLED(this.pi4j, this.pin, this.ffdc, this, this.dioPinData, cfgU,
-                this.priChipName);
+            this.priChipName);
         this.jumpTable[3] = new PinInterruptActionIntf() {
             public void interruptAction(int pinNumber, DigitalState pinState) {
                 action.changeLed(pinNumber, pinState);
@@ -236,20 +230,6 @@ public class Mcp23008PinMonitor extends Mcp23008 implements Mcp23xxxPinMonitorIn
         // cfgU.enableGpioPath
         Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc, parmsObj.busNum, parmsObj.priChipAddress, mcpObj.cfgData, mcpObj, console);
 
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                ffdc.ffdcFlushShutdown(); // push all logs to the file
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
 
         if (parmsObj.hasFullKeyedData) { // -g
             HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.fullKeyedData);

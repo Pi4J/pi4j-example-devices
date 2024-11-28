@@ -38,10 +38,8 @@ package com.pi4j.devices.mpl3115a2;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.exception.LifecycleException;
 import com.pi4j.util.Console;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
+
 
 public class MPL3115A2_App {
 
@@ -52,14 +50,14 @@ public class MPL3115A2_App {
 
     /**
      * See -h help text for usage
-     *
+     * <p>
      * Also, the -x reset chip.   Initial chip access may fail to retrieve data
      * and log an error message.  When the chip has completed reset normal data
      * retrieval will resume.
-     *
-     *
-     *     At present supports retrieval Temperature Pressure and Altitude.
-     *  A future commit will incorporate 'target' interrupt support.
+     * <p>
+     * <p>
+     * At present supports retrieval Temperature Pressure and Altitude.
+     * A future commit will incorporate 'target' interrupt support.
      */
     public static void main(String[] args) throws Exception {
 
@@ -68,13 +66,13 @@ public class MPL3115A2_App {
         int address = MPL3115A2_Declares.DEFAULT_ADDRESS;
 
         boolean doReset = false;
-        int gpio_int_1_num = 0x42 ;
-        int gpio_int_2_num = 0x42 ;
+        int gpio_int_1_num = 0x42;
+        int gpio_int_2_num = 0x42;
         float pw = 0;
         float tw = 0;
         float tg = 0;
         float pg = 0;
-        float pa = 0 ;
+        float pa = 0;
 
         // ------------------------------------------------------------
         // Initialize the Pi4J Runtime Context
@@ -99,20 +97,6 @@ public class MPL3115A2_App {
         System.out.println("----------------------------------------------------------");
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
-        // Prior to running methods, set up control-c handler
-        Signal.handle(new Signal("INT"), new SignalHandler() {
-            public void handle(Signal sig) {
-                System.out.println("Performing ctl-C shutdown");
-                try {
-                    pi4j.shutdown();
-                } catch (LifecycleException e) {
-                    e.printStackTrace();
-                }
-                Thread.dumpStack();
-                System.exit(2);
-            }
-        });
-
 
         final Console console = new Console();
         console.print("==============================================================");
@@ -121,9 +105,9 @@ public class MPL3115A2_App {
 
 
         String helpString = " parms: -b hex value bus    -a hex value address -int1 interrupt1 gpio," +
-                " -int2 interrrupt2 gpio, -x do reset,  -t trace -Pa local_Pa\n" +
-                "  -PW pressure/alt window -PG pressure/alt limit   -TW temp window -TG temp limit  \n" +
-                " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
+            " -int2 interrrupt2 gpio, -x do reset,  -t trace -Pa local_Pa\n" +
+            "  -PW pressure/alt window -PG pressure/alt limit   -TW temp window -TG temp limit  \n" +
+            " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -131,39 +115,39 @@ public class MPL3115A2_App {
                 String a = args[i + 1];
                 busNum = Integer.parseInt(a.substring(2), 16);
                 i++;
-            }else if (o.contentEquals("-TG")) { // temp limit
+            } else if (o.contentEquals("-TG")) { // temp limit
                 String a = args[i + 1];
                 i++;
-                tg  = Float.parseFloat(a);
-            }else if (o.contentEquals("-TW")) { // temp window
+                tg = Float.parseFloat(a);
+            } else if (o.contentEquals("-TW")) { // temp window
                 String a = args[i + 1];
                 i++;
-                tw  = Float.parseFloat(a);
-            }else if (o.contentEquals("-PG")) { // pressure limit
+                tw = Float.parseFloat(a);
+            } else if (o.contentEquals("-PG")) { // pressure limit
                 String a = args[i + 1];
                 i++;
-                pg  = Float.parseFloat(a);
-            }else if (o.contentEquals("-PW")) { // pressure window
+                pg = Float.parseFloat(a);
+            } else if (o.contentEquals("-PW")) { // pressure window
                 String a = args[i + 1];
                 i++;
-                pw  = Float.parseFloat(a);
+                pw = Float.parseFloat(a);
             } else if (o.contentEquals("-Pa")) { // local Pa
                 String a = args[i + 1];
                 i++;
-                pa  = Float.parseFloat(a);
-            }else if (o.contentEquals("-int1")) {
+                pa = Float.parseFloat(a);
+            } else if (o.contentEquals("-int1")) {
                 String a = args[i + 1];
                 i++;
                 gpio_int_1_num = Integer.parseInt(a);
-            }else if (o.contentEquals("-int2")) {
+            } else if (o.contentEquals("-int2")) {
                 String a = args[i + 1];
                 i++;
                 gpio_int_2_num = Integer.parseInt(a);
-            }else if (o.contentEquals("-a")) { // device address
+            } else if (o.contentEquals("-a")) { // device address
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-            }else if (o.contentEquals("-x")) {
+            } else if (o.contentEquals("-x")) {
                 doReset = true;
             } else if (o.contentEquals("-t")) {
                 String a = args[i + 1];
@@ -186,12 +170,12 @@ public class MPL3115A2_App {
         }
 
 
-        var mplDev = new MPL3115A2(pi4j, console, busNum, address,gpio_int_1_num,gpio_int_2_num, traceLevel);
+        var mplDev = new MPL3115A2(pi4j, console, busNum, address, gpio_int_1_num, gpio_int_2_num, traceLevel);
         console.println("  Dev I2C detail    " + mplDev.i2cDetail());
         console.println("  Setup ----------------------------------------------------------");
 
 
-        if(doReset){
+        if (doReset) {
             mplDev.reset();
         }
 
@@ -215,7 +199,7 @@ public class MPL3115A2_App {
 
 
         console.println("Adjust the Pa used in altitude calculation ");
-        if(pa > 0){
+        if (pa > 0) {
             mplDev.set_local_Pa_correction((long) (pa));
         }
         console.println("Again obtain the altitude in meters using new Pa ");
@@ -224,16 +208,16 @@ public class MPL3115A2_App {
         console.println(" Altitude Meters = " + altitudePa);
 
 
-        if(pg > 0){
+        if (pg > 0) {
             mplDev.set_P_PGT((long) pg);
         }
-        if(pw > 0){
+        if (pw > 0) {
             mplDev.set_P_WND((long) pw);
         }
-        if(tg > 0){
+        if (tg > 0) {
             mplDev.set_T_TGT((long) tg);
         }
-        if(tw > 0){
+        if (tw > 0) {
             mplDev.set_T_WND((long) tw);
         }
 
