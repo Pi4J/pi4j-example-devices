@@ -47,11 +47,6 @@ import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
 
 public class ADS1256App {
-    public static enum PinTrackingConflictHandler {
-	printAndExit,
-	printAndRecover,
-	silentAndRecover
-    }
 
     public static void main(String[] args) throws InterruptedException, IOException {
 	var console = new Console();
@@ -267,7 +262,7 @@ public class ADS1256App {
 	    System.out.println("readAnalogDifferential() returned : channel  :" + ppName + "/" + pnName + "  value  :" + rtn);
 	    try {
 		while(dumpRepeatedly & (System.in.available() == 0 || System.in.read() != '\n')) {
-		    System.out.print("\033[1A");//Go back up 1 lines to rewite the output
+		    System.out.print("\033[1A");//Go back up 1 line to rewite the output
 		    rtn = ads.readAnalogDifferential(MuxValue.valueOf(ppName).ordinal(), MuxValue.valueOf(pnName).ordinal());
 		    System.out.println("readAnalogDifferential() returned : channel  :" + ppName + "/" + pnName + "  value  :" + rtn);
 		    Thread.sleep(1000);
