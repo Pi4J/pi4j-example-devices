@@ -7,7 +7,7 @@
  *     * **********************************************************************
  *     * ORGANIZATION  :  Pi4J
  *     * PROJECT       :  Pi4J :: EXTENSION
- *     * FILENAME      :  ADS1256.java
+ *     * FILENAME      :  ADS1255.java
  *     *
  *     * This file is part of the Pi4J project. More information about
  *     * this project can be found here:  https://pi4j.com/
@@ -41,25 +41,25 @@ import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
 
-public final class ADS1256 extends AbstractADS125x {
+public final class ADS1255 extends AbstractADS125x {
 
     @SuppressWarnings("exports")
-    public ADS1256(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect,
+    public ADS1255(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect,
 	    boolean reset, int drdyPin, int csPin, int rstPin,
 	    boolean crtRstGpio, int pdwnPin, boolean crtPdwnGpio,
 	    Console console, String traceLevel, double vref, DataRate sampleRate, boolean useBuffer)
-	    throws InterruptedException {
-	super(pi4j, spiBus, chipSelect, reset, drdyPin, csPin, rstPin, crtRstGpio,
-		pdwnPin, crtPdwnGpio, console, traceLevel, vref, sampleRate, useBuffer);
+		    throws InterruptedException {
+		super(pi4j, spiBus, chipSelect, reset, drdyPin, csPin, rstPin, crtRstGpio,
+			pdwnPin, crtPdwnGpio, console, traceLevel, vref, sampleRate, useBuffer);
     }
 
     @Override
     public int getNumGpioPins() {
-	return 4;
+	return 2;
     }
 
     @Override
     public int getNumAnalogPins() {
-	return 8;
+	return 2;
     }
-}//end ADS1256
+}//end ADS1255
