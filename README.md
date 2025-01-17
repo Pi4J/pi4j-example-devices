@@ -16,7 +16,7 @@ The following lists the currently supported devices within this project:
 * [1602A LCD  HD44780U](src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md): App uses SN74HC595 to control the LCD
 * [1602A LCD MCP23017 I2C  Controller](src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md): App uses MCP23017 to control the LCD
 * [1602A_LCD_PCF8574A I2C  Controller](src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md): App uses PCF8574A to control the LCD
-* [ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md) (1)
+* [ADS1255/ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md) (1)
 * [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1) (2)
 * [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md) (1)
 * [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md) (1)(3)
