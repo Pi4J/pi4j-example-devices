@@ -69,7 +69,7 @@ public class ADS1256App {
 
         int gpiopPin = 42;
 
-        console.title("<-- The Pi4J V2 Project Extension  -->", "MCP3008App");
+        console.title("<-- The Pi4J V2 Project Extension  -->", "ADS1256App");
         String helpString = " parms:  -vref decimal reference voltage  \n" +
             "-rst resetPin   -cs  chipSelectPin   -drdy  drdyPin  -pdwn syn/pwrdPin \n" +
             "  -pp -pn  AIN0 AIN1 AIN2 AIN3 AIN4 AIN5 AIN6 AIN7 AINCOM   -x reset \n" +

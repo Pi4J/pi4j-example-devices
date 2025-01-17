@@ -20,7 +20,7 @@ public class MCP3008App {
 
         double vref = 0;
 
-        SpiChipSelect chipSelect = SpiChipSelect.CS_0;
+        SpiChipSelect chipSelect = SpiChipSelect.CS_1;
         SpiBus spiBus = SpiBus.BUS_0;
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP3008App");
