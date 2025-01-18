@@ -4,10 +4,68 @@
 2. cd target/distribution
 3. sudo ./runADS1256.sh
 
-Note_0 Within the code of this application, The use of -rp or -sp and
-all AD/DA parms will be ignored
+## Application Functions
+This test application performs the following mutually-exclusive functions:
+### Read a GPIO Pin (-rp)
+Read a the binary state of the GPIO pin specified by the -p option.
+### Set a GPIO Pin's Output State (-sp)
+Write the binary state of the GPIO pin specified by the -p option. Allowed values are HIGH and LOW.
+### Dump All Analog and GPIO Input States (-di)
+Put all analog and digital I/O to input mode, and print a table of every analog single-ended voltage and the binary state of every GPIO. Repeat as quickly as possible.
+### Modulate the GPIO Output States To A Chase Pattern (-chase)
+Put all GPIO pins to output mode. Turn one GPIO on at a time, sequentially. The update interval is 2s. An integer interval, in milliseconds, may be specified after this option. A reflection of the current state will be printed to the screen.
+### Perform a differential read of the specified analog input pair (default)
+Use -pp to set positive analog pin and -pn to set negative analog pin. Legal values are AIN0...AIN7 and AINCOM. Both properties default to AINCOM.
 
-Tested
+## Options
+### Dump Repeatedly (-dr)
+When dumping all input states or performing a differential read, dump repeatedly. For differential reads, the dump rate is 1/sec or as fast as can be done, whichever is slower. When dumping input states, the dump rate is as fast as possible.
+### Use Buffer (-buf)
+Enables the AD125x analog input buffer.
+### Use Voting (-vo)
+Applies a 3-way error-correction voting algorithm to the inputs. For each read request, three are actually made and the best value is returned. Digital inputs are majority vote, analog inputs are median.
+### Specify Control Pins and Busses (-rst -cs -drdy -pdwn -s)
+ -rst Reset pin number (default 18)
+ -cs Chip Select GPIO pin number (default 22)
+ -drdy DRDY GPIO pin number (default 17)
+ -pdwn PDWN GPIO pin number (default 27)
+ -s SPI bus number, not pin (default 0)
+ The default pin numbers should automatically work with the pin numbers on the Waveshare High Precision AD/DA Board.
+### Specify Reference Voltage (-vref)
+ Notify the app of the reference voltage being fed between the VREFP and VEREFN pins. Defaults to 2.5 as that is what the Waveshare board uses.
+### Specify GPIO Pin On Which To Operate(-p)
+Used in combination with -rp and -sp to set or read a pin.
+### Reset Chip On Startup (-x)
+### Specify ADC Data Rate (-sps)
+Specify ADC data rate in samples per second written as a single value as shown in the datasheet. Confirmed stable values are: 2.5, 5, 10, 15, 25, 30, 50, 60. High rates result in shorter response times while lower rates result in higher precision.
+## Notes
+All pin numbers are GPIO pin numbers, not physical pin numbers. For example, the GPIO 17 pin which is the default pin to use
+for DRDY is actually on physical pin 11. Consult a raspberry pi
+GPIO pinout chart for details.
+## Examples (Tested against Waveshare High Precision AD/DA board)
+### Dump all analog and digital inputs (-di) at 2/sec, 10SPS (-sps 10), repeatedly (-dr), reset before starting (-x)
+sudo ./runADS1256.sh -x -dr -di -sps 10
+### Dump all analog and digital inputs (-di) at 2/sec, buffer on (-buf), 50SPS (-sps 50), repeatedly (-dr), use 3-way voting/median (-vo), and reset before starting (-x)
+sudo ./runADS1256.sh -x -dr -di -sps 50 -buf -vo
+### Chase the GPIOs at 2sec interval (-chase) and reset before starting (-x)
+sudo ./runADS1256.sh -x -chase
+### Chase the GPIOs as quickly as possible (-chase 0) and reset before starting (-x)
+sudo ./runADS1256.sh -x -chase 0
+### Chase the GPIOs at 250ms intervals (-chase 250) and reset before starting (-x)
+sudo ./runADS1256.sh -x -chase 250
+### Get a differential reading (-rp) of AIN0 and AIN1 and exit
+sudo ./runADS1256.sh -pp AIN0 -pn AIN1
+### Get a single-ended reading of AIN0 against AINCOM and exit
+sudo ./runADS1256.sh -pp AIN0 -pn AINCOM
+### Set GPIO 1 to input-mode, print the state of GPIO 1 and exit
+sudo ./runADS1256.sh -p 1 -rp
+### Set GPIO 0 to output-mode, turn the pin on.
+sudo ./runADS1256.sh -p 0 -sp HIGH
+
+## Test Configuration (new)
+Waveshare High Precision AD/DA Board with all jumpers in their factory positions. Installed on a raspberry pi 3.
+In this case, AIN0 is controlled by the onboard potentiometer and AIN1 is controlled by the photocell.
+## Test Configuration (old)
 ADS1256 module mounted. The chip I have has no vref input pin and no labeling
 nor documentation. Used a VOM to map lines from the ADS1256 to external pins  
 It appears the DVdd 5V is used as the V-reference.
