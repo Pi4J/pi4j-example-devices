@@ -93,8 +93,9 @@ public class NeoPixel94V extends Component {
     /**
      * Default frequency of a WS2812 Neopixel Strip
      */
-    private static final int DEFAULT_FREQUENCY_PI3 = 800_000;   //use this for a Pi4
+    private static final int DEFAULT_FREQUENCY_PI3 = 800_000;   //use this for a pi 1 - 3
     private static final int DEFAULT_FREQUENCY_PI4 = 500_000;   //use this for a Pi4
+    private static final int DEFAULT_FREQUENCY_PI5 = 650_000;   //use this for a Pi5
 
     /**
      * between each rendering of the strip, there has to be a reset-time where nothing is written to the SPI
@@ -191,11 +192,11 @@ public class NeoPixel94V extends Component {
         return Spi.newConfigBuilder(pi4j)
             .id("SPI" + 1)
             .name("LED Matrix")
-            .bus(SpiBus.BUS_1)
+            .bus(SpiBus.BUS_0)
             .address(channel)
             .mode(SpiMode.MODE_0)
-            .baud(8 * DEFAULT_FREQUENCY_PI4) //     bit-banging from Bit to SPI-Byte
-            .provider("pigpio-spi")
+            .baud(8 * DEFAULT_FREQUENCY_PI5) //     bit-banging from Bit to SPI-Byte
+            .provider("linuxfs-spi")
             .build();
 
     }
