@@ -13,7 +13,7 @@
  *     * this project can be found here:  https://pi4j.com/
  *     * **********************************************************************
  *     * %%
- *     *   * Copyright (C) 2012 - 2022 Pi4J
+ *     *   * Copyright (C) 2012 - 2024 Pi4J
  *      * %%
  *     *
  *     * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,19 +37,13 @@
 package com.pi4j.devices.ads1256;
 
 import com.pi4j.context.Context;
-import com.pi4j.io.exception.IOException;
-import com.pi4j.io.gpio.digital.DigitalInput;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiChipSelect;
-import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class ADS1256 {
+
 
     enum MuxValue {
         AIN0,
@@ -608,161 +602,4 @@ public class ADS1256 {
         return read;
 
     }
-
-
-    private short mapDrateString(String name) {
-        ADS1256_DRATE[] drateMap = ADS1256_DRATE.values();
-        int posPin = 0xff;
-        for (ADS1256_DRATE col : drateMap) {
-            // Calling ordinal() to find index
-            // of drate.
-            if (col.toString().contentEquals(name)) {
-                posPin = col.ordinal();
-                this.logger.trace(" drate : " + name + "  No : " + ADS1256_DRATE_E[posPin]);
-                break;
-            }
-        }
-        return (short) (ADS1256_DRATE_E[posPin] & 0xff);
-    }
-
-    private short mapGainString(String name) {
-        ADS1256_GAIN[] drateMap = ADS1256_GAIN.values();
-        int posPin = 0xff;
-        for (ADS1256_GAIN col : drateMap) {
-            // Calling ordinal() to find index
-            // of Gain name.
-            if (col.toString().contentEquals(name)) {
-                posPin = col.ordinal();
-                this.logger.trace(" gain : " + name + "  No : " + posPin);
-                break;
-            }
-        }
-        return (short) (posPin & 0xff);
-    }
-
-    public DigitalState readGpio(int pin) {
-        this.logger.trace(">>> Enter readGpio pin  " + pin);
-        DigitalState rval = DigitalState.UNKNOWN;
-        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
-        if (this.isPinInput(pin, regVal)) {
-            rval = this.getPinState(pin, regVal);
-        }
-        this.logger.trace("<<< Exit readGpio  State" + rval);
-        return (rval);
-    }
-
-    public boolean setGpioDirOut(int pin) {
-        this.logger.trace(">>> Enter setGpioDirOut pin  " + pin);
-        boolean rval = false;
-        // this.logger.trace("ADCON"  + this.readRegData(ADS1256_Declares.REG_ADCON));
-        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
-        regVal &= ~(0x10 << pin) & 0xff;
-        this.writeReg(ADS1256_Declares.REG_IO, regVal);
-        rval = true;
-        this.logger.trace("<<< Exit setGpioDirOut  " + rval);
-        return (rval);
-    }
-
-    public boolean setGpioDirIn(int pin) {
-        this.logger.trace(">>> Enter setGpioDirIn pin  " + pin);
-        boolean rval = false;
-        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
-        regVal |= (0x10 << pin) & 0xff;
-        this.writeReg(ADS1256_Declares.REG_IO, regVal);
-        this.logger.trace("<<< Exit setGpioDirIn  State" + rval);
-        rval = true;
-        return (rval);
-    }
-
-    private DigitalState getPinState(int pin, byte registerVal) {
-        DigitalState rval = DigitalState.UNKNOWN;
-        this.logger.trace(">>> Enter isPinInput pin: " + pin);
-        if ((registerVal & (0x01 << pin)) == 0) {
-            rval = DigitalState.LOW;
-        } else {
-            rval = DigitalState.HIGH;
-        }
-        this.logger.trace(" Exit isPinInput ");
-        return (rval);
-    }
-
-    public boolean setGpio(int pin, DigitalState newState) {
-        this.logger.trace(">>> Enter setGpio  pin " + pin + "  state : " + newState);
-        boolean rval = false;
-        byte regVal = this.readRegData(ADS1256_Declares.REG_IO);
-        if (this.isPinOutput(pin, regVal)) {
-            rval = this.setPinState(pin, newState, regVal);
-        } else {
-            this.logger.trace("Pin " + pin + " not configured for output");
-        }
-        this.logger.trace("<<< Exit setGpio " + rval);
-        return (rval);
-    }
-
-    private boolean setPinState(int pin, DigitalState newState, byte registerVal) {
-        boolean rval = false;
-        this.logger.trace(">>> Enter setPinState pin: " + pin + "  state: " + newState);
-        if (newState == DigitalState.HIGH) {
-            registerVal |= (1 << pin);
-            rval = true;
-        } else {
-            registerVal &= ~(1 << pin);
-            rval = true;
-        }
-        this.writeReg(ADS1256_Declares.REG_IO, registerVal);
-        this.logger.trace(" Exit setPinState   " + rval);
-        return (rval);
-    }
-
-    private boolean isPinInput(int pin, byte registerVal) {
-        boolean rval = false;
-        this.logger.trace(">>> Enter isPinInput pin: " + pin);
-        if ((registerVal & (0x10 << pin)) > 0) {
-            rval = true;
-        }
-        this.logger.trace(" Exit isPinInput " + rval);
-        return (rval);
-    }
-
-    private boolean isPinOutput(int pin, byte registerVal) {
-        boolean rval = false;
-        this.logger.trace(">>> Enter isPinOutput pin: " + pin);
-        if ((registerVal & (0x10 << pin)) == 0) {
-            rval = true;
-        }
-        this.logger.trace(" Exit isPinOutput " + rval);
-        return (rval);
-    }
-
-
-    // SPI device
-    //  public SpiDevice spi;
-
-    // ADC channel count
-    // file
-    private Spi spi;
-    private final Console console;
-    private final String traceLevel;
-    private final Logger logger;
-
-    private double vref = 2.5;
-    private final SpiChipSelect chipSelect;
-    private final SpiBus spiBus;
-
-    private final Context pi4j;
-    private boolean resetChip = false;
-
-    private DigitalInput drdyGpio;
-    private final int drdyPinNum;   // 17
-    private DigitalOutput csGpio;
-    private final int csPinNum;     //  22
-
-    private DigitalOutput rstGpio;
-    private final int rstPinNum;     //  18
-    private boolean crtRstGpio = false;
-    private DigitalOutput pdwnGpio;
-
-    private final int pdwnPinNum;     //  27
-    private boolean crtPdwnGpio = false;
-}
-
+}//end ADS1256
