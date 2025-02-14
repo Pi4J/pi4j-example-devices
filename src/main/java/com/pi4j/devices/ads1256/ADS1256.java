@@ -171,9 +171,10 @@ public class ADS1256 {
             .name("A/D converter")
             .bus(this.spiBus)
             .chipSelect(this.chipSelect)
+            .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
             .baud(976563) //Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_1)
-            .provider("linuxfs-spi")
+            .provider("pigpio-spi")
             .build();
         this.spi = this.pi4j.create(spiConfig);
 
@@ -377,7 +378,7 @@ public class ADS1256 {
         byte rval = 42;
         this.csGpio.low();
         busyWaitMS(2);
-        byte[] buf = new byte[4097] ; //{0, 0, 0};
+        byte[] buf = {0, 0, 0};
         buf[0] = (byte) (ADS1256_Declares.RREG | reg);
         buf[1] = 0x00;
         this.spi.write(buf);
@@ -586,7 +587,7 @@ public class ADS1256 {
         this.logger.trace(">>> Enter doRDATA ");
 
         int read = 0;
-        byte[] buf = {0, 0, 0};
+        int[] buf = {0, 0, 0};
 
         this.waitForDrdyLow();
         busyWaitMS(1);
@@ -594,8 +595,10 @@ public class ADS1256 {
         this.csGpio.low();
         busyWaitMS(2);
         this.spi.write(ADS1256_Declares.RDATA);
-        busyWaitMS(4);
-        this.spi.read(buf);
+        busyWaitMS(1);
+        buf[0] = this.spi.readByte();
+        buf[1] = this.spi.readByte();
+        buf[2] = this.spi.readByte();
         this.csGpio.high();
         read = (buf[0] << 16) & 0x00FF0000;
         read |= (buf[1] << 8) & 0x0000FF00;

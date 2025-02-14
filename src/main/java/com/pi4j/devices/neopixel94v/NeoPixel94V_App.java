@@ -49,12 +49,6 @@ public class NeoPixel94V_App {
         Context pi4j = Pi4J.newAutoContext();
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "NeoPixel94V");
-        // print installed providers
-        System.out.println("----------------------------------------------------------");
-        System.out.println("PI4J PROVIDERS");
-        System.out.println("----------------------------------------------------------");
-        pi4j.providers().describe().print(System.out);
-        System.out.println("----------------------------------------------------------");
 
 
         int pixels = 8;
@@ -93,7 +87,7 @@ public class NeoPixel94V_App {
 
         //set them all off, so nothing is shining
         System.out.println("All Off");
-       ledStrip.allOff();
+        ledStrip.allOff();
 
         ledStrip.waitForInput();
 
