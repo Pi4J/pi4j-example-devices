@@ -115,10 +115,9 @@ public abstract class AbstractADS125x implements ADS125x {
             .name("A/D converter")
             .bus(this.spiBus)
             .chipSelect(this.chipSelect)
-            .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
             .baud(976563) //Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_1)
-            .provider("pigpio-spi")
+            .provider("linuxfs-spi")
             .build();
         this.spi = this.pi4j.create(spiConfig);
 
