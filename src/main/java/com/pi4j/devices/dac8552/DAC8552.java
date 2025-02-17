@@ -159,10 +159,9 @@ public class DAC8552 {
             .chipSelect(SpiChipSelect.CS_0)   // not used
             // 30D400
             //     0b001100001101010000000000
-            .flags(0b0000000000000011100001L)  // Ux CE not used, MM mode 1
             .baud(976563)
             .mode(SpiMode.MODE_1)
-            .provider("pigpio-spi")
+            .provider("linuxfs-spi")
             .build();
         this.spi = this.pi4j.create(spiConfig);
 

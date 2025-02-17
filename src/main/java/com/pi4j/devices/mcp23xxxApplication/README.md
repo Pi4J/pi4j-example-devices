@@ -323,7 +323,5 @@ sudo ./runMcp23017PinMonitor.sh -q 9548#1 -d 14 -o OFF -p pin0 -c 23017#1
 
 NOTES
 ~/Pi4j_v2/Pi4J_V2_devices/src/main/python/monitor_py
-sudo pigpiod
-sudo killall pigpiod
 
 sudo ./monitor.py 27

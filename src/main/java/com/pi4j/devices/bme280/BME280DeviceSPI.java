@@ -51,7 +51,6 @@ import java.text.DecimalFormat;
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example must be executed with sudo as it uses PiGpio with:
  * sudo `which jbang` Pi4JTempHumPressSpi.java
  * <p>
  * Based on:
@@ -127,7 +126,7 @@ public class BME280DeviceSPI {
             .chipSelect(chipSelect)
             .baud(Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_0)
-            .provider("pigpio-spi")
+            .provider("linuxfs-spi")
             .build();
         spi = pi4j.create(spiConfig);
 

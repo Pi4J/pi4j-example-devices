@@ -52,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- JAVA COMPILER VERSIONS -->
-        <java.version>11</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
          <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
@@ -65,7 +65,7 @@
 
         <!-- DEPENDENCIES VERSIONS  2.0.3  -SNAPSHOT  -->
         <slf4j.version>1.7.30</slf4j.version>
-        <pi4j.version>2.7.1-SNAPSHOT</pi4j.version>
+        <pi4j.version>3.0.0-SNAPSHOT</pi4j.version>
 
         <!-- BUILD PLUGIN VERSIONS -->
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
@@ -96,6 +96,7 @@
             <name>Sonatype Open Source Maven Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
+
     </repositories>
 
     <dependencies>
@@ -133,11 +134,11 @@
             <artifactId>pi4j-core</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-pigpio</artifactId>
             <version>${pi4j.version}</version>
-        </dependency>
+        </dependency-->
         <!--dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-rp1spi</artifactId>
@@ -152,15 +153,15 @@
             <version>${pi4j.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-linuxfs</artifactId>
-            <version>${pi4j.version}</version>
         </dependency>
     </dependencies>
 
