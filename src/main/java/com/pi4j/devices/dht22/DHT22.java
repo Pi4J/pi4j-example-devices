@@ -71,7 +71,7 @@ public class DHT22 {
     private DigitalOutputConfigBuilder outputConfig1;
     private DigitalInputConfigBuilder inputConfig1;
 
-    private DHT22.DataInGpioListener listener;
+       private DHT22.DataInGpioListener listener;
 
 
     long timeElapsed;

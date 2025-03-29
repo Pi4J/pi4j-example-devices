@@ -36,7 +36,9 @@ public class MCP3008 {
             .id("SPI" + spiBus + " " + chipSelect)
             .name("A/D converter")
             .bus(spiBus)
-            .chipSelect(chipSelect)
+            .channel(7)
+           // .address(5)
+         //   .chipSelect(SpiChipSelect.CS_9)
           /*  .flags(0b0000000000000000000000L)*/
             .baud(Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_0)
