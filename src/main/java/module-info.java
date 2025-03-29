@@ -42,6 +42,7 @@ module com.pi4j.devices{
     exports com.pi4j.devices.sn74hc595;
     exports com.pi4j.devices.mcp4725;
     exports com.pi4j.devices.hd44780u_lcd1602a;
+    exports com.pi4j.devices.pca9685;
     exports com.pi4j.devices.pcf8574a_lcd1602a;
     exports com.pi4j.devices.mcp23017_lcd1602a;
     exports com.pi4j.devices.dht22;
