@@ -31,17 +31,21 @@ package com.pi4j.devices.pca9685;
 
 public class PCA9685Declares {
 
-    public static final int MODE0_ADDR = 0x00;
-    public static final byte MODE0_SUBADDR1 = 0x08;
-    public static final byte MODE0_SUBADDR2 = 0x04;
-    public static final byte MODE0_SUBADDR3 = 0x02;
+
+    static final int defaultClockSpeed = 25630710;
+
+
+    public static final int  MODE1_ADDR     = 0x00;
+    public static final int  MODE2_ADDR     = 0x01;
+    public static final byte MODE1_SUBADDR1 = 0x08;
+    public static final byte MODE1_SUBADDR2 = 0x04;
+    public static final byte MODE1_SUBADDR3 = 0x02;
 
 
     public static final int RESET_ADDR = 0x06;
     public static final int CONFIG_ADDRESS = 0x70;
 
 
-    public static final int MODEL2 = 0x01;
 
     public static final int SUBADR1 = 0x02; // bus1 subaddr 0xE2 bit0 rsrvd
     public static final int SUBADR2 = 0x03; // bus1 subaddr 0xE4 bit0 rsrvd

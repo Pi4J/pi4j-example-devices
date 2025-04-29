@@ -59,7 +59,7 @@ public class PCA9685 {
     private final PCA9685.DataInGpioListener listener = null;
 
     private I2CProvider i2CProvider = null;
-    private I2C tempDeviceReset = null;
+    private final I2C tempDeviceReset = null;
     private I2C tempDeviceAddr1 = null;
     private I2C tempDeviceAddr2 = null;
     private I2C tempDeviceAddr3 = null;
@@ -112,9 +112,45 @@ public class PCA9685 {
         }
 
 
+        var old_mode1 = this.device.readRegister(PCA9685Declares.MODE1_ADDR);
+        // clear power mode bit to normal operation
+        old_mode1 = old_mode1 & ~PCA9685Declares.SLEEP_LOW_PWR;
+        // ensure AutoInc bitis set
+        this.device.writeRegister(PCA9685Declares.MODE1_ADDR, (old_mode1 | PCA9685Declares.AUTO_INC_ENAB));
+
+        // set freq to 60
+        // todo  make into an arg
+        this.setFreq(60);
+        this.showMode1();
+
         this.logger.trace("<<< Initializing the chip");
     }
 
+    public void setFreq(int freq) {
+        this.logger.trace(">>> setFreq  " + freq);
+
+        int prescale = (int) ((PCA9685Declares.defaultClockSpeed / 4096.0 / freq + 0.5) - 1);
+        if (prescale < 3) {
+            this.logger.error("Invalid freq  " + freq);
+            System.exit(101);
+        }
+        var old_mode = this.device.readRegister(PCA9685Declares.MODE1_ADDR);
+        //  byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE1_AI)) | AUTO_INC_ENAB .MODE1_AI);
+        // byte newVal = (byte) (presentValue | 0XA0);
+        this.device.writeRegister(PCA9685Declares.MODE1_ADDR, (old_mode & 0x7F) | PCA9685Declares.SLEEP_LOW_PWR); //  # Mode 1, sleep
+        this.device.writeRegister(PCA9685Declares.PRE_SCALE, prescale);
+        this.device.writeRegister(PCA9685Declares.MODE1_ADDR, (old_mode));
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        this.device.writeRegister(PCA9685Declares.MODE1_ADDR, (old_mode | 0x20));
+    }
+
+    /**
+     * Reset   Reset IC and then set Mode1 t0 auto increment registers
+     */
     public void reset() {
         this.logger.trace(">>> Reset");
         if (tempDeviceReset == null) {
@@ -123,10 +159,16 @@ public class PCA9685 {
                 .bus(this.bus)
                 .device(0x00)
                 .build();
-            tempDeviceReset = i2CProvider.create(i2cConfig);
+            //  tempDeviceReset = i2CProvider.create(i2cConfig);
         }
+        // enable restart
+        var old_mode = this.device.readRegister(PCA9685Declares.MODE1_ADDR);
+        //       tempDeviceReset.writeRegister(PCA9685Declares.MODE1_ADDR, old_mode|0x80);
         //  Reset chip
-        tempDeviceReset.write(PCA9685Declares.RESET_ADDR);
+        this.device.write(PCA9685Declares.RESET_ADDR);
+        //set AI
+        this.device.writeRegister(PCA9685Declares.MODE1_ADDR, old_mode);
+
         this.logger.trace("<<< Reset");
     }
 
@@ -144,9 +186,9 @@ public class PCA9685 {
         }
         // Program subaddr1 to Usersupplied value.
         tempDeviceAddr1.writeRegister(PCA9685Declares.SUBADR1, (subAddress << 1));
-        var presentValue = tempDeviceAddr1.readRegister(PCA9685Declares.MODE0_ADDR);
-        byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE0_SUBADDR1)) | PCA9685Declares.MODE0_SUBADDR1);
-        tempDeviceAddr1.writeRegister(PCA9685Declares.MODE0_ADDR, newVal);
+        var presentValue = tempDeviceAddr1.readRegister(PCA9685Declares.MODE1_ADDR);
+        byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE1_SUBADDR1)) | PCA9685Declares.MODE1_SUBADDR1);
+        tempDeviceAddr1.writeRegister(PCA9685Declares.MODE1_ADDR, newVal);
         this.logger.trace("<<< setSubAddr1");
     }
 
@@ -164,9 +206,9 @@ public class PCA9685 {
         }
         // Program subaddr1 to Usersupplied value.
         tempDeviceAddr2.writeRegister(PCA9685Declares.SUBADR2, (subAddress << 1));
-        var presentValue = tempDeviceAddr2.readRegister(PCA9685Declares.MODE0_ADDR);
-        byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE0_SUBADDR2)) | PCA9685Declares.MODE0_SUBADDR2);
-        tempDeviceAddr2.writeRegister(PCA9685Declares.MODE0_ADDR, newVal);
+        var presentValue = tempDeviceAddr2.readRegister(PCA9685Declares.MODE1_ADDR);
+        byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE1_SUBADDR2)) | PCA9685Declares.MODE1_SUBADDR2);
+        tempDeviceAddr2.writeRegister(PCA9685Declares.MODE1_ADDR, newVal);
         this.logger.trace("<<< setSubAddr2");
     }
 
@@ -184,20 +226,182 @@ public class PCA9685 {
         }
         // Program subaddr1 to Usersupplied value.
         tempDeviceAddr3.writeRegister(PCA9685Declares.SUBADR3, (subAddress << 1));
-        var presentValue = tempDeviceAddr3.readRegister(PCA9685Declares.MODE0_ADDR);
-        byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE0_SUBADDR3)) | PCA9685Declares.MODE0_SUBADDR3);
-        tempDeviceAddr3.writeRegister(PCA9685Declares.MODE0_ADDR, newVal);
+        var presentValue = tempDeviceAddr3.readRegister(PCA9685Declares.MODE1_ADDR);
+        byte newVal = (byte) ((presentValue & (~PCA9685Declares.MODE1_SUBADDR3)) | PCA9685Declares.MODE1_SUBADDR3);
+        tempDeviceAddr3.writeRegister(PCA9685Declares.MODE1_ADDR, newVal);
         this.logger.trace("<<< setSubAddr3");
     }
 
-    public void enablePCA(boolean enable){
+    public void enablePCA(boolean enable) {
         this.logger.trace(">>> enablePCA {}", enable);
-       if (enable) {
+        if (enable) {
             this.oePin.low();
         } else {
             this.oePin.high();
         }
         this.logger.trace("<<< enablePCA");
+    }
+
+    public void setLedIntensity(int devAddr, int ledNum, int intensity) {
+        String formattedString = String.format(">>> setLedIntensity DevAddr %x  led %x intensity  %x", devAddr, ledNum, intensity);
+        this.logger.trace(formattedString);
+
+        if (intensity == 0xFFFF) {
+            // Special case for "fully on":
+            this.setLedOn(devAddr, ledNum, 0x1000, 0);
+        } else if (intensity < 0x0010) {
+            // case of "fullyoff"
+            this.setLedOn(devAddr, ledNum, 0, 0x1000);
+        } else {
+         //   intensity = intensity >> 4;
+            this.setLedOn(devAddr, ledNum, intensity, (4095 - intensity));
+        }
+    }
+
+
+    public void setLedOn(int devAddr, int ledNum, int ledOn, int ledOff) {
+        String formattedString = String.format(">>> setLedOn DevAddr %x  led %x time ON %x, led OFF %x", devAddr, ledNum, ledOn, ledOff);
+        this.logger.trace(formattedString);
+        I2C tempDeviceOn = this.device; //null;
+        if (tempDeviceOn == null) {
+            I2CProvider i2CProvider = this.pi4j.provider("linuxfs-i2c");
+            I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
+                .id("setLedOn_" + devAddr + "_" + ledNum)
+                .bus(this.bus)
+                .device(devAddr) //Pca9685Declares.CONFIG_ADDRESS)
+                .build();
+            //  tempDeviceOn = i2CProvider.create(i2cConfig);
+        }
+        byte[] data = new byte[4];
+        data[0] = (byte) (ledOn & 0x00ff);
+        data[1] = (byte) ((ledOn & 0x1f00) >> 8);
+        data[2] = (byte) (ledOff & 0x00ff);
+        data[3] = (byte) ((ledOff & 0x1f00) >> 8);
+        tempDeviceOn.writeRegister(PCA9685Declares.LED0_ON_L + (ledNum * 4), data);
+    }
+
+    public void setMode1(int newModeVal) {
+        var presentValue = this.device.readRegister(PCA9685Declares.MODE1_ADDR);
+        this.device.writeRegister(PCA9685Declares.MODE1_ADDR, newModeVal);
+        String formattedString = String.format(">>> setMode1 old value %x  ,newValue %x", presentValue, newModeVal);
+        this.logger.debug(formattedString);
+    }
+
+    public void setMode2(int newModeVal) {
+        var presentValue = this.device.readRegister(PCA9685Declares.MODE2_ADDR);
+        this.device.writeRegister(PCA9685Declares.MODE2_ADDR, newModeVal);
+        String formattedString = String.format(">>> setMode1 old value %x  ,newValue %x", presentValue, newModeVal);
+        this.logger.debug(formattedString);
+    }
+
+        public void showMode1() {
+        var presentValue = this.device.readRegister(PCA9685Declares.MODE1_ADDR);
+        String formattedString = String.format(">>> showMode1  %x", presentValue);
+        this.logger.debug(formattedString);
+        formattedString = "";
+        if ((presentValue & 0x1) == 0) {
+            formattedString = formattedString.concat("\nallCall no\n");
+        } else {
+            formattedString = formattedString.concat("\nallCall yes\n");
+        }
+
+        if ((presentValue & 0x2) == 0) {
+            formattedString = formattedString.concat("subaddress3response  no\n");
+        } else {
+            formattedString = formattedString.concat("subaddress3 response  yes\n");
+        }
+
+        if ((presentValue & 0x4) == 0) {
+            formattedString = formattedString.concat("subaddress2 response  no\n");
+        } else {
+            formattedString = formattedString.concat("subaddress2 response  yes\n");
+        }
+        if ((presentValue & 0x8) == 0) {
+            formattedString = formattedString.concat("subaddress1 response  no\n");
+        } else {
+            formattedString = formattedString.concat("subaddress1 response  yes\n");
+        }
+        if ((presentValue & 0x10) == 0) {
+            formattedString = formattedString.concat("normal mode  \n");
+        } else {
+            formattedString = formattedString.concat("low power mode response \n");
+        }
+        if ((presentValue & 0x20) == 0) {
+            formattedString = formattedString.concat("auto INC disabled  \n");
+        } else {
+            formattedString = formattedString.concat("auto INC enabled \n");
+        }
+        if ((presentValue & 0x40) == 0) {
+            formattedString = formattedString.concat("internal clock  \n");
+        } else {
+            formattedString = formattedString.concat("EXTCLK \n");
+        }
+        if ((presentValue & 0x80) == 0) {
+            formattedString = formattedString.concat("restart disabled  \n");
+        } else {
+            formattedString = formattedString.concat("restart enabled \n");
+        }
+        this.logger.debug(formattedString);
+
+
+    }
+
+    public void showFreq() {
+        var freq = this.device.readRegister(PCA9685Declares.PRE_SCALE);
+        String formattedString = String.format(">>> showFreq  %x    %d", freq, freq);
+        this.logger.debug(formattedString);
+    }
+        public void showMode2() {
+        var presentValue = this.device.readRegister(PCA9685Declares.MODE2_ADDR);
+        String formattedString = String.format(">>> showMode2  %x", presentValue);
+        this.logger.debug(formattedString);
+        formattedString = "";
+        if ((presentValue & 0x1) == 0) {
+            formattedString = formattedString.concat("\nOUTNE[1:0]  0\n");
+        } else {
+            formattedString = formattedString.concat("\nOUTNE[1:0]  1\n");
+        }
+
+        if ((presentValue & 0x2) == 0) {
+            formattedString = formattedString.concat("OUTNE[1:0]  0\n");
+        } else {
+            formattedString = formattedString.concat("OUTNE[1:0]  0\n");
+        }
+
+        if ((presentValue & 0x4) == 0) {
+            formattedString = formattedString.concat("open drain \n");
+        } else {
+            formattedString = formattedString.concat("totem \n");
+        }
+        if ((presentValue & 0x8) == 0) {
+            formattedString = formattedString.concat("change on STOP  \n");
+        } else {
+            formattedString = formattedString.concat("change on Ack \n");
+        }
+        if ((presentValue & 0x10) == 0) {
+            formattedString = formattedString.concat("output NOT inverted  \n");
+        } else {
+            formattedString = formattedString.concat("output inverted \n");
+        }
+        this.logger.debug(formattedString);
+    }
+
+    public void showLedOnOff(int ledNum) {
+        String formattedString = String.format(">>> showLedOnOff  led %d", ledNum);
+        this.logger.debug(formattedString);
+
+        int ledValue = this.device.readRegister(PCA9685Declares.LED0_ON_L + (ledNum * 4));
+        formattedString = String.format(" led%d_ON_L    %x", ledNum, ledValue);
+        this.logger.debug(formattedString);
+        ledValue = this.device.readRegister(PCA9685Declares.LED0_ON_H + (ledNum * 4));
+        formattedString = String.format(" led%d_ON_H    %x", ledNum, ledValue);
+        this.logger.debug(formattedString);
+        ledValue = this.device.readRegister(PCA9685Declares.LED0_OFF_L + (ledNum * 4));
+        formattedString = String.format(" led%d_OFF_L   %x", ledNum, ledValue);
+        this.logger.debug(formattedString);
+        ledValue = this.device.readRegister(PCA9685Declares.LED0_OFF_H + (ledNum * 4));
+        formattedString = String.format(" led%d_OFF_H   %x", ledNum, ledValue);
+        this.logger.debug(formattedString);
     }
 
     private static class DataInGpioListener implements DigitalStateChangeListener {
