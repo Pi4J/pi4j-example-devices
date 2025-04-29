@@ -111,6 +111,7 @@ public class PCA9685 {
             System.exit(201);
         }
 
+
         var old_mode1 = this.device.readRegister(PCA9685Declares.MODE1_ADDR);
         // clear power mode bit to normal operation
         old_mode1 = old_mode1 & ~PCA9685Declares.SLEEP_LOW_PWR;
