@@ -1,5 +1,5 @@
 /*
- *    * Copyright (C) 2012 - 2024 Pi4J
+ *    * Copyright (C) 2012 - 2025 Pi4J
  *  * %%
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
  *  **********************************************************************
  *  ORGANIZATION  :  Pi4J
  *  PROJECT       :  Pi4J :: EXTENSION
- *  FILENAME      :  Pca9685Declares.java
+ *  FILENAME      :  PCA9685Declares.java
  *
  *  This file is part of the Pi4J project. More information about
  *  this project can be found here:  https://pi4j.com/
