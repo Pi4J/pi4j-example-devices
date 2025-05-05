@@ -28,4 +28,4 @@
 # * %%
 #
 
-java --module-path . --module  com.pi4j.devices/com.pi4j.devices.pca9685.PCa9685App  "$@"
+java --module-path . --module  com.pi4j.devices/com.pi4j.devices.pca9685.PCA9685App  "$@"

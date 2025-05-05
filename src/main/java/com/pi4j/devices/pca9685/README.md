@@ -1,41 +1,114 @@
-PCA9685 12-bit PWM LED controlled
 
-## Wiring:  As coded this program uses I2C
+
+#        * -
+#        * #%L
+#        * **********************************************************************
+#        * ORGANIZATION  :  Pi4J
+#        * PROJECT       :  Pi4J :: EXTENSION
+#        * FILENAME      : README.md
+# *
+#        * This file is part of the Pi4J project. More information about
+#        * this project can be found here:  https://pi4j.com/
+#        * **********************************************************************
+#        * %%
+#        *   * Copyright (C) 2012 - 2023 Pi4J
+#         * %%
+# *
+#        * Licensed under the Apache License, Version 2.0 (the "License");
+#        * you may not use this file except in compliance with the License.
+#        * You may obtain a copy of the License at
+# *
+#        *      http://www.apache.org/licenses/LICENSE-2.0
+# *
+#        * Unless required by applicable law or agreed to in writing, software
+#        * distributed under the License is distributed on an "AS IS" BASIS,
+#        * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#        * See the License for the specific language governing permissions and
+#        * limitations under the License.
+#        * #L%
+# *
+
+
+# PCA9685 12-bit PWM LED controlled
+Datasheet
+https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf
+
+
+## Build and Run
 
 1. ./mvnw clean package
 2. cd target/distribution
 3. ./runPCA9685.sh OPT parms........
    Parm -t traceLevel
+   " parms:  -a hex value address, -b bus, -p OE pin, -h help \n" +
+   "  -x reset  -s1 addr1   -s2 addr2   -s3 addr3  -q quit -e E enable/ D disable  -t trace \n" +
+   "-ledON devaDDR led# timeOn timeOff   -intensity devaDDR led#  intensity \n " +
+   " -d debug  -sm1 newVal    -sm2 newVal -sf frequency"
+All values are entered as Hex data
+
 
 Note In example usage the EO pin is connected to gpio 12
-VCC and V+ connected to Pi 5v
+VCC connected to Pi 3.3v and V+ connected to Pi 5v
 Note  Must enable the LEDs via -e E, this will drive OE GPIO low.
 
 
+## Usage 
 
+./runPCA9685.sh -b 0x1 -a 0x70  -p 0x0c -e E -s1 0x72 -s2 0x74 -s3 0x76 -t trace
 
-./runPCA9685.sh -b 0x1 -a 0x70  -p 0x0c -s1 0x72 -s2 0x74 -s3 0x76 -t "TRACE"
+./runPCA9685.sh -b 0x1 -a 0x70 -p 0x0c -x -e E -s1 0x72 -s2 0x74 -s3 0x76
 
-./runPCA9685.sh -b 0x1 -a 0x70 -p 0x0c -x -s1 0x72 -s2 0x74 -s3 0x76
-
-After settting the above attributes, the chip can be used to continue
+After setting the above attributes, the chip can be used to continue
 controlling LEDs/PWMs
 
-# LED0  set intensity to 0x700  (2000) of a possible 0xFFF (4095)
-./runPCA9685.sh -intensity 0x70 0x00 0x07d0
+Also, the above .sh will start a simple application.  The following commands
+are an example of using the app.  The app displays to possible 
+parms you can enter.
+
+
+## Intensity 
+100%
+-intensity 0x70 0x0 0xffff
+ 25%
+-intensity 0x70 0x0 0x400
+50%
+-intensity 0x70 0x0 0x800
+
+## ledOn
+0xffff will always be high, 0 will always be low and 0x7fff will be half high and then half low.
+
+LED0  set intensity to 0x700  (2000) of a possible 0xFFF (4095)
 
 
 LED 0 off
--ledOn 0x70 0x00 0x0 0xfff
+      -ledOn 0x70 0x00 0x0 0xffff
 
-LED 0 off
--ledOn 0x70 0x00 0xfff 0x0
+LED 0 on
+     -ledOn 0x70 0x00 0xffff 0x0
+
+     
+
+## PWM
+
+Read Datasheet section 7 examples to calculate ON and Off times
+ -ledOn 0x70 0x0 0xE66 0xCCB
+ -ledOn 0x70 0x0 0x1 0x99
+
+-ledOn 0x70 0x0 0x199 0x4cc
+-sf 0x1f           LEDs flicker=
+-ledOn 0x70 0x0 0xE65 0xCCB
+
+
+-sf 0x20
+
+-ledOn 0x70 0x00 0x400 0xc00
+
 
 # NOTE:
 
 If the chip was never reconfigured its device address is 0x70.
 
-# Wiring
+#Wiring                                                                                                                                                                                                                                                                                                 
 
 Pi PCA9685
 GRND GRND

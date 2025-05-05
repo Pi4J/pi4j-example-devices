@@ -1,5 +1,5 @@
 /*
- *    * Copyright (C) 2012 - 2024 Pi4J
+ *    * Copyright (C) 2012 - 2025 Pi4J
  *  * %%
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
  *  **********************************************************************
  *  ORGANIZATION  :  Pi4J
  *  PROJECT       :  Pi4J :: EXTENSION
- *  FILENAME      :  Pca9685.java
+ *  FILENAME      :  PCA9685.java
  *
  *  This file is part of the Pi4J project. More information about
  *  this project can be found here:  https://pi4j.com/
@@ -40,9 +40,6 @@ import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.time.Instant;
-
 public class PCA9685 {
     private Logger logger;
 
@@ -56,7 +53,6 @@ public class PCA9685 {
 
     private int OEPinNum = 0;
     private final DigitalInput OE = null;
-    private final PCA9685.DataInGpioListener listener = null;
 
     private I2CProvider i2CProvider = null;
     private final I2C tempDeviceReset = null;
@@ -246,15 +242,17 @@ public class PCA9685 {
         String formattedString = String.format(">>> setLedIntensity DevAddr %x  led %x intensity  %x", devAddr, ledNum, intensity);
         this.logger.trace(formattedString);
 
-        if (intensity == 0xFFFF) {
-            // Special case for "fully on":
+        if (intensity >= 0xFFF) {
+            // "fully on":
             this.setLedOn(devAddr, ledNum, 0x1000, 0);
         } else if (intensity < 0x0010) {
             // case of "fullyoff"
             this.setLedOn(devAddr, ledNum, 0, 0x1000);
         } else {
-         //   intensity = intensity >> 4;
-            this.setLedOn(devAddr, ledNum, intensity, (4095 - intensity));
+            intensity = intensity >> 4;
+         //   this.setLedOn(devAddr, ledNum, (intensity & 0x1f) >> 8,(intensity& 0xff0));
+            this.setLedOn(devAddr, ledNum,  8, intensity);
+
         }
     }
 
@@ -348,7 +346,7 @@ public class PCA9685 {
 
     public void showFreq() {
         var freq = this.device.readRegister(PCA9685Declares.PRE_SCALE);
-        String formattedString = String.format(">>> showFreq  %x    %d", freq, freq);
+        String formattedString = String.format(">>> showFreq  %x   (DEC) %d", freq, freq);
         this.logger.debug(formattedString);
     }
         public void showMode2() {
@@ -404,107 +402,7 @@ public class PCA9685 {
         this.logger.debug(formattedString);
     }
 
-    private static class DataInGpioListener implements DigitalStateChangeListener {
 
-        Instant startInstant;
-        Duration timeElapsed;
-        boolean data_bits_started = false;
-
-        long dataBits = 0;
-        int bitCounter = 0;
-        PCA9685 theDevice = null;
-
-        public DataInGpioListener(PCA9685 pca) {
-
-            this.theDevice = pca;
-            System.out.println("DataInGpioListener ctor");
-        }
-
-        @Override
-        public void onDigitalStateChange(DigitalStateChangeEvent event) {
-            System.out.println(">>> Enter: onDigitalStateChange");
-            this.startInstant = Instant.now(); //  init Duration because first event is Low,
-            // this is in prep to begin sending high----low transition to signify 0 or 1
-            if (event.state() == DigitalState.HIGH) {  // LED off
-                //this.startInstant = Instant.now();
-                System.out.println("onDigitalStateChange Pin went High");
-            } else if (event.state() == DigitalState.LOW) { // LEDs on
-                System.out.println("onDigitalStateChange Pin went Low");
-                //  this.timeElapsed = Duration.between(startInstant, endInstant);
-            } else {
-                System.out.println("Strange event state  " + event.state());
-            }
-            System.out.println("<<< Exit: onDigitalStateChange");
-        }
-
-    }
-
-
-    /**
-     * The chip will be reset, forcing the POR (PowerOnReset)
-     * steps to occur. Once completes the chip will be configured
-     * to operate 'forced' mode and single sample.
-     *
-     * @throws Exception
-     */
-    void resetSensor() {
-
-
-        //  device.writeRegister(regVal, ctlVal, ctlVal.length);
-    }
-
-    /**
-     * Three register sets containing the readings are read, then all factory
-     * compensation registers are read. The compensated reading are calculated and
-     * displayed.
-     */
-    public void getMeasurements() {
-        byte[] buff = new byte[6];
-
-//        device.readRegister(Pca9685.BMP280Declares.reg_dig_h6, charVal);
-
-        console.println("Humidity: ");
-
-
-    }
-
-    /**
-     * @param read 8 bits data
-     * @return unsigned value
-     */
-    private static int castOffSignByte(byte read) {
-        return ((int) read & 0Xff);
-    }
-
-    /**
-     * @param read 8 bits data
-     * @return signed value
-     */
-    private static int signedByte(byte[] read) {
-        return read[0];
-    }
-
-    /**
-     * @param read 16 bits of data  stored in 8 bit array
-     * @return 16 bit signed
-     */
-    private static int signedInt(byte[] read) {
-        int temp = 0;
-        temp = (read[0] & 0xff);
-        temp += (((long) read[1]) << 8);
-        return (temp);
-    }
-
-    /**
-     * @param read 16 bits of data  stored in 8 bit array
-     * @return 64 bit unsigned value
-     */
-    private static long castOffSignInt(byte[] read) {
-        long temp = 0;
-        temp = ((long) read[0] & 0xff);
-        temp += (((long) read[1] & 0xff)) << 8;
-        return (temp);
-    }
 
 
 }

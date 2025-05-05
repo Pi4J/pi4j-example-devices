@@ -1,5 +1,5 @@
 /*
- *    * Copyright (C) 2012 - 2024 Pi4J
+ *    * Copyright (C) 2012 - 2025 Pi4J
  *  * %%
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
  *  **********************************************************************
  *  ORGANIZATION  :  Pi4J
  *  PROJECT       :  Pi4J :: EXTENSION
- *  FILENAME      :  Pca9685App.java
+ *  FILENAME      :  PCA9685App.java
  *
  *  This file is part of the Pi4J project. More information about
  *  this project can be found here:  https://pi4j.com/
@@ -43,9 +43,11 @@ public class PCA9685App {
     private static final Console console = new Console(); // Pi4J Logger helper
 
     private static final int I2C_BUS = 0x01;
-    private static final int I2C_ADDRESS = 0x72; // When connecting SDO to GND = 0x76
+    private static final int I2C_ADDRESS = 0x70; // When connecting SDO to GND = 0x76
 
     public static void main(String[] args) throws Exception {
+
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
 
         var pi4j = Pi4J.newAutoContext();
         PCA9685 pca = null;
@@ -63,8 +65,8 @@ public class PCA9685App {
 
         String helpString = " parms:  -a hex value address, -b bus, -p OE pin, -h help \n" +
             "  -x reset  -s1 addr1   -s2 addr2   -s3 addr3  -q quit -e E enable/ D disable  -t trace \n" +
-            "-ledON devaDDR led# timeOn time Off   -intensity devaDDR led#  intensity \n " +
-            " -d debug  -sm1 newVal    -sm2 newVal ";
+            "-ledON devaDDR led# timeOn timeOff   -intensity devaDDR led#  intensity \n " +
+            " -d debug  -sm1 newVal    -sm2 newVal -sf frequency";
         boolean loop = true;
         Scanner scanner = new Scanner(System.in);
         boolean addr1_present = false;
@@ -73,11 +75,15 @@ public class PCA9685App {
 
         boolean quit = false;
         boolean reset = false;
+        boolean setEnable = false;
+        boolean setFreq = false;
         int ledNum = 0;
         int ledOn = 0;
         int ledOff = 0;
         int newMode1 = 0;
         int newMode2 = 0;
+        int frequency = 0;
+        int devAddr = 0;
         boolean setOn = false;
 boolean setIntensity = false;
 boolean setSM1 = false;
@@ -101,8 +107,15 @@ int intensity = 0;
                     i++;
                     setSM2 = true;
                     newMode2 = Integer.parseInt(a.substring(2), 16);
-                } else if (o.contentEquals("-ledOn")) {
+                } else if (o.contentEquals("-sf")) {
                     String a = args[i + 1];
+                    i++;
+                    setFreq = true;
+                    frequency = Integer.parseInt(a.substring(2), 16);
+                }else if (o.contentEquals("-ledOn")) {
+                    String a = args[i + 1];
+                    devAddr =  Integer.parseInt(a.substring(2), 16);
+
                     i++;
                     a = args[i + 1];
                     ledNum = Integer.parseInt(a.substring(2), 16);
@@ -124,6 +137,8 @@ int intensity = 0;
                     pin = Integer.parseInt(a.substring(2), 16);
                 }else if (o.contentEquals("-intensity")) {
                     String a = args[i + 1];
+                    devAddr =  Integer.parseInt(a.substring(2), 16);
+
                     i++;
                     a = args[i + 1];
                     ledNum = Integer.parseInt(a.substring(2), 16);
@@ -135,6 +150,7 @@ int intensity = 0;
                  }  else if (o.contentEquals("-e")) {
                     String a = (args[i + 1]).toUpperCase();
                     i++;
+                    setEnable = true;
                     if (a.contains("E")) {
                         enablePCA = true;
                     } else if (a.contains("D")) {
@@ -200,17 +216,7 @@ int intensity = 0;
             // The reset should be the first device code to run.
             // Reset the chip before setting any configuration
             if (reset) {
-                pca.showMode1();
-                pca.showMode2();
-                pca.showLedOnOff(0);
-                pca.showLedOnOff(1);
-                detectI2C("i2cdetect -y 1");
                 pca.reset();
-                pca.showMode1();
-                pca.showMode2();
-                pca.showLedOnOff(0);
-                pca.showLedOnOff(1);
-                detectI2C("i2cdetect -y 1");
             }
 
             if (setSM1) {
@@ -219,6 +225,9 @@ int intensity = 0;
 
             if (setSM2) {
                 pca.setMode2(newMode2);
+            }
+            if (setFreq) {
+                pca.setFreq(frequency);
             }
 
             if (addr1_present) {
@@ -233,14 +242,15 @@ int intensity = 0;
                 pca.setSubAddr3(0x70, addr3);
             }
 
-            pca.enablePCA(enablePCA);
-
+            if (setEnable) {
+                pca.enablePCA(enablePCA);
+            }
 
             if (setOn) {
-                pca.setLedOn(0x70, ledNum, ledOn, ledOff);
+                pca.setLedOn(devAddr, ledNum, ledOn, ledOff);
             }
             if (setIntensity) {
-                pca.setLedIntensity(0x70, ledNum, intensity);
+                pca.setLedIntensity(devAddr, ledNum, intensity);
             }
 
             //  detectI2C("i2cdetect -y 1");
@@ -251,12 +261,15 @@ int intensity = 0;
             setIntensity = false;
             setSM1 = false;
             setSM2 = false;
+            setFreq = false;
              quit = false;
              reset = false;
+            setEnable = false;
              ledNum = 0;
              ledOn = 0;
              ledOff = 0;
              setOn = false;
+             debug = false;
 
             System.out.println(helpString);
             String name = scanner.nextLine();
