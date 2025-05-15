@@ -46,7 +46,7 @@ The following lists the currently supported devices within this project:
 
 
 ### GPIO monitor
-
+The following is valid on all pre Pi5 SOCs.  Not valid on Pi5 SOCs.
 This repository includes two Python scripts to monitor GPIO pin states in real-time on a Raspberry Pi. \
 **Note**: These scripts use the pigpio library, which is currently incompatible with the Raspberry Pi 5.
 
