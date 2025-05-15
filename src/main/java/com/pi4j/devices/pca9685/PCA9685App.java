@@ -47,7 +47,7 @@ public class PCA9685App {
 
     public static void main(String[] args) throws Exception {
 
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 
         var pi4j = Pi4J.newAutoContext();
         PCA9685 pca = null;
@@ -111,20 +111,20 @@ int intensity = 0;
                     String a = args[i + 1];
                     i++;
                     setFreq = true;
-                    frequency = Integer.parseInt(a.substring(2), 16);
+                    frequency = Integer.parseInt(a);
                 }else if (o.contentEquals("-ledOn")) {
                     String a = args[i + 1];
                     devAddr =  Integer.parseInt(a.substring(2), 16);
 
                     i++;
                     a = args[i + 1];
-                    ledNum = Integer.parseInt(a.substring(2), 16);
+                    ledNum = Integer.parseInt(a);
                     i++;
                     a = args[i + 1];
-                    ledOn = Integer.parseInt(a.substring(2), 16);
+                    ledOn = Integer.parseInt(a);
                     i++;
                     a = args[i + 1];
-                    ledOff = Integer.parseInt(a.substring(2), 16);
+                    ledOff = Integer.parseInt(a);
                     i++;
                     setOn = true;
                 }else if (o.contentEquals("-b")) {
@@ -141,10 +141,10 @@ int intensity = 0;
 
                     i++;
                     a = args[i + 1];
-                    ledNum = Integer.parseInt(a.substring(2), 16);
+                    ledNum = Integer.parseInt(a);
                     i++;
                     a = args[i + 1];
-                    intensity = Integer.parseInt(a.substring(2), 16);
+                    intensity = Integer.parseInt(a);
                     i++;
                     setIntensity = true;
                  }  else if (o.contentEquals("-e")) {
@@ -202,12 +202,12 @@ int intensity = 0;
             if (pca == null) {
                 pca = new PCA9685(console, bus, address, pin, pi4j, traceLevel);
             }
-            if(debug) {
+             if(debug) {
+                 pca.showPrescale();
                 pca.showMode1();
                 pca.showMode2();
                 pca.showFreq();
-                pca.showLedOnOff(0);
-                pca.showLedOnOff(1);
+                pca.showLedOnOff(15);
                 detectI2C("i2cdetect -y 1");
             }
             if (quit) {

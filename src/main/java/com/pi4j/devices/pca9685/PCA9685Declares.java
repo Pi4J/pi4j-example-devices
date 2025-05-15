@@ -32,7 +32,7 @@ package com.pi4j.devices.pca9685;
 public class PCA9685Declares {
 
 
-    static final int defaultClockSpeed = 25630710;
+    static final int defaultClockSpeed = 25000000; //25630710;
 
 
     public static final int  MODE1_ADDR     = 0x00;

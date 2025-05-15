@@ -53,6 +53,7 @@ Note  Must enable the LEDs via -e E, this will drive OE GPIO low.
 
 
 ## Usage 
+Led intensity and LED time on and off are all decimal input, other parms are hex input.
 
 ./runPCA9685.sh -b 0x1 -a 0x70  -p 0x0c -e E -s1 0x72 -s2 0x74 -s3 0x76 -t trace
 
@@ -68,11 +69,11 @@ parms you can enter.
 
 ## Intensity 
 100%
--intensity 0x70 0x0 0xffff
+-intensity 0x70 0 4095
  25%
--intensity 0x70 0x0 0x400
+-intensity 0x70 0 1024
 50%
--intensity 0x70 0x0 0x800
+-intensity 0x70 0 2048
 
 ## ledOn
 0xffff will always be high, 0 will always be low and 0x7fff will be half high and then half low.
@@ -81,27 +82,26 @@ LED0  set intensity to 0x700  (2000) of a possible 0xFFF (4095)
 
 
 LED 0 off
-      -ledOn 0x70 0x00 0x0 0xffff
+      -ledOn 0x70 0 0 4095
 
 LED 0 on
-     -ledOn 0x70 0x00 0xffff 0x0
+     -ledOn 0x70 0 4095 0 
 
      
 
 ## PWM
 
 Read Datasheet section 7 examples to calculate ON and Off times
- -ledOn 0x70 0x0 0xE66 0xCCB
- -ledOn 0x70 0x0 0x1 0x99
+ -ledOn 0x70 15 3686 3275
 
--ledOn 0x70 0x0 0x199 0x4cc
--sf 0x1f           LEDs flicker=
--ledOn 0x70 0x0 0xE65 0xCCB
+-ledOn 0x70 15 409 1228
 
+-sf 31         LEDs flicker=
+-ledOn 0x70 15 3685 3275
 
--sf 0x20
+-sf 32
 
--ledOn 0x70 0x00 0x400 0xc00
+-ledOn 0x70 0 1024 3072
 
 
 # NOTE:
