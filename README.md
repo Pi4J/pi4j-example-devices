@@ -4,6 +4,11 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Devices
 Collection of devices implemented for use with Pi4J V2.
 
 Project by Tom Aarts.
+```text
+Note: Second tag captures code that works with pi4j 3.x.x and java21.
+Followon work will use java24 and new providers.
+```
+
 
 ```text
 Note: This repository has a tag identifying the code level that works with
