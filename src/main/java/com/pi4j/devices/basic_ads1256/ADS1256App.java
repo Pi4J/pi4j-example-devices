@@ -40,6 +40,8 @@ import com.pi4j.util.Console;
 public class ADS1256App {
 
     public static void main(String[] args) throws InterruptedException, IOException {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "TRACE");
+
         Context pi4j = Pi4J.newAutoContext();
         var console = new Console();
         double vref = 0;

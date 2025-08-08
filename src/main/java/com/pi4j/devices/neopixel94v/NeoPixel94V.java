@@ -196,7 +196,7 @@ public class NeoPixel94V extends Component {
             .address(channel)
             .mode(SpiMode.MODE_0)
             .baud(8 * DEFAULT_FREQUENCY_PI5) //     bit-banging from Bit to SPI-Byte
-            .provider("linuxfs-spi")
+            .provider("SpiFFMProviderImpl")    //linuxfs-spi
             .build();
 
     }
@@ -206,7 +206,7 @@ public class NeoPixel94V extends Component {
         Scanner scan = new Scanner(System.in);
 
         this.console.println("Hit any key to continue");
-        scan.next();
+        String foo = scan.next();
 
         return (rval);
     }
