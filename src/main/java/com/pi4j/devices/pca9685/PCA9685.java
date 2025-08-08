@@ -40,6 +40,8 @@ import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import java.nio.ByteBuffer;
+
 public class PCA9685 {
     private Logger logger;
 
@@ -79,7 +81,7 @@ public class PCA9685 {
         this.logger = LoggerFactory.getLogger(PCA9685.class);
         this.logger.trace(">>> Initializing the chip");
 
-        i2CProvider = this.pi4j.provider("linuxfs-i2c");
+        i2CProvider = this.pi4j.provider("FFMI2CProviderImpl");   // linuxfs-i2c  FFMI2CProviderImpl
 
 
         // create i2c device with new address

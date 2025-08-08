@@ -4,7 +4,7 @@ import com.pi4j.context.Context;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
-import com.pi4j.io.spi.SpiChipSelect;
+// import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class MCP3008 {
 
 
-    public MCP3008(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect, short pinCount, Console console, String traceLevel, double vref) {
+    public MCP3008(Context pi4j, SpiBus spiBus, short chipSelect, short pinCount, Console console, String traceLevel, double vref) {
         super();
         this.console = console;
         this.pi4j = pi4j;
@@ -36,13 +36,13 @@ public class MCP3008 {
             .id("SPI" + spiBus + " " + chipSelect)
             .name("A/D converter")
             .bus(spiBus)
-            .channel(7)
+            .channel((int) this.chipSelect)
            // .address(5)
          //   .chipSelect(SpiChipSelect.CS_9)
           /*  .flags(0b0000000000000000000000L)*/
             .baud(Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_0)
-            .provider("linuxfs-spi")
+            .provider("linuxfs-spi")   // linuxfs-spi     SpiFFMProviderImpl
             .build();
         this.spi = this.pi4j.create(spiConfig);
 
@@ -80,11 +80,12 @@ public class MCP3008 {
         // see the link below for the data sheet on the MCP3004/MCP3008 chip:
         // http://ww1.microchip.com/downloads/en/DeviceDoc/21294E.pdf
 
+       // one time through
 
         // continue running program until user exits using CTRL-C
         while (console.isRunning()) {
             read(this.doallChannels, this.channel);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
         console.emptyLine();
         this.logger.trace("<<< Exit displayMCP3008State");
@@ -101,7 +102,7 @@ public class MCP3008 {
             for (short channel = 0; channel < this.pinCount; channel++) {
                 int conversion_value = getConversionValue(channel);
                 this.logger.trace("Channel  :" + channel + "  value  :" + String.format(" | %04d", conversion_value)); // print
-                Thread.sleep(500);
+                Thread.sleep(1000);
                 // 4
                 // digits
                 // with
@@ -113,7 +114,7 @@ public class MCP3008 {
             this.logger.trace("Channel  :" + channel + "  value  :" + String.format(" | %04d", conversion_value)); // print
         }
         this.logger.trace(" |\r");
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         this.logger.trace("<<< Exit read");
 
     }
@@ -153,7 +154,7 @@ public class MCP3008 {
         if (this.vref > 0) {
             this.logger.info("A/D read input voltage : " + ((result * this.vref) / 1024 + " \n"));
         }
-        this.logger.trace("<<< Exit getConversionValue ");
+        this.logger.trace("<<< Exit getConversionValue  ");
 
         return result;
     }
@@ -172,7 +173,7 @@ public class MCP3008 {
     private final Logger logger;
 
     private final double vref;
-    private final SpiChipSelect chipSelect;
+    private final short chipSelect;
     private final SpiBus spiBus;
 
     private final Context pi4j;

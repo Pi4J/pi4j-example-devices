@@ -15,12 +15,12 @@ module com.pi4j.devices{
 
     requires java.logging;
     requires jdk.unsupported;
-    requires com.pi4j.plugin.linuxfs;
+   // requires com.pi4j.plugin.linuxfs;
     requires java.desktop;
     requires com.pi4j.plugin.gpiod;
    // requires com.pi4j.library.kernel;
     //requires com.pi4j.plugin.rp1spi;
-
+    requires com.pi4j.plugin.ffm;
     uses com.pi4j.extension.Extension;
     uses com.pi4j.provider.Provider;
 

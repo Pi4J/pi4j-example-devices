@@ -37,6 +37,7 @@
 package com.pi4j.devices.lcd1602a;
 
 
+//import com.pi4j.context.Context;
 import com.pi4j.context.Context;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;

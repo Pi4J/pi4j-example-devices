@@ -176,7 +176,7 @@ static final int[] ADS1256_DRATE_E =
             .chipSelect(this.chipSelect)
             .baud(976563) //Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_1)
-            .provider("linuxfs-spi")
+            .provider("linuxfs-spi")   //linuxfs-spi    SpiFFMProviderImpl
             .build();
         this.spi = this.pi4j.create(spiConfig);
 

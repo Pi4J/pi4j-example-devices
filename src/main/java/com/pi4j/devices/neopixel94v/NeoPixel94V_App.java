@@ -45,6 +45,9 @@ public class NeoPixel94V_App {
 
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "TRACE");
+
+
         var console = new Console();
         Context pi4j = Pi4J.newAutoContext();
 

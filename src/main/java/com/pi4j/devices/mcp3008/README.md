@@ -35,9 +35,12 @@ To monitor only pin 0
 sudo ./runMcp3008.sh -p 0x0
 
 Change the logging detail to 'trace' vref voltage of 3.3
-sudo ./runMcp3008.sh -p 0x0 -t trace -vref 3.3
+sudo ./runMcp3008.sh -p 0x0 -t trace -vref 3.3  
 
-Use SPI 1
+chip select 0
+./runMcp3008.sh -p 0x0 -t trace -vref 3.3  -c 0x00
+
+_Use SPI 1_
 sudo ./runMcp3008.sh -p 0x0 -s 0x01
 
 Use ChipSelect 1
