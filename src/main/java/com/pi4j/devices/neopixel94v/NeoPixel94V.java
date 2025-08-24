@@ -196,7 +196,7 @@ public class NeoPixel94V extends Component {
             .address(channel)
             .mode(SpiMode.MODE_0)
             .baud(8 * DEFAULT_FREQUENCY_PI5) //     bit-banging from Bit to SPI-Byte
-            .provider("SpiFFMProviderImpl")    //linuxfs-spi
+            .provider("linuxfs-spi")    //linuxfs-spi    SpiFFMProviderImpl
             .build();
 
     }

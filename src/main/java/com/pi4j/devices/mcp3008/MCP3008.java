@@ -30,7 +30,7 @@ public class MCP3008 {
         this.init();
 
     }
-
+    // possible providers comment
     private void init() {
         var spiConfig = Spi.newConfigBuilder(pi4j)
             .id("SPI" + spiBus + " " + chipSelect)
