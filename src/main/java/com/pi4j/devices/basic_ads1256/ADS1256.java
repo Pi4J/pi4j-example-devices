@@ -169,6 +169,7 @@ static final int[] ADS1256_DRATE_E =
      * @throws InterruptedException
      */
     private void init() throws InterruptedException {
+        // possible providers left as comment
         var spiConfig = Spi.newConfigBuilder(pi4j)
             .id("SPI" + this.spiBus + " " + this.chipSelect)
             .name("A/D converter")

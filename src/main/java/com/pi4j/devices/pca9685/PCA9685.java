@@ -80,8 +80,8 @@ public class PCA9685 {
         System.setProperty("org.slf4j.simpleLogger.log." + PCA9685.class.getName(), this.traceLevel);
         this.logger = LoggerFactory.getLogger(PCA9685.class);
         this.logger.trace(">>> Initializing the chip");
-
-        i2CProvider = this.pi4j.provider("FFMI2CProviderImpl");   // linuxfs-i2c  FFMI2CProviderImpl
+        // possible providers left as comment
+        i2CProvider = this.pi4j.provider("linuxfs-i2c");   // linuxfs-i2c  FFMI2CProviderImpl
 
 
         // create i2c device with new address
