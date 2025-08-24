@@ -20,7 +20,6 @@ module com.pi4j.devices{
     requires com.pi4j.plugin.gpiod;
    // requires com.pi4j.library.kernel;
     //requires com.pi4j.plugin.rp1spi;
-    requires com.pi4j.plugin.ffm;
     uses com.pi4j.extension.Extension;
     uses com.pi4j.provider.Provider;
 
