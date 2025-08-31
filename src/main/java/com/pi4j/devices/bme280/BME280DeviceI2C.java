@@ -143,9 +143,7 @@ public class BME280DeviceI2C {
                 // 1 Pa = 0.0000098692316931 atmosphere (standard) and 1 atm = 101.325 kPa
                 console.println("Pressure: " + df.format(measurement.getPressure() / 101_325) + " atm");
 
-                if (type == SensorType.BME280) {
-                    console.println("Humidity: " + df.format(measurement.getHumidity()) + " %");
-                }
+                console.println("Humidity: " + df.format(measurement.getHumidity()) + " %");
             }
         }
 
