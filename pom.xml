@@ -156,7 +156,11 @@
             <artifactId>pi4j-plugin-raspberrypi</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-drivers</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
