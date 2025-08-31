@@ -125,8 +125,6 @@ public class BME280DeviceI2C {
         try (I2C i2c = i2CProvider.create(i2cConfig)) {
 
             Bmx280Driver bmx280Driver = new Bmx280Driver(i2c);
-            SensorType type = bmx280Driver.getSensorType();
-            console.println("Detected sensor type: " + type);
 
             DecimalFormat df = new DecimalFormat("0.###");
 
