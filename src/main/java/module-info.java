@@ -12,12 +12,13 @@ module com.pi4j.devices{
    // requires org.apache.logging.log4j;
    // requires org.apache.logging.log4j.core;
 
+
     requires java.logging;
     requires jdk.unsupported;
     requires com.pi4j.plugin.linuxfs;
     requires java.desktop;
     requires com.pi4j.plugin.gpiod;
-    // requires com.pi4j.library.kernel;
+   // requires com.pi4j.library.kernel;
     //requires com.pi4j.plugin.rp1spi;
 
     requires pi4j.drivers;  // Note drivers vs. driver ¯\_(ツ)_/¯
