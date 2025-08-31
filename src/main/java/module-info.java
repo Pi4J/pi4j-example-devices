@@ -16,12 +16,12 @@ module com.pi4j.devices{
     requires com.pi4j.plugin.linuxfs;
     requires java.desktop;
     requires com.pi4j.plugin.gpiod;
+    // requires com.pi4j.library.kernel;
+    //requires com.pi4j.plugin.rp1spi;
 
     requires pi4j.drivers;  // Note drivers vs. driver ¯\_(ツ)_/¯
     uses com.pi4j.driver.sensor.bmx280.Bmx280Driver;
 
-    // requires com.pi4j.library.kernel;
-    //requires com.pi4j.plugin.rp1spi;
     uses com.pi4j.extension.Extension;
     uses com.pi4j.provider.Provider;
 
