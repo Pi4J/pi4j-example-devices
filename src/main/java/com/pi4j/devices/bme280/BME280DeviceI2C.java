@@ -37,9 +37,8 @@ package com.pi4j.devices.bme280;
 
 
 import com.pi4j.Pi4J;
-import com.pi4j.driver.sensor.bmx280.Bmx280Driver;
-import com.pi4j.driver.sensor.bmx280.Bmx280Driver.SensorType;
-import com.pi4j.driver.sensor.bmx280.Bmx280Driver.Measurement;
+import com.pi4j.drivers.sensor.bmx280.Bmx280Driver;
+import com.pi4j.drivers.sensor.bmx280.Bmx280Driver.Measurement;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
