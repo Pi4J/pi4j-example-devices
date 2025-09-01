@@ -96,7 +96,11 @@
             <name>Sonatype Open Source Maven Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
-
+        <repository>
+            <id>oss-snapshots-M2-repo-2</id>
+            <name>Sonatype OSS Maven2 Repository 2</name>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
