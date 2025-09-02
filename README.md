@@ -3,6 +3,28 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Devices
 
 Collection of devices implemented for use with Pi4J V2.
 
+
+  __  __ _               _   _          
+|  \/  (_)__ _ _ _ __ _| |_(_)___ _ _  
+| |\/| | / _` | '_/ _` |  _| / _ \ ' \
+|_|  |_|_\__, |_| \__,_|\__|_\___/_||_|
+| |_ ___ |___/                         
+|  _/ _ \                              
+\__\___/ _
+|   \ _ _(_)_ _____ _ _ ___            
+| |) | '_| \ V / -_) '_(_-<            
+|___/|_| |_|\_/\___|_| /__/
+
+We began major changes in the Device Examples.  We are migrating to drivers
+that separate the device example code from external dependencies. These examples will
+be modified one by one. 
+
+Migrated devices are located in https://github.com/Pi4J/pi4j-drivers/tree/main
+
+When a device is migrated its table entry will be updated to indicate that change (M).
+
+
+
 Project by Tom Aarts.
 ```text
 Note: Second tag captures code that works with pi4j 2.x.x and java21.
@@ -25,7 +47,7 @@ The following lists the currently supported devices within this project:
 * [Basic_ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/basic_ads1256/README.md) (1)
 * [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1) (2)
 * [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md) (1)
-* [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md) (1)(3)
+* [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md) (1)(3)(M)
 * [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md) (3)
 * [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md) (1)
 * [HC-SR04 Ultrasonic Sensor](src/main/java/com/pi4j/devices/hcsr04/README.md)
@@ -45,6 +67,7 @@ The following lists the currently supported devices within this project:
 
 ### Notes:
 
+(M): Driver migration complete
 (1): This package uses code within this repo and Pi4J \
 (2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart \
 (3): SPI versions of the device uses Pigpio, cannot be used on Raspberry Pi5 \
