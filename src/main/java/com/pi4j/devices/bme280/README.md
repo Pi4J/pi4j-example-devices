@@ -1,15 +1,6 @@
 https://pdf1.alldatasheet.com/datasheet-pdf/view/1132060/BOSCH/BME280.html
 
-  __  __ _               _          _ 
-|  \/  (_)__ _ _ _ __ _| |_ ___ __| |
-| |\/| | / _` | '_/ _` |  _/ -_) _` |
-|_|  |_|_\__, |_| \__,_|\__\___\__,_|
-| |_ ___ |___/                       
-|  _/ _ \                            
-\__\___/ _
-|   \ _ _(_)_ _____ _ _ ___          
-| |) | '_| \ V / -_) '_(_-<          
-|___/|_| |_|\_/\___|_| /__/
+
 
 This example device has been migrated under the drivers. The device code can be found at
 https://github.com/Pi4J/pi4j-drivers/tree/main/src/main/java/com/pi4j/drivers/sensor/bmx280
