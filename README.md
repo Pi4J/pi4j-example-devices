@@ -60,7 +60,7 @@ The following table the currently supported devices within this project:
 | Misc          | I2C        |         | [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
 | Misc          | I2C        | (1)     | [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) 
 | Sensor        | I2C, SPI   | (1)     | [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md)                                                              
-| Sensor        |            | (1) (3) | [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md)                                        
+| Sensor        | I2C, SPI   | (1) (3) | [BME280  Temperature, Pressure and Humidity Sensor](src/main/java/com/pi4j/devices/bme280/README.md)                                        
 | Sensor        | 1-Wire     | (1)     | [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md)                                                                            
 | Sensor        |            |         | [HC-SR04 Ultrasonic Sensor](src/main/java/com/pi4j/devices/hcsr04/README.md)                                                                            
 | Sensor        | I2C        | (1)     | [MPL3115A2 Temp/Pressure/Altitude device](src/main/java/com/pi4j/devices/mpl3115a2/README.md)                                                           
