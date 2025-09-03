@@ -36,32 +36,35 @@ Note: This repository has a tag identifying the code level that works with
 2.6.0-SNAPSHOT. These commits may contain  code using providers and/or Pi4J-V2
 interfaces not available in prior SNAPSHOTs.. 
 ```
-The following lists the currently supported devices within this project:
+The following table the currently supported devices within this project:
 
-* [1602A LCD  HD44780U](src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md): App uses SN74HC595 to control the LCD
-* [1602A LCD MCP23017 I2C  Controller](src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md): App uses MCP23017 to control the LCD
-* [1602A_LCD_PCF8574A I2C  Controller](src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md): App uses PCF8574A to control the LCD
-* [ADS1255/ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md) (1)
-* [Basic_ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/basic_ads1256/README.md) (1)
-* [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md) (1) (2)
-* [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md) (1)
-* [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md) (1)(3)
-* [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md) (3)
-* [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md) (1)
-* [HC-SR04 Ultrasonic Sensor](src/main/java/com/pi4j/devices/hcsr04/README.md)
-* [Is31fl3731 matrix controller](src/main/java/com/pi4j/devices/is31Fl37Matrix/README.md) (1)
-* [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)
-* [MCP23008 and MCP23017 Pin monitoring (interrupt support)](src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md)
-* [MCP23017 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23017/README.md)
-* [MCP3008 A/D 10bit converter](src/main/java/com/pi4j/devices/mcp3008/README.md) (1)(3)
-* [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md) (1)
-* [MPL3115A2 Temp/Pressure/Altitude device](src/main/java/com/pi4j/devices/mpl3115a2/README.md) (1)
-* [NeoPixel94V  Intelligent Control LED device](src/main/java/com/pi4j/devices/neopixel94v/README.md) (1)(3)
-* [QT Rotary Encoder](src/main/java/com/pi4j/devices/rotary_encoder/README.md) (1)
-* [SN74HC595 8 Bit shift register](src/main/java/com/pi4j/devices/sn74hc595/README.md) (1)
-* [SSD1306 OLED I2C](src/main/java/com/pi4j/devices/ssd1306/README.md) (1)
-* [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
-* [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) (1)
+| Category      | Connection | Issues  | Device / Example
+|---------------|------------|---------|------------------------------------------------------------------------------------------------------------------------
+| Display       |            |         | [1602A LCD  HD44780U](src/main/java/com/pi4j/devices/hd44780u_lcd1602a/README.md): App uses SN74HC595 to control the LCD
+| Display       | I2C        |         | [1602A LCD MCP23017 I2C  Controller](src/main/java/com/pi4j/devices/mcp23017_lcd1602a/README.md): App uses MCP23017 to control the LCD   
+| Display       | I2C        |         | [1602A_LCD_PCF8574A I2C  Controller](src/main/java/com/pi4j/devices/pcf8574a_lcd1602a/README.md): App uses PCF8574A to control the LCD 
+| Display       | I2C        | (1)     | [Is31fl3731 matrix controller](src/main/java/com/pi4j/devices/is31Fl37Matrix/README.md)                                                               
+| Display       | I2C        | (1)     | [SSD1306 OLED I2C](src/main/java/com/pi4j/devices/ssd1306/README.md)                                                                                  
+| Display       | SPI        | (1)(3)  | [NeoPixel94V  Intelligent Control LED device](src/main/java/com/pi4j/devices/neopixel94v/README.md) 
+| A/D           |            | (1)     | [ADS1255/ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/ads1256/README.md)                                                                
+| A/D           | I2C        | (1)     | [Basic_ADS1256 24bit A-to-D](src/main/java/com/pi4j/devices/basic_ads1256/README.md)
+| A/D           | SPI        | (3)     | [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md)
+| A/D           | SPI        | (1)(3)  | [MCP3008 A/D 10bit converter](src/main/java/com/pi4j/devices/mcp3008/README.md)              
+| A/D           | I2C        | (1)     | [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md)      
+| IO Expander   | I2C        |         | [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)        
+| IO Expander   | I2C        |         | [MCP23008 and MCP23017 Pin monitoring (interrupt support)](src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md)    
+| IO Expander   | I2C        |         | [MCP23017 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23017/README.md)       
+| Memory        |            | (1) (2) | [AT24C512 SEEPROM](src/main/java/com/pi4j/devices/at24c512/README.md)        
+| Misc          | I2C        | (1)     | [QT Rotary Encoder](src/main/java/com/pi4j/devices/rotary_encoder/README.md) 
+| Misc          |            | (1)     | [SN74HC595 8 Bit shift register](src/main/java/com/pi4j/devices/sn74hc595/README.md)
+| Misc          | I2C        |         | [TCA9548 (1x8 I2C switch)](src/main/java/com/pi4j/devices/tca9548/README.md)
+| Misc          | I2C        | (1)     | [VL53L0X TimeOfFlight device](src/main/java/com/pi4j/devices/vl53L0X/README.md) 
+| Sensor        | I2C, SPI   | (1)     | [BMP280  Temperature and Pressure Sensor](src/main/java/com/pi4j/devices/bmp280/README.md)                                                              
+| Sensor        |            | (1) (3) | [BME280  Temperature, Pressure and Humidity Sensor (I2C & SPI)](src/main/java/com/pi4j/devices/bme280/README.md)                                        
+| Sensor        | 1-Wire     | (1)     | [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md)                                                                            
+| Sensor        |            |         | [HC-SR04 Ultrasonic Sensor](src/main/java/com/pi4j/devices/hcsr04/README.md)                                                                            
+| Sensor        | I2C        | (1)     | [MPL3115A2 Temp/Pressure/Altitude device](src/main/java/com/pi4j/devices/mpl3115a2/README.md)                                                           
+
 
 ### Notes:
 
