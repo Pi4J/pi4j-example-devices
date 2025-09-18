@@ -53,8 +53,21 @@ NEOPIXEL WS2812B uses the following timing to represent a '1' or a '0' bit. To
 accomplish in SPI, a '1' sends a byte0b11111000 and a '0' sends a byte 0b11000000.
 When the array of bytes are sent via SPI at a specific frequency the WS2812B
 interprets the bytes as correctly timed 0's and 1's.
-To accomplish the SPI frequency is set to 8*500_000.
+To accomplish the SPI frequency is set to 8*500_000 for older Pis
+and 8*650_000 for Pis with the RP1 chip.
 
+```text
+Note; While the Pi5 with a RP1 chip is able to maintain the required
+SPI frequency, the older Pis are not as stable.  You can improve the 
+possibility of using a NeoPixel with older Pi by the following:
+Add to /boot/config.txt or /boot//firmware/config.txt
+core_freq=500
+core_freq_min=500
+
+For an alternative see :
+https://www.pi4j.com/examples/jbang/jbang_pi4j_spi_led_matrix/
+
+```
 Pulse duration to represent a one or a zero.
 int32_t highTime0NanoSeconds, 400 ns
 int32_t lowTime0NanoSeconds, 850 ns
