@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import static java.lang.Math.round;
+import com.pi4j.boardinfo.util.BoardInfoHelper;
 
 public class NeoPixel94V extends Component {
 
@@ -189,13 +190,14 @@ public class NeoPixel94V extends Component {
      * @return SPI instance
      */
     private SpiConfig buildSpiConfig(Context pi4j, int channel, int frequency) {
+        int spiFrequency = BoardInfoHelper.usesRP1() ? DEFAULT_FREQUENCY_PI5 : DEFAULT_FREQUENCY_PI4;
         return Spi.newConfigBuilder(pi4j)
-            .id("SPI" + 1)
+            .id("SPI")
             .name("LED Matrix")
             .bus(SpiBus.BUS_0)
             .address(channel)
             .mode(SpiMode.MODE_0)
-            .baud(8 * DEFAULT_FREQUENCY_PI5) //     bit-banging from Bit to SPI-Byte
+            .baud(8 * spiFrequency) //     bit-banging from Bit to SPI-Byte
             .provider("linuxfs-spi")    //linuxfs-spi    SpiFFMProviderImpl
             .build();
 
