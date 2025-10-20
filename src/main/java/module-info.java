@@ -22,7 +22,7 @@ module com.pi4j.devices{
     //requires com.pi4j.plugin.rp1spi;
 
     requires pi4j.drivers;
-    uses com.pi4j.drivers.sensor.bmx280.Bmx280Driver;
+    uses com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
 
     uses com.pi4j.extension.Extension;
     uses com.pi4j.provider.Provider;
