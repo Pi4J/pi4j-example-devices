@@ -37,9 +37,9 @@
 package com.pi4j.devices.bme280;
 
 import com.pi4j.Pi4J;
-import com.pi4j.drivers.sensor.bmx280.Bmx280Driver;
-import com.pi4j.drivers.sensor.bmx280.Bmx280Driver.Measurement;
-import com.pi4j.drivers.sensor.bmx280.Bmx280Driver.Model;
+import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
+import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver.Measurement;
+import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver.Model;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.Spi;
