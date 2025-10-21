@@ -51,6 +51,7 @@ The following table the currently supported devices within this project:
 | A/D           | SPI        | (3)     | [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md)
 | A/D           | SPI        | (1)(3)  | [MCP3008 A/D 10bit converter](src/main/java/com/pi4j/devices/mcp3008/README.md)              
 | A/D           | I2C        | (1)     | [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md)      
+| HAT           |            |         | [Raspberry SenseHat](src/main/java/com/pi4j/examples/hat/raspberry/sensehat/README.md)
 | IO Expander   | I2C        |         | [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)        
 | IO Expander   | I2C        |         | [MCP23008 and MCP23017 Pin monitoring (interrupt support)](src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md)    
 | IO Expander   | I2C        |         | [MCP23017 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23017/README.md)       
