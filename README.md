@@ -22,13 +22,11 @@ be modified one by one.
 
 Migrated devices are located in https://github.com/Pi4J/pi4j-drivers/tree/main
 
-
 Project by Tom Aarts.
 ```text
 Note: Second tag captures code that works with pi4j 2.x.x and java21.
 Followon work will use java24 and new providers.
 ```
-
 
 ```text
 Note: This repository has a tag identifying the code level that works with
@@ -36,6 +34,12 @@ Note: This repository has a tag identifying the code level that works with
 2.6.0-SNAPSHOT. These commits may contain  code using providers and/or Pi4J-V2
 interfaces not available in prior SNAPSHOTs.. 
 ```
+
+"Generic" Examples:
+
+- [I2C Sensor Autodetect Program](src/main/java/com/pi4j/examples/sensor/autodetect/)
+
+
 The following table the currently supported devices within this project:
 
 | Category      | Connection | Issues  | Device / Example
@@ -51,7 +55,7 @@ The following table the currently supported devices within this project:
 | A/D           | SPI        | (3)     | [DAC8552  16bit DAC  SPI connected](src/main/java/com/pi4j/devices/dac8552/README.md)
 | A/D           | SPI        | (1)(3)  | [MCP3008 A/D 10bit converter](src/main/java/com/pi4j/devices/mcp3008/README.md)              
 | A/D           | I2C        | (1)     | [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md)      
-| HAT           |            |         | [Raspberry SenseHat](src/main/java/com/pi4j/examples/hat/raspberry/sensehat/README.md)
+| HAT           |            |         | [Raspberry SenseHat](src/main/java/com/pi4j/examples/hat/raspberry/sensehat/)
 | IO Expander   | I2C        |         | [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)        
 | IO Expander   | I2C        |         | [MCP23008 and MCP23017 Pin monitoring (interrupt support)](src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md)    
 | IO Expander   | I2C        |         | [MCP23017 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23017/README.md)       
