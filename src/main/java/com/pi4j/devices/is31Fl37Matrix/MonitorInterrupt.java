@@ -126,7 +126,7 @@ public class MonitorInterrupt {
         }
         // wait (block) for user to exit program using CTRL-C
         console.waitForExit();
-        monitorPin.shutdown(pi4j);
+        monitorPin.close();
         // shutdown Pi4J
         console.println("ATTEMPTING TO SHUTDOWN/TERMINATE THIS PROGRAM");
         pi4j.shutdown();
