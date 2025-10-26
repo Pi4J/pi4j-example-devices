@@ -38,7 +38,6 @@ package com.pi4j.devices.bmp280;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.*;
 import com.pi4j.util.Console;
 import org.slf4j.LoggerFactory;
@@ -83,12 +82,11 @@ public class BMP280DeviceSPI extends BMP280Device {
     public final String SPI_PROVIDER_ID = ID + "-spi";
 
 
-    public BMP280DeviceSPI(Context pi4j, Console console, SpiBus spiBus, SpiChipSelect chipSlct, int csPin, String traceLevel) {
+    public BMP280DeviceSPI(Context pi4j, Console console, SpiBus spiBus, SpiChipSelect chipSlct,  String traceLevel) {
         super(pi4j, console, traceLevel);
         this.pi4j = pi4j;
         this.spiBus = spiBus;
         this.chipSlct = chipSlct;
-        this.csPin = csPin;
         this.console = console;
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
@@ -101,25 +99,7 @@ public class BMP280DeviceSPI extends BMP280Device {
 
     private void init() {
         this.logger.info(">>> Enter:init ");
-
-        // required all configs
-        var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
-            .id("CS_pin")
-            .name("CS")
-            .address(this.csPin)
-            .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
-        try {
-            this.csGpio = pi4j.create(outputConfig2);
-        } catch (Exception e) {
-            e.printStackTrace();
-            console.println("create DigOut CS failed");
-            System.exit(202);
-        }
-
         this.createSPIDevice();
-
         this.logger.info("<<<Exit:init ");
     }
 
@@ -128,7 +108,7 @@ public class BMP280DeviceSPI extends BMP280Device {
      * a BMP280 device instance
      */
     private void createSPIDevice() {
-        this.logger.info(">>> Enter:createSPIDevice   bus  " + this.spiBus + "  CS Gpio" + this.csGpio.toString());
+        this.logger.info(">>> Enter:createSPIDevice   bus  " + this.spiBus);
         var spiConfig = Spi.newConfigBuilder(this.pi4j)
             .id("SPI" + this.spiBus + "_BMP280")
             .name("D/A converter")
@@ -152,14 +132,11 @@ public class BMP280DeviceSPI extends BMP280Device {
      */
     public int readRegister(int register) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
-        this.csGpio.low();
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
-        int bytesWritten = this.spi.write(data);
         byte[] value = new byte[1];
-        byte rval = this.spi.readByte();
-        this.csGpio.high();
-        this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", rval));
-        return (rval);
+        this.spi.registerRead(data, data.length, value, value.length);
+        this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", value[0]));
+        return value[0]; //rval);
     }
 
     /**
@@ -170,12 +147,9 @@ public class BMP280DeviceSPI extends BMP280Device {
     public int readRegister(int register, byte[] buffer) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
-        this.csGpio.low();
-        int bytesWritten = this.spi.write(data);
-        int bytesRead = this.spi.read(buffer);
-        this.csGpio.high();
+        this.spi.registerRead(data, data.length, buffer, buffer.length);
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", buffer[0]) + String.format("0X%02x: ", buffer[0]));
-        return (bytesRead);
+        return buffer.length;
     }
 
 
@@ -193,9 +167,7 @@ public class BMP280DeviceSPI extends BMP280Device {
         };
         byte[] dummy = new byte[2];
         // send read request to BMP chip via SPI channel
-        this.csGpio.low();
         byteswritten = this.spi.write(buffer);
-        this.csGpio.high();
 
         this.logger.trace("<<< Exit writeRegister wrote : " + byteswritten);
         return (rval);
