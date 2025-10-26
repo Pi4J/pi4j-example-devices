@@ -23,6 +23,7 @@ public class Snake {
     private static final int FADE_OUT_TIME = 2000;
 
     private final GraphicsDisplay display;
+    private final GameController controller;
     private final DeferredDelay deferredDelay = new DeferredDelay();
     private final int x0;
     private final int y0;
@@ -44,12 +45,13 @@ public class Snake {
 
     public Snake(GraphicsDisplay display, GameController controller) {
         this.display = display;
+        this.controller = controller;
 
-        assignKey(controller.getKey(GameController.Key.UP), value -> processDirectionalKey(value, 0, -1));
-        assignKey(controller.getKey(GameController.Key.DOWN), value -> processDirectionalKey(value, 0, 1));
-        assignKey(controller.getKey(GameController.Key.LEFT), value -> processDirectionalKey(value, -1, 0));
-        assignKey(controller.getKey(GameController.Key.RIGHT), value -> processDirectionalKey(value, 1, 0));
-        assignKey(controller.getKey(GameController.Key.CENTER), value -> processCenterKey(value));
+        assignKey(GameController.Key.UP, value -> processDirectionalKey(value, 0, -1));
+        assignKey(GameController.Key.DOWN, value -> processDirectionalKey(value, 0, 1));
+        assignKey(GameController.Key.LEFT, value -> processDirectionalKey(value, -1, 0));
+        assignKey(GameController.Key.RIGHT, value -> processDirectionalKey(value, 1, 0));
+        assignKey(GameController.Key.CENTER, value -> processCenterKey(value));
 
         int displayWidth = display.getWidth();
         int displayHeight = display.getHeight();
@@ -79,8 +81,11 @@ public class Snake {
         setEntity(x, y, Entity.SNAKE);
     }
 
-    private void assignKey(ListenableOnOffRead<?> key, Consumer<Boolean> consumer) {
-        keys.put(key, key.addConsumer(consumer));
+    private void assignKey(GameController.Key key, Consumer<Boolean> consumer) {
+        ListenableOnOffRead<?> lor = controller.getKey(key);
+        if (lor != null) {
+            keys.put(lor, lor.addConsumer(consumer));
+        }
     }
 
     private void initialize() {
