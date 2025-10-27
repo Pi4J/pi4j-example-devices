@@ -37,8 +37,6 @@
 package com.pi4j.devices.bmp280;
 
 import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.*;
 import com.pi4j.util.Console;
 import org.slf4j.LoggerFactory;
@@ -66,8 +64,7 @@ public class BMP280DeviceSPI extends BMP280Device {
 
     SpiChipSelect chipSlct;
     int csPin;
-    private DigitalOutput csGpio;
-
+   
     // local/internal SPI reference for communication with hardware chip
     Spi spi = null;
 
