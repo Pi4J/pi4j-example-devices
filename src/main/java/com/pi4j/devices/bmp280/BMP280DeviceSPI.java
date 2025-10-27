@@ -67,8 +67,7 @@ public class BMP280DeviceSPI extends BMP280Device {
     // local/internal SPI reference for communication with hardware chip
     Spi spi = null;
 
-    SpiConfig config = null;
-    // SPI Provider name and unique ID
+     // SPI Provider name and unique ID
     /**
      * Constant <code>SPI_PROVIDER_NAME="NAME +  SPI Provider"</code>
      */
@@ -131,7 +130,7 @@ public class BMP280DeviceSPI extends BMP280Device {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
         byte[] value = new byte[1];
-        this.spi.registerRead(data, data.length, value, value.length);
+        this.spi.writeRead(data, data.length, value, value.length);
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", value[0]));
         return value[0]; //rval);
     }
@@ -144,7 +143,7 @@ public class BMP280DeviceSPI extends BMP280Device {
     public int readRegister(int register, byte[] buffer) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
-        this.spi.registerRead(data, data.length, buffer, buffer.length);
+        this.spi.writeRead(data, data.length, buffer, buffer.length);
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", buffer[0]) + String.format("0X%02x: ", buffer[0]));
         return buffer.length;
     }
