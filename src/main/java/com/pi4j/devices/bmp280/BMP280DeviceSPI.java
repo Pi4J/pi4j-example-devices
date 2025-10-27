@@ -67,8 +67,7 @@ public class BMP280DeviceSPI extends BMP280Device {
     // local/internal SPI reference for communication with hardware chip
     Spi spi = null;
 
-    SpiConfig config = null;
-    // SPI Provider name and unique ID
+     // SPI Provider name and unique ID
     /**
      * Constant <code>SPI_PROVIDER_NAME="NAME +  SPI Provider"</code>
      */
