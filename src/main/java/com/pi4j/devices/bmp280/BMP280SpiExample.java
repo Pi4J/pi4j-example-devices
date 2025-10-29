@@ -60,7 +60,6 @@ public class BMP280SpiExample {
         SpiChipSelect chipSelect = SpiChipSelect.CS_0;
         SpiBus spiBus = SpiBus.BUS_0;
 
-        int csPin = 21;
 
 
         // ------------------------------------------------------------
@@ -91,16 +90,12 @@ public class BMP280SpiExample {
         console.print("==============================================================");
 
 
-        String helpString = " parms:   -t trace    -csp  chipSelectGPIO    \n " +
+        String helpString = " parms:   -t trace      \n " +
             " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if (o.contentEquals("-csp")) { // device address
-                String a = args[i + 1];
-                i++;
-                csPin = Integer.parseInt(a);
-            } else if (o.contentEquals("-t")) { // device address
+            if (o.contentEquals("-t")) { // device address
                 String a = args[i + 1];
                 i++;
                 traceLevel = a;
@@ -120,7 +115,7 @@ public class BMP280SpiExample {
             }
         }
 
-        var bmpDev = new BMP280DeviceSPI(pi4j, console, spiBus, chipSelect, csPin, traceLevel);
+        var bmpDev = new BMP280DeviceSPI(pi4j, console, spiBus, chipSelect, traceLevel);
 
 
         bmpDev.initSensor();

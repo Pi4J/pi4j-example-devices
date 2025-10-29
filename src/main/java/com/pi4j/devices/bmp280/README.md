@@ -8,7 +8,7 @@ The I2C example program has the assumption the BMP280 is connected to Pi bus 1, 
 operate as device address 0x77. If these assumptions are not possible, the bus and device address value can be passed
 as parms. Or modify the BMP280I2cExample program to use your specific bus and device address.
 
-The SPI example assumes SPI bus 0, ChipSelect GPIO 21. The GPIO is configurable as a program parm option.
+The SPI example assumes SPI bus 0, ChipSelect 0.
 
 The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2 documentation. Consult that logger
 class documentation to understand its various logging options.
@@ -40,7 +40,7 @@ SPI connection path.
 
 1. ./mvnw clean package
 2. cd target/distribution
-3. sudo ./runBMP280SPI.sh -csp 21
+3. sudo ./runBMP280SPI.sh
 
 Use of different bus or device address, use the applicable values in the following command.
 sudo ./runBMP280I2C.sh -b 0x01 -a 0x77
@@ -68,13 +68,13 @@ I2C connection
 
 SPI connection using 4-wire SPI
 
-| RPi          | Color  | Sensor |
-|:-------------|:-------|:-------|
-| Pin19 MOSI   | Blue   | SDI    |
-| Pin21 MISO   | Yellow | SDO    |
-| Pin23 SCLK   | Green  | SCK    |
-| Pin40 GPIO21 | Orange | CS     |
-| Pin6  Gnd    | Brown  | GND    |
-| Pin1  3.3V   | Red    | Vin    |
+| RPi            | Color  | Sensor |
+|:---------------|:-------|:-------|
+| Pin19 MOSI     | Blue   | SDI    |
+| Pin21 MISO     | Yellow | SDO    |
+| Pin23 SCLK     | Green  | SCK    |
+| Pin24 SPICE0   | Orange | CS     |
+| Pin6  Gnd      | Brown  | GND    |
+| Pin1  3.3V     | Red    | Vin    |
 
 
