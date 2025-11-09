@@ -73,7 +73,7 @@ public class CP2102N {
             .flowControl(FlowControl.NONE)
             .id(id)
             .name(name)
-            .device("/dev/ttyAMA0")
+            .port("/dev/ttyAMA0")
             .provider("linuxfsserial")
             .build());
 
