@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 /**
  * A simple "Snake" game implementation for a 8x8 playing field.
  * <p>
- * Hold the center key for one second to exit.
+ * Press the select key or hold the center key for one second to exit.
  * <p>
  * This class doesn't include a main() method; please find an examples for wiring this up in the waveshare 14972
  * dispay hat demo.
@@ -42,6 +42,7 @@ public class Snake {
     private Entity[][] arena;
     private List<Segment> body = new ArrayList<>();
     private long longPressStart = Long.MAX_VALUE;
+    private boolean exit = false;
 
     public Snake(GraphicsDisplay display, GameController controller) {
         this.display = display;
@@ -52,6 +53,7 @@ public class Snake {
         assignKey(GameController.Key.LEFT, value -> processDirectionalKey(value, -1, 0));
         assignKey(GameController.Key.RIGHT, value -> processDirectionalKey(value, 1, 0));
         assignKey(GameController.Key.CENTER, value -> processCenterKey(value));
+        assignKey(GameController.Key.SELECT, _ -> { exit = true; });
 
         int displayWidth = display.getWidth();
         int displayHeight = display.getHeight();
@@ -122,10 +124,13 @@ public class Snake {
 
     public void run() {
         initialize();
-        while (System.currentTimeMillis() - longPressStart < 1000) {
+        while (!exit) {
             deferredDelay.setDelayMillis(stepTimeMillis);
             step();
             deferredDelay.materializeDelay();
+            if (System.currentTimeMillis() - longPressStart > 1000) {
+                exit = true;
+            }
         }
         display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
