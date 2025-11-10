@@ -3,10 +3,7 @@ package com.pi4j.examples.hat.raspberry.sensehat;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.hat.raspberry.SenseHat;
-import com.pi4j.examples.games.snake.Snake;
 import com.pi4j.examples.hat.DisplayHatDemo;
-import com.pi4j.examples.ui.ListView;
-import com.pi4j.examples.ui.SensorView;
 
 /**
  * Demo for the Sense hat. Renders a menu with options for showing sensor values and playing snake.
