@@ -2,9 +2,7 @@ package com.pi4j.examples.hat.waveshare.waveshare14972;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.hat.waveshare.Waveshare14972;
-import com.pi4j.drivers.input.GameController;
 import com.pi4j.examples.hat.DisplayHatDemo;
 
 /**
