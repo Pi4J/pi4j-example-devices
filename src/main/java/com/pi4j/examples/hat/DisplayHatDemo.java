@@ -10,6 +10,7 @@ import com.pi4j.examples.ui.SensorView;
 
 import java.util.List;
 
+/** A generic demo for display hats */
 public class DisplayHatDemo {
 
     private final GraphicsDisplay display;
