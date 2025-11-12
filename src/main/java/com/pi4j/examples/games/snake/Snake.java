@@ -41,7 +41,6 @@ public class Snake {
 
     private Entity[][] arena;
     private List<Segment> body = new ArrayList<>();
-    private long longPressStart = Long.MAX_VALUE;
     private boolean exit = false;
 
     public Snake(GraphicsDisplay display, GameController controller) {
@@ -52,8 +51,6 @@ public class Snake {
         assignKey(GameController.Key.DOWN, value -> processDirectionalKey(value, 0, 1));
         assignKey(GameController.Key.LEFT, value -> processDirectionalKey(value, -1, 0));
         assignKey(GameController.Key.RIGHT, value -> processDirectionalKey(value, 1, 0));
-        assignKey(GameController.Key.CENTER, value -> processCenterKey(value));
-        assignKey(GameController.Key.SELECT, _ -> { exit = true; });
 
         int displayWidth = display.getWidth();
         int displayHeight = display.getHeight();
@@ -107,9 +104,6 @@ public class Snake {
         addFood();
     }
 
-    private void processCenterKey(boolean pressed) {
-        longPressStart = pressed ? System.currentTimeMillis() : Long.MAX_VALUE;
-    }
 
     private void processDirectionalKey(boolean keyPressed, int dx, int dy) {
         if (keyPressed) {
@@ -128,9 +122,6 @@ public class Snake {
             deferredDelay.setDelayMillis(stepTimeMillis);
             step();
             deferredDelay.materializeDelay();
-            if (System.currentTimeMillis() - longPressStart > 1000) {
-                exit = true;
-            }
         }
         display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
@@ -157,7 +148,7 @@ public class Snake {
             }
             fadeOut -= stepTimeMillis;
             if (fadeOut <= 0) {
-                initialize();
+                exit = true;
             }
         } else {
             int newX = headX + dx;

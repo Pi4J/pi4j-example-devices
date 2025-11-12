@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * For a usage example, please refer to the SenseHat demo.
  */
 public class ListView {
-    private static final Runnable EXIT_ACTION = () -> {};
+    public static final Runnable EXIT_ACTION = () -> {};
 
     private final GraphicsDisplay display;
     private final GameController controller;
@@ -128,7 +128,9 @@ public class ListView {
             assignKeys(this::triggerKey,
                 GameController.Key.RIGHT, GameController.Key.CENTER,
                 GameController.Key.A, GameController.Key.SELECT, GameController.Key.KEY_1);
-            assignKeys(this::backKey, GameController.Key.B, GameController.Key.LEFT, GameController.Key.KEY_3);
+            if (!items.stream().anyMatch(item -> item.action == EXIT_ACTION)) {
+                assignKeys(this::backKey, GameController.Key.B, GameController.Key.LEFT, GameController.Key.KEY_3);
+            }
             select(selectedIndex);
         }
     }

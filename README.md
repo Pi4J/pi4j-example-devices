@@ -57,6 +57,7 @@ The following table the currently supported devices within this project:
 | A/D           | I2C        | (1)     | [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md)      
 | HAT           |            |         | [Raspberry SenseHat](src/main/java/com/pi4j/examples/hat/raspberry/sensehat/)
 | HAT           |            |         | [Waveshare 14972 Mini Display Hat](src/main/java/com/pi4j/examples/hat/waveshare/waveshare14972/)
+| HAT           |            |         | [Waveshare GamePi13 Hat](src/main/java/com/pi4j/examples/hat/waveshare/gamepi13/)
 | IO Expander   | I2C        |         | [MCP23008 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23008/README.md)        
 | IO Expander   | I2C        |         | [MCP23008 and MCP23017 Pin monitoring (interrupt support)](src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md) 
 | IO Expander   | I2C        |         | [MCP23017 drive and read chip GPIOs](src/main/java/com/pi4j/devices/mcp23017/README.md) 
