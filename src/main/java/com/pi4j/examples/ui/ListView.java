@@ -34,10 +34,15 @@ public class ListView {
     private boolean exit;
     private boolean keyEnabled;
 
+    public ListView(CharacterDisplay display, GameController controller) {
+        this.display = display;
+        this.controller = controller;
+    }
+
     public ListView(GraphicsDisplay display, GameController controller, int scale) {
         BitmapFont font = display.getHeight() > 50 * scale ? BitmapFont.get5x10Font() : BitmapFont.get5x8Font();
-        this.display = new GraphicsCharacterDisplay(display, font, 0xffffffff, 0xff000000, scale);
-        this.controller = controller;
+        this(new GraphicsCharacterDisplay(display, font, 0xffffffff, 0xff000000, scale),
+            controller);
     }
 
     public ListView add(String text) {
