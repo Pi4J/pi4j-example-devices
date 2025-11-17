@@ -14,10 +14,14 @@ public class Demo {
         Context pi4j = Pi4J.newAutoContext();
         GamePi13 hat = new GamePi13(pi4j);
 
-        new DisplayHatDemo(hat.getDisplay(), hat.getController(), null).run();
+        new DisplayHatDemo(
+            hat.getDisplay(),
+            null,
+            hat.getController(),
+            /*hat.getSoundDriver()*/ null,
+            null).run();
 
-        hat.getDisplay().close();
-        hat.getController().close();
+        hat.close();
         pi4j.shutdown();
     }
 

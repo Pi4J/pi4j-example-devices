@@ -1,6 +1,6 @@
 package com.pi4j.examples.ui;
 
-import com.pi4j.drivers.display.graphics.GraphicsDisplay;
+import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.drivers.sensor.Sensor;
 import com.pi4j.drivers.sensor.SensorDescriptor;
@@ -35,11 +35,10 @@ public class SensorView {
     }
 
     public SensorView(
-        GraphicsDisplay display,
-        GameController controller,
-        int scale
+        CharacterDisplay display,
+        GameController controller
     ) {
-        this.listView = new ListView(display, controller, scale);
+        this.listView = new ListView(display, controller);
     }
 
     public SensorView add(Sensor sensor) {
