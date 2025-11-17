@@ -22,6 +22,7 @@ public class ListView {
 
     private final CharacterDisplay display;
     private final GameController controller;
+    private final boolean useMarker;
     private final List<Item> items = new ArrayList<>();
 
     private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> activeKeys = new HashMap<>();
@@ -37,12 +38,7 @@ public class ListView {
     public ListView(CharacterDisplay display, GameController controller) {
         this.display = display;
         this.controller = controller;
-    }
-
-    public ListView(GraphicsDisplay display, GameController controller, int scale) {
-        BitmapFont font = display.getHeight() > 50 * scale ? BitmapFont.get5x10Font() : BitmapFont.get5x8Font();
-        this(new GraphicsCharacterDisplay(display, font, 0xffffffff, 0xff000000, scale),
-            controller);
+        this.useMarker = !display.getSupportedAttributes().contains(CharacterDisplay.Attribute.INVERSE);
     }
 
     public ListView add(String text) {
@@ -66,6 +62,7 @@ public class ListView {
                     while (!exit) {
                         Thread.sleep(50);
                         GameController.Direction direction = controller.getDirection();
+                        System.out.println("Direction: " + direction);
                         if (!keyEnabled) {
                             keyEnabled = direction == GameController.Direction.NONE;
                         } else if (direction == GameController.Direction.NORTH) {
@@ -127,7 +124,7 @@ public class ListView {
     private void render() {
         display.clear();
         int maxLine = line0 + display.getHeight();
-        for (int i = line0; i <= maxLine; i++) {
+        for (int i = line0; i < maxLine; i++) {
             render(i);
         }
     }
@@ -138,10 +135,13 @@ public class ListView {
 
         if (index < items.size()) {
             String text = items.get(index).label;
+            if (useMarker) {
+                text = (selected ? "> " : "  ") + text;
+            }
             int x = 0;
             if (selected && scroll) {
                 x = x0;
-                text += " - " + text;
+                text += (useMarker ? " " : " - ") + text;
             } else {
                 text += " ".repeat(display.getWidth());
             }
