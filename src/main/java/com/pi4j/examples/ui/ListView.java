@@ -62,7 +62,6 @@ public class ListView {
                     while (!exit) {
                         Thread.sleep(50);
                         GameController.Direction direction = controller.getDirection();
-                        System.out.println("Direction: " + direction);
                         if (!keyEnabled) {
                             keyEnabled = direction == GameController.Direction.NONE;
                         } else if (direction == GameController.Direction.NORTH) {
@@ -74,6 +73,7 @@ public class ListView {
                         } else if (direction == GameController.Direction.EAST
                               || anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
                             Runnable action = items.get(selectedIndex).action;
+                            display.clear();
                             if (action == EXIT_ACTION) {
                                 exit = true;
                             } else {
@@ -102,7 +102,6 @@ public class ListView {
                 }
                 triggeredAction = null;
         }
-        display.clear();
     }
 
     public int size() {
@@ -152,7 +151,7 @@ public class ListView {
 
     private void select(int index) {
            selectedIndex = (items.size() + index) % items.size();
-           line0 = Math.max(0, selectedIndex - display.getHeight());
+           line0 = Math.max(0, selectedIndex - display.getHeight() + 1);
            scroll = items.get(selectedIndex).label.length() > display.getWidth();
            x0 = 0;
            render();
