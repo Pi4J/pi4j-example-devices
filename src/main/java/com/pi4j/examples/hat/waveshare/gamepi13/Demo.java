@@ -18,7 +18,7 @@ public class Demo {
             hat.getDisplay(),
             null,
             hat.getController(),
-            /*hat.getSoundDriver()*/ null,
+            hat.getSoundDriver(),
             null).run();
 
         hat.close();

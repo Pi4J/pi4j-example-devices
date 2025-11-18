@@ -53,7 +53,7 @@ public class DisplayHatDemo {
             menu.add("Bricks", () -> new Bricks(graphicsDisplay, controller).run());
         }
         if (soundDriver != null) {
-            menu.add("Play Sound", () -> {
+            menu.add("Play Demo Sound", () -> {
                 soundDriver.playNotes(103, null, Note.G4, 8, Note.G4, 8, Note.G4, 8, Note.DS4, 6, Note.AS4, 2, Note.G4, 8, Note.DS4, 6, Note.AS4, 2, Note.G4, 16);
             });
         }
