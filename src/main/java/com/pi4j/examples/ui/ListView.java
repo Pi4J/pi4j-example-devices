@@ -58,49 +58,49 @@ public class ListView {
     public void run() {
         render();
         while (!exit) {
-                try {
-                    while (!exit) {
-                        Thread.sleep(50);
-                        GameController.Direction direction = controller.getDirection();
-                        if (!keyEnabled) {
-                            keyEnabled = direction == GameController.Direction.NONE;
-                        } else if (direction == GameController.Direction.NORTH) {
-                            select(selectedIndex - 1);
-                            keyEnabled = false;
-                        } else if (direction == GameController.Direction.SOUTH) {
-                            select(selectedIndex + 1);
-                            keyEnabled = false;
-                        } else if (direction == GameController.Direction.EAST
-                              || anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
-                            Runnable action = items.get(selectedIndex).action;
-                            display.clear();
-                            if (action == EXIT_ACTION) {
-                                exit = true;
-                            } else {
-                                action.run();
-                                render();
-                            }
-                        } else if (direction == GameController.Direction.WEST) {
-                                keyEnabled = false;
+            try {
+                while (!exit) {
+                    Thread.sleep(50);
+                    GameController.Direction direction = controller.getDirection();
+                    if (!keyEnabled) {
+                        keyEnabled = direction == GameController.Direction.NONE;
+                    } else if (direction == GameController.Direction.NORTH) {
+                        select(selectedIndex - 1);
+                        keyEnabled = false;
+                    } else if (direction == GameController.Direction.SOUTH) {
+                        select(selectedIndex + 1);
+                        keyEnabled = false;
+                    } else if (direction == GameController.Direction.EAST
+                        || anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
+                        Runnable action = items.get(selectedIndex).action;
+                        display.clear();
+                        if (action == EXIT_ACTION) {
+                            exit = true;
+                        } else {
+                            action.run();
+                            render();
                         }
-
-                        if (scroll) {
-                            if (--x0 < -(3 + items.get(selectedIndex).label.length()) * 6) {
-                                x0 = 0;
-                            }
-                            render(selectedIndex);
-                        }
+                    } else if (direction == GameController.Direction.WEST) {
+                        keyEnabled = false;
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
+
+                    if (scroll) {
+                        if (--x0 < -(3 + items.get(selectedIndex).label.length()) * 6) {
+                            x0 = 0;
+                        }
+                        render(selectedIndex);
+                    }
                 }
-                if (triggeredAction == EXIT_ACTION) {
-                    exit = true;
-                } else if (triggeredAction != null) {
-                    triggeredAction.run();
-                }
-                triggeredAction = null;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+            if (triggeredAction == EXIT_ACTION) {
+                exit = true;
+            } else if (triggeredAction != null) {
+                triggeredAction.run();
+            }
+            triggeredAction = null;
         }
     }
 
