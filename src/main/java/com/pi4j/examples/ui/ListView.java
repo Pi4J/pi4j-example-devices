@@ -28,7 +28,7 @@ public class ListView {
     private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> activeKeys = new HashMap<>();
 
     private boolean scroll;
-    private int x0;
+    private float x0;
     private int line0;
     private int selectedIndex = 0;
     private Runnable triggeredAction = null;
@@ -79,13 +79,15 @@ public class ListView {
                         } else {
                             action.run();
                             render();
+
                         }
                     } else if (direction == GameController.Direction.WEST) {
                         keyEnabled = false;
                     }
 
                     if (scroll) {
-                        if (--x0 < -(3 + items.get(selectedIndex).label.length()) * 6) {
+                        x0 = x0 - 1.0f/6;
+                        if (x0 < -(3 + items.get(selectedIndex).label.length())) {
                             x0 = 0;
                         }
                         render(selectedIndex);
@@ -137,7 +139,7 @@ public class ListView {
             if (useMarker) {
                 text = (selected ? "> " : "  ") + text;
             }
-            int x = 0;
+            float x = 0;
             if (selected && scroll) {
                 x = x0;
                 text += (useMarker ? " " : " - ") + text;
