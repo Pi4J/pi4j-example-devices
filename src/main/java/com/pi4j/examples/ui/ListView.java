@@ -1,9 +1,6 @@
 package com.pi4j.examples.ui;
 
-import com.pi4j.drivers.display.BitmapFont;
 import com.pi4j.drivers.display.character.CharacterDisplay;
-import com.pi4j.drivers.display.graphics.GraphicsCharacterDisplay;
-import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.io.ListenableOnOffRead;
 import com.pi4j.io.OnOffRead;
@@ -154,7 +151,7 @@ public class ListView {
     private void select(int index) {
            selectedIndex = (items.size() + index) % items.size();
            line0 = Math.max(0, selectedIndex - display.getHeight() + 1);
-           scroll = items.get(selectedIndex).label.length() > display.getWidth();
+           scroll = items.get(selectedIndex).label.length() + (useMarker ? 2 : 0) > display.getWidth();
            x0 = 0;
            render();
     }
