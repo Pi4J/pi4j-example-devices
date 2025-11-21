@@ -28,9 +28,9 @@ public class ListView {
     private float x0;
     private int line0;
     private int selectedIndex = 0;
-    private Runnable triggeredAction = null;
     private boolean exit;
-    private boolean keyEnabled;
+    private GameController.Direction triggeredDirection = GameController.Direction.NONE;
+    private GameController.Key triggeredKey = null;
 
     public ListView(CharacterDisplay display, GameController controller) {
         this.display = display;
@@ -53,53 +53,42 @@ public class ListView {
     }
 
     public void run() {
+        select(selectedIndex);
         render();
-        while (!exit) {
-            try {
-                while (!exit) {
-                    Thread.sleep(50);
-                    GameController.Direction direction = controller.getDirection();
-                    if (!keyEnabled) {
-                        keyEnabled = direction == GameController.Direction.NONE;
-                    } else if (direction == GameController.Direction.NORTH) {
-                        select(selectedIndex - 1);
-                        keyEnabled = false;
-                    } else if (direction == GameController.Direction.SOUTH) {
-                        select(selectedIndex + 1);
-                        keyEnabled = false;
-                    } else if (direction == GameController.Direction.EAST
-                        || anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
-                        Runnable action = items.get(selectedIndex).action;
-                        display.clear();
-                        if (action == EXIT_ACTION) {
-                            exit = true;
-                        } else {
-                            action.run();
-                            render();
-
+        try {
+            while (!exit) {
+                Thread.sleep(50);
+                GameController.Direction direction = controller.getDirection();
+                if (direction == GameController.Direction.NONE) {
+                    switch (triggeredDirection) {
+                        case NORTH -> select(selectedIndex - 1);
+                        case SOUTH -> select(selectedIndex + 1);
+                        case EAST -> trigger();
+                        case WEST -> {
+                            if (items.stream().noneMatch(item -> item.action == EXIT_ACTION)) {
+                                exit = true;
+                                display.clear();
+                            }
                         }
-                    } else if (direction == GameController.Direction.WEST) {
-                        keyEnabled = false;
                     }
-
-                    if (scroll) {
-                        x0 = x0 - 1.0f/6;
-                        if (x0 < -(3 + items.get(selectedIndex).label.length())) {
-                            x0 = 0;
-                        }
-                        render(selectedIndex);
+                    triggeredDirection = GameController.Direction.NONE;
+                } else {
+                    triggeredDirection = direction;
+                    if (anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
+                        trigger();
                     }
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
+                if (scroll) {
+                    x0 = x0 - 1.0f / 6;
+                    if (x0 < -(3 + items.get(selectedIndex).label.length())) {
+                        x0 = 0;
+                    }
+                    render(selectedIndex);
+                }
             }
-            if (triggeredAction == EXIT_ACTION) {
-                exit = true;
-            } else if (triggeredAction != null) {
-                triggeredAction.run();
-            }
-            triggeredAction = null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
         }
     }
 
@@ -112,8 +101,12 @@ public class ListView {
     private boolean anyPressed(GameController.Key... keys) {
         for (GameController.Key key : keys) {
             OnOffRead<?> onOff = controller.getKey(key);
-            if (onOff != null && onOff.isOn()) {
-                return true;
+            if (onOff != null) {
+                if (onOff.isOn()) {
+                    triggeredKey = key;
+                } else {
+                    return triggeredKey == key;
+                }
             }
         }
         return false;
@@ -149,13 +142,23 @@ public class ListView {
     }
 
     private void select(int index) {
-           selectedIndex = (items.size() + index) % items.size();
-           line0 = Math.max(0, selectedIndex - display.getHeight() + 1);
-           scroll = items.get(selectedIndex).label.length() + (useMarker ? 2 : 0) > display.getWidth();
-           x0 = 0;
-           render();
+        selectedIndex = (items.size() + index) % items.size();
+        line0 = Math.max(0, selectedIndex - display.getHeight() + 1);
+        scroll = items.get(selectedIndex).label.length() + (useMarker ? 2 : 0) > display.getWidth();
+        x0 = 0;
+        render();
     }
 
+    private void trigger() {
+        Runnable action = items.get(selectedIndex).action;
+        display.clear();
+        if (action == EXIT_ACTION) {
+            exit = true;
+        } else if (action != null) {
+            action.run();
+            render();
+        }
+    }
 
     static class Item {
         final String label;
