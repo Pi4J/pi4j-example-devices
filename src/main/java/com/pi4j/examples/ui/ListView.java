@@ -1,14 +1,11 @@
 package com.pi4j.examples.ui;
 
-import com.pi4j.drivers.display.BitmapFont;
-import com.pi4j.drivers.display.graphics.GraphicsDisplay;
+import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.io.ListenableOnOffRead;
+import com.pi4j.io.OnOffRead;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -20,36 +17,25 @@ import java.util.function.Consumer;
 public class ListView {
     public static final Runnable EXIT_ACTION = () -> {};
 
-    private final GraphicsDisplay display;
+    private final CharacterDisplay display;
     private final GameController controller;
-    private final Object lock = new Object();
+    private final boolean useMarker;
     private final List<Item> items = new ArrayList<>();
-    private final int scale;
-    private final BitmapFont font;
-    private final int lineHeight;
+
     private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> activeKeys = new HashMap<>();
 
     private boolean scroll;
-    private int x0;
+    private float x0;
     private int line0;
     private int selectedIndex = 0;
-    private Runnable triggeredAction = null;
     private boolean exit;
+    private GameController.Direction triggeredDirection = GameController.Direction.NONE;
+    private GameController.Key triggeredKey = null;
 
-    public ListView(GraphicsDisplay display, GameController controller) {
-        this(display, controller, 1);
-    }
-
-    public ListView(GraphicsDisplay display, GameController controller, int scale) {
+    public ListView(CharacterDisplay display, GameController controller) {
         this.display = display;
         this.controller = controller;
-        this.scale = scale;
-        if (display.getHeight() > 50 * scale) {
-            font = BitmapFont.get5x10Font();
-        } else {
-            font = BitmapFont.get5x8Font();
-        }
-        this.lineHeight = font.getCellHeight() * scale;
+        this.useMarker = !display.getSupportedAttributes().contains(CharacterDisplay.Attribute.INVERSE);
     }
 
     public ListView add(String text) {
@@ -57,150 +43,120 @@ public class ListView {
     }
 
     public ListView add(String text, Runnable action) {
-        synchronized (lock) {
-            items.add(new Item(text, action));
-        }
+        items.add(new Item(text, action));
         return this;
     }
 
     public ListView set(int index, String text) {
-        synchronized (lock) {
-            items.set(index, new Item(text, null));
-        }
+        items.set(index, new Item(text, null));
         return this;
     }
 
     public void run() {
-        synchronized (lock) {
+        select(selectedIndex);
+        render();
+        try {
             while (!exit) {
-                initialize();
-                try {
-                    while (!exit && triggeredAction == null) {
-                        lock.wait(50);
-                        if (scroll) {
-                            if (--x0 < -(3 + items.get(selectedIndex).label.length()) * 6) {
-                                x0 = 0;
+                Thread.sleep(50);
+                GameController.Direction direction = controller.getDirection();
+                if (direction == GameController.Direction.NONE) {
+                    switch (triggeredDirection) {
+                        case NORTH -> select(selectedIndex - 1);
+                        case SOUTH -> select(selectedIndex + 1);
+                        case EAST -> trigger();
+                        case WEST -> {
+                            if (items.stream().noneMatch(item -> item.action == EXIT_ACTION)) {
+                                exit = true;
+                                display.clear();
                             }
-                            render(selectedIndex);
-                            display.flush();
                         }
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
+                    triggeredDirection = GameController.Direction.NONE;
+                } else {
+                    triggeredDirection = direction;
+                    if (anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
+                        trigger();
+                    }
                 }
-                releaseKeys();
-                if (triggeredAction == EXIT_ACTION) {
-                    exit = true;
-                } else if (triggeredAction != null) {
-                    triggeredAction.run();
+                if (scroll) {
+                    x0 = x0 - 1.0f / 6;
+                    if (x0 < -(3 + items.get(selectedIndex).label.length())) {
+                        x0 = 0;
+                    }
+                    render(selectedIndex);
                 }
-                triggeredAction = null;
             }
-            display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
         }
     }
 
     public int size() {
-        synchronized (lock) {
-            return items.size();
-        }
+        return items.size();
     }
 
     // Private helpers
 
-    private void assignKeys(Consumer<Boolean> consumer, GameController.Key... keys) {
-        synchronized (lock) {
-            for (GameController.Key key : keys) {
-                ListenableOnOffRead<?> lor = controller.getKey(key);
-                if (lor != null) {
-                    this.activeKeys.put(lor, lor.addConsumer(consumer));
+    private boolean anyPressed(GameController.Key... keys) {
+        for (GameController.Key key : keys) {
+            OnOffRead<?> onOff = controller.getKey(key);
+            if (onOff != null) {
+                if (onOff.isOn()) {
+                    triggeredKey = key;
+                } else {
+                    return triggeredKey == key;
                 }
             }
         }
-    }
-
-    private void initialize() {
-        synchronized (lock) {
-            render();
-            assignKeys(pressed -> moveCursor(pressed, -1), GameController.Key.UP);
-            assignKeys(pressed -> moveCursor(pressed, 1), GameController.Key.DOWN);
-            assignKeys(this::triggerKey,
-                GameController.Key.RIGHT, GameController.Key.CENTER,
-                GameController.Key.A, GameController.Key.SELECT, GameController.Key.KEY_1);
-            if (!items.stream().anyMatch(item -> item.action == EXIT_ACTION)) {
-                assignKeys(this::backKey, GameController.Key.B, GameController.Key.LEFT, GameController.Key.KEY_3);
-            }
-            select(selectedIndex);
-        }
+        return false;
     }
 
     private void render() {
-        synchronized (lock) {
-            int maxLine = line0 + display.getHeight() / lineHeight + 1;
-            for (int i = line0; i < maxLine; i++) {
-                render(i);
-            }
-        }
-    }
-
-    private void moveCursor(boolean pressed, int direction) {
-        if (pressed) {
-            select(selectedIndex + direction);
-        }
-    }
-
-    private void releaseKeys() {
-        synchronized (lock) {
-            for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : activeKeys.entrySet()) {
-                entry.getKey().removeConsumer(entry.getValue());
-            }
-            activeKeys.clear();
+        display.clear();
+        int maxLine = line0 + display.getHeight();
+        for (int i = line0; i < maxLine; i++) {
+            render(i);
         }
     }
 
     private void render(int index) {
-        synchronized (lock) {
-            boolean selected = selectedIndex == index;
-            boolean invert = selected && display.getHeight() > scale * 8;
-            int backgroundColor = invert ? 0xffffffff : 0xff000000;
-            int foregroundColor = invert ? 0xff000000 : 0xffffffff;
+        boolean selected = selectedIndex == index;
+        boolean invert = selected && display.getHeight() > 1;
 
-            display.fillRect(0, lineHeight * (index - line0), display.getWidth(), lineHeight, backgroundColor);
-            if (index < items.size()) {
-                String text = items.get(index).label;
-                int x = 0;
-                if (selected && scroll) {
-                    x = x0 * scale;
-                    text += " - " + text;
-                }
-                display.renderText(x, lineHeight + (index - line0) * lineHeight, text, font, foregroundColor, scale, scale);
+        if (index < items.size()) {
+            String text = items.get(index).label;
+            if (useMarker) {
+                text = (selected ? "> " : "  ") + text;
             }
+            float x = 0;
+            if (selected && scroll) {
+                x = x0;
+                text += (useMarker ? " " : " - ") + text;
+            } else {
+                text += " ".repeat(display.getWidth());
+            }
+            display.writeAt(x, index - line0, text,
+                invert ? EnumSet.of(CharacterDisplay.Attribute.INVERSE) : EnumSet.noneOf(CharacterDisplay.Attribute.class));
         }
     }
 
     private void select(int index) {
-        synchronized (lock) {
-           selectedIndex = (items.size() + index) % items.size();
-           line0 = Math.max(0, selectedIndex - (display.getHeight() - lineHeight) / lineHeight);
-           scroll = items.get(selectedIndex).label.length() * 6 * scale > display.getWidth();
-           x0 = 0;
-           render();
-        }
+        selectedIndex = (items.size() + index) % items.size();
+        line0 = Math.max(0, selectedIndex - display.getHeight() + 1);
+        scroll = items.get(selectedIndex).label.length() + (useMarker ? 2 : 0) > display.getWidth();
+        x0 = 0;
+        render();
     }
 
-    private void backKey(boolean pressed) {
-        if (pressed) {
+    private void trigger() {
+        Runnable action = items.get(selectedIndex).action;
+        display.clear();
+        if (action == EXIT_ACTION) {
             exit = true;
-        }
-    }
-
-    private void triggerKey(boolean pressed) {
-        if (pressed) {
-            synchronized (lock) {
-                triggeredAction = items.get(selectedIndex).action;
-                lock.notify();
-            }
+        } else if (action != null) {
+            action.run();
+            render();
         }
     }
 

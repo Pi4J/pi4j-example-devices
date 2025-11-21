@@ -14,7 +14,12 @@ public class Demo {
         Context pi4j = Pi4J.newAutoContext();
         Waveshare14972 hat = new Waveshare14972(pi4j);
 
-        new DisplayHatDemo(hat.getDisplay(), hat.getController(), null).run();
+        new DisplayHatDemo(
+            hat.getDisplay(),
+            null,
+            hat.getController(),
+            null,
+            null).run();
 
         hat.getDisplay().close();
         hat.getController().close();
