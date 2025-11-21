@@ -1,6 +1,5 @@
 package com.pi4j.examples.hat;
 
-import com.pi4j.drivers.display.BitmapFont;
 import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.display.graphics.GraphicsCharacterDisplay;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
