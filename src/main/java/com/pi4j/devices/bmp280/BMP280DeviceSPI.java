@@ -143,7 +143,7 @@ public class BMP280DeviceSPI extends BMP280Device {
     public int readRegister(int register, byte[] buffer) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
-        this.spi.writeRead(data,  buffer);
+        this.spi.writeThenRead(data,  buffer);
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", buffer[0]) + String.format("0X%02x: ", buffer[0]));
         return buffer.length;
     }
