@@ -72,11 +72,11 @@ public class ListView {
                         }
                     }
                     triggeredDirection = GameController.Direction.NONE;
-                } else {
-                    triggeredDirection = direction;
                     if (anyPressed(GameController.Key.CENTER, GameController.Key.START, GameController.Key.A)) {
                         trigger();
                     }
+                } else {
+                    triggeredDirection = direction;
                 }
                 if (scroll) {
                     x0 = x0 - 1.0f / 6;
@@ -104,8 +104,9 @@ public class ListView {
             if (onOff != null) {
                 if (onOff.isOn()) {
                     triggeredKey = key;
-                } else {
-                    return triggeredKey == key;
+                } else if (triggeredKey == key) {
+                    triggeredKey = null;
+                    return true;
                 }
             }
         }
