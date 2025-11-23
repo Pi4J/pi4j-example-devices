@@ -14,7 +14,7 @@ public class SenseHatDemo {
         Context pi4j = Pi4J.newAutoContext();
         SenseHat senseHat = new SenseHat(pi4j);
 
-        new DisplayHatDemo(senseHat.getDisplay(), senseHat.getController(), senseHat.getAllSensors()).run();
+        new DisplayHatDemo(senseHat.getDisplay(), null, senseHat.getController(), null, senseHat.getAllSensors()).run();
 
         pi4j.shutdown();
     }

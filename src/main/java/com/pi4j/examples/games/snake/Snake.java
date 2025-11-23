@@ -38,6 +38,7 @@ public class Snake {
     private int headY;
     private int length;
     private int stepTimeMillis;
+    private boolean armed = false;
 
     private Entity[][] arena;
     private List<Segment> body = new ArrayList<>();
@@ -46,11 +47,6 @@ public class Snake {
     public Snake(GraphicsDisplay display, GameController controller) {
         this.display = display;
         this.controller = controller;
-
-        assignKey(GameController.Key.UP, value -> processDirectionalKey(value, 0, -1));
-        assignKey(GameController.Key.DOWN, value -> processDirectionalKey(value, 0, 1));
-        assignKey(GameController.Key.LEFT, value -> processDirectionalKey(value, -1, 0));
-        assignKey(GameController.Key.RIGHT, value -> processDirectionalKey(value, 1, 0));
 
         int displayWidth = display.getWidth();
         int displayHeight = display.getHeight();
@@ -80,12 +76,6 @@ public class Snake {
         setEntity(x, y, Entity.SNAKE);
     }
 
-    private void assignKey(GameController.Key key, Consumer<Boolean> consumer) {
-        ListenableOnOffRead<?> lor = controller.getKey(key);
-        if (lor != null) {
-            keys.put(lor, lor.addConsumer(consumer));
-        }
-    }
 
     private void initialize() {
         arena = new Entity[AREA_SIZE][AREA_SIZE];
@@ -104,14 +94,6 @@ public class Snake {
         addFood();
     }
 
-
-    private void processDirectionalKey(boolean keyPressed, int dx, int dy) {
-        if (keyPressed) {
-            this.dx = dx;
-            this.dy = dy;
-        }
-    }
-
     private void renderColor(int x, int y, int color) {
         display.fillRect(x0 + x * scale, y0 + y * scale, scale, scale, color);
     }
@@ -120,6 +102,17 @@ public class Snake {
         initialize();
         while (!exit) {
             deferredDelay.setDelayMillis(stepTimeMillis);
+            GameController.Direction direction = controller.getDirection();
+            if (!armed) {
+                armed = direction == GameController.Direction.NONE;
+            } else {
+                switch (direction) {
+                    case NORTH -> setDirection(0, -1);
+                    case SOUTH -> setDirection(0, 1);
+                    case EAST -> setDirection(1, 0);
+                    case WEST -> setDirection(-1, 0);
+                }
+            }
             step();
             deferredDelay.materializeDelay();
         }
@@ -127,6 +120,11 @@ public class Snake {
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
             entry.getKey().removeConsumer(entry.getValue());
         }
+    }
+
+    private void setDirection(int dx, int dy) {
+        this.dx = dx;
+        this.dy = dy;
     }
 
     private void setEntity(int x, int y, Entity entity) {
