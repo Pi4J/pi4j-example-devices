@@ -6,7 +6,7 @@ import com.pi4j.drivers.hat.waveshare.GamePi13;
 import com.pi4j.examples.hat.DisplayHatDemo;
 
 /**
- * A simple demo running a "Snake" game. Exit by pressing the select key.
+ * A small demo allowing the user to play two mini games.
  */
 public class Demo {
 

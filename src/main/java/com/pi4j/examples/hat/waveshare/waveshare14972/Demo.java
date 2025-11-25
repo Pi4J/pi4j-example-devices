@@ -6,7 +6,7 @@ import com.pi4j.drivers.hat.waveshare.Waveshare14972;
 import com.pi4j.examples.hat.DisplayHatDemo;
 
 /**
- * A simple demo running a "Snake" game. Exit by holding the center button for one second.
+ * A small demo allowing the user to play two mini games.
  */
 public class Demo {
 
