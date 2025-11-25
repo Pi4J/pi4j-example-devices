@@ -15,6 +15,7 @@ public class CrowPi2Demo {
             crowPi2.getGraphicsDisplay(),
             crowPi2.getTextDisplay(),
             crowPi2.getGameController(),
+            crowPi2.getKeyPad(),
             crowPi2.getSoundDriver(),
             null);
 
