@@ -4,9 +4,11 @@ import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.display.graphics.GraphicsCharacterDisplay;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
+import com.pi4j.drivers.input.KeyPad;
 import com.pi4j.drivers.sensor.Sensor;
 import com.pi4j.drivers.sound.Note;
 import com.pi4j.drivers.sound.SoundDriver;
+import com.pi4j.examples.apps.calculator.Calculator;
 import com.pi4j.examples.games.bricks.Bricks;
 import com.pi4j.examples.games.snake.Snake;
 import com.pi4j.examples.ui.ListView;
@@ -20,6 +22,7 @@ public class DisplayHatDemo {
     private final GraphicsDisplay graphicsDisplay;
     private final CharacterDisplay characterDisplay;
     private final GameController controller;
+    private final KeyPad keyPad;
     private final SoundDriver soundDriver;
     private final List<Sensor> sensors;
 
@@ -27,6 +30,7 @@ public class DisplayHatDemo {
         GraphicsDisplay graphicsDisplay,
         CharacterDisplay characterDisplay,
         GameController controller,
+        KeyPad keyPad,
         SoundDriver soundDriver,
         List<Sensor> sensors
     ) {
@@ -34,6 +38,7 @@ public class DisplayHatDemo {
         this.characterDisplay = characterDisplay != null ? characterDisplay
             : new GraphicsCharacterDisplay(graphicsDisplay);
         this.controller = controller;
+        this.keyPad = keyPad;
         this.soundDriver = soundDriver;
         this.sensors = sensors;
     }
@@ -50,6 +55,9 @@ public class DisplayHatDemo {
         menu.add("Snake", () -> new Snake(graphicsDisplay, controller).run());
         if (resolution >= 64) {
             menu.add("Bricks", () -> new Bricks(graphicsDisplay, controller).run());
+        }
+        if (keyPad != null) {
+            menu.add("Calculator", () -> new Calculator(characterDisplay, keyPad).run());
         }
         if (soundDriver != null) {
             menu.add("Play Demo Sound", () -> {

@@ -1,8 +1,8 @@
-package com.pi4j.examples.hat.waveshare.gamepi13;
+package com.pi4j.examples.hat.waveshare.waveshare13891;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.hat.waveshare.GamePi13;
+import com.pi4j.drivers.hat.waveshare.Waveshare13891;
 import com.pi4j.examples.hat.DisplayHatDemo;
 
 /**
@@ -12,17 +12,18 @@ public class Demo {
 
     static void main(String[] args) {
         Context pi4j = Pi4J.newAutoContext();
-        GamePi13 hat = new GamePi13(pi4j);
+        Waveshare13891 hat = new Waveshare13891(pi4j);
 
         new DisplayHatDemo(
             hat.getDisplay(),
             null,
             hat.getController(),
             null,
-            hat.getSoundDriver(),
+            null,
             null).run();
 
-        hat.close();
+        hat.getDisplay().close();
+        hat.getController().close();
         pi4j.shutdown();
     }
 
