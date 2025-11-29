@@ -56,6 +56,7 @@ The following table the currently supported devices within this project:
 | A/D           | SPI        | (1)(3)  | [MCP3008 A/D 10bit converter](src/main/java/com/pi4j/devices/mcp3008/README.md)    
 | A/D           | I2C        | (1)     | [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md)      
 | HAT           |            |         | [Raspberry SenseHat](src/main/java/com/pi4j/examples/hat/raspberry/sensehat/)
+| HAT           |            |         | [Waveshare 13890 Mini OLED Display Hat](src/main/java/com/pi4j/examples/hat/waveshare/waveshare13890/)
 | HAT           |            |         | [Waveshare 13891 Mini Display Hat](src/main/java/com/pi4j/examples/hat/waveshare/waveshare13891/)
 | HAT           |            |         | [Waveshare 14972 Mini Display Hat](src/main/java/com/pi4j/examples/hat/waveshare/waveshare14972/)
 | HAT           |            |         | [Waveshare GamePi13 Hat](src/main/java/com/pi4j/examples/hat/waveshare/gamepi13/)

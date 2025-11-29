@@ -78,7 +78,8 @@ public class Bricks {
     }
 
     private void initializeBricks() {
-        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0);
+        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xffffffff);
+        display.fillRect(x0, y0, scale * FIELD_SIZE, scale * FIELD_SIZE, 0xff000000);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 setBrick(i, j, true);
@@ -203,6 +204,6 @@ public class Bricks {
             y0 + 8 * (y + 1) * scale + 1,
             14 * scale,
             6 * scale,
-            alive ? (y == 0 ? 0xff0000 : y == 1 ? 0xff00 : 0xff) : 0);
+            alive ? (y == 0 ? 0xffff8888 : y == 1 ? 0xffff8888 : 0xff88ff88) : 0);
     }
 }

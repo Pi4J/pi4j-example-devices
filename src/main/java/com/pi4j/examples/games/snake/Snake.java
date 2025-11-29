@@ -79,7 +79,8 @@ public class Snake {
 
     private void initialize() {
         arena = new Entity[AREA_SIZE][AREA_SIZE];
-        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0);
+        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xffffffff);
+        display.fillRect(x0, y0, scale * AREA_SIZE, scale * AREA_SIZE, 0xff000000);
         body.clear();
         length = 1;
 
