@@ -19,6 +19,7 @@ public class Demo {
             null,
             hat.getController(),
             null,
+            null,
             null).run();
 
         hat.getDisplay().close();
