@@ -10,6 +10,7 @@ import com.pi4j.drivers.sound.Note;
 import com.pi4j.drivers.sound.SoundDriver;
 import com.pi4j.examples.apps.calculator.Calculator;
 import com.pi4j.examples.games.bricks.Bricks;
+import com.pi4j.examples.games.piman.PiMan;
 import com.pi4j.examples.games.snake.Snake;
 import com.pi4j.examples.ui.ListView;
 import com.pi4j.examples.ui.SensorView;
@@ -53,6 +54,7 @@ public class DisplayHatDemo {
                 .run());
         }
         menu.add("Snake", () -> new Snake(graphicsDisplay, controller).run());
+        menu.add("PiMan", () -> new PiMan(graphicsDisplay, controller, soundDriver).run());
         if (resolution >= 64) {
             menu.add("Bricks", () -> new Bricks(graphicsDisplay, controller).run());
         }
