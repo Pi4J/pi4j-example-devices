@@ -3,7 +3,7 @@ package com.pi4j.examples.games.snake;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.io.ListenableOnOffRead;
-import com.pi4j.util.DeferredDelay;
+import com.pi4j.util.Delay;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -24,7 +24,7 @@ public class Snake {
 
     private final GraphicsDisplay display;
     private final GameController controller;
-    private final DeferredDelay deferredDelay = new DeferredDelay();
+    private final Delay delay = new Delay();
     private final int x0;
     private final int y0;
     private final int scale;
@@ -102,7 +102,7 @@ public class Snake {
     public void run() {
         initialize();
         while (!exit) {
-            deferredDelay.setDelayMillis(stepTimeMillis);
+            delay.setMillis(stepTimeMillis);
             GameController.Direction direction = controller.getDirection();
             if (!armed) {
                 armed = direction == GameController.Direction.NONE;
@@ -115,7 +115,7 @@ public class Snake {
                 }
             }
             step();
-            deferredDelay.materializeDelay();
+            delay.materialize();
         }
         display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
