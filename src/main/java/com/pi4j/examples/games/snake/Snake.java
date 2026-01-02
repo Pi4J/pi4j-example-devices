@@ -102,7 +102,7 @@ public class Snake {
     public void run() {
         initialize();
         while (!exit) {
-            delay.setDelayMillis(stepTimeMillis);
+            delay.setMillis(stepTimeMillis);
             GameController.Direction direction = controller.getDirection();
             if (!armed) {
                 armed = direction == GameController.Direction.NONE;
@@ -115,7 +115,7 @@ public class Snake {
                 }
             }
             step();
-            delay.materializeDelay();
+            delay.materialize();
         }
         display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
