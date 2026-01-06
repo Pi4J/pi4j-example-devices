@@ -278,7 +278,7 @@
             </plugin>
 
             <!-- INCLUDE OSGi MANIFEST IN JAR -->
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -293,7 +293,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
 
             <!-- DEFAULT JAR EXECUTABLE CLASS -->
             <plugin>
