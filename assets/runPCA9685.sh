@@ -1,6 +1,8 @@
+#!/usr/bin/env bash
 
 #
-# *   * Copyright (C) 2012 - 2024 Pi4J
+#   * #%L
+#   * Copyright (C) 2012 - 2025 Pi4J
 #  * %%
 # *
 # * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,5 +29,6 @@
 # * **********************************************************************
 # * %%
 #
+#
 
-java --module-path . --module  com.pi4j.devices/com.pi4j.devices.pca9685.PCA9685App  "$@"
+ java  -classpath ./*:../classes  com.pi4j.devices.pca9685.PCA9685App  "$@"
