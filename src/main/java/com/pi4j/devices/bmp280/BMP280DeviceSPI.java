@@ -172,7 +172,7 @@ public class BMP280DeviceSPI extends BMP280Device {
         this.logger.trace(">>> Enter writeDelayRead   ");
 
         // send read request to BMP chip via SPI channel
-        this.spi.writeThenRead(writeData, 0, writeData.length, afterWriteDelay,readData, 0, readData.length, (short)0);
+        this.spi.writeThenRead(writeData, 0, writeData.length, afterWriteDelay,readData, 0, readData.length);
 
         this.logger.trace("<<< Exit writeRegister wrote  ");
     }
