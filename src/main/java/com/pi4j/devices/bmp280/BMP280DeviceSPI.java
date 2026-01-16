@@ -62,15 +62,6 @@ public class BMP280DeviceSPI extends BMP280Device {
     // local/internal SPI reference for communication with hardware chip
     Spi spi = null;
 
-     // SPI Provider name and unique ID
-    /**
-     * Constant <code>SPI_PROVIDER_NAME="NAME +  SPI Provider"</code>
-     */
-    public final String SPI_PROVIDER_NAME = NAME + " BMP280 SPI Provider";
-    /**
-     * Constant <code>SPI_PROVIDER_ID="ID + -spi"</code>
-     */
-    public final String SPI_PROVIDER_ID = ID + "-spi";
 
 
     public BMP280DeviceSPI(Context pi4j, Console console, SpiBus spiBus, SpiChipSelect chipSlct,  String traceLevel) {
@@ -118,7 +109,7 @@ public class BMP280DeviceSPI extends BMP280Device {
 
 
     /**
-     * @param register
+     * @param register address of register to read
      * @return 8bit value read from register
      */
     public int readRegister(int register) {
@@ -156,7 +147,6 @@ public class BMP280DeviceSPI extends BMP280Device {
         byte[] buffer = new byte[]{(byte) (0b01111111 & register),
             (byte) data
         };
-        byte[] dummy = new byte[2];
         // send read request to BMP chip via SPI channel
         byteswritten = this.spi.write(buffer);
 
@@ -174,7 +164,7 @@ public class BMP280DeviceSPI extends BMP280Device {
         // send read request to BMP chip via SPI channel
         this.spi.writeThenRead(writeData, 0, writeData.length, afterWriteDelay,readData, 0, readData.length);
 
-        this.logger.trace("<<< Exit writeRegister wrote  ");
+        this.logger.trace("<<< Exit writeDelayRead  ");
     }
 }
 

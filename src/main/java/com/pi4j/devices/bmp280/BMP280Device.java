@@ -61,18 +61,6 @@ public abstract class BMP280Device implements BMP280Interface {
     public static final String ID = "BMP280";
 
 
-    private static final int t1 = 0;
-    private static final int t2 = 1;
-    private static final int t3 = 2;
-    private static final int p1 = 3;
-    private static final int p2 = 4;
-    private static final int p3 = 5;
-    private static final int p4 = 6;
-    private static final int p5 = 7;
-    private static final int p6 = 8;
-    private static final int p7 = 9;
-    private static final int p8 = 10;
-    private static final int p9 = 11;
 
 
     protected Logger logger;
@@ -229,13 +217,6 @@ public abstract class BMP280Device implements BMP280Interface {
         this.readRegister(BMP280Declares.press_msb, buff);
 
 
-        int p_msb = castOffSignByte(buff[0]);
-        int p_lsb = castOffSignByte(buff[1]);
-        int p_xlsb = castOffSignByte(buff[2]);
-
-        int t_msb = castOffSignByte(buff[3]);
-        int t_lsb = castOffSignByte(buff[4]);
-        int t_xlsb = castOffSignByte(buff[5]);
 
 
         long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
