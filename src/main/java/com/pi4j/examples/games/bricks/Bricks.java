@@ -3,7 +3,7 @@ package com.pi4j.examples.games.bricks;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.io.ListenableOnOffRead;
-import com.pi4j.util.Delay;
+import com.pi4j.util.DeferredDelay;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class Bricks {
 
     private final GraphicsDisplay display;
     private final GameController controller;
-    private final Delay delay = new Delay();
+    private final DeferredDelay delay = new DeferredDelay();
     private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> keys = new HashMap<>();
 
     private final int scale;
@@ -173,7 +173,7 @@ public class Bricks {
 
     public void run() {
         while (!exit) {
-            delay.setMillis(stepTime);
+            delay.setDelayMillis(stepTime);
             renderPaddle(false);
             paddleX = Math.max(0, Math.min(paddleX + paddleDx, FIELD_SIZE - PADDLE_WIDTH));
             renderPaddle(true);
@@ -182,7 +182,7 @@ public class Bricks {
             moveBall();
             renderBall(true);
 
-            delay.materialize();
+            delay.materializeDelay();
         }
         releaseKeys();
     }
