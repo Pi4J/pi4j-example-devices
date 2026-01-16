@@ -5,7 +5,7 @@ import com.pi4j.drivers.display.graphics.Graphics;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.drivers.sound.SoundDriver;
-import com.pi4j.util.Delay;
+import com.pi4j.util.DeferredDelay;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -18,7 +18,7 @@ public abstract class MiniGame {
     protected final SoundDriver soundDriver;
     protected final String gameName;
     protected final Graphics graphics;
-    protected final Delay delay = new Delay();
+    protected final DeferredDelay delay = new DeferredDelay();
     protected int backgroundColor;
     protected int borderColor;
 
@@ -195,7 +195,7 @@ public abstract class MiniGame {
 
     public void run() {
         while (!exit) {
-            delay.setMillis(17);
+            delay.setDelayMillis(17);
             if (running) {
                 running = step();
                 if (!running) {
@@ -205,7 +205,7 @@ public abstract class MiniGame {
                 titleScreenStep();
             }
             display.flush();
-            delay.materialize();
+            delay.materializeDelay();
         }
     }
 
