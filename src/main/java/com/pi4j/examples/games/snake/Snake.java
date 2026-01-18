@@ -115,7 +115,7 @@ public class Snake {
                 }
             }
             step();
-            delay.materialize();
+            delay.materialize();;
         }
         display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {

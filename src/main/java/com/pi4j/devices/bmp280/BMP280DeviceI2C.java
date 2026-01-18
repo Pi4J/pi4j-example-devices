@@ -191,5 +191,18 @@ public class BMP280DeviceI2C extends BMP280Device {
         return (rval);
     }
 
+    @Override
+    public void writeDelayRead(byte[] writeData, short afterWriteDelay, byte[] readData) {
+
+        this.i2c.writeRegister(BMP280Declares.ctrl_meas, writeData);
+        // Next delay for 100 ms to provide chip time to perform measurements
+        try {
+            Thread.sleep(afterWriteDelay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.i2c.readRegister(BMP280Declares.reg_dig_t1, readData);
+    }
+
 
 }

@@ -61,18 +61,6 @@ public abstract class BMP280Device implements BMP280Interface {
     public static final String ID = "BMP280";
 
 
-    private static final int t1 = 0;
-    private static final int t2 = 1;
-    private static final int t3 = 2;
-    private static final int p1 = 3;
-    private static final int p2 = 4;
-    private static final int p3 = 5;
-    private static final int p4 = 6;
-    private static final int p5 = 7;
-    private static final int p6 = 8;
-    private static final int p7 = 9;
-    private static final int p8 = 10;
-    private static final int p9 = 11;
 
 
     protected Logger logger;
@@ -167,7 +155,11 @@ public abstract class BMP280Device implements BMP280Interface {
 
         this.writeRegister(BMP280Declares.ctrl_meas, ctlVal[0]);
 
-        //  this.writeRegister(BMP280Declares.ctrl_meas, ctlReg);
+
+        byte[] writeBuffer = new byte[]{(byte) (0b01111111 & BMP280Declares.ctrl_meas),
+            (byte) ctlVal[0], (byte) (0b10000000 | BMP280Declares.reg_dig_t1) } ;
+        byte[] readBuffer =  new byte[24];
+
 
 
         // Next delay for 100 ms to provide chip time to perform measurements
@@ -182,42 +174,42 @@ public abstract class BMP280Device implements BMP280Interface {
         byte[] compVal = new byte[2];
 
 
-        this.readRegister(BMP280Declares.reg_dig_t1, compVal);
+       this.writeDelayRead(writeBuffer, (short)100, readBuffer) ;
 
-        long dig_t1 = castOffSignInt(compVal);
 
+        long dig_t1 = castOffSignInt(new byte[]{readBuffer[0],readBuffer[1]}) ;
         this.readRegister(BMP280Declares.reg_dig_t2, compVal);
-        int dig_t2 = signedInt(compVal);
+        int dig_t2 = signedInt(new byte[]{readBuffer[2],readBuffer[3]});
 
         this.readRegister(BMP280Declares.reg_dig_t3, compVal);
-        int dig_t3 = signedInt(compVal);
+        int dig_t3 = signedInt(new byte[]{readBuffer[4],readBuffer[5]});
 
         this.readRegister(BMP280Declares.reg_dig_p1, compVal);
-        long dig_p1 = castOffSignInt(compVal);
+        long dig_p1 = castOffSignInt(new byte[]{readBuffer[6],readBuffer[7]});
 
         this.readRegister(BMP280Declares.reg_dig_p2, compVal);
-        int dig_p2 = signedInt(compVal);
+        int dig_p2 = signedInt(new byte[]{readBuffer[8],readBuffer[9]});
 
         this.readRegister(BMP280Declares.reg_dig_p3, compVal);
-        int dig_p3 = signedInt(compVal);
+        int dig_p3 = signedInt(new byte[]{readBuffer[10],readBuffer[11]});
 
         this.readRegister(BMP280Declares.reg_dig_p4, compVal);
-        int dig_p4 = signedInt(compVal);
+        int dig_p4 = signedInt(new byte[]{readBuffer[12],readBuffer[13]});
 
         this.readRegister(BMP280Declares.reg_dig_p5, compVal);
-        int dig_p5 = signedInt(compVal);
+        int dig_p5 = signedInt(new byte[]{readBuffer[14],readBuffer[15]});
 
         this.readRegister(BMP280Declares.reg_dig_p6, compVal);
-        int dig_p6 = signedInt(compVal);
+        int dig_p6 = signedInt(new byte[]{readBuffer[16],readBuffer[17]});
 
         this.readRegister(BMP280Declares.reg_dig_p7, compVal);
-        int dig_p7 = signedInt(compVal);
+        int dig_p7 = signedInt(new byte[]{readBuffer[18],readBuffer[19]});
 
         this.readRegister(BMP280Declares.reg_dig_p8, compVal);
-        int dig_p8 = signedInt(compVal);
+        int dig_p8 = signedInt(new byte[]{readBuffer[20],readBuffer[21]});
 
         this.readRegister(BMP280Declares.reg_dig_p9, compVal);
-        int dig_p9 = signedInt(compVal);
+        int dig_p9 = signedInt(new byte[]{readBuffer[22],readBuffer[23]});
 
 
         byte[] buff = new byte[6];
@@ -225,13 +217,6 @@ public abstract class BMP280Device implements BMP280Interface {
         this.readRegister(BMP280Declares.press_msb, buff);
 
 
-        int p_msb = castOffSignByte(buff[0]);
-        int p_lsb = castOffSignByte(buff[1]);
-        int p_xlsb = castOffSignByte(buff[2]);
-
-        int t_msb = castOffSignByte(buff[3]);
-        int t_lsb = castOffSignByte(buff[4]);
-        int t_xlsb = castOffSignByte(buff[5]);
 
 
         long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
