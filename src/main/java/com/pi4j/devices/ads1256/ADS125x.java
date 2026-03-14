@@ -37,7 +37,7 @@
 package com.pi4j.devices.ads1256;
 
 public interface ADS125x {
-    
+
     public enum MuxValue {
         AIN0,
         AIN1,
@@ -48,10 +48,10 @@ public interface ADS125x {
         AIN6,
         AIN7,
         AINCOM;
-	
-	public short channelNumber() {
-	    return (short)(ordinal() & 0xff);
-	}
+
+        public short channelNumber() {
+            return (short) (ordinal() & 0xff);
+        }
     }//end MuxValue
 
     public enum Gain {
@@ -62,45 +62,59 @@ public interface ADS125x {
         GAIN_16(16),         //	= 4,	/* GAIN  16 */
         GAIN_32(32),           //	= 5,	/*GAIN    32 */
         GAIN_64(64);      //	= 6,	/*GAIN    64 */
-        
+
         private Gain(int gainScalar) {
             this.gainScalar = gainScalar;
-        };
-        
+        }
+
+        ;
+
         private final int gainScalar;
-        public int getGainScalar() {return gainScalar;}
+
+        public int getGainScalar() {
+            return gainScalar;
+        }
     }//end GAIN
 
     public enum DataRate {
-        SPS_30000(30_000,0xF0,.21f),
-        SPS_15000(15_000,0xE0,.25f),
-        SPS_7500(7500,0xD0,.31f),
-        SPS_3750(3750,0xC0,.44f),
-        SPS_2000(2000,0xB0,.68f),
-        SPS_1000(1000,0xA1,1.18f),
-        SPS_500(500,0x92,2.18f),
-        SPS_100(100,0x82,10.18f),
-        SPS_60(60,0x72,16.84f),
-        SPS_50(50,0x63,20.18f),
-        SPS_30(30,0x53,33.51f),
-        SPS_25(25,0x43,40.18f),
-        SPS_15(15,0x33,66.84f),
-        SPS_10(10,0x23,100.18f),
-        SPS_5(5,0x13,200.18f),
-        SPS_2d5(2.5f,0x03,400.18f),
-        DRATE_MAX(0,0x0,0f);
-        
+        SPS_30000(30_000, 0xF0, .21f),
+        SPS_15000(15_000, 0xE0, .25f),
+        SPS_7500(7500, 0xD0, .31f),
+        SPS_3750(3750, 0xC0, .44f),
+        SPS_2000(2000, 0xB0, .68f),
+        SPS_1000(1000, 0xA1, 1.18f),
+        SPS_500(500, 0x92, 2.18f),
+        SPS_100(100, 0x82, 10.18f),
+        SPS_60(60, 0x72, 16.84f),
+        SPS_50(50, 0x63, 20.18f),
+        SPS_30(30, 0x53, 33.51f),
+        SPS_25(25, 0x43, 40.18f),
+        SPS_15(15, 0x33, 66.84f),
+        SPS_10(10, 0x23, 100.18f),
+        SPS_5(5, 0x13, 200.18f),
+        SPS_2d5(2.5f, 0x03, 400.18f),
+        DRATE_MAX(0, 0x0, 0f);
+
         private DataRate(float dataRateHertz, int registerValue, float settlingTimeMS) {
-            this.registerAddress = (byte)(registerValue&0xFF);
+            this.registerAddress = (byte) (registerValue & 0xFF);
             this.dataRateSPS = dataRateHertz;
             this.settlingTimeMS = settlingTimeMS;
         }
-        
+
         private final byte registerAddress;
         private final float dataRateSPS, settlingTimeMS;
-	public byte asRegisterValue() {return registerAddress;}
-	public float getDataRateSPS() {return dataRateSPS;}
-	public float getSettlingTimeMS() {return settlingTimeMS;}
+
+        public byte asRegisterValue() {
+            return registerAddress;
+        }
+
+        public float getDataRateSPS() {
+            return dataRateSPS;
+        }
+
+        public float getSettlingTimeMS() {
+            return settlingTimeMS;
+        }
     }//end DRATE
 
 
@@ -170,27 +184,29 @@ public interface ADS125x {
 
 
     public final static int CHIP_ID = 0x03;
-    
+
     /**
      * Helper method to determine if a specified GPIO pin is high in the specified
      * GPIO register byte value.
+     *
      * @param gpioPinNumber
      * @param regVal
      * @return true if the GPIO pin is HIGH, else false.
      * @since Dec 18, 2024
      */
     public static boolean isGpioHigh(int gpioPinNumber, byte regVal) {
-	if(isPinInput(gpioPinNumber, regVal))
-	    return (regVal & (0x01 << gpioPinNumber)) != 0;
-	else
-	    throw new IllegalStateException("Attempted to read GPIO pin "+gpioPinNumber+", which is set as output.");
+        if (isPinInput(gpioPinNumber, regVal))
+            return (regVal & (0x01 << gpioPinNumber)) != 0;
+        else
+            throw new IllegalStateException("Attempted to read GPIO pin " + gpioPinNumber + ", which is set as output.");
     }//end isGpioHigh()
-    
+
     /**
      * Helper method to determine if a specified GPIO pin is high in the specified
      * GPIO register byte value.
+     *
      * @param gpioPinNumber The PGIO input number (not the chip pin number)
-     * @param regVal Register value byte obtained from something like readRaw(...)
+     * @param regVal        Register value byte obtained from something like readRaw(...)
      * @return true if pin is input, else false
      * @since Dec 18, 2024
      */
@@ -203,8 +219,9 @@ public interface ADS125x {
     /**
      * Helper method to determine if a specified GPIO pin is high in the specified
      * GPIO register byte value.
+     *
      * @param gpioPinNumber The PGIO input number (not the chip pin number)
-     * @param regVal Register value byte obtained from something like readRaw(...)
+     * @param regVal        Register value byte obtained from something like readRaw(...)
      * @return true if pin is output, else false
      * @since Dec 18, 2024
      */
@@ -225,6 +242,7 @@ public interface ADS125x {
     /**
      * Get the currently-set VREF volt property used for calculating A/D voltage readings.
      * This property defaults to 2.5V if not set.
+     *
      * @return VREF in volts
      * @since Dec 2, 2024
      */
@@ -233,6 +251,7 @@ public interface ADS125x {
     /**
      * Set the VREF property to be used in calculating A/D voltage readings.
      * This property defaults to 2.5V if not set.
+     *
      * @param vRefVolts
      * @since Dec 2, 2024
      */
@@ -240,7 +259,8 @@ public interface ADS125x {
 
     /**
      * Query "time required for a step change
-	on the analog inputs to propagate through the filter)" in milliseconds.
+     * on the analog inputs to propagate through the filter)" in milliseconds.
+     *
      * @return
      * @since Dec 18, 2024
      */
@@ -254,11 +274,12 @@ public interface ADS125x {
      * @throws InterruptedException
      */
     void configADC(Gain gain, DataRate drate,
-	    boolean autoCalibrate, boolean useBuffer)
-	    throws InterruptedException;//end configADC(...)
+                   boolean autoCalibrate, boolean useBuffer)
+        throws InterruptedException;//end configADC(...)
 
     /**
      * Get a one-sided analog reading against AINCOM
+     *
      * @param analogInputNumber The AINx pin number from which to read the analog value.
      * @return Analog value, non-normalized.
      * @throws InterruptedException
@@ -268,52 +289,57 @@ public interface ADS125x {
 
     /**
      * Get a one-sided analog reading against AINCOM. See datasheet pg. 23.
+     *
      * @param analogInputNumber The AINx pin number from which to read the analog value.
      * @return Analog value, normalized to the range [-1,1]
      * @throws InterruptedException
      * @since Dec 2, 2024
      */
     double readAnalogOneSidedNormalized(int analogInputNumber)
-	    throws InterruptedException;
+        throws InterruptedException;
 
     /**
      * Get a one-sided analog reading against AINCOM in volts. See datasheet pg. 23.<br>
      * This assumes that the setVRef() property is set to its proper value, else 5V reference is used.
+     *
      * @param analogInputNumber The AINx pin number from which to read the analog value.
      * @return Analog value, normalized to the range [-1,1]
      * @throws InterruptedException
      * @since Dec 2, 2024
      */
     double readAnalogOneSidedVolts(int analogInputNumber)
-	    throws InterruptedException;
+        throws InterruptedException;
 
     int readAnalogDifferential(int analogPositiveInputNumber,
-	    int analogNegativeInputNumber) throws InterruptedException;
+                               int analogNegativeInputNumber) throws InterruptedException;
 
     double readAnalogDifferentialNormalized(int analogPositiveInputNumber,
-	    int analogNegativeInputNumber) throws InterruptedException;
+                                            int analogNegativeInputNumber) throws InterruptedException;
 
     double readAnalogDifferentialVolts(int analogPositiveInputNumber,
-	    int negativeInputNumber) throws InterruptedException;
+                                       int negativeInputNumber) throws InterruptedException;
 
     /**
      * Set the specified gpio pin
+     *
      * @param pin
      * @param newState
      * @since Dec 13, 2024
      */
     public void setGpio(int pin, boolean newState);
-    
+
     /**
      * Set the gpio status byte to the I/O register, complete with direction
      * information on the more significant nibble.
+     *
      * @since Dec 13, 2024
      */
     public void setGpioRaw(byte regVal);
-    
+
     /**
      * Get the gpio status byte from the I/O register, complete with direction
      * information on the more significant nibble.
+     *
      * @return Gpio I/O status byte
      * @since Dec 13, 2024
      */
@@ -321,6 +347,7 @@ public interface ADS125x {
 
     /**
      * Query whether the specified gpio is high
+     *
      * @param gpioPinNumber The GPIO pin number (not chip number) to query
      * @return Boolean representing the given gpio pin's logical state
      * @since Dec 13, 2024
@@ -329,6 +356,7 @@ public interface ADS125x {
 
     /**
      * Query the number of usable GPIO pins.
+     *
      * @return The Number of GPIO pins of this ADS125x chip.
      * @since Dec 15, 2024
      */
@@ -336,6 +364,7 @@ public interface ADS125x {
 
     /**
      * Query the number of usable analog input pins
+     *
      * @return The number of analog input (AIN) pins of this ADS125x chip.
      * @since Dec 15, 2024
      */
@@ -343,6 +372,7 @@ public interface ADS125x {
 
     /**
      * Query if auto-calibrate was enabled when this ADS125x chip was initialized.
+     *
      * @return True if auto-calibrate was enabled, else false.
      * @since Dec 15, 2024
      */
@@ -350,6 +380,7 @@ public interface ADS125x {
 
     /**
      * Specify the I/O direction of a given gpio pin to be OUTPUT
+     *
      * @param gpioPinNumber The pin number of the GPIO in question (D0, D1 ... Dx)
      * @since Dec 15, 2024
      */
@@ -357,6 +388,7 @@ public interface ADS125x {
 
     /**
      * Specify the I/O direction of a given gpio pin to be OUTPUT
+     *
      * @param gpioPinNumber The pin number of the GPIO in question (D0, D1 ... Dx)
      * @since Dec 15, 2024
      */

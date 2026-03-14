@@ -40,41 +40,6 @@ import org.slf4j.Logger;
 public class DisplayLED {
 
 
-    public DisplayLED(Logger logger) {
-        super();
-        this.logger = logger;
-    }
-
-    public void usage() {
-        System.out.println("option f:func,b:bus,-a:address,-t bmp_address ,-n number,-x:axis,-y:axis,-o:ON");
-        System.out.println("python display_led.py  -b 1 -a 0X74  -t 0x77 -o ON -t 12:34  -w STEADY -l 1");
-        System.out.println("python display_led.py  -b 1 -a 0x74 -t 0x77 -x 0 -y 0 -o ON ");
-        System.out.println("python display_led.py  -b 1 -a 0x74 -t 0x77 -n 1 -w BLINK or STEADY");
-    }
-
-    // pixels for 0 1 2 3 4 5 6 7 8 9 :
-    // First element is the width in pixels of the displayed number
-    int[] a;
-    int[] xy0 = new int[]{0, 0, 1, 0, 2, 0, 0, 1, 2, 1, 0, 2, 2, 2, 0, 3, 2, 3, 0, 4, 2, 4, 0, 5, 2, 5, 0, 6, 2, 6, 2,
-        6, 1, 6};
-    int[] xy1 = new int[]{0, 1, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 0, 6, 2, 6};
-    int[] xy2 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 3, 3, 2, 4, 1, 5, 0, 6, 1, 6, 2, 6, 3, 6};
-    int[] xy3 = new int[]{0, 1, 1, 0, 2, 0, 3, 1, 3, 2, 2, 3, 3, 4, 3, 5, 0, 5, 1, 6, 2, 6};
-    int[] xy4 = new int[]{0, 0, 0, 1, 0, 2, 0, 3, 1, 3, 2, 3, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6};
-    int[] xy5 = new int[]{0, 0, 0, 1, 0, 2, 0, 6, 1, 0, 2, 0, 3, 0, 1, 2, 2, 3, 3, 4, 2, 5, 1, 6, 0, 6};
-    int[] xy6 = new int[]{1, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 3, 2, 3, 3, 4, 3, 5, 2, 6, 1, 6};
-    int[] xy7 = new int[]{0, 0, 0, 1, 1, 0, 2, 0, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6};
-    int[] xy8 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 1, 3, 2, 3, 0, 4, 0, 5, 1, 6, 2, 6, 3, 4, 3, 5};
-    int[] xy9 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6};
-    int[] xy10 = new int[]{0, 2, 0, 4};
-    int[][] pixels = new int[][]{xy0, xy1, xy2, xy3, xy4, xy5, xy6, xy7, xy8, xy9, xy10};
-
-    int[] width = new int[]{3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1};
-
-    // List<List<List<int>>> listOfListsOfLists =new
-    // ArrayList<List<List<int>>>(1);
-    // list [ list [list,list] ] ]
-
     /*
      * // 0 [ [
      * [3],[[0,0],[1,0],[2,0],[0,1],[2,1],[0,2],[2,2],[0,3],[2,3],[0,4],[2,4]
@@ -99,6 +64,41 @@ public class DisplayLED {
      * 2,3],[3,3],[3,4],[3,5],[3,6]] ], // 10 [ [1],[[0,2],[0,4]] ], ]
      */
     private final int space_between_symbols = 0;
+    private final Logger logger;
+    // pixels for 0 1 2 3 4 5 6 7 8 9 :
+    // First element is the width in pixels of the displayed number
+    int[] a;
+    int[] xy0 = new int[]{0, 0, 1, 0, 2, 0, 0, 1, 2, 1, 0, 2, 2, 2, 0, 3, 2, 3, 0, 4, 2, 4, 0, 5, 2, 5, 0, 6, 2, 6, 2,
+        6, 1, 6};
+    int[] xy1 = new int[]{0, 1, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 0, 6, 2, 6};
+    int[] xy2 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 3, 3, 2, 4, 1, 5, 0, 6, 1, 6, 2, 6, 3, 6};
+    int[] xy3 = new int[]{0, 1, 1, 0, 2, 0, 3, 1, 3, 2, 2, 3, 3, 4, 3, 5, 0, 5, 1, 6, 2, 6};
+    int[] xy4 = new int[]{0, 0, 0, 1, 0, 2, 0, 3, 1, 3, 2, 3, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6};
+    int[] xy5 = new int[]{0, 0, 0, 1, 0, 2, 0, 6, 1, 0, 2, 0, 3, 0, 1, 2, 2, 3, 3, 4, 2, 5, 1, 6, 0, 6};
+    int[] xy6 = new int[]{1, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 3, 2, 3, 3, 4, 3, 5, 2, 6, 1, 6};
+    int[] xy7 = new int[]{0, 0, 0, 1, 1, 0, 2, 0, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6};
+    int[] xy8 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 1, 3, 2, 3, 0, 4, 0, 5, 1, 6, 2, 6, 3, 4, 3, 5};
+    int[] xy9 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6};
+    int[] xy10 = new int[]{0, 2, 0, 4};
+    int[][] pixels = new int[][]{xy0, xy1, xy2, xy3, xy4, xy5, xy6, xy7, xy8, xy9, xy10};
+
+    int[] width = new int[]{3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1};
+
+    // List<List<List<int>>> listOfListsOfLists =new
+    // ArrayList<List<List<int>>>(1);
+    // list [ list [list,list] ] ]
+
+    public DisplayLED(Logger logger) {
+        super();
+        this.logger = logger;
+    }
+
+    public void usage() {
+        System.out.println("option f:func,b:bus,-a:address,-t bmp_address ,-n number,-x:axis,-y:axis,-o:ON");
+        System.out.println("python display_led.py  -b 1 -a 0X74  -t 0x77 -o ON -t 12:34  -w STEADY -l 1");
+        System.out.println("python display_led.py  -b 1 -a 0x74 -t 0x77 -x 0 -y 0 -o ON ");
+        System.out.println("python display_led.py  -b 1 -a 0x74 -t 0x77 -n 1 -w BLINK or STEADY");
+    }
 
     /**
      * Translate 'number' to its LED frame data and load into matrix controller shifted by plus_x columns
@@ -213,9 +213,6 @@ public class DisplayLED {
         this.logger.trace("create_led_pattern");
 
     }
-
-
-    private final Logger logger;
 
 
 }

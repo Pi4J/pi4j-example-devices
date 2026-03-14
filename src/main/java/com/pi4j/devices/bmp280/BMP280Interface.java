@@ -116,14 +116,15 @@ public interface BMP280Interface {
      * @return bytes written, else -1
      */
     int writeRegister(int register, int data);
+
     /**
-     * @param writeData bytes to write
-     * @param readData  bytes to read
+     * @param writeData       bytes to write
+     * @param readData        bytes to read
      * @param afterWriteDelay MS time to delay after write
      */
-    public void writeDelayRead(byte[] writeData, short afterWriteDelay, byte[] readData) ;
+    public void writeDelayRead(byte[] writeData, short afterWriteDelay, byte[] readData);
 
 
-    }
+}
 
 

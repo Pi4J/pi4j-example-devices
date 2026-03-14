@@ -44,7 +44,6 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
-import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
 
@@ -80,7 +79,7 @@ public class BME280DeviceSPI {
     private static final String SPI_PROVIDER_NAME = "BME280 SPI Provider";
     private static final String SPI_PROVIDER_ID = "BME280-spi";
 
-    private static final SpiChipSelect chipSelect = SpiChipSelect.CS_0;
+    private static final int chipSelect = 0;
     private static final SpiBus spiBus = SpiBus.BUS_0;
     private static DigitalOutput csGpio;
     private static Spi spi;
@@ -112,20 +111,18 @@ public class BME280DeviceSPI {
         var csGpioConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("CS_pin")
             .name("CS")
-            .address(csPin)
+            .bcm(csPin)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
         csGpio = pi4j.create(csGpioConfig);
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
             .id(SPI_PROVIDER_ID)
             .name(SPI_PROVIDER_NAME)
             .bus(spiBus)
-            .chipSelect(chipSelect)
+            .channel(chipSelect)
             .baud(Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_0)
-            .provider("linuxfs-spi")
             .build();
         spi = pi4j.create(spiConfig);
 

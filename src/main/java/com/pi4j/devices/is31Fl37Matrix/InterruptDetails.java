@@ -32,6 +32,9 @@ package com.pi4j.devices.is31Fl37Matrix;/*
  */
 
 public class InterruptDetails {
+    private final boolean rval;
+    private final int counter;
+
     public InterruptDetails() {
         this.counter = 0;
         this.rval = false;
@@ -51,10 +54,6 @@ public class InterruptDetails {
     public int getCounter() {
         return (this.counter);
     }
-
-
-    private final boolean rval;
-    private final int counter;
 
 }
 

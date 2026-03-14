@@ -37,6 +37,7 @@
 package com.pi4j.devices.neopixel94v;
 
 
+import com.pi4j.boardinfo.util.BoardInfoHelper;
 import com.pi4j.context.Context;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
@@ -51,7 +52,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import static java.lang.Math.round;
-import com.pi4j.boardinfo.util.BoardInfoHelper;
 
 public class NeoPixel94V extends Component {
 
@@ -195,10 +195,9 @@ public class NeoPixel94V extends Component {
             .id("SPI")
             .name("LED Matrix")
             .bus(SpiBus.BUS_0)
-            .address(channel)
+            .bcm(channel)
             .mode(SpiMode.MODE_0)
-            .baud(8 * spiFrequency) //     bit-banging from Bit to SPI-Byte
-            .provider("linuxfs-spi")    //linuxfs-spi    SpiFFMProviderImpl
+            .baud(8 * spiFrequency)
             .build();
 
     }

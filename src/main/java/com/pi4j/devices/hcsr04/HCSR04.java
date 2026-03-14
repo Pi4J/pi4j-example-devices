@@ -72,7 +72,7 @@ public class HCSR04 {
         var trigConfig = DigitalOutput.newConfigBuilder(pi4jContext)
             .id("trigSignal")
             .name("Trig signal for HC-SR04")
-            .address(trigPinNumber)
+            .bcm(trigPinNumber)
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.LOW);
         this.trigPin = pi4jContext.create(trigConfig);
@@ -80,7 +80,7 @@ public class HCSR04 {
         var echoConfig = DigitalInput.newConfigBuilder(pi4jContext)
             .id("echoSignal")
             .name("Echo signal for HC-SR04")
-            .address(echoPinNumber)
+            .bcm(echoPinNumber)
             .pull(PullResistance.PULL_DOWN);
         this.echoPin = pi4jContext.create(echoConfig);
     }

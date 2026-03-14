@@ -34,7 +34,6 @@ import com.pi4j.context.Context;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.SpiBus;
-import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
 
 public class ADS1256App {
@@ -54,7 +53,7 @@ public class ADS1256App {
         int rsrtPin = 42;
         int pdwnPin = 42;
         boolean resetChip = false;
-        SpiChipSelect chipSelect = SpiChipSelect.CS_0;
+        int chipSelect = 0;
         SpiBus spiBus = SpiBus.BUS_0;
         DigitalState newState = DigitalState.UNKNOWN;
         boolean setPinState = false;
@@ -117,7 +116,7 @@ public class ADS1256App {
                 crtPdwn = true;
             } else if (o.contentEquals("-cNotUsed")) {
                 String a = args[i + 1];
-                chipSelect = SpiChipSelect.getByNumber(Short.parseShort(a.substring(2), 16));
+                chipSelect = Integer.parseInt(a);
                 i++;
             } else if (o.contentEquals("-x")) {
                 resetChip = true;

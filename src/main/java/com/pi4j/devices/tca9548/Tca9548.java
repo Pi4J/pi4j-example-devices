@@ -248,10 +248,9 @@ public class Tca9548 extends BasicI2cDevice implements GpioBasics {
         var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("restPin")
             .name("tca95448 reset")
-            .address(resetGpio)
+            .bcm(resetGpio)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
         DigitalOutput resetPin = null;
         try {
             resetPin = pi4j.create(ledConfig);

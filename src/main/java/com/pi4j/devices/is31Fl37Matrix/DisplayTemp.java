@@ -33,11 +33,15 @@ package com.pi4j.devices.is31Fl37Matrix;/*
 
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Device;
+import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.devices.bmp280.BMP280DeviceI2C;
+import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
+import com.pi4j.io.i2c.I2C;
+import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 
+import java.text.DecimalFormat;
 import java.time.LocalTime;
 
 /**
@@ -45,6 +49,14 @@ import java.time.LocalTime;
  * Then obtain the system time-of-day and display that through the matrix controller.
  */
 public class DisplayTemp {
+
+    private final Is31Fl37Matrix display;
+    private final Logger logger;
+    private final Context pi4j;
+    private final Console console;
+    private BMP280DeviceI2C bmpDev;
+    private I2C bmeDev;
+    private Bmx280Driver bmx280Driver;
 
     /**
      * This class includes the state -  private BMP280Device bmpDev;    This is required as Pi4j_V2
@@ -58,6 +70,8 @@ public class DisplayTemp {
         this.pi4j = pi4j;
         this.console = console;
         this.bmpDev = null;
+        this.bmx280Driver = null;
+
     }
 
     /**
@@ -65,7 +79,7 @@ public class DisplayTemp {
      * on subsequent calls regardless of values supplied.
      */
     public void process_bmp_data(ControlLeds pin_monitor, int led_blink,
-                                 Integer loop_count, Integer bmp_bus, Integer bmp_address) {
+                                 Integer loop_count, Integer bmp_bus, Integer bmp_address, byte sensorID) {
         int display_num = 42;
         double[] readings = new double[2];
         // bmp = read_BMP180.ReadBmp180()
@@ -73,12 +87,45 @@ public class DisplayTemp {
         this.logger.trace("parms :  blink : " + String.format("0x%02X", led_blink) + " loop_count : "
             + String.format("0x%02X", loop_count) + " bmp180 address : " + String.format("0x%02X", bmp_address));
 
-        // pi4j_V2 does not support creating an instance more than one.
-        if (this.bmpDev == null) {
-            this.bmpDev = new BMP280DeviceI2C(this.pi4j, this.console, bmp_bus, bmp_address, this.logger);
-        }
-        readings[0] = bmpDev.temperatureC();
+        if (sensorID == BMP280Declares.idValueMskBMP) {
+            if (this.bmpDev == null) {
+                this.bmpDev = new BMP280DeviceI2C(this.pi4j, this.console, bmp_bus, bmp_address, this.logger);
+            }
+            readings[0] = bmpDev.temperatureC();
 
+        } else if (sensorID == BMP280Declares.idValueMskBME) {
+            if (this.bmeDev == null) {
+                I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
+                    .id("BME280")
+                    .bus(bmp_bus)
+                    .device(bmp_address)
+                    .build();
+
+                // Read values 10 times
+                this.bmeDev = pi4j.create(i2cConfig);
+                bmx280Driver = new Bmx280Driver(bmeDev);
+            }
+            DecimalFormat df = new DecimalFormat("0.###");
+
+            console.println("**************************************");
+            console.println("Reading values,");
+
+            Bmx280Driver.Measurement measurement = bmx280Driver.readMeasurement();
+
+            console.println("Temperature: " + df.format(measurement.getTemperature()) + " °C");
+            console.println("Temperature: " + df.format(measurement.getTemperature() * 1.8 + 32) + " °F ");
+
+            console.println("Pressure: " + df.format(measurement.getPressure()) + " Pa");
+            // 1 Pa = 0.00001 bar or 1 bar = 100,000 Pa
+            console.println("Pressure: " + df.format(measurement.getPressure() / 100_000) + " bar");
+            // 1 Pa = 0.0000098692316931 atmosphere (standard) and 1 atm = 101.325 kPa
+            console.println("Pressure: " + df.format(measurement.getPressure() / 101_325) + " atm");
+
+            console.println("Humidity: " + df.format(measurement.getHumidity()) + " %");
+
+            readings[0] = Double.parseDouble(df.format(measurement.getTemperature()));
+
+        }
         double temp = readings[0];
         // double pressure = readings[1];
         // (temp, pressure) = bmp.readBmp180()
@@ -102,6 +149,7 @@ public class DisplayTemp {
 
         InterruptDetails completed = pin_monitor.wait_for_interrupt();
         if (completed.getSuccessVal()) {
+
             pin_monitor.toggle_led(false);
         } else {
             pin_monitor.flash_alarm_led(this.display);
@@ -136,11 +184,5 @@ public class DisplayTemp {
         this.logger.trace("show_time");
 
     }
-
-    private final Is31Fl37Matrix display;
-    private final Logger logger;
-    private BMP280Device bmpDev;
-    private final Context pi4j;
-    private final Console console;
 
 }

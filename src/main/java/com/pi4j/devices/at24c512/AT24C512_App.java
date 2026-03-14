@@ -79,9 +79,6 @@ public class AT24C512_App {
         // extensions found in the application's classpath which
         // may include 'Platforms' and 'I/O Providers'
 
-    /*    var pi4j = Pi4J.newContextBuilder().add(
-                linuxfs-i2cProvider.newInstance()).build();
-*/
         Context pi4j = Pi4J.newAutoContext();
 
         // print installed providers

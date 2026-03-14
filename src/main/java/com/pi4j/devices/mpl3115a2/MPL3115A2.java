@@ -171,10 +171,9 @@ public class MPL3115A2 {
         var ledConfigIntr = DigitalInput.newConfigBuilder(pi4j)
             .id("Interrupt_1")
             .name("Interrupt_1_TW_PW")
-            .address(this.int1_gpio)
+            .bcm(this.int1_gpio)
             .pull(PullResistance.OFF)
-            .debounce(4000L)
-            .provider("gpiod-digital-input");
+            .debounce(4000L);
         try {
             this.int1 = pi4j.create(ledConfigIntr);
             this.int1.addListener(new MonitorInterrupt1(this));
@@ -187,10 +186,9 @@ public class MPL3115A2 {
         var ledConfigIntr2 = DigitalInput.newConfigBuilder(pi4j)
             .id("Interrupt_2")
             .name("Interrupt_2_DRDY")
-            .address(this.int2_gpio)
+            .bcm(this.int2_gpio)
             .pull(PullResistance.OFF)
-            .debounce(4000L)
-            .provider("gpiod-digital-input");
+            .debounce(4000L);
         try {
             this.int2 = pi4j.create(ledConfigIntr2);
         } catch (Exception e) {

@@ -33,11 +33,13 @@ package com.pi4j.devices.is31Fl37Matrix;/*
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
+import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public class Is31Fl37_matrix_app {
 
+    private final boolean verbose = false;
     private DigitalOutput processGPIO;
     private DigitalOutput warnGPIO;
     private Context pi4j = null;
@@ -55,7 +58,6 @@ public class Is31Fl37_matrix_app {
     private int bmp_address;
     private int bus_num;
     private int bmp_bus;
-    private final boolean verbose = false;
     private int loop_count = 0;
     private int repeat_count;
     private int led_blink = 0;
@@ -91,44 +93,16 @@ public class Is31Fl37_matrix_app {
         this.warnGPIO = warnGpio;
         this.processGPIO = processGpio;
 
-        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
-        //  must fully qualify logger as others exist and the slf4 code will use the first it
-        //  encounters if using the defaultLogLevel
-        System.setProperty("org.slf4j.simpleLogger.log." + Is31Fl37_matrix_app.class.getName(), this.traceLevel);
 
         this.logger = LoggerFactory.getLogger(Is31Fl37_matrix_app.class);
 
         // this.print_state();
     }
 
-    public void print_state() {
-        /*
-         * System.out.println(" print_state()   address: " + this.address +
-         * " bus_num: " + this.bus_num + " traceLevel: " +
-         * this.traceLevel + " loop_count: " + this.loop_count +
-         * " repeat_count: " + this.repeat_count + " led_blink: " +
-         * this.led_blink);
-         */
-        this.logger.info(" print_state()   Matrix address: " + String.format("0x%02X", this.address) + " Matrix bus_num: "
-            + this.bus_num + "  BMP address: " + String.format("0x%02X", this.bmp_address) + " BMP bus_num: "
-            + this.bmp_bus + " traceLevel: " + this.traceLevel + " loop_count: " + this.loop_count
-            + " repeat_count: " + this.repeat_count + " led_blink: " + this.led_blink);
+    static void main(String[] args) throws IOException, InterruptedException {
 
-    }
+        System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "off");
 
-    public void clearGpioCfg() {
-        // final GpioController gpio = GpioFactory.getInstance();
-        // gpio.shutdown();
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        // Logger logger = Logger.getLogger("ibm.simics.ProcessTable");
-        /*
-         * Properties props = new java.util.Properties(); FileInputStream fis =
-         * new FileInputStream("table_wire.properties");
-         *
-         * props.load(fis);
-         */
         int address = 0xff;
         int bmp_address = 0xff;
         int bus_num = 0xff;
@@ -275,10 +249,9 @@ public class Is31Fl37_matrix_app {
         var ledConfigIntr = DigitalInput.newConfigBuilder(pi4j)
             .id("MatrixInterrupt")
             .name("MatrixInterrupt")
-            .address(monitorPinNum)
+            .bcm(monitorPinNum)
             .pull(PullResistance.PULL_UP)
-            .debounce(4000L)
-            .provider("gpiod-digital-input");
+            .debounce(4000L);
         try {
             monitorPin = pi4j.create(ledConfigIntr);
         } catch (Exception e) {
@@ -289,10 +262,9 @@ public class Is31Fl37_matrix_app {
         var ledConfigReset = DigitalOutput.newConfigBuilder(pi4j)
             .id("MatrixReset")
             .name("MatrixReset")
-            .address(resetPinNum)
+            .bcm(resetPinNum)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
         try {
             resetPin = pi4j.create(ledConfigReset);
         } catch (Exception e) {
@@ -305,10 +277,9 @@ public class Is31Fl37_matrix_app {
             var ledConfigGreen = DigitalOutput.newConfigBuilder(pi4j)
                 .id("ProcessLED")
                 .name("ProcessLED")
-                .address(processGPIO)
+                .bcm(processGPIO)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+                .initial(DigitalState.LOW);
             try {
                 processPin = pi4j.create(ledConfigGreen);
             } catch (Exception e) {
@@ -322,10 +293,9 @@ public class Is31Fl37_matrix_app {
             var ledConfigRed = DigitalOutput.newConfigBuilder(pi4j)
                 .id("WarnLED")
                 .name("WarnLED")
-                .address(warnGPIO)
+                .bcm(warnGPIO)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output");
+                .initial(DigitalState.LOW);
             try {
                 warnPin = pi4j.create(ledConfigRed);
             } catch (Exception e) {
@@ -374,6 +344,9 @@ public class Is31Fl37_matrix_app {
 
             int c = 0;
 
+            // pi4j_V2 does not support creating an instance more than one.
+            byte sensorID = getSensorType(pi4j, bmp_bus, bmp_address, console);
+
             // if leg displays temperature/time count times then exists.
             if (display_app.repeat_count > 0) {
                 for (int i = 0; i < display_app.repeat_count; i++) {
@@ -382,7 +355,7 @@ public class Is31Fl37_matrix_app {
                     // cfgU.runCli();
 
                     display.process_bmp_data(pin_monitor,
-                        display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
+                        display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address, sensorID);
                     // Thread.sleep(2000);
 
                     // clear the matrix
@@ -406,7 +379,7 @@ public class Is31Fl37_matrix_app {
                 while (true) {
                     // future // eChip = cfgU.enableChipPath(mainChip);
                     display.process_bmp_data(pin_monitor,
-                        display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
+                        display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address, sensorID);
                     Thread.sleep(2000);
                     // clear the matrix
                     for (c = 0; c < 8; c++) {
@@ -435,4 +408,51 @@ public class Is31Fl37_matrix_app {
 
     }
 
+    static byte getSensorType(Context pi4j, int bus, int address, Console console) {
+
+        var i2cDeviceConfig = I2C
+            .newConfigBuilder(pi4j)
+            .bus(bus)
+            .device(address)
+            .id("sensor")
+            .name("target_sensor")
+            .build();
+        var i2c = pi4j.create(i2cDeviceConfig);
+
+        // Read data from 0xD0 and check if the expected value is received
+        byte[] wrData = new byte[1];
+        byte[] reg = new byte[1];
+        reg[0] = (byte) (0xD0 & 0xff);
+        i2c.writeThenRead(reg, wrData);
+        pi4j.shutdown(i2c);
+        byte id = wrData[0];
+        if (id == BMP280Declares.idValueMskBMP) {
+            return id;
+        } else if (id == BMP280Declares.idValueMskBME) {
+            return id;
+        } else {
+            console.println("Not BMP280 nor BME280,  chip ID read  {}", id);
+        }
+        return 0x00;
+    }
+
+    public void print_state() {
+        /*
+         * System.out.println(" print_state()   address: " + this.address +
+         * " bus_num: " + this.bus_num + " traceLevel: " +
+         * this.traceLevel + " loop_count: " + this.loop_count +
+         * " repeat_count: " + this.repeat_count + " led_blink: " +
+         * this.led_blink);
+         */
+        this.logger.info(" print_state()   Matrix address: " + String.format("0x%02X", this.address) + " Matrix bus_num: "
+            + this.bus_num + "  BMP address: " + String.format("0x%02X", this.bmp_address) + " BMP bus_num: "
+            + this.bmp_bus + " traceLevel: " + this.traceLevel + " loop_count: " + this.loop_count
+            + " repeat_count: " + this.repeat_count + " led_blink: " + this.led_blink);
+
+    }
+
+    public void clearGpioCfg() {
+        // final GpioController gpio = GpioFactory.getInstance();
+        // gpio.shutdown();
+    }
 }

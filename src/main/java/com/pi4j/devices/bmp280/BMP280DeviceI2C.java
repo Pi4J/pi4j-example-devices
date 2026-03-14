@@ -129,7 +129,6 @@ public class BMP280DeviceI2C extends BMP280Device {
             .device(address)
             .id(id + " " + name)
             .name(name)
-            .provider("linuxfs-i2c")
             .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);

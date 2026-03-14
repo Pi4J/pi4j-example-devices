@@ -43,6 +43,11 @@ public class ControlLeds {
 
 
     private final Logger logger;
+    private final Is31Fl37Matrix matrix;
+    private final Context pi4j;
+    private final Console console;
+    private DigitalOutput redLED = null;    // considered the Warning LED
+    private DigitalOutput greenLED = null;    // considered the normal processing LED
 
 
     public ControlLeds(Context pi4j, Console console, DigitalOutput red_led_pin, DigitalOutput green_led_pin, Is31Fl37Matrix matrix, Logger logger) {
@@ -119,7 +124,6 @@ public class ControlLeds {
 
     }
 
-
     /**
      * Monitor the matrix controller interrupt to indicate the matrix has completed
      * displaying the previously loaded matrix data.
@@ -137,14 +141,6 @@ public class ControlLeds {
             + String.format("0x%02X", rval.getCounter()));
         return (rval);
     }
-
-
-    private final Is31Fl37Matrix matrix;
-    private final Context pi4j;
-    private final Console console;
-
-    private DigitalOutput redLED = null;    // considered the Warning LED
-    private DigitalOutput greenLED = null;    // considered the normal processing LED
 
 
 }

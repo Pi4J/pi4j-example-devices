@@ -68,13 +68,13 @@ I2C connection
 
 SPI connection using 4-wire SPI
 
-| RPi            | Color  | Sensor |
-|:---------------|:-------|:-------|
-| Pin19 MOSI     | Blue   | SDI    |
-| Pin21 MISO     | Yellow | SDO    |
-| Pin23 SCLK     | Green  | SCK    |
-| Pin24 SPICE0   | Orange | CS     |
-| Pin6  Gnd      | Brown  | GND    |
-| Pin1  3.3V     | Red    | Vin    |
+| RPi          | Color  | Sensor |
+|:-------------|:-------|:-------|
+| Pin19 MOSI   | Blue   | SDI    |
+| Pin21 MISO   | Yellow | SDO    |
+| Pin23 SCLK   | Green  | SCK    |
+| Pin24 SPICE0 | Orange | CS     |
+| Pin6  Gnd    | Brown  | GND    |
+| Pin1  3.3V   | Red    | Vin    |
 
 

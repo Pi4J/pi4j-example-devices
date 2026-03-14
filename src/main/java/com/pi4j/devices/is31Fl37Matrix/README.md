@@ -1,5 +1,7 @@
 Implementation of the Is31fl3731 matrix controller.  
-Uses a BMP280 and system time to alternately display the temperature and time.
+Uses a BME280 and system time to alternately display the temperature and time.
+
+Note: Shutdown pin SDB not implemented
 
 The program has the tables to translate numbers to matrix commands, it does not
 translate alphabetic characters.
@@ -8,13 +10,22 @@ translate alphabetic characters.
 2. cd target/distribution
 3. Execute command to perform desired Matrix operation
 
-sudo ./runIs31fl37Matrix.sh -b 0x01 -a 0x74 -bmpB 0x01 -bmpA 0x76 -g 24 -w 20 -i 128 -c 1 -l 1 -r 16 -z 12 -t info
+// Test board
+./runIs31fl37Matrix.sh -b 0x01 -a 0x74 -bmpB 0x01 -bmpA 0x76 -g 24 -w 20 -i 128 -c 1 -l 1 -r 16 -z 12 -t off
 
-sudo java --module-path . --module com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31fl37_matrix_app -b 0x1 -a
-0x74 <matrix> " +
-" -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address -g GPIO processing LED -w GPIO warning LED  " +
-"-i intensity<128>  -c <repeat_count,0 infinite>  -l <displays>   -s log -r resetGpio -z monitorGpio#  " +
-"-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\" Default \"info\"
+// Lab display device
+./runIs31fl37Matrix.sh -b 0x1 -a 0x74 -bmpB 0x1 -bmpA 0x76 -g 23 -w 24 -i 128 -c 2 -l 1 -r 19 -z 21 -t off
+
+H3 white gpio17   
+H4 grey gpio19 -r
+E1 red gpio21 -z
+E2 blue SDA
+E3 purple SCL
+E4 yellow gpio 24 -w
+E5 green gpio23 -g
+J side 5v
+A side 3.3v
+B side grnd
 
 GPIO pin
 
@@ -70,6 +81,7 @@ python3 monitorGpio2.py -p 25
 The python3 program monitorGpio2.py uses the GPIO.add_event_detect function callback to more closely
 operate same as the java monitor program's event callback
 
-Special regression test. Only displaus time. Bogus but valid address passed on for -bmpA
+// Lab display uses the following GPIOs
+// Special regression test. Only displays time. Bogus but valid address passed on for -bmpA
 
-sudo ./runIs31fl37MatrixTest.sh -b 0x01 -a 0x74 -bmpB 0x01 -bmpA 0x74 -g 24 -w 20 -i 128 -c 1 -l 1 -r 18 -z 25 -t info
+./runIs31fl37MatrixTest.sh -b 0x1 -a 0x74 -bmpB 0x1 -bmpA 0x76 -g 23 -w 24 -i 128 -c 2 -l 1 -r 19 -z 21 -t off

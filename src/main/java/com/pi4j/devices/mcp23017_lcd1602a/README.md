@@ -32,6 +32,7 @@
 #
 #
 -->
+
 ```
 MCP23017 1602A
 GPB0 RS
@@ -54,6 +55,7 @@ A2 grnd
 A1 +5
 A0 grnd
 ```
+
 Simple implementation of MCP23017, specific to controlling a 1602A LCD. If you are interested   
 in a full utilization of all MCP23017 functionality, see :  
 src/main/java/com/pi4j/devices/mcp23017/README.md  
@@ -67,6 +69,7 @@ src/main/java/com/pi4j/devices/mcp23xxxApplication/README.md
 ```
 sudo ./runMCP23017_LCD.sh -b 0x01 -a 0x21 -x 4 -t trace -line1 aBc -line2 XyZ
 ```
+
 Bus 1, address 0x21, reset pin GPIO4, detailed logging , line one text, line two text  
 Clears display, Line1 begins in fourth position, line2 begins in second position
 
@@ -74,5 +77,6 @@ Clears display, Line1 begins in fourth position, line2 begins in second position
 sudo ./runMCP23017_LCD.sh -b 0x01 -a 0x21 -x 4 -r -clearLCD -t trace -line1 aaaaaa -line1Offset 4 -line2 zzzzzz
 -line2Offset 2
 ```
+
 line one starts at offset 4, line two offset 2
 Param -shiftL 2 shift both lines 2 positions to left

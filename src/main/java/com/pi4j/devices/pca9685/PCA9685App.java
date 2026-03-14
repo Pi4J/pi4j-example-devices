@@ -85,24 +85,24 @@ public class PCA9685App {
         int frequency = 0;
         int devAddr = 0;
         boolean setOn = false;
-boolean setIntensity = false;
-boolean setSM1 = false;
+        boolean setIntensity = false;
+        boolean setSM1 = false;
         boolean setSM2 = false;
 
-int intensity = 0;
+        int intensity = 0;
         while (loop) {
-           for (int i = 0; i < args.length; i++) {
+            for (int i = 0; i < args.length; i++) {
                 String o = args[i];
                 if (o.contentEquals("-a")) {
                     String a = args[i + 1];
                     i++;
                     address = Integer.parseInt(a.substring(2), 16);
-                }else if (o.contentEquals("-sm1")) {
+                } else if (o.contentEquals("-sm1")) {
                     String a = args[i + 1];
                     i++;
                     setSM1 = true;
                     newMode1 = Integer.parseInt(a.substring(2), 16);
-                }else if (o.contentEquals("-sm2")) {
+                } else if (o.contentEquals("-sm2")) {
                     String a = args[i + 1];
                     i++;
                     setSM2 = true;
@@ -112,9 +112,9 @@ int intensity = 0;
                     i++;
                     setFreq = true;
                     frequency = Integer.parseInt(a);
-                }else if (o.contentEquals("-ledOn")) {
+                } else if (o.contentEquals("-ledOn")) {
                     String a = args[i + 1];
-                    devAddr =  Integer.parseInt(a.substring(2), 16);
+                    devAddr = Integer.parseInt(a.substring(2), 16);
 
                     i++;
                     a = args[i + 1];
@@ -127,7 +127,7 @@ int intensity = 0;
                     ledOff = Integer.parseInt(a);
                     i++;
                     setOn = true;
-                }else if (o.contentEquals("-b")) {
+                } else if (o.contentEquals("-b")) {
                     String a = args[i + 1];
                     i++;
                     bus = Integer.parseInt(a.substring(2), 16);
@@ -135,9 +135,9 @@ int intensity = 0;
                     String a = args[i + 1];
                     i++;
                     pin = Integer.parseInt(a.substring(2), 16);
-                }else if (o.contentEquals("-intensity")) {
+                } else if (o.contentEquals("-intensity")) {
                     String a = args[i + 1];
-                    devAddr =  Integer.parseInt(a.substring(2), 16);
+                    devAddr = Integer.parseInt(a.substring(2), 16);
 
                     i++;
                     a = args[i + 1];
@@ -147,7 +147,7 @@ int intensity = 0;
                     intensity = Integer.parseInt(a);
                     i++;
                     setIntensity = true;
-                 }  else if (o.contentEquals("-e")) {
+                } else if (o.contentEquals("-e")) {
                     String a = (args[i + 1]).toUpperCase();
                     i++;
                     setEnable = true;
@@ -156,7 +156,7 @@ int intensity = 0;
                     } else if (a.contains("D")) {
                         enablePCA = false;
                     } else {
-                        console.println("  !!! Invalid Parm %s " , o.toString());
+                        console.println("  !!! Invalid Parm %s ", o.toString());
                         console.println(helpString);
                         System.exit(43);
                     }
@@ -179,7 +179,7 @@ int intensity = 0;
                     reset = true;
                 } else if (o.contentEquals("-d")) {
                     debug = true;
-                }else if (o.contentEquals("-q")) {
+                } else if (o.contentEquals("-q")) {
                     quit = true;
                 } else if (o.contentEquals("-h")) {
                     console.println(helpString);
@@ -195,15 +195,15 @@ int intensity = 0;
                         System.exit(40);
                     }
                 } else {
-                    console.println("  !!! Invalid Parm %s " , o.toString());
+                    console.println("  !!! Invalid Parm %s ", o.toString());
                     console.println(helpString);
-                 }
+                }
             }
             if (pca == null) {
                 pca = new PCA9685(console, bus, address, pin, pi4j, traceLevel);
             }
-             if(debug) {
-                 pca.showPrescale();
+            if (debug) {
+                pca.showPrescale();
                 pca.showMode1();
                 pca.showMode2();
                 pca.showFreq();
@@ -255,21 +255,21 @@ int intensity = 0;
 
             //  detectI2C("i2cdetect -y 1");
 
-             addr1_present = false;
-             addr2_present = false;
-             addr3_present = false;
+            addr1_present = false;
+            addr2_present = false;
+            addr3_present = false;
             setIntensity = false;
             setSM1 = false;
             setSM2 = false;
             setFreq = false;
-             quit = false;
-             reset = false;
+            quit = false;
+            reset = false;
             setEnable = false;
-             ledNum = 0;
-             ledOn = 0;
-             ledOff = 0;
-             setOn = false;
-             debug = false;
+            ledNum = 0;
+            ledOn = 0;
+            ledOff = 0;
+            setOn = false;
+            debug = false;
 
             System.out.println(helpString);
             String name = scanner.nextLine();
@@ -286,7 +286,7 @@ int intensity = 0;
 
     private static void endPgm(Context pi4j) {
         pi4j.shutdown();
-       // detectI2C("i2cdetect -y 1");
+        // detectI2C("i2cdetect -y 1");
         console.println("**************************************");
         console.println("Finished");
         System.exit(0);

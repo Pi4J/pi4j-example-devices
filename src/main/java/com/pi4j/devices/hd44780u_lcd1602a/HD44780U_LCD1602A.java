@@ -82,10 +82,9 @@ public class HD44780U_LCD1602A extends LCD1602A {
         var outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
             .id("RS_pin")
             .name("Enable")
-            .address(this.RsPinNum)
+            .bcm(this.RsPinNum)
             .shutdown(DigitalState.LOW)
-            .initial(DigitalState.LOW)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.LOW);
         try {
             this.RsPin = pi4j.create(outputConfig1);
         } catch (Exception e) {
@@ -97,10 +96,9 @@ public class HD44780U_LCD1602A extends LCD1602A {
         var outputConfig3 = DigitalOutput.newConfigBuilder(pi4j)
             .id("EN_pin")
             .name("EN")
-            .address(this.EnPinNum)
+            .bcm(this.EnPinNum)
             .shutdown(DigitalState.LOW)
-            .initial(DigitalState.LOW)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.LOW);
         try {
             this.EnPin = pi4j.create(outputConfig3);
         } catch (Exception e) {

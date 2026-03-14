@@ -236,9 +236,8 @@ public class BaseGpioInOut implements GpioBasics {
             var ledConfig = DigitalInput.newConfigBuilder(this.pi4j)
                 .id(name)
                 .name(name)
-                .address(number)
-                .pull(pullup)
-                .provider("gpiod-digital-input");
+                .bcm(number)
+                .pull(pullup);
             DigitalInput input = null;
             try {
                 input = this.pi4j.create(ledConfig);
@@ -286,10 +285,9 @@ public class BaseGpioInOut implements GpioBasics {
             var ledConfig = DigitalOutput.newConfigBuilder(this.pi4j)
                 .id(name)
                 .name(name)
-                .address(number)
+                .bcm(number)
                 .shutdown(initialValue)
-                .initial(initialValue)
-                .provider("gpiod-digital-output");
+                .initial(initialValue);
             try {
                 output = this.pi4j.create(ledConfig);
             } catch (Exception e) {

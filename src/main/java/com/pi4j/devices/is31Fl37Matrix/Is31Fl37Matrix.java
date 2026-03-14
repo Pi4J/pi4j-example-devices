@@ -69,11 +69,15 @@ public class Is31Fl37Matrix {
     private final int _ENABLE_OFFSET = 0x00;
     private final int _BLINK_OFFSET = 0x12;
     private final int _COLOR_OFFSET = 0x24;
-
-    private int _frame = 0;
-
-    private boolean intrp_occured = false;
     private final Logger logger;
+    private final int address;
+    private final int bmp_address;
+    private final int bus_num;
+    private final I2C device;
+    private final DigitalInput input;
+    private final Context pi4j;
+    private int _frame = 0;
+    private boolean intrp_occured = false;
 
     public Is31Fl37Matrix(Integer bus, Integer address, Integer bmp_address, Logger logger,
                           DigitalInput interruptPin, Context pi4j) {
@@ -85,6 +89,7 @@ public class Is31Fl37Matrix {
         this.pi4j = pi4j;
 
         this.device = this.createI2cDevice(this.bus_num, this.address);
+
         this.init();
         this.reset();
 
@@ -105,14 +110,13 @@ public class Is31Fl37Matrix {
             .device(address)
             .id("VL53L0X_TOF  " + id + " " + name)
             .name(name)
-            .provider("linuxfs-i2c")
             .build();
         rval = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("Exit: createI2cDevice VL53L0X_TOF" + id + name);
+
         return (rval);
 
     }
-
 
     private void reset() {
         this.logger.trace("reset");
@@ -592,15 +596,9 @@ public class Is31Fl37Matrix {
 
     }
 
-    private final int address;
-    private final int bmp_address;
-    private final int bus_num;
-    private final I2C device;
-    private final DigitalInput input;
-
-    private final Context pi4j;
-
     private class MatrixGpioListener implements DigitalStateChangeListener {
+
+        private final Is31Fl37Matrix chip;
 
         public MatrixGpioListener(Is31Fl37Matrix chip) {
             this.chip = chip;
@@ -624,8 +622,6 @@ public class Is31Fl37Matrix {
                 this.chip.intrp_happened();
             }
         }
-
-        private final Is31Fl37Matrix chip;
     }
 
 

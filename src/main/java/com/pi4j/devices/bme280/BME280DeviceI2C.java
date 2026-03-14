@@ -41,7 +41,6 @@ import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver.Measurement;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
-import com.pi4j.io.i2c.I2CProvider;
 import com.pi4j.util.Console;
 
 import java.text.DecimalFormat;
@@ -113,15 +112,14 @@ public class BME280DeviceI2C {
         }
         // Initialize I2C
         console.println("Initializing the sensor via I2C");
-        I2CProvider i2CProvider = pi4j.provider("linuxfs-i2c");
-        I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
+         I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
             .id("BME280")
             .bus(I2C_BUS)
             .device(address)
             .build();
 
         // Read values 10 times
-        try (I2C i2c = i2CProvider.create(i2cConfig)) {
+        try (I2C i2c = pi4j.create(i2cConfig)) {
 
             Bmx280Driver bmx280Driver = new Bmx280Driver(i2c);
 

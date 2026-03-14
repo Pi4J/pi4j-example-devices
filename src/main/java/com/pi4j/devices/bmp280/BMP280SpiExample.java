@@ -34,7 +34,6 @@ package com.pi4j.devices.bmp280;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.spi.SpiBus;
-import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
 
 
@@ -52,9 +51,8 @@ public class BMP280SpiExample {
      */
     public static void main(String[] args) throws Exception {
 
-        SpiChipSelect chipSelect = SpiChipSelect.CS_0;
+        int chipSelect = 0;
         SpiBus spiBus = SpiBus.BUS_0;
-
 
 
         // ------------------------------------------------------------

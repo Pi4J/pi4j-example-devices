@@ -1,12 +1,7 @@
 https://pdf1.alldatasheet.com/datasheet-pdf/view/1132060/BOSCH/BME280.html
 
-
-
 This example device has been migrated under the drivers. The device code can be found at
 https://github.com/Pi4J/pi4j-drivers/tree/main/src/main/java/com/pi4j/drivers/sensor/bmx280
-
-
-
 
 The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2 documentation.
 Consult that logger class documentation to understand its various logging options.
