@@ -41,7 +41,6 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
-import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
@@ -156,23 +155,21 @@ public class DAC8552 {
             .id("SPI" + this.spiBus + "_DAC8552")
             .name("D/A converter")
             .bus(this.spiBus)
-            .chipSelect(SpiChipSelect.CS_0)   // not used
+            .channel(0)   // not used
             // 30D400
             //     0b001100001101010000000000
             .baud(976563)
             .mode(SpiMode.MODE_1)
-            .provider("linuxfs-spi")
-            .build();
+             .build();
         this.spi = this.pi4j.create(spiConfig);
 
         // required all configs
         var outputConfig2 = DigitalOutput.newConfigBuilder(pi4j)
             .id("CS_pin")
             .name("CS")
-            .address(this.csPinNum)
+            .bcm(this.csPinNum)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
         try {
             this.csGpio = pi4j.create(outputConfig2);
         } catch (Exception e) {

@@ -32,7 +32,9 @@
 package com.pi4j.devices.bmp280;
 
 import com.pi4j.context.Context;
-import com.pi4j.io.spi.*;
+import com.pi4j.io.spi.Spi;
+import com.pi4j.io.spi.SpiBus;
+import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
 import org.slf4j.LoggerFactory;
 
@@ -57,18 +59,17 @@ public class BMP280DeviceSPI extends BMP280Device {
 
     SpiBus spiBus;
 
-    SpiChipSelect chipSlct;
+    int channel;
 
     // local/internal SPI reference for communication with hardware chip
     Spi spi = null;
 
 
-
-    public BMP280DeviceSPI(Context pi4j, Console console, SpiBus spiBus, SpiChipSelect chipSlct,  String traceLevel) {
+    public BMP280DeviceSPI(Context pi4j, Console console, SpiBus spiBus, int channel, String traceLevel) {
         super(pi4j, console, traceLevel);
         this.pi4j = pi4j;
         this.spiBus = spiBus;
-        this.chipSlct = chipSlct;
+        this.channel = channel;
         this.console = console;
         // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
         //  must fully qualify logger as others exist and the slf4 code will use the first it
@@ -95,13 +96,12 @@ public class BMP280DeviceSPI extends BMP280Device {
             .id("SPI" + this.spiBus + "_BMP280")
             .name("D/A converter")
             .bus(this.spiBus)
-            .chipSelect(this.chipSlct)
+            .channel(this.channel)
             //1 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
             //b  b  b  b  b  b  R  T  n  n  n  n  W  A u2 u1 u0 p2 p1 p0  m  m
             // .flags(0b0000000000000000100000L)  // MODE0, ux GPIO not used for chip select
             .baud(Spi.DEFAULT_BAUD)    // Max 10MHz
             .mode(SpiMode.MODE_0)
-            .provider("linuxfs-spi")
             .build();
         this.spi = this.pi4j.create(spiConfig);
         this.logger.info("Exit:createSPIDevice  ");
@@ -116,7 +116,7 @@ public class BMP280DeviceSPI extends BMP280Device {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
         byte[] value = new byte[1];
-        this.spi.writeThenRead(data,value);
+        this.spi.writeThenRead(data, value);
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", value[0]));
         return value[0]; //rval);
     }
@@ -129,7 +129,7 @@ public class BMP280DeviceSPI extends BMP280Device {
     public int readRegister(int register, byte[] buffer) {
         this.logger.trace(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte[] data = new byte[]{(byte) (0b10000000 | register)};
-        this.spi.writeThenRead(data,  buffer);
+        this.spi.writeThenRead(data, buffer);
         this.logger.trace("<<< Exit readRegister   : " + String.format("0X%02x: ", buffer[0]) + String.format("0X%02x: ", buffer[0]));
         return buffer.length;
     }
@@ -153,16 +153,17 @@ public class BMP280DeviceSPI extends BMP280Device {
         this.logger.trace("<<< Exit writeRegister wrote : " + byteswritten);
         return (rval);
     }
+
     /**
-     * @param writeData bytes to write
-     * @param readData  bytes to read
+     * @param writeData       bytes to write
+     * @param readData        bytes to read
      * @param afterWriteDelay MS time to delay after write
      */
     public void writeDelayRead(byte[] writeData, short afterWriteDelay, byte[] readData) {
         this.logger.trace(">>> Enter writeDelayRead   ");
 
         // send read request to BMP chip via SPI channel
-        this.spi.writeThenRead(writeData, 0, writeData.length, afterWriteDelay,readData, 0, readData.length);
+        this.spi.writeThenRead(writeData, 0, writeData.length, afterWriteDelay, readData, 0, readData.length);
 
         this.logger.trace("<<< Exit writeDelayRead  ");
     }

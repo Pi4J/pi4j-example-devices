@@ -96,7 +96,7 @@ public class NeoPixel94V_App {
 
         //set them all off, so nothing is shining
         System.out.println("All Off");
-       ledStrip.allOff();
+        ledStrip.allOff();
 
         ledStrip.waitForInput();
 

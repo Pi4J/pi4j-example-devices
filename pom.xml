@@ -64,8 +64,8 @@
 
 
         <!-- DEPENDENCIES VERSIONS  2.0.3  -SNAPSHOT  -->
-        <slf4j.version>1.7.30</slf4j.version>
-        <pi4j.version>4.0.0-SNAPSHOT</pi4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <pi4j.version>4.1.0-SNAPSHOT</pi4j.version>
 
         <!-- BUILD PLUGIN VERSIONS -->
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
@@ -103,23 +103,20 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
+
         <!-- change to use the default slf4 simple -->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-gpiod</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
-        <!-- change to use the default slf4 simple -->
+        <!-->
         <dependency>
             <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-library-linuxfs</artifactId>
+            <artifactId>pi4j-plugin-ffm</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
+        <-->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-linuxfs</artifactId>
@@ -132,11 +129,15 @@
             </dependency>
          <dependency>
             <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
-        <!-- include Pi4J Core -->
+           <!-- include Pi4J Core -->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-core</artifactId>
@@ -147,11 +148,7 @@
             <artifactId>pi4j-plugin-pigpio</artifactId>
             <version>${pi4j.version}</version>
         </dependency-->
-        <!--dependency>
-            <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-rp1spi</artifactId>
-            <version>${pi4j.version}</version>
-        </dependency-->
+
         <!--- log4j - version 2   -->
 
         <!-- include Pi4J Plugins (Platforms and I/O Providers) -->

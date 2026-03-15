@@ -36,7 +36,7 @@ public class MonitorInterrupt {
      * @param args an array of {@link java.lang.String} objects.
      * @throws java.lang.Exception if any.
      */
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
 
         // create Pi4J console wrapper/helper
         // (This is a utility class to abstract some of the boilerplate stdin/stdout code)

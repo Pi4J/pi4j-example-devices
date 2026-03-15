@@ -26,7 +26,7 @@ public class CreateInterrupt {
      * @param args an array of {@link java.lang.String} objects.
      * @throws java.lang.Exception if any.
      */
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
 
         // create Pi4J console wrapper/helper
         // (This is a utility class to abstract some of the boilerplate stdin/stdout code)
@@ -91,10 +91,9 @@ public class CreateInterrupt {
         var interruptConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("Interrupt")
             .name("Interrupt")
-            .address(interruptPinNum)
+            .bcm(interruptPinNum)
             .shutdown(initialState)
-            .initial(initialState)
-            .provider("gpiod-digital-output");
+            .initial(initialState);
         try {
             interruptPin = pi4j.create(interruptConfig);
         } catch (Exception e) {

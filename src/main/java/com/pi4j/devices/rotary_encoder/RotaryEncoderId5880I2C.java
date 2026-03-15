@@ -93,9 +93,8 @@ public class RotaryEncoderId5880I2C {
             .device(address)
             .build();
         var inputCfg = DigitalInput.newConfigBuilder(pi4j)
-            .address(pin)
-            .pull(PullResistance.PULL_UP)
-            .provider("gpiod-digital-input");
+            .bcm(pin)
+            .pull(PullResistance.PULL_UP);
         DigitalInput intrp = pi4j.create(inputCfg);
 
         I2C rotary = i2CProvider.create(i2cConfig);

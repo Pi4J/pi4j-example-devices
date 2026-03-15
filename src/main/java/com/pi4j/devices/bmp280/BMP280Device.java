@@ -61,8 +61,6 @@ public abstract class BMP280Device implements BMP280Interface {
     public static final String ID = "BMP280";
 
 
-
-
     protected Logger logger;
     protected String traceLevel;
 
@@ -157,9 +155,8 @@ public abstract class BMP280Device implements BMP280Interface {
 
 
         byte[] writeBuffer = new byte[]{(byte) (0b01111111 & BMP280Declares.ctrl_meas),
-            (byte) ctlVal[0], (byte) (0b10000000 | BMP280Declares.reg_dig_t1) } ;
-        byte[] readBuffer =  new byte[24];
-
+            (byte) ctlVal[0], (byte) (0b10000000 | BMP280Declares.reg_dig_t1)};
+        byte[] readBuffer = new byte[24];
 
 
         // Next delay for 100 ms to provide chip time to perform measurements
@@ -174,49 +171,47 @@ public abstract class BMP280Device implements BMP280Interface {
         byte[] compVal = new byte[2];
 
 
-       this.writeDelayRead(writeBuffer, (short)100, readBuffer) ;
+        this.writeDelayRead(writeBuffer, (short) 100, readBuffer);
 
 
-        long dig_t1 = castOffSignInt(new byte[]{readBuffer[0],readBuffer[1]}) ;
+        long dig_t1 = castOffSignInt(new byte[]{readBuffer[0], readBuffer[1]});
         this.readRegister(BMP280Declares.reg_dig_t2, compVal);
-        int dig_t2 = signedInt(new byte[]{readBuffer[2],readBuffer[3]});
+        int dig_t2 = signedInt(new byte[]{readBuffer[2], readBuffer[3]});
 
         this.readRegister(BMP280Declares.reg_dig_t3, compVal);
-        int dig_t3 = signedInt(new byte[]{readBuffer[4],readBuffer[5]});
+        int dig_t3 = signedInt(new byte[]{readBuffer[4], readBuffer[5]});
 
         this.readRegister(BMP280Declares.reg_dig_p1, compVal);
-        long dig_p1 = castOffSignInt(new byte[]{readBuffer[6],readBuffer[7]});
+        long dig_p1 = castOffSignInt(new byte[]{readBuffer[6], readBuffer[7]});
 
         this.readRegister(BMP280Declares.reg_dig_p2, compVal);
-        int dig_p2 = signedInt(new byte[]{readBuffer[8],readBuffer[9]});
+        int dig_p2 = signedInt(new byte[]{readBuffer[8], readBuffer[9]});
 
         this.readRegister(BMP280Declares.reg_dig_p3, compVal);
-        int dig_p3 = signedInt(new byte[]{readBuffer[10],readBuffer[11]});
+        int dig_p3 = signedInt(new byte[]{readBuffer[10], readBuffer[11]});
 
         this.readRegister(BMP280Declares.reg_dig_p4, compVal);
-        int dig_p4 = signedInt(new byte[]{readBuffer[12],readBuffer[13]});
+        int dig_p4 = signedInt(new byte[]{readBuffer[12], readBuffer[13]});
 
         this.readRegister(BMP280Declares.reg_dig_p5, compVal);
-        int dig_p5 = signedInt(new byte[]{readBuffer[14],readBuffer[15]});
+        int dig_p5 = signedInt(new byte[]{readBuffer[14], readBuffer[15]});
 
         this.readRegister(BMP280Declares.reg_dig_p6, compVal);
-        int dig_p6 = signedInt(new byte[]{readBuffer[16],readBuffer[17]});
+        int dig_p6 = signedInt(new byte[]{readBuffer[16], readBuffer[17]});
 
         this.readRegister(BMP280Declares.reg_dig_p7, compVal);
-        int dig_p7 = signedInt(new byte[]{readBuffer[18],readBuffer[19]});
+        int dig_p7 = signedInt(new byte[]{readBuffer[18], readBuffer[19]});
 
         this.readRegister(BMP280Declares.reg_dig_p8, compVal);
-        int dig_p8 = signedInt(new byte[]{readBuffer[20],readBuffer[21]});
+        int dig_p8 = signedInt(new byte[]{readBuffer[20], readBuffer[21]});
 
         this.readRegister(BMP280Declares.reg_dig_p9, compVal);
-        int dig_p9 = signedInt(new byte[]{readBuffer[22],readBuffer[23]});
+        int dig_p9 = signedInt(new byte[]{readBuffer[22], readBuffer[23]});
 
 
         byte[] buff = new byte[6];
 
         this.readRegister(BMP280Declares.press_msb, buff);
-
-
 
 
         long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
@@ -338,7 +333,7 @@ public abstract class BMP280Device implements BMP280Interface {
         this.resetSensor();
         // read 0xD0 validate data equal 0x58 or 0x60
         int id = this.readRegister(BMP280Declares.chipId);
-        if ((id == BMP280Declares.idValueMskBMP) || (id == BMP280Declares.idValueMskBME)) {
+        if ((id == 0x55) || (id == BMP280Declares.idValueMskBMP) || (id == BMP280Declares.idValueMskBME)) {
             this.logger.trace("Correct chip ID read");
         } else {
             System.out.println("Incorrect chip ID read");

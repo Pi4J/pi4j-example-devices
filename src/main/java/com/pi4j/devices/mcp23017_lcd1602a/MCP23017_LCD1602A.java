@@ -90,10 +90,9 @@ public class MCP23017_LCD1602A extends LCD1602A {
         var outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
             .id("RESET_pin")
             .name("Reset")
-            .address(this.resetPinNum)
+            .bcm(this.resetPinNum)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
         try {
             this.ResetPin = pi4j.create(outputConfig1);
         } catch (Exception e) {

@@ -71,7 +71,7 @@ public class DHT22 {
     private DigitalOutputConfigBuilder outputConfig1;
     private DigitalInputConfigBuilder inputConfig1;
 
-       private DHT22.DataInGpioListener listener;
+    private DHT22.DataInGpioListener listener;
 
 
     long timeElapsed;
@@ -105,18 +105,16 @@ public class DHT22 {
         this.outputConfig1 = DigitalOutput.newConfigBuilder(pi4j)
             .id("Data_Out")
             .name("Data_Out")
-            .address(this.dataPinNum)
+            .bcm(this.dataPinNum)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
 
 
         this.inputConfig1 = DigitalInput.newConfigBuilder(pi4j)
             .id("Data_In")
             .name("Data_In")
-            .address(this.dataPinNum)
-            .pull(PullResistance.OFF)
-            .provider("gpiod-digital-input");
+            .bcm(this.dataPinNum)
+            .pull(PullResistance.OFF);
 
 
         this.logger.trace("<<< Exit: init");

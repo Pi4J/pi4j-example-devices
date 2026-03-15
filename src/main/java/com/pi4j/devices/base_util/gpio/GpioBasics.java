@@ -81,10 +81,9 @@ public interface GpioBasics {
         var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("resetPin")
             .name("Chip reset")
-            .address(resetGpio)
+            .bcm(resetGpio)
             .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH)
-            .provider("gpiod-digital-output");
+            .initial(DigitalState.HIGH);
         DigitalOutput resetPin = null;
         try {
             resetPin = pi4j.create(ledConfig);

@@ -68,6 +68,7 @@ For an alternative see :
 https://www.pi4j.com/examples/jbang/jbang_pi4j_spi_led_matrix/
 
 ```
+
 Pulse duration to represent a one or a zero.
 int32_t highTime0NanoSeconds, 400 ns
 int32_t lowTime0NanoSeconds, 850 ns
@@ -88,9 +89,11 @@ Transmits 8 short, 8 short, 8 long
 300/900
 
 Composition of 24bit data:
+
 ```
 G7 G6 G5 G4 G3 G2 G1 G0 R7 R6 R5 R4 R3 R2 R1 R0 B7 B6 B5 B4 B3 B2 B1 B0
 ```
+
 Note: Follow the order of GRB to sent data and the high bit sent at first.
 
 The NeoPixel94V class assumes the above order Green Red Blue. The code

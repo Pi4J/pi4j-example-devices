@@ -4,7 +4,6 @@ import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.spi.SpiBus;
-//import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
 
 public class MCP3008App {

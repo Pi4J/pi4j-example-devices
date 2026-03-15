@@ -38,13 +38,12 @@ package com.pi4j.devices.ads1256;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.spi.SpiBus;
-import com.pi4j.io.spi.SpiChipSelect;
 import com.pi4j.util.Console;
 
 public final class ADS1256 extends AbstractADS125x {
 
     @SuppressWarnings("exports")
-    public ADS1256(Context pi4j, SpiBus spiBus, SpiChipSelect chipSelect,
+    public ADS1256(Context pi4j, SpiBus spiBus, int chipSelect,
                    boolean reset, int drdyPin, int csPin, int rstPin,
                    boolean crtRstGpio, int pdwnPin, boolean crtPdwnGpio,
                    Console console, String traceLevel, double vref, DataRate sampleRate, boolean useBuffer)
@@ -57,6 +56,7 @@ public final class ADS1256 extends AbstractADS125x {
     public int getNumGpioPins() {
         return 4;
     }
+
     @Override
     public int getNumAnalogPins() {
         return 8;
