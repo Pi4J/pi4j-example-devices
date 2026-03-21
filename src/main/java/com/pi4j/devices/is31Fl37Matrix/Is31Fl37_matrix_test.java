@@ -1,36 +1,32 @@
 /*
  *
+ *  #%L
+ *  * Copyright (C) 2012 - 2025 Pi4J
+ *  * %%
  *
- *     *
- *     * -
- *     * #%L
- *     * **********************************************************************
- *     * ORGANIZATION  :  Pi4J
- *     * PROJECT       :  Pi4J :: EXTENSION
- *     * FILENAME      :  Is31Fl37_matrix_test.java
- *     *
- *     * This file is part of the Pi4J project. More information about
- *     * this project can be found here:  https://pi4j.com/
- *     * **********************************************************************
- *     * %%
- *     *   * Copyright (C) 2012 - 2022 Pi4J
- *      * %%
- *     *
- *     * Licensed under the Apache License, Version 2.0 (the "License");
- *     * you may not use this file except in compliance with the License.
- *     * You may obtain a copy of the License at
- *     *
- *     *      http://www.apache.org/licenses/LICENSE-2.0
- *     *
- *     * Unless required by applicable law or agreed to in writing, software
- *     * distributed under the License is distributed on an "AS IS" BASIS,
- *     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     * See the License for the specific language governing permissions and
- *     * limitations under the License.
- *     * #L%
- *     *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ * -
+ *  #%L
+ *  **********************************************************************
+ *  ORGANIZATION  :  Pi4J
+ *  PROJECT       :  Pi4J :: EXTENSION
+ *  FILENAME      :  Is31Fl37_matrix_test.java
+ *
+ *  This file is part of the Pi4J project. More information about
+ *  this project can be found here:  https://pi4j.com/
+ *  **********************************************************************
+ *  %%
  *
  */
 
@@ -93,21 +89,11 @@ public class Is31Fl37_matrix_test {
         this.warnGPIO = warnGpio;
         this.processGPIO = processGpio;
 
-        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
-        //  must fully qualify logger as others exist and the slf4 code will use the first it
-        //  encounters if using the defaultLogLevel
 
         // this.print_state();
     }
 
     static void main(String[] args) throws IOException, InterruptedException {
-        // Logger logger = Logger.getLogger("ibm.simics.ProcessTable");
-        /*
-         * Properties props = new java.util.Properties(); FileInputStream fis =
-         * new FileInputStream("table_wire.properties");
-         *
-         * props.load(fis);
-         */
         System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "OFF");
 
         int address = 0xff;
@@ -118,7 +104,6 @@ public class Is31Fl37_matrix_test {
         int repeat_count = 0;
         int led_blink = 0;
         String traceLevel = "info";
-        boolean tmpFileUse = false;
         boolean parmsOk = true;
         int resetPinNum = 0xff;
         int monitorPinNum = 0xff;
@@ -130,8 +115,6 @@ public class Is31Fl37_matrix_test {
         DigitalOutput warnPin = null;
         DigitalOutput resetPin = null;
         DigitalInput monitorPin = null;
-        boolean eChip = false;
-        String mainChip = null;
         boolean doReset = false;
 
 
@@ -157,7 +140,7 @@ public class Is31Fl37_matrix_test {
                 console.println(
                     " java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31Fl37_matrix_test  -b 0x1 -a 0x74 <matrix> " +
                         " -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address  -g  GPIO processing LED      -w GPIO warning LED  " +
-                        "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -s log  -r resetGpio -z monitorGpio#  " +
+                        "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -r resetGpio -z monitorGpio#  " +
                         "-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"");
                 System.exit(0);
             } else if (o.contentEquals("-r")) {
@@ -220,14 +203,6 @@ public class Is31Fl37_matrix_test {
                 String a = args[i + 1];
                 i++;
                 repeat_count = Integer.parseInt(a);
-            } else if (o.contentEquals("-s")) {
-                tmpFileUse = true;
-
-            } else if (o.contentEquals("-y")) { // mainChip
-                mainChip = args[i + 1];
-
-                // >>>tcaObj.bus_num = Integer.parseInt(a.substring(2), 16);
-                i++;
             } else if (o.contentEquals("-g")) {
                 String a = args[i + 1];
                 createProcessPin = true;
@@ -323,7 +298,7 @@ public class Is31Fl37_matrix_test {
             console.println(
                 " java --module-path . --module  com.pi4j.devices.multi/com.pi4j.devices.is31fl37Matrix.Is31Fl37_matrix_test  -b 0x1 -a 0x74 <matrix> " +
                     " -bmpB 0x1 <BMP280 bus> -bmpA 0x76 BMP280 address  -g  GPIO processing LED      -w GPIO warning LED  " +
-                    "-i intensity -c <repeat_count,0 infinite>  -l <displays>   -s log  -r resetGpio -z monitorGpio#  " +
+                    "-i intensity -c <repeat_count,0 infinite>  -l <displays>  -r resetGpio -z monitorGpio#  " +
                     "-t values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"");
             System.exit(0x42);
         }
@@ -350,56 +325,38 @@ public class Is31Fl37_matrix_test {
             // if leg displays temperature/time count times then exists.
             if (display_app.repeat_count > 0) {
                 for (int i = 0; i < display_app.repeat_count; i++) {
-                    // future // eChip = cfgU.enableChipPath(mainChip);
-                    // cfgU.displayEnableReg(bus_num, mainChip);
-                    // cfgU.runCli();
-
-                     /*   display.process_bmp_data(pin_monitor,
-                                display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
-                        // Thread.sleep(2000);
-
-                        // clear the matrix
-                        for (c = 0; c < 7; c++) {
-                            matrix.fill(0, (byte) 0, 0);
-                        }
-                        */
-
-                    // future //eChip = cfgU.enableChipPath(mainChip);
                     display.show_time(pin_monitor, display_app.led_blink,
                         display_app.loop_count);
+                    InterruptDetails completed = pin_monitor.wait_for_interrupt();
+                    if (completed.getSuccessVal()) {
+
+                        pin_monitor.toggle_led(false);
+                    } else {
+                        pin_monitor.flash_alarm_led(matrix);
+                    }
                     // clear the matrix
                     for (c = 0; c < 8; c++) {
                         matrix.fill(0, (byte) 0, 0);
                     }
                 }
                 matrix.blink_write(0);
-                // clear the matrix
-                for (c = 0; c < 8; c++) {
-                    matrix.fill(0, (byte) 0, 0);
-                }
+
             } else {  // else leg continuously displays temperature/time
                 while (true) {
-                    // future // eChip = cfgU.enableChipPath(mainChip);
-                      /*  display.process_bmp_data(pin_monitor,
-                                display_app.led_blink, display_app.loop_count, display_app.bmp_bus, display_app.bmp_address);
-                        Thread.sleep(2000);
-                        // clear the matrix
-                        for (c = 0; c < 8; c++) {
-                            matrix.fill(0, (byte) 0, 0);
-                        }*/
-                    // future  //eChip = cfgU.enableChipPath(mainChip);
                     display.show_time(pin_monitor, display_app.led_blink,
                         display_app.loop_count);
                     Thread.sleep(2000);
+                    InterruptDetails completed = pin_monitor.wait_for_interrupt();
+                    if (completed.getSuccessVal()) {
+                        pin_monitor.toggle_led(false);
+                    } else {
+                        pin_monitor.flash_alarm_led(matrix);
+                    }
                     // clear the matrix
                     for (c = 0; c < 8; c++) {
                         matrix.fill(0, (byte) 0, 0);
                     }
                 }
-                /*
-                 * display.blink(0); // THE FOLLOWING NEEDS A CTL-C HANDLER for
-                 * (int i; i < 7; i++) { display.fill(1, false, 0); }
-                 */
             }
         } catch (Exception e) {
             e.printStackTrace(System.out);
@@ -411,13 +368,7 @@ public class Is31Fl37_matrix_test {
     }
 
     public void print_state() {
-        /*
-         * System.out.println(" print_state()   address: " + this.address +
-         * " bus_num: " + this.bus_num + " traceLevel: " +
-         * this.traceLevel + " loop_count: " + this.loop_count +
-         * " repeat_count: " + this.repeat_count + " led_blink: " +
-         * this.led_blink);
-         */
+
         this.logger.info(" print_state()   Matrix address: " + String.format("0x%02X", this.address) + " Matrix bus_num: "
             + this.bus_num + "  BMP address: " + String.format("0x%02X", this.bmp_address) + " BMP bus_num: "
             + this.bmp_bus + " traceLevel: " + this.traceLevel + " loop_count: " + this.loop_count

@@ -14,7 +14,7 @@ translate alphabetic characters.
 ./runIs31fl37Matrix.sh -b 0x01 -a 0x74 -bmpB 0x01 -bmpA 0x76 -g 24 -w 20 -i 128 -c 1 -l 1 -r 16 -z 12 -t off
 
 // Lab display device
-./runIs31fl37Matrix.sh -b 0x1 -a 0x74 -bmpB 0x1 -bmpA 0x76 -g 23 -w 24 -i 128 -c 2 -l 1 -r 19 -z 21 -t off
+./runIs31fl37Matrix.sh -b 0x1 -a 0x74 -bmpB 0x1 -bmpA 0x76 -g 23 -w 24 -i 128 -c 0 -l 1 -r 19 -z 21 -t off
 
 H3 white gpio17   
 H4 grey gpio19 -r

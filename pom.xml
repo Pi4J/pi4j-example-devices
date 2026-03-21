@@ -110,34 +110,34 @@
             <artifactId>pi4j-plugin-gpiod</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
-        <!-->
+        <!--  requires driver verification >
+       <dependency>
+           <groupId>com.pi4j</groupId>
+           <artifactId>pi4j-plugin-ffm</artifactId>
+           <version>${pi4j.version}</version>
+       </dependency>
+       <-->
+       <dependency>
+           <groupId>com.pi4j</groupId>
+           <artifactId>pi4j-plugin-linuxfs</artifactId>
+           <version>${pi4j.version}</version>
+       </dependency>
         <dependency>
-            <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-ffm</artifactId>
-            <version>${pi4j.version}</version>
-        </dependency>
-        <-->
+               <groupId>net.java.dev.jna</groupId>
+               <artifactId>jna</artifactId>
+               <version>5.12.1</version>
+           </dependency>
         <dependency>
-            <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-linuxfs</artifactId>
-            <version>${pi4j.version}</version>
-        </dependency>
-         <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna</artifactId>
-                <version>5.12.1</version>
-            </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-           <!-- include Pi4J Core -->
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-api</artifactId>
+           <version>${slf4j.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-simple</artifactId>
+           <version>${slf4j.version}</version>
+       </dependency>
+          <!-- include Pi4J Core -->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-core</artifactId>

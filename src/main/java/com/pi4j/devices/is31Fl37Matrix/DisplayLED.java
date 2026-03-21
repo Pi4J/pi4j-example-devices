@@ -1,3 +1,35 @@
+/*
+ *
+ *  #%L
+ *  * Copyright (C) 2012 - 2025 Pi4J
+ *  * %%
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ * -
+ *  #%L
+ *  **********************************************************************
+ *  ORGANIZATION  :  Pi4J
+ *  PROJECT       :  Pi4J :: EXTENSION
+ *  FILENAME      :  DisplayLED.java
+ *
+ *  This file is part of the Pi4J project. More information about
+ *  this project can be found here:  https://pi4j.com/
+ *  **********************************************************************
+ *  %%
+ *
+ */
+
 package com.pi4j.devices.is31Fl37Matrix;/*
  *
  *
@@ -40,29 +72,7 @@ import org.slf4j.Logger;
 public class DisplayLED {
 
 
-    /*
-     * // 0 [ [
-     * [3],[[0,0],[1,0],[2,0],[0,1],[2,1],[0,2],[2,2],[0,3],[2,3],[0,4],[2,4]
-     * ,[0,5],[2,5],[0,6],[2,6],[2,6],[1,6]] ], [ // 1
-     * [3],[[0,1],[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[0,6],[2,6]] ], // 2
-     * [
-     * [4],[[0,1],[0,2],[1,0],[2,0],[3,1],[3,2],[3,3],[2,4],[1,5],[0,6],[1,6],[2
-     * , 6],[3,6]] ] , // 3
-     * [[4],[[0,1],[1,0],[2,0],[3,1],[3,2],[2,3],[3,4],[3,5],[0,5],[1,6],[2,6]]]
-     * ,// 4
-     * [[4],[[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,0],[3,1],[3,2],[3,3],[3,4
-     * ],[3,5],[3,6]] ], [ // 5
-     * [4],[[0,0],[0,1],[0,2],[0,6],[1,0],[2,0],[3,0],[1,2],[
-     * 2,3],[3,4],[2,5],[1,6],[0,6]] ], [ // 6
-     * [4],[[1,0],[0,1],[0,2],[0,3],[0,4],[0,5
-     * ],[1,3],[2,3],[3,4],[3,5],[2,6],[1,6]] ], [ //7
-     * [4],[[0,0],[0,1],[1,0],[2,0],[3,0],[3,1],[3,2],[3,3],[3,4],[3,5],[3,6]]
-     * ], [ //8
-     * [4],[[0,1],[0,2],[1,0],[2,0],[3,1],[3,2],[1,3],[2,3],[0,4],[0,5],[1,6
-     * ],[2,6],[3,4],[3,5]] ], [ // 9
-     * [4],[[0,1],[0,2],[1,0],[2,0],[3,1],[3,2],[1,3],[
-     * 2,3],[3,3],[3,4],[3,5],[3,6]] ], // 10 [ [1],[[0,2],[0,4]] ], ]
-     */
+
     private final int space_between_symbols = 0;
     private final Logger logger;
     // pixels for 0 1 2 3 4 5 6 7 8 9 :
@@ -79,10 +89,14 @@ public class DisplayLED {
     int[] xy7 = new int[]{0, 0, 0, 1, 1, 0, 2, 0, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6};
     int[] xy8 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 1, 3, 2, 3, 0, 4, 0, 5, 1, 6, 2, 6, 3, 4, 3, 5};
     int[] xy9 = new int[]{0, 1, 0, 2, 1, 0, 2, 0, 3, 1, 3, 2, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6};
-    int[] xy10 = new int[]{0, 2, 0, 4};
-    int[][] pixels = new int[][]{xy0, xy1, xy2, xy3, xy4, xy5, xy6, xy7, xy8, xy9, xy10};
+    int[] xy10 = new int[]{0, 2, 0, 4};   // :
+    int[] xy11 = new int[]{1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 2, 0, 3, 0, 4, 0, 2, 2, 3, 2}; // F
+    int[] xy12 = new int[]{1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 4, 0, 4, 1, 4, 2, 4, 3, 4, 4, 2, 2, 3, 2}; // H
 
-    int[] width = new int[]{3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1};
+
+    int[][] pixels = new int[][]{xy0, xy1, xy2, xy3, xy4, xy5, xy6, xy7, xy8, xy9, xy10, xy11, xy12};
+
+    int[] width = new int[]{3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 4, 5};
 
     // List<List<List<int>>> listOfListsOfLists =new
     // ArrayList<List<List<int>>>(1);
@@ -132,85 +146,185 @@ public class DisplayLED {
      * Based on input data, create the LED patterns (frame) to display that data.  Then pass that data to the
      * matrix controller to perform the actual display
      *
+     * @param pin_monitor  to toggle LEDs
+     * @param display_dev  matrix controller
+     * @param display_temp temperature value
+     * @param led_blink    intensity
+     * @param loop_count   whether display value is shown more than once
+     */
+    public void create_led_pattern_temp(ControlLeds pin_monitor, Is31Fl37Matrix display_dev, int display_temp,
+                                        int led_blink, Integer loop_count) {
+
+        this.logger.trace("create_led_pattern_temp");
+        this.logger.trace("parms :   display_temp : " + String.format("0x%02X", display_temp) + " blink : " + String.format("0x%02X", led_blink) + " loop_count : "
+            + String.format("0x%02X", loop_count));
+
+        // # et LEDs to indicate starting matrix operation
+        pin_monitor.toggle_led(true);
+
+        String ascii_temp_str;
+
+
+        ascii_temp_str = Integer.toString(display_temp);
+        char[] ascii_num = ascii_temp_str.toCharArray();
+
+        int num = 0;
+        int offset = 0;
+        int placement = 0; // # added to x axis value in setting the pixels
+        // # special format when displaying time
+
+        for (int i = 0; i < ascii_num.length; i++) {
+            num = Character.getNumericValue(ascii_num[i]);
+            placement = this.write_num(num, offset, placement, display_dev, led_blink);
+            offset += 1;
+        }
+        num = 11; // # pixel array for base 10, has a twelfth entry for
+        offset += 1;  // space between last digit and the letter F
+        // the F
+        placement = this.write_num(num, offset, placement, display_dev, led_blink); // #led_blink)
+        offset += 1;
+
+        play_dev(display_dev, loop_count);
+
+        InterruptDetails completed = pin_monitor.wait_for_interrupt();
+        if (completed.getSuccessVal()) {
+            pin_monitor.toggle_led(false);
+        } else {
+            pin_monitor.flash_alarm_led(display_dev);
+        }
+        this.logger.trace("create_led_pattern_temp");
+
+    }
+
+    /**
+     * Based on input data, create the LED patterns (frame) to display that data.  Then pass that data to the
+     * matrix controller to perform the actual display
+     *
      * @param pin_monitor to toggle LEDs
      * @param display_dev matrix controller
-     * @param display_num temperature value
-     * @param display_asc time value
      * @param led_blink   intensity
      * @param loop_count  whether display value is shown more than once
-     * @param time_mode   Whether creating frames of temperature info ot time-of-day info
      */
-    public void create_led_pattern(ControlLeds pin_monitor, Is31Fl37Matrix display_dev, int display_num,
-                                   char[] display_asc, int led_blink, Integer loop_count, boolean time_mode) {
-        // if verbose:
-        // print
-        // "create_led_pattern:display in leds : time_mode %s, display_num %s
-        // "%(time_mode,
-        // display_num)
-        this.logger.trace("create_led_pattern");
-        this.logger.trace("parms :  display_num : " + String.format("0x%02X", display_num) + " display_ASC : "
-            + display_asc[0] + " blink : " + String.format("0x%02X", led_blink) + " loop_count : "
-            + String.format("0x%02X", loop_count) + " time_mode : " + time_mode);
+    public void create_led_pattern_humidity(ControlLeds pin_monitor, Is31Fl37Matrix display_dev, int display_humidity,
+                                            int led_blink, Integer loop_count) {
+        this.logger.trace("create_led_pattern_humidity");
+        this.logger.trace("parms :   display_humidity : " + String.format("0x%02X", display_humidity) + " blink : " + String.format("0x%02X", led_blink) + " loop_count : "
+            + String.format("0x%02X", loop_count));
 
         // # et LEDs to indicate starting matrix operation
         pin_monitor.toggle_led(true);
 
         char[] ascii_num; // = ''; // new char[5];
-        String ascii_str;
+        String ascii_temp_str;
+        String ascii_humidity_str;
 
-        if (time_mode) {
-            ascii_num = display_asc;
-        } else {
-            ascii_str = Integer.toString(display_num);
-            ascii_num = ascii_str.toCharArray();
-        }
+
+        // = ''; // new char[5];
+        char[] ascii_humidity_num = new char[0];
+        ascii_humidity_str = Integer.toString(display_humidity);
+        ascii_humidity_num = ascii_humidity_str.toCharArray();
         int num = 0;
         int offset = 0;
-        int placement = 0; // # aded to x axis value in setting the pixels
-        // # special format when displaying time
-        if (time_mode) { // # we expect format HH:MM in string format
-            num = Character.getNumericValue(display_asc[0]);
+        int placement = 0; // # added to x axis value in setting the pixels
+
+        // humidity
+        // # et LEDs to indicate starting matrix operation
+        pin_monitor.toggle_led(true);
+
+
+        for (int i = 0; i < ascii_humidity_num.length; i++) {
+            num = Character.getNumericValue(ascii_humidity_num[i]);
             placement = this.write_num(num, offset, placement, display_dev, led_blink);
             offset += 1;
-            // #
-            num = Character.getNumericValue(display_asc[1]);
-            placement = this.write_num(num, offset, placement, display_dev, led_blink);
-            offset += 1;
-            // #
-            num = 10; // # pixel array for base 10, has an eleventh entry for
-            // the :
-            display_dev.blink_write(540);
-            placement = this.write_num(num, offset, placement, display_dev, 1); // #led_blink)
-            // #
-            // force
-            // blinking
-            offset += 1;
-            // #
-            num = Character.getNumericValue(display_asc[3]);
-            placement = this.write_num(num, offset, placement, display_dev, led_blink);
-            offset += 1;
-            // #
-            num = Character.getNumericValue(display_asc[4]);
-            placement = this.write_num(num, offset, placement, display_dev, led_blink);
-            offset += 1;
-        } else {
-            for (int i = 0; i < ascii_num.length; i++) {
-                num = Character.getNumericValue(ascii_num[i]);
-                placement = this.write_num(num, offset, placement, display_dev, led_blink);
-                offset += 1;
-            }
         }
+        num = 12; // # pixel array for base 10, has a 13th entry for
+        offset += 1;  // space between last digit and the letter H
+        // the F
+        placement = this.write_num(num, offset, placement, display_dev, led_blink); // #led_blink)
+        // #
+        // force
+        // blinking
+        offset += 1;
+
+        play_dev(display_dev, loop_count);
+
+        InterruptDetails completed = pin_monitor.wait_for_interrupt();
+        if (completed.getSuccessVal()) {
+            pin_monitor.toggle_led(false);
+        } else {
+            pin_monitor.flash_alarm_led(display_dev);
+        }
+        this.logger.trace("create_led_pattern_humidity");
+
+    }
+
+    /**
+     * Based on input data, create the LED patterns (frame) to display that data.  Then pass that data to the
+     * matrix controller to perform the actual display
+     *
+     * @param pin_monitor to toggle LEDs
+     * @param display_dev matrix controller
+     * @param display_asc time value
+     * @param led_blink   intensity
+     * @param loop_count  whether display value is shown more than once
+     */
+    public void create_led_pattern_time(ControlLeds pin_monitor, Is31Fl37Matrix display_dev,
+                                        char[] display_asc, int led_blink, Integer loop_count) {
+        this.logger.trace("create_led_pattern_time");
+        this.logger.trace("parms : display_ASC : "
+            + display_asc[0] + " blink : " + String.format("0x%02X", led_blink) + " loop_count : "
+            + String.format("0x%02X", loop_count));
+
+        // # et LEDs to indicate starting matrix operation
+        pin_monitor.toggle_led(true);
+
+        char[] ascii_num = display_asc;
+        int num = 0;
+        int offset = 0;
+        int placement = 0; // # added to x axis value in setting the pixels
+        // # special format when displaying time
+        num = Character.getNumericValue(display_asc[0]);
+        placement = this.write_num(num, offset, placement, display_dev, led_blink);
+        offset += 1;
+        // #
+        num = Character.getNumericValue(display_asc[1]);
+        placement = this.write_num(num, offset, placement, display_dev, led_blink);
+        offset += 1;
+        // #
+        num = 10; // # pixel array for base 10, has an eleventh entry for
+        // the :
+        display_dev.blink_write(540);
+        placement = this.write_num(num, offset, placement, display_dev, 1); // #led_blink)
+        // #
+        // force
+        // blinking
+        offset += 1;
+        // #
+        num = Character.getNumericValue(display_asc[3]);
+        placement = this.write_num(num, offset, placement, display_dev, led_blink);
+        offset += 1;
+        // #
+        num = Character.getNumericValue(display_asc[4]);
+        placement = this.write_num(num, offset, placement, display_dev, led_blink);
+        offset += 1;
+        play_dev(display_dev, loop_count);
+
+        InterruptDetails completed = pin_monitor.wait_for_interrupt();
+        if (completed.getSuccessVal()) {
+            pin_monitor.toggle_led(false);
+        } else {
+            pin_monitor.flash_alarm_led(display_dev);
+        }
+        this.logger.trace("create_led_pattern_time");
+
+    }
+
+
+    private void play_dev(Is31Fl37Matrix display_dev, int loop_count) {
 
         int delay = 693;
         int frames = 0; // could use offset
         display_dev.autoplay(delay, loop_count, frames);// #offset
-        // # wait for the autoplay to complete
-        // #completed = pin_monitor.monitor_intr(verbose)
-        // # call dbus interface
-
-        // if verbose:
-        // print "monitor_intr returned ", completed
-        this.logger.trace("create_led_pattern");
 
     }
 

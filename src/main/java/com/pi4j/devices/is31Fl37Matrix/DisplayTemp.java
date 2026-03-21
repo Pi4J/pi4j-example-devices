@@ -1,3 +1,35 @@
+/*
+ *
+ *  #%L
+ *  * Copyright (C) 2012 - 2025 Pi4J
+ *  * %%
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ * -
+ *  #%L
+ *  **********************************************************************
+ *  ORGANIZATION  :  Pi4J
+ *  PROJECT       :  Pi4J :: EXTENSION
+ *  FILENAME      :  DisplayTemp.java
+ *
+ *  This file is part of the Pi4J project. More information about
+ *  this project can be found here:  https://pi4j.com/
+ *  **********************************************************************
+ *  %%
+ *
+ */
+
 package com.pi4j.devices.is31Fl37Matrix;/*
  *
  *
@@ -80,7 +112,8 @@ public class DisplayTemp {
      */
     public void process_bmp_data(ControlLeds pin_monitor, int led_blink,
                                  Integer loop_count, Integer bmp_bus, Integer bmp_address, byte sensorID) {
-        int display_num = 42;
+        int display_temp_num = 42;
+        int display_humidity_num = 00;
         double[] readings = new double[2];
         // bmp = read_BMP180.ReadBmp180()
         this.logger.trace("process_bmp_data");
@@ -124,43 +157,39 @@ public class DisplayTemp {
             console.println("Humidity: " + df.format(measurement.getHumidity()) + " %");
 
             readings[0] = Double.parseDouble(df.format(measurement.getTemperature()));
+            readings[1] = Double.parseDouble(df.format(measurement.getHumidity()));
 
         }
         double temp = readings[0];
-        // double pressure = readings[1];
-        // (temp, pressure) = bmp.readBmp180()
-        // if verbose:
-        // print " Temp Celsius ", temp
-        // print " Presure " , pressure
+        double humidity = readings[1];
+        display_humidity_num = (int) humidity;
+
 
         boolean time_mode = false;
-        display_num = (int) ((temp * 1.8) + 32);
+        display_temp_num = (int) ((temp * 1.8) + 32);
         // if verbose:
-        // print "Display fahrenheit temp " ,display_num
+        // print "Display fahrenheit temp " ,display_temp_num
         char[] display_asc = new char[5];
         DisplayLED disp_worker = new DisplayLED(this.logger);
-        disp_worker.create_led_pattern(pin_monitor, this.display, display_num, display_asc, led_blink, loop_count,
-            time_mode);
-        /*
-         * System.out.println("sit and spin to see if the java trigger fires");
-         * try { Thread.sleep(10); } catch (InterruptedException e) { // TODO
-         * Auto-generated catch block e.printStackTrace(); }
-         */
-
-        InterruptDetails completed = pin_monitor.wait_for_interrupt();
-        if (completed.getSuccessVal()) {
-
-            pin_monitor.toggle_led(false);
-        } else {
-            pin_monitor.flash_alarm_led(this.display);
+        disp_worker.create_led_pattern_temp(pin_monitor, this.display, display_temp_num, led_blink, loop_count);
+        // clear the matrix
+        for (int c = 0; c < 8; c++) {
+            this.display.fill(0, (byte) 0, 0);
         }
+        disp_worker.create_led_pattern_humidity(pin_monitor, this.display, display_humidity_num, led_blink, loop_count);
+        // clear the matrix
+        for (int c = 0; c < 8; c++) {
+            this.display.fill(0, (byte) 0, 0);
+        }
+
+
         this.logger.trace("process_bmp_data");
 
     }
 
     public void show_time(ControlLeds pin_monitor, int led_blink,
                           Integer loop_count) {
-        int display_num = 42;
+        int display_num = 42; // not used this method
         boolean time_mode = true;
         // # obtain a viewable version of the time and display the time
         LocalTime thisSec;
@@ -172,15 +201,13 @@ public class DisplayTemp {
         String string_asc = String.format("%1$02d:%2$02d", thisSec.getHour(), thisSec.getMinute());
         char[] display_asc = string_asc.toCharArray();
         DisplayLED disp_worker = new DisplayLED(this.logger);
-        disp_worker.create_led_pattern(pin_monitor, this.display, display_num, display_asc, led_blink, loop_count,
-            time_mode);
-
-        InterruptDetails completed = pin_monitor.wait_for_interrupt();
-        if (completed.getSuccessVal()) {
-            pin_monitor.toggle_led(false);
-        } else {
-            pin_monitor.flash_alarm_led(this.display);
+        disp_worker.create_led_pattern_time(pin_monitor, this.display, display_asc, led_blink, loop_count);
+        // clear the matrix
+        for (int c = 0; c < 8; c++) {
+            this.display.fill(0, (byte) 0, 0);
         }
+
+
         this.logger.trace("show_time");
 
     }
