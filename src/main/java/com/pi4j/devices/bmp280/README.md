@@ -15,38 +15,25 @@ class documentation to understand its various logging options.
 
 The I2C connection functions as written in the Phillips spec.
 
-I2C connection path.
 
+I2C
 1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBMP280I2C.sh
    Args if bus and or address must be set
    -b 0x01 -a 0x77
 
-The SPI connection per the Datasheet supports MODE0 or MODE3. The spec shows reading a register consists of:
+The SPI connection per the Datasheet supports MODE0 or MODE3.
 
-1. Chip select driven low
-2. Eight clocks pulses to write the register address via the Pi MOSI
-3. Multiple eight clock pulses for each byte of data returned thru the Pi MISO
-4. Chip select driven high
-
-In either Mode0 or Mode3 the read data bytes are miss-read and the clock pulses are not signaled for the expected reads.
-The SPI open flags support configuration of writing a determined number of bytes before continuing the clock pulses
-for the expected read data . This however requires the BMP280 chip connect using the 3-wire configuration and
-the chips config register be modified. As most chips use 4-wire configuration I use 4-wire, and use a configurable
-GPIO as the CS (chip select)
-
-SPI connection path.
-
+SPI 
 1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBMP280SPI.sh
 
-Use of different bus or device address, use the applicable values in the following command.
-sudo ./runBMP280I2C.sh -b 0x01 -a 0x77
+
 
 Will create the BMP280 device to create a BMP280Device instance Call the various temperature and pressure methods
-defined in the interface. The device defaults to Pi Bus 1 and device address 0X77
+defined in the interface. 
 
 No parameters are required. However, if 'any' parameter value is to be supplied:
 parms: -b hex value bus -a hex value address -t trace  

@@ -40,8 +40,6 @@ import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver.Measurement;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver.Model;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiMode;
@@ -81,7 +79,6 @@ public class BME280DeviceSPI {
 
     private static final int chipSelect = 0;
     private static final SpiBus spiBus = SpiBus.BUS_0;
-    private static DigitalOutput csGpio;
     private static Spi spi;
 
     public static void main(String[] args) throws Exception {
@@ -91,30 +88,12 @@ public class BME280DeviceSPI {
         // Initialize SPI
         console.println("Initializing the sensor via SPI");
 
-        String helpString = " parms:      -csp  chipSelectGPIO    \n ";
+        String helpString = " parms:   NONE    \n ";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if (o.contentEquals("-csp")) { // device address
-                String a = args[i + 1];
-                i++;
-                csPin = Integer.parseInt(a);
-            } else if (o.contentEquals("-h")) {
-                console.println(helpString);
-                System.exit(39);
-            } else {
-                console.println("  !!! Invalid Parm " + args);
-                console.println(helpString);
-                System.exit(42);
-            }
+            console.println(helpString);
+            System.exit(39);
         }
-
-        var csGpioConfig = DigitalOutput.newConfigBuilder(pi4j)
-            .id("CS_pin")
-            .name("CS")
-            .bcm(csPin)
-            .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH);
-        csGpio = pi4j.create(csGpioConfig);
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
             .id(SPI_PROVIDER_ID)
@@ -126,7 +105,7 @@ public class BME280DeviceSPI {
             .build();
         spi = pi4j.create(spiConfig);
 
-        Bmx280Driver bmx280Driver = new Bmx280Driver(spi, csGpio);
+        Bmx280Driver bmx280Driver = new Bmx280Driver(spi);
 
         console.println("Device model detected: " + bmx280Driver.getModel());
 
