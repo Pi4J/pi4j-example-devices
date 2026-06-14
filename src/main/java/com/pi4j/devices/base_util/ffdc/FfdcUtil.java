@@ -422,10 +422,7 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
     }
 
 
-    @Override
-    public void printLoadedPlatforms() {
-       ; //  Caught in a core cleanup PR  PrintInfo.printLoadedPlatforms(this.console, this.pi4j);
-    }
+
 
     @Override
     public void printProviders() {

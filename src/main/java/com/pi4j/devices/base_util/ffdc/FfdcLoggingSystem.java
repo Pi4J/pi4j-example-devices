@@ -40,7 +40,10 @@ package com.pi4j.devices.base_util.ffdc;
  * can add any desired details.
  */
 public interface FfdcLoggingSystem {
+
     void printProviders();
 
     void printRegistry();
+
+
 }
