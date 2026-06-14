@@ -241,7 +241,7 @@ public class Mcp23008App  {
             pin7 input   pullDown  pin1
 
 
-            GPIO27 has a listener
+            GPIO27 has a listener    Wired to INT pin
             */
 
     private static void configureMCP(Mcp23008Driver mcpDriver, Console console) {

@@ -36,8 +36,6 @@ package com.pi4j.devices.base_util;
 
 
 import com.pi4j.context.Context;
-import com.pi4j.platform.Platform;
-import com.pi4j.platform.Platforms;
 import com.pi4j.provider.Providers;
 import com.pi4j.registry.Registry;
 import com.pi4j.util.Console;
@@ -58,52 +56,7 @@ import com.pi4j.util.Console;
  */
 public class PrintInfo {
 
-    /**
-     * Pi4J Platforms.
-     * <p>Platforms are intended to represent the hardware platform where Pi4J is running.
-     * </p>
-     * <p>Platforms represent the physical layout of a system's hardware I/O
-     * capabilities and what I/O providers the target platform supports.  For example, a 'RaspberryPi' platform supports
-     * `Digital` inputs and outputs, PWM, I2C, SPI, and Serial but does not support a default provider for 'Analog'
-     * inputs and outputs.</p>
-     * <p>Platforms also provide validation for the I/O pins and their capabilities for the target hardware.</p>
-     *
-     * @param console {@link Console}
-     * @param pi4j    {@link Context}
-     */
-    public static void printLoadedPlatforms(Console console, Context pi4j) {
-        Platforms platforms = pi4j.platforms();
 
-        // Let's print out to the console the detected and loaded
-        // platforms that Pi4J detected when it was initialized.
-        console.box("Pi4J PLATFORMS");
-        console.println();
-        platforms.describe().print(System.out);
-        console.println();
-    }
-
-    /**
-     * Pi4J Platform (Default Platform)
-     * <p>A single 'default' platform is auto-assigned during Pi4J initialization based on a weighting value provided
-     * by each platform implementation at runtime. Additionally, you can override this behavior and assign your own
-     * 'default' platform anytime after initialization.</p>
-     * <p>The default platform is a single platform instance from the managed platforms collection that will serve to
-     * define the default I/O providers that Pi4J will use for each given I/O interface when creating and registering
-     * I/O instances.</p>
-     *
-     * @param console {@link Console}
-     * @param pi4j    {@link Context}
-     */
-    public static void printDefaultPlatform(Console console, Context pi4j) {
-        Platform platform = pi4j.platform();
-
-        // Let's print out to the console the detected and loaded
-        // platforms that Pi4J detected when it was initialized.
-        console.box("Pi4J DEFAULT PLATFORM");
-        console.println();
-        platform.describe().print(System.out);
-        console.println();
-    }
 
     /**
      * Pi4J Providers
