@@ -95,3 +95,25 @@ _______________________
    GPIO.output(16,GPIO.LOW)
    GPIO.output( 16 , GPIO.HIGH)
 
+pythonimport lgpio
+import time
+
+# 1. Open the gpiochip (usually 0)
+h = lgpio.gpiochip_open(0)
+
+LED_PIN = 17
+
+# 2. YOU MUST CLAIM THE PIN FIRST (This allocates it)
+lgpio.gpio_claim_output(h, LED_PIN)
+
+try:
+while True:
+# 3. Now you can safely use it
+lgpio.gpio_write(h, LED_PIN, 1)
+time.sleep(1)
+lgpio.gpio_write(h, LED_PIN, 0)
+time.sleep(1)
+finally:
+# 4. Always release the chip when done
+lgpio.gpiochip_close(h)
+
