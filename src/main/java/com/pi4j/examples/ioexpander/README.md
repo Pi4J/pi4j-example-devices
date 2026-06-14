@@ -1,4 +1,4 @@
-# Using IOExpanders in Pi4j with Pi4j drivers
+# Using IOExpanders in Pi4J with Pi4J Drivers
 
 IOExpanders are typically I2C-based chips that provide additional GPI ports. Typical applications are:
 
