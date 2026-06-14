@@ -42,10 +42,6 @@ import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 import com.pi4j.drivers.io.expander.mcp23008.Mcp23008Driver;
 
-import java.time.Duration;
-import java.time.Instant;
-
-import static com.pi4j.devices.base_util.gpio.GpioPinCfgData.Direction.*;
 
 
 public class Mcp23008App  {
