@@ -37,7 +37,7 @@ package com.pi4j.devices.mcp23008;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.io.expander.ConfigurableIoExpander;
-import com.pi4j.io.ListenableOnOffRead;
+//import com.pi4j.io.ListenableOnOffRead;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
@@ -152,7 +152,6 @@ public class Mcp23008App  {
         console.println("----------------------------------------------------------");
         console.println("PI4J PROVIDERS");
         console.println("----------------------------------------------------------");
-     //   pi4j.providers().describe().print(System.out);
         console.println("----------------------------------------------------------");
 
 
