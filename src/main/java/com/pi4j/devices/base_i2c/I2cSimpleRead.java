@@ -227,8 +227,6 @@ public class I2cSimpleRead extends BasicI2cDevice {
         // Output Pi4J Context information
         // ------------------------------------------------------------
         if (showCfg) {
-            ffdc.printLoadedPlatforms();
-            ffdc.printDefaultPlatform();
             ffdc.printProviders();
             ffdc.printRegistry();
         }

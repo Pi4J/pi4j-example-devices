@@ -421,17 +421,6 @@ public class FfdcUtil implements FfdcLoggingModule, FfdcLoggingSystem {
         return (true);
     }
 
-
-    @Override
-    public void printLoadedPlatforms() {
-        PrintInfo.printLoadedPlatforms(this.console, this.pi4j);
-    }
-
-    @Override
-    public void printDefaultPlatform() {
-        PrintInfo.printDefaultPlatform(this.console, this.pi4j);
-    }
-
     @Override
     public void printProviders() {
         PrintInfo.printProviders(this.console, this.pi4j);
