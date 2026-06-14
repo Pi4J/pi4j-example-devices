@@ -1,6 +1,6 @@
 # IOExpander Joystick Input Example
 
-![Mini Breadboard with a MCP23017 and a Joystick](board.jpg)
+![Mini Breadboard with a MCP23017 and a Joystick](mcp23017_joystick.jpg)
 
 Wiring up IOExpander input is in principle similar to wiring up output, with the added complexity that
 we need to connect the interrupt pin in order to be notified about input changes: I2C is a host controlled
@@ -56,8 +56,14 @@ pulling up and switching against ground.
 ```
         expander.setInputPolarity(0xffff);
 ```
-Now with all the configuration out to the way, we listen on the connected pins and print
-their name and value
+Now with all the configuration out of the way, we listen on the connected pins and print
+their name and value. The "B" pins B0-B7 map to software pin numbers 8-15 in the driver;
+basically counting the B pins starts where the A pins end.
+
+Note that we use the `addConsumer()` method to register a callback that will be
+called whenever the pin changes value. 
+
+
 ```
         expander.getInput(15).addConsumer((value) -> System.out.println("Up Key " + value));
         expander.getInput(14).addConsumer((value) -> System.out.println("Down Key " + value));
