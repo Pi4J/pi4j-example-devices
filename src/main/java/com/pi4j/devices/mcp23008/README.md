@@ -31,14 +31,37 @@ BCM gpio13 configured as output connected MCP23008 (bar) RESET pdip6
 
 BCM gpio27 configured as input connected MCP23008 INT pdip8
 
-BCM gpio22 configured as output connected to LED
+BCM gpio18 configured as output connected to LED
 
-Red LED (+) connected to pin0 pdip10
-Green LED (+) connected to pin1 pdip11
-Yellow LED (+) connected to pin2 pdip12
+Red LED (+) connected to pin0 
+Green LED (+) connected to pin1 
+Wire      (+) connected to pin2 pin7
 
-MCP23008 on Pi BCM 1 address 0x20
-All address pins (A0 A1 A2) are strapped to ground for the chips default address 0x20
+MCP23008 on Pi i2c bus 1 address 0x27
+All address pins (A0 A1 A2) are strapped to 3.3v for the chips address 0x27
+
+MCP23008 pins are configured:
+pin0 output  + LED
+pin1 output  pin7
+pin3 input   gpio16
+pin4 Input   Jumper wire 
+pin7 input   pullDown
+
+
+Write pin0   illuminate LED
+
+
+Write pin1       Read pin7
+
+
+gpio16 output, drive  see results pin3
+
+
+Connect jumper grnd/3.3  read pin4
+
+
+
+
 
 _______________________           
 
@@ -50,7 +73,7 @@ _______________________
   | | | |  
   | | | |
   | | |                       ____________________
-  | | |__________> RESET >   - MCP23008 0x20 -
+  | | |__________> RESET >   - MCP23008 0x27 -
   | |                             ____________________
   | |________________ < INT  <        | | | |
   | | LEDs
@@ -58,12 +81,12 @@ _______________________
 ```
 
 1. Drive MCP23008 pin0 Red Led hi low
-   sudo ./runMcp23008.sh -b 0x1 -a 0x20 -d 0 -o ON -m   
-   sudo ./runMcp23008.sh -b 0x1 -a 0x20 -d 0 -o OFF
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -d 0 -o ON -m   
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -d 0 -o OFF
 
 2. Read MCP23008 pin4
    Read 4
-   sudo ./runMcp23008.sh -b 0x1 -a 0x20 -r 4 
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -r 4 
    This will set pin4 high or low
    python3
    import RPi.GPIO as GPIO
