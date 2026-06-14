@@ -16,8 +16,8 @@ We start by implementing a simple Traffic Light class. This might seem like a tr
 abstraction initially, but having something that ensures that we don't show red and green lights
 at the same time might not be such a silly idea at all.
 
-One important detail here is that we use the OnOffWrite interface to represent the lights. 
-OnOffWrite is an interface implemented by DigitalInput that abstracts from physical aspects
+One important detail here is that we use the `OnOffWrite` interface to represent the lights. 
+`OnOffWrite` is an interface implemented by `DigitalInput` that abstracts from physical aspects
 souch as debounce settings and just encapsulates the on/off state. Using this abstraction
 will make our traffic lights work seamlessly with IO Expanders and physial Rasperry PI GPIO pins
 all the like:
