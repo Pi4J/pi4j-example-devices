@@ -1,5 +1,7 @@
 # IO Expander Traffic Lights
 
+![Mini Breadboard with a PCF8574 and a mini LED traffic light](board.jpg)
+
 At some point, GPIO pins might become a tight resource -- or you might want to control 
 multiple IO pins at a longer distance -- without pulling a massive amount of wires.
 
@@ -16,8 +18,8 @@ We start by implementing a simple Traffic Light class. This might seem like a tr
 abstraction initially, but having something that ensures that we don't show red and green lights
 at the same time might not be such a silly idea at all.
 
-One important detail here is that we use the OnOffWrite interface to represent the lights. 
-OnOffWrite is an interface implemented by DigitalInput that abstracts from physical aspects
+One important detail here is that we use the `OnOffWrite` interface to represent the lights. 
+`OnOffWrite` is an interface implemented by `DigitalInput` that abstracts from physical aspects
 souch as debounce settings and just encapsulates the on/off state. Using this abstraction
 will make our traffic lights work seamlessly with IO Expanders and physial Rasperry PI GPIO pins
 all the like:
@@ -63,8 +65,6 @@ Finally, we map these states to the corresponding lights:
 
 When testing this example, we were using a cheap "ready-made" traffic light built from 3 LEDs and corresponding
 resistors, as shown in the photo. However, the same works just with plain LEDs and resistors. 
-
-![Mini Breadboard with a PCF8574 and a mini LED traffic light](board.jpg)
 
 The general hardware setup is as follows:
 
@@ -135,6 +135,8 @@ If you enjoyed this example, consider trying the following:
 - Build another traffic light and expand the code so they show 
   the opposite signal, like a set of real traffic signals would;
   this can be done with more IO Expanders or by utilizing more pins.
+
+- Use a MCP23017 to controll a mega-intersection with 5 traffic lights.
 
 - Implement an error state that shows a yellow blinking signal
 
