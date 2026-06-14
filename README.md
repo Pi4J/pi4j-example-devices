@@ -3,16 +3,19 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Examples
 
 Various examples demonstrating the use of Pi4J core and/or drivers library.
 
+## Pi4J Concept Examples
+
+These examples demonstrate various aspects of the Pi4J core and driver libraries:
+
+- [Traffic Lights](src/main/java/com/pi4j/examples/ioexpander/output/): Using IO Expanders for more output options 
+- [I2C Sensor Autodetect Program](src/main/java/com/pi4j/examples/sensor/autodetect/)
+
+## Device Examples
+
 We began major changes in the Device examples.  We are migrating to drivers  
 that separate the device driver code from external dependencies. These examples  
 will be modified one by one.  
 For driver project dependency details see https://www.pi4j.com/drivers/
-
-
-"Generic" Examples:
-
-- [I2C Sensor Autodetect Program](src/main/java/com/pi4j/examples/sensor/autodetect/)
-
 
 The following table the currently supported devices within this project:
 
