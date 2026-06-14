@@ -1,5 +1,7 @@
 # IO Expander Traffic Lights
 
+![Mini Breadboard with a PCF8574 and a mini LED traffic light](board.jpg)
+
 At some point, GPIO pins might become a tight resource -- or you might want to control 
 multiple IO pins at a longer distance -- without pulling a massive amount of wires.
 
@@ -63,8 +65,6 @@ Finally, we map these states to the corresponding lights:
 
 When testing this example, we were using a cheap "ready-made" traffic light built from 3 LEDs and corresponding
 resistors, as shown in the photo. However, the same works just with plain LEDs and resistors. 
-
-![Mini Breadboard with a PCF8574 and a mini LED traffic light](board.jpg)
 
 The general hardware setup is as follows:
 
