@@ -17,25 +17,20 @@ Java classes to access the MCP23008 GPIO controller as an application.
 Supported functions.
 
 
-   Example does not use the MCp23008 interrupt capability. That will be added at a later time
-
     1. ./mvnw clean package
     2. cd target/distribution 
-    3. Execute command to reset Mcp23008
-    4. Execute command to perform desired MCP23008 operation
+    3. Execute command to run the example program
 
 
-BCM gpio16 configured as output connected MCP23008 pin 4 pdip14
+BCM gpio16 configured as output connected MCP23008 pin 4 
 
-BCM gpio13 configured as output connected MCP23008 (bar) RESET pdip6
+BCM gpio13 configured as output connected MCP23008 (bar) RESET 
 
-BCM gpio27 configured as input connected MCP23008 INT pdip8
+BCM gpio27 configured as input connected MCP23008 INT 
 
 BCM gpio18 configured as output connected to LED
 
-Red LED (+) connected to pin0 
-Green LED (+) connected to pin1 
-Wire      (+) connected to pin2 pin7
+LED (+) connected to pin0 
 
 MCP23008 on Pi i2c bus 1 address 0x27
 All address pins (A0 A1 A2) are strapped to 3.3v for the chips address 0x27
@@ -44,7 +39,6 @@ MCP23008 pins are configured:
 pin0 output  + LED
 pin1 output  pin7
 pin3 input   gpio16
-pin4 Input   Jumper wire 
 pin7 input   pullDown
 
 
@@ -56,8 +50,6 @@ Write pin1       Read pin7
 
 gpio16 output, drive  see results pin3
 
-
-Connect jumper grnd/3.3  read pin4
 
 
 
@@ -117,3 +109,4 @@ finally:
 # 4. Always release the chip when done
 lgpio.gpiochip_close(h)
 
+``````````````````````````````````````````````````````````````````````````````````

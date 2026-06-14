@@ -37,7 +37,6 @@ package com.pi4j.devices.mcp23008;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.io.expander.ConfigurableIoExpander;
-//import com.pi4j.io.ListenableOnOffRead;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
@@ -83,9 +82,8 @@ public class Mcp23008App  {
         boolean readPin = false;
 
 
-        console.title("<-- The Pi4J V2 Project Extension  -->", "HD44780U_App");
-        String helpString = " parms: HD44780U   -b hex value bus -a hex value address  \n  " +
-            "  -r read-pin #  -sH set_pin_high #   -sL set_pin_low #  -x reset MCP \n";
+        console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008App");
+        String helpString = " parms: HD44780U   -b hex value bus -a hex value address ";
 
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -97,47 +95,6 @@ public class Mcp23008App  {
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-            } else if (o.contentEquals("-r")) {
-                String a = args[i + 1];
-                mcpPinR = Integer.parseInt(a);
-                readPin = true;
-                i++;
-            } else if (o.contentEquals("-sH")) {
-                String a = args[i + 1];
-                drivePin = true;
-                drivePinHigh = true;
-                mcpPinW = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-sL")) {
-                String a = args[i + 1];
-                drivePin = true;
-                drivePinHigh = false;
-                mcpPinW = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-x")) {
-                resetMCP = true;
-            } else if (o.contentEquals("-int_pin")) {
-                String a = args[i + 1];
-                int_Pin = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-int_pin")) {
-                String a = args[i + 1];
-                int_Pin = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-rest_pin")) {
-                String a = args[i + 1];
-                reset_Pin = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-int_led")) {
-                String a = args[i + 1];
-                int_Led = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-test_pin")) {
-                String a = args[i + 1];
-                test_pin = Integer.parseInt(a);
-                i++;
-            } else if (o.contentEquals("-do_reset")) {
-                resetMCP = true;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(41);
@@ -188,87 +145,90 @@ public class Mcp23008App  {
             .pull(PullResistance.PULL_DOWN);
         DigitalInput interruptPin = pi4j.create(inputConfig1);
 
-
+    // create an I2C to the <CP23008.
         I2C mcpDev = createI2cDevice(pi4j, busNum, address);
-
+    // Create the Mcp23008Driver passing the MCP23008 I2C device
         Mcp23008Driver mcpDriver = new Mcp23008Driver(mcpDev);
 
+        // The MCP23008 Interrupt pin is connected to GPIO 27
         interruptPin.addListener(new GpioListener(mcpDriver, console));
-        // clear any outstanding interrupts
-        mcpDriver.getInterruptCapture();
+
+        // reset the MCP23008 device. This will set all the MCP23008 registers to
+        // their POR values. In a non-test environment you would avoid a reset
+        // at it essentially erase any existing register configurations.
+        resetChip(resetPin);
 
 
-        if (resetMCP) {
-            resetChip(resetPin);
-        }
-
-
-        // Configure the pins
-        configureMCP(mcpDriver, console);
+        // Configure the pins. Sets the MCP23008 registers to define pins
+        // direction, polarity interrupt characteristics etc.
+        configureMCP(mcpDriver, console, mcpDev);
 
         console.print("Chip register configurations completed");
 
-
+        // LED connected to pin 0
         console.println("LED off ??") ;
         waitMS(3000);
+        // Drive pin 0 high
+        drivePin(mcpDriver, mcpPinLed,  true);
 
-        if (drivePin) {
-            drivePin(mcpDriver, mcpPinLed,  drivePinHigh);
-        }
-
+         // LED should now be ON
         console.println("LED on ??") ;
         waitMS(3000);
 
 
-        mcpDriver.getInterruptCapture();
-
-        console.println("Expect 0 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR)  ) ;
-
+        // output pin1 is connected to input pin 7
+        console.println("Expect 0 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR, console)  ) ;
+        // Drive output pin 1 HIGH
         drivePin(mcpDriver, mcpPinW, true );
 
         waitMS(3000);
 
-
-       if (readPin) {
-            console.println("Expect 1 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR)  ) ;
-        }
-
-
-
+        // Input pin 7 should npw be HIGH
+        console.println("Expect 1 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR, console)  ) ;
 
         int whichPin =   mcpDriver.getInterruptCapture();
         String intcap =  String.format("%8s", Integer.toBinaryString(whichPin)).replace(" ","0");
         console.println("INTF register b" + intcap) ;
 
 
+
         pinInterrupted(mcpDriver, console);
+        // set interrupt enabled on MCP23008 pin 3 connected to GPIO 16
+        // Selected mod will create interrupt on any pin change.  See the
+        // MCP23008 datasheet for explanation of interrupt conditions.
+        mcpDriver.setInterruptMode(mcpPinGpio, Mcp23008Driver.InterruptMode.ON_0);
+        mcpDriver.getInterruptCapture();
 
+        console.println("Expect 0 Read Pin " + mcpPinGpio  +  "   value  "  + readOnePin(mcpDriver, mcpPinGpio, console)  ) ;
+
+
+        console.println("Expect console message pertaining to onDigitalStateChange " );
         gpioToPin.high();   // gpio connected to MCP pin  mcpPinGpio
+        waitMS(3000);
 
-        console.println("Expect 1 Read Pin " + mcpPinGpio  +  "   value  "  + readOnePin(mcpDriver, mcpPinGpio)  ) ;
-
-
-
-        console.println("move jumper between 3.3v and ground") ;
-        waitMS(300000);
-
+        console.println("Expect 1 Read Pin " + mcpPinGpio  +  "   value  "  + readOnePin(mcpDriver, mcpPinGpio, console)  ) ;
 
 
         // Shutdown Pi4J
         pi4j.shutdown();
     }
 
+
+
     /*      pin0 output  +         LED
             pin1 output            pin7
             pin3 input   pullup    gpio16
-            pin4 Input   PullUp    jumper
             pin7 input   pullDown  pin1
 
 
             GPIO27 has a listener    Wired to INT pin
             */
 
-    private static void configureMCP(Mcp23008Driver mcpDriver, Console console) {
+    private static void configureMCP(Mcp23008Driver mcpDriver, Console console, I2C debug) {
+       /* int regs = debug.readRegister(0x09);
+        String gpio =  String.format("%8s", Integer.toBinaryString(regs)).replace(" ","0");
+        console.println("GPIO register, offset 0x09 b" + gpio);
+*/
         mcpDriver.setIoDirection(mcpPinW, ConfigurableIoExpander.Direction.OUTPUT);
 
         mcpDriver.setIoDirection(mcpPinLed, ConfigurableIoExpander.Direction.OUTPUT);
@@ -277,15 +237,9 @@ public class Mcp23008App  {
 
         mcpDriver.setPullupResistorConfiguration(mcpPinGpio, true );
 
-        mcpDriver.setIoDirection(mcpPinWIre, ConfigurableIoExpander.Direction.INPUT);
-        mcpDriver.setPullupResistorConfiguration(mcpPinWIre, true );
-
-        // set interrupt enabled
-        mcpDriver.setInterruptMode(4, Mcp23008Driver.InterruptMode.ON_0);
-
-
         mcpDriver.setIoDirection(mcpPinR, ConfigurableIoExpander.Direction.INPUT);
-        mcpDriver.setPullupResistorConfiguration(7, false);
+
+        mcpDriver.setPullupResistorConfiguration(mcpPinR, false);
 
 
     }
@@ -308,8 +262,11 @@ public class Mcp23008App  {
         drvr.setOutputState(pin,drivePinHigh);
      }
 
-    private static int   readOnePin(Mcp23008Driver drv, int pin ) {
-        return (drv.getInputState(pin) ? 1 : 0 );
+    private static int   readOnePin(Mcp23008Driver drv, int pin , Console console) {
+
+        boolean stateHigh = drv.getInputState(pin);
+        console.println(" Pin " + pin + "state HIGH ?  " +stateHigh);
+        return (stateHigh ? 1 : 0 );
     }
 
     public  static  int pinInterrupted(Mcp23008Driver drv , Console console){
@@ -363,7 +320,8 @@ public class Mcp23008App  {
             } else {
                 System.out.println("Strange event state  " + event.state());
             }
-            int whichPin = mcpDrv.getInterruptCapture();
+            int whichPin = mcpDrv.getInterruptCapture(); // Read the INTCAP register to clear this
+            // interrupt to allow the next interrupt
            String intcap =  String.format("%8s", Integer.toBinaryString(whichPin)).replace(" ","0");
            console.println("INTF register b" + intcap) ;
         }
