@@ -13,8 +13,8 @@ import java.net.Socket;
 import java.util.*;
 
 public class SensorServer {
-    private static final int BUS = 1;
-    private static final int PORT = 8147;
+    private static final int I2C_BUS = 1;
+    private static final int HTTP_PORT = 8147;
 
     private final ServerSocket serverSocket;
     private final List<Sensor> sensorList;
@@ -163,11 +163,11 @@ public class SensorServer {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         Context pi4j = Pi4J.newAutoContext();
-        List<Sensor> sensorList = SensorDetector.detectI2cSensors(pi4j, BUS);
+        List<Sensor> sensorList = SensorDetector.detectI2cSensors(pi4j, I2C_BUS);
         System.out.println("Detected sensors: " + sensorList.stream().map(s -> s.getClass().getSimpleName()).toList());
-        System.out.println("Starting server on port " + PORT);
+        System.out.println("Starting server on port " + HTTP_PORT);
         System.out.println();
-        SensorServer server = new SensorServer(PORT, sensorList);
+        SensorServer server = new SensorServer(HTTP_PORT, sensorList);
 
         StringBuilder sb = new StringBuilder();
         server.renderHelp(sb);
