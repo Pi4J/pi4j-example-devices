@@ -136,6 +136,8 @@ If you enjoyed this example, consider trying the following:
   the opposite signal, like a set of real traffic signals would;
   this can be done with more IO Expanders or by utilizing more pins.
 
+- Use a MCP23017 to controll a mega-intersection with 5 traffic lights.
+
 - Implement an error state that shows a yellow blinking signal
 
 - Use this on your model railroad or lego city and send us links & pictures! :) 
