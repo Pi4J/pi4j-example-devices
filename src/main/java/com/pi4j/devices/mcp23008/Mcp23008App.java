@@ -125,8 +125,8 @@ public class Mcp23008App  {
             .id("GpioToPin")
             .name("GpioToPin")
             .bcm(test_pin)
-            .shutdown(DigitalState.HIGH)
-            .initial(DigitalState.HIGH);
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW);
         DigitalOutput gpioToPin = pi4j.create(testConfig);
 
         var testConfigIntr = DigitalOutput.newConfigBuilder(pi4j)
@@ -179,6 +179,7 @@ public class Mcp23008App  {
         // output pin1 is connected to input pin 7
         console.println("Expect 0 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR, console)  ) ;
         // Drive output pin 1 HIGH
+        console.println("Drive HIGH Pin " + mcpPinR);
         drivePin(mcpDriver, mcpPinW, true );
 
         waitMS(3000);
@@ -202,7 +203,7 @@ public class Mcp23008App  {
         console.println("Expect 0 Read Pin " + mcpPinGpio  +  "   value  "  + readOnePin(mcpDriver, mcpPinGpio, console)  ) ;
 
 
-        console.println("Expect console message pertaining to onDigitalStateChange " );
+        console.println("Expect console message pertaining to onDigitalStateChange when gpioToPin set High" );
         gpioToPin.high();   // gpio connected to MCP pin  mcpPinGpio
         waitMS(3000);
 
