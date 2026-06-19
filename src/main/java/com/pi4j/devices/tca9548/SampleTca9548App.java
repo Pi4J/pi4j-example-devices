@@ -170,8 +170,6 @@ public class SampleTca9548App {
         }
         // Display pi4j_V2 configuration details
         if (showCfg) {
-            ffdc.printLoadedPlatforms();
-            ffdc.printDefaultPlatform();
             ffdc.printProviders();
             ffdc.printRegistry();
         }
