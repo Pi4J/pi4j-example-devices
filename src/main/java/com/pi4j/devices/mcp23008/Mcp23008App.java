@@ -36,33 +36,24 @@ package com.pi4j.devices.mcp23008;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.appConfig.AppConfigUtilities;
-import com.pi4j.devices.base_util.ffdc.FfdcUtil;
-import com.pi4j.devices.base_util.gpio.BaseGpioInOut;
-import com.pi4j.devices.base_util.gpio.GpioPinCfgData;
-import com.pi4j.devices.base_util.mapUtil.MapUtil;
-import com.pi4j.devices.mcp23xxxApplication.Mcp23xxxParms;
-import com.pi4j.devices.mcp23xxxCommon.Mcp23xxxUtil;
-import com.pi4j.devices.mcp23xxxCommon.McpConfigData;
+import com.pi4j.drivers.io.expander.ConfigurableIoExpander;
+import com.pi4j.io.gpio.digital.*;
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
-
-import java.util.HashMap;
-
-public class Mcp23008App extends Mcp23008 {
+import com.pi4j.drivers.io.expander.mcp23008.Mcp23008Driver;
 
 
-    /**
-     * CTOR
-     *
-     * @param pi4j       Context
-     * @param parms      Contains all parms supplied by the program called
-     * @param ffdc       logging
-     * @param dioPinData Pi Gpio config devices
-     * @param console    Console
-     */
-    public Mcp23008App(Context pi4j, Mcp23xxxParms parms, FfdcUtil ffdc, HashMap<Integer, GpioPinCfgData> dioPinData, Console console) {
-        super(pi4j, parms, ffdc, dioPinData, console);
-    }
+
+public class Mcp23008App  {
+
+    private static final int DEFAULT_ADDRESS = 0x27;
+    private static final int DEFAULT_BUS = 0x1;
+    private static int mcpPinW = 1;
+    private static int mcpPinR = 7;
+    private static int mcpPinGpio = 3;
+    private static int mcpPinWIre = 4;
+    private static int mcpPinLed = 0;
+
 
     /**
      * <p>
@@ -78,83 +69,264 @@ public class Mcp23008App extends Mcp23008 {
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008App");
 
-        HashMap<Integer, GpioPinCfgData> dioPinData = new HashMap<Integer, GpioPinCfgData>();
 
-        Mcp23xxxParms parmsObj = Mcp23xxxUtil.processMain(pi4j, args, false, dioPinData, console);
-
-        FfdcUtil ffdc = new FfdcUtil(console, pi4j, parmsObj.ffdcControlLevel, Mcp23008.class);
-
-        ffdc.ffdcDebugEntry("mcp23008App : Arg processing completed...\n");
-
-
-        Mcp23008App mcpObj = new Mcp23008App(parmsObj.pi4j, parmsObj, ffdc, dioPinData, console);
-
-        BaseGpioInOut gpio = new BaseGpioInOut(parmsObj.pi4j, mcpObj.ffdc, mcpObj.dioPinData);
-        mcpObj.gpio = gpio;
-
-        AppConfigUtilities cfgU = null; // The config utils will not be used in this example
-        mcpObj.cfgU = cfgU;
-
-        mcpObj.mapUtils = new MapUtil(mcpObj.ffdc, mcpObj.gpio);
+        int busNum = DEFAULT_BUS;
+        int address = DEFAULT_ADDRESS;
+        int int_Pin = 27;
+        int reset_Pin = 13;
+        int test_pin = 16;
+        int int_Led = 18;
+        boolean resetMCP = false;
+        boolean drivePinHigh = false;
+        boolean drivePin = false;
+        boolean readPin = false;
 
 
-        mcpObj.cfgData = new McpConfigData(ffdc);
+        console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008App");
+        String helpString = " parms: HD44780U   -b hex value bus -a hex value address ";
 
-        Mcp23xxxUtil mcpUtil = new Mcp23xxxUtil(parmsObj.pi4j, ffdc, parmsObj.busNum, parmsObj.address, mcpObj.cfgData, mcpObj, console);
-
-
-        if (parmsObj.hasFullKeyedData) { // -g
-            HashMap<String, HashMap<String, String>> outerMap = mcpObj.mapUtils.createFullMap(parmsObj.fullKeyedData);
-            mcpObj.cfgData.replaceMap(outerMap);
-            gpio.createGpioInstance(mcpObj.cfgData.getFullMap());
+        for (int i = 0; i < args.length; i++) {
+            String o = args[i];
+            if (o.contentEquals("-b")) { // bus
+                String a = args[i + 1];
+                busNum = Integer.parseInt(a.substring(2), 16);
+                i++;
+            } else if (o.contentEquals("-a")) { // device address
+                String a = args[i + 1];
+                i++;
+                address = Integer.parseInt(a.substring(2), 16);
+            } else if (o.contentEquals("-h")) {
+                console.println(helpString);
+                System.exit(41);
+            } else {
+                console.println("  !!! Invalid Parm " + o);
+                console.println(helpString);
+                System.exit(43);
+            }
         }
 
-        if (parmsObj.doReset) {
-            mcpObj.resetChip();
-        }
 
-        // do this before pin data as this will set 'banked', needed for correct
-        // addressing
-        if (parmsObj.hasIOCONKeyedData) { // -k
-            HashMap<String, HashMap<String, String>> mMap;
-            mMap = mcpObj.mapUtils.createFullMap(parmsObj.IOCONKeyedData);
-            mcpObj.cfgData.replaceMap(mMap);
-            mcpUtil.processKeyedData();
-        }
+        console.println("----------------------------------------------------------");
+        console.println("PI4J PROVIDERS");
+        console.println("----------------------------------------------------------");
+        console.println("----------------------------------------------------------");
 
-        if (parmsObj.hasFullPinKeyedData) { // -m
-            HashMap<String, HashMap<String, String>> mMap;
-            mMap = mcpObj.mapUtils.createFullMap(parmsObj.fullPinKeyedData);
-            mcpObj.cfgData.replaceMap(mMap);
-            mcpUtil.processKeyedData();
-        }
+
+        var resetConfig = DigitalOutput.newConfigBuilder(pi4j)
+            .id("Reset_Pin")
+            .name("Reset_Pin")
+            .bcm(reset_Pin)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH);
+        DigitalOutput resetPin = pi4j.create(resetConfig);
+
+
+        var testConfig = DigitalOutput.newConfigBuilder(pi4j)
+            .id("GpioToPin")
+            .name("GpioToPin")
+            .bcm(test_pin)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW);
+        DigitalOutput gpioToPin = pi4j.create(testConfig);
+
+        var testConfigIntr = DigitalOutput.newConfigBuilder(pi4j)
+            .id("INTR_triggered")
+            .name("INTR_triggered")
+            .bcm(int_Led)
+            .shutdown(DigitalState.HIGH)
+            .initial(DigitalState.HIGH);
+        DigitalOutput intr_happened = pi4j.create(testConfigIntr);
+
+
+        var inputConfig1 = DigitalInput.newConfigBuilder(pi4j)
+            .id("Interrupt")
+            .name("Interrupt")
+            .bcm(int_Pin)
+            .pull(PullResistance.PULL_DOWN);
+        DigitalInput interruptPin = pi4j.create(inputConfig1);
+
+    // create an I2C to the <CP23008.
+        I2C mcpDev = createI2cDevice(pi4j, busNum, address);
+    // Create the Mcp23008Driver passing the MCP23008 I2C device
+        Mcp23008Driver mcpDriver = new Mcp23008Driver(mcpDev);
+
+        // The MCP23008 Interrupt pin is connected to GPIO 27
+        interruptPin.addListener(new GpioListener(mcpDriver, console));
+
+        // reset the MCP23008 device. This will set all the MCP23008 registers to
+        // their POR values. In a non-test environment you would avoid a reset
+        // at it essentially erase any existing register configurations.
+        resetChip(resetPin);
+
+
+        // Configure the pins. Sets the MCP23008 registers to define pins
+        // direction, polarity interrupt characteristics etc.
+        configureMCP(mcpDriver, console, mcpDev);
 
         console.print("Chip register configurations completed");
 
-        mcpObj.reinit("Mcp23008", "Mcp23008", parmsObj.busNum, parmsObj.address);
+        // LED connected to pin 0
+        console.println("LED off ??") ;
+        waitMS(3000);
+        // Drive pin 0 high
+        drivePin(mcpDriver, mcpPinLed,  true);
 
-        if (parmsObj.dumpRegs) {
-            mcpObj.dumpRegs();
-            System.exit(0);
-        }
-
-
-        if (parmsObj.setPin) {
-            mcpObj.drivePin(parmsObj.pin, parmsObj.pinOn);
-        }
+         // LED should now be ON
+        console.println("LED on ??") ;
+        waitMS(3000);
 
 
-        if (parmsObj.readPin) {
-            mcpObj.readInput(parmsObj.pin);
-        }
+        // output pin1 is connected to input pin 7
+        console.println("Expect 0 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR, console)  ) ;
+        // Drive output pin 1 HIGH
+        console.println("Drive HIGH Pin " + mcpPinR);
+        drivePin(mcpDriver, mcpPinW, true );
+
+        waitMS(3000);
+
+        // Input pin 7 should npw be HIGH
+        console.println("Expect 1 Read Pin " + mcpPinR  +  "   value  "  + readOnePin(mcpDriver, mcpPinR, console)  ) ;
+
+        int whichPin =   mcpDriver.getInterruptCapture();
+        String intcap =  String.format("%8s", Integer.toBinaryString(whichPin)).replace(" ","0");
+        console.println("INTF register b" + intcap) ;
 
 
-        mcpObj.ffdc.ffdcDebugEntry("program ending normal");
-        //
-        ffdc.ffdcFlushShutdown(); // push all logs to the file
+
+        pinInterrupted(mcpDriver, console);
+        // set interrupt enabled on MCP23008 pin 3 connected to GPIO 16
+        // Selected mod will create interrupt on any pin change.  See the
+        // MCP23008 datasheet for explanation of interrupt conditions.
+        mcpDriver.setInterruptMode(mcpPinGpio, Mcp23008Driver.InterruptMode.ON_0);
+        mcpDriver.getInterruptCapture();
+
+        console.println("Expect 0 Read Pin " + mcpPinGpio  +  "   value  "  + readOnePin(mcpDriver, mcpPinGpio, console)  ) ;
+
+
+        console.println("Expect console message pertaining to onDigitalStateChange when gpioToPin set High" );
+        gpioToPin.high();   // gpio connected to MCP pin  mcpPinGpio
+        waitMS(3000);
+
+        console.println("Expect 1 Read Pin " + mcpPinGpio  +  "   value  "  + readOnePin(mcpDriver, mcpPinGpio, console)  ) ;
+
 
         // Shutdown Pi4J
         pi4j.shutdown();
     }
+
+
+
+    /*      pin0 output  +         LED
+            pin1 output            pin7
+            pin3 input   pullup    gpio16
+            pin7 input   pullDown  pin1
+
+
+            GPIO27 has a listener    Wired to INT pin
+            */
+
+    private static void configureMCP(Mcp23008Driver mcpDriver, Console console, I2C debug) {
+       /* int regs = debug.readRegister(0x09);
+        String gpio =  String.format("%8s", Integer.toBinaryString(regs)).replace(" ","0");
+        console.println("GPIO register, offset 0x09 b" + gpio);
+*/
+        mcpDriver.setIoDirection(mcpPinW, ConfigurableIoExpander.Direction.OUTPUT);
+
+        mcpDriver.setIoDirection(mcpPinLed, ConfigurableIoExpander.Direction.OUTPUT);
+
+        mcpDriver.setIoDirection(mcpPinGpio, ConfigurableIoExpander.Direction.INPUT);
+
+        mcpDriver.setPullupResistorConfiguration(mcpPinGpio, true );
+
+        mcpDriver.setIoDirection(mcpPinR, ConfigurableIoExpander.Direction.INPUT);
+
+        mcpDriver.setPullupResistorConfiguration(mcpPinR, false);
+
+
+    }
+
+
+    private static I2C createI2cDevice(Context pi4j, int bus, int address) {
+        String id = String.format("0X%02x: ", bus);
+        String name = String.format("0X%02x: ", address);
+        var i2cDeviceConfig = I2C.newConfigBuilder(pi4j)
+            .bus(bus)
+            .device(address)
+            .id(id + " " + name)
+            .name(name)
+            .build();
+        return  pi4j.create(i2cDeviceConfig);
+    }
+
+    private static void    drivePin(Mcp23008Driver drvr, int pin , boolean drivePinHigh) {
+
+        drvr.setOutputState(pin,drivePinHigh);
+     }
+
+    private static int   readOnePin(Mcp23008Driver drv, int pin , Console console) {
+
+        boolean stateHigh = drv.getInputState(pin);
+        console.println(" Pin " + pin + "state HIGH ?  " +stateHigh);
+        return (stateHigh ? 1 : 0 );
+    }
+
+    public  static  int pinInterrupted(Mcp23008Driver drv , Console console){
+        // Examine INTCAP for which pin caused the interrupt
+       int rval = 0xff;
+        int flags = drv.getInterruptCapture();
+        String intcap =  String.format("%8s", Integer.toBinaryString(flags)).replace(" ","0");
+        console.println("INTF register b" + intcap) ;
+
+        for(int c = 0; c<8; c++){
+            if ((flags & (1 << c) ) > 0){
+                rval = c;
+            }
+        }
+        return rval;
+    }
+
+    public static void resetChip(DigitalOutput pin) {
+        pin.low();
+        waitMS(20);
+        pin.high();
+        waitMS(20); // allow time for reinit
+    }
+
+
+    public static void waitMS(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+
+        }
+    }
+
+    public static class GpioListener implements DigitalStateChangeListener {
+
+       Console console;
+       Mcp23008Driver mcpDrv;
+
+        public GpioListener(Mcp23008Driver drvr, Console consoleParm) {
+            console=consoleParm ;
+            mcpDrv = drvr;
+            console.println("Listener CTOR ") ;
+           }
+
+        @Override
+        public void onDigitalStateChange(DigitalStateChangeEvent event) {
+            if (event.state() == DigitalState.LOW) {
+                console.println("onDigitalStateChange Pin went low");
+            } else if (event.state() == DigitalState.HIGH) {
+                console.println("onDigitalStateChange Pin went high");
+            } else {
+                System.out.println("Strange event state  " + event.state());
+            }
+            int whichPin = mcpDrv.getInterruptCapture(); // Read the INTCAP register to clear this
+            // interrupt to allow the next interrupt
+           String intcap =  String.format("%8s", Integer.toBinaryString(whichPin)).replace(" ","0");
+           console.println("INTF register b" + intcap) ;
+        }
+    }
+
 
 }

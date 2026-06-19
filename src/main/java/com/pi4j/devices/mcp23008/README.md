@@ -17,28 +17,43 @@ Java classes to access the MCP23008 GPIO controller as an application.
 Supported functions.
 
 
-   Example does not use the MCp23008 interrupt capability. That will be added at a later time
-
     1. ./mvnw clean package
     2. cd target/distribution 
-    3. Execute command to reset Mcp23008
-    4. Execute command to perform desired MCP23008 operation
+    3. Execute command to run the example program
 
 
-BCM gpio16 configured as output connected MCP23008 pin 4 pdip14
+BCM gpio16 configured as output connected MCP23008 pin 4 
 
-BCM gpio13 configured as output connected MCP23008 (bar) RESET pdip6
+BCM gpio13 configured as output connected MCP23008 (bar) RESET 
 
-BCM gpio27 configured as input connected MCP23008 INT pdip8
+BCM gpio27 configured as input connected MCP23008 INT 
 
-BCM gpio22 configured as output connected to LED
+BCM gpio18 configured as output connected to LED
 
-Red LED (+) connected to pin0 pdip10
-Green LED (+) connected to pin1 pdip11
-Yellow LED (+) connected to pin2 pdip12
+LED (+) connected to pin0 
 
-MCP23008 on Pi BCM 1 address 0x20
-All address pins (A0 A1 A2) are strapped to ground for the chips default address 0x20
+MCP23008 on Pi i2c bus 1 address 0x27
+All address pins (A0 A1 A2) are strapped to 3.3v for the chips address 0x27
+
+MCP23008 pins are configured:
+pin0 output  + LED
+pin1 output  pin7
+pin3 input   gpio16
+pin7 input   pullDown
+
+
+Write pin0   illuminate LED
+
+
+Write pin1       Read pin7
+
+
+gpio16 output, drive  see results pin3
+
+
+
+
+
 
 _______________________           
 
@@ -50,7 +65,7 @@ _______________________
   | | | |  
   | | | |
   | | |                       ____________________
-  | | |__________> RESET >   - MCP23008 0x20 -
+  | | |__________> RESET >   - MCP23008 0x27 -
   | |                             ____________________
   | |________________ < INT  <        | | | |
   | | LEDs
@@ -58,12 +73,12 @@ _______________________
 ```
 
 1. Drive MCP23008 pin0 Red Led hi low
-   sudo ./runMcp23008.sh -b 0x1 -a 0x20 -d 0 -o ON -m   
-   sudo ./runMcp23008.sh -b 0x1 -a 0x20 -d 0 -o OFF
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -d 0 -o ON -m   
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -d 0 -o OFF
 
 2. Read MCP23008 pin4
    Read 4
-   sudo ./runMcp23008.sh -b 0x1 -a 0x20 -r 4 
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -r 4 
    This will set pin4 high or low
    python3
    import RPi.GPIO as GPIO
@@ -72,3 +87,26 @@ _______________________
    GPIO.output(16,GPIO.LOW)
    GPIO.output( 16 , GPIO.HIGH)
 
+pythonimport lgpio
+import time
+
+# 1. Open the gpiochip (usually 0)
+h = lgpio.gpiochip_open(0)
+
+LED_PIN = 17
+
+# 2. YOU MUST CLAIM THE PIN FIRST (This allocates it)
+lgpio.gpio_claim_output(h, LED_PIN)
+
+try:
+while True:
+# 3. Now you can safely use it
+lgpio.gpio_write(h, LED_PIN, 1)
+time.sleep(1)
+lgpio.gpio_write(h, LED_PIN, 0)
+time.sleep(1)
+finally:
+# 4. Always release the chip when done
+lgpio.gpiochip_close(h)
+
+``````````````````````````````````````````````````````````````````````````````````
