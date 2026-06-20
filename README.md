@@ -3,6 +3,17 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Examples
 
 Various examples demonstrating the use of Pi4J core and/or drivers library.
 
+## The Environment
+If setting up a new Raspberry Pi, see the Pi4J documentation for assistance.
+[Prepare a Raspberry Pi](https://www.pi4j.com/prepare/)
+
+To move this code repository to your Raspberry Pi use the git clone command.
+If not familiar with 'git' minimal reading is recommended.  
+git clone https://github.com/Pi4J/pi4j-examples "target directory"
+
+Each example device has a README with build and usage documentation. 
+
+
 ## Pi4J Concept Examples
 
 These examples demonstrate various aspects of the Pi4J core and driver libraries:
