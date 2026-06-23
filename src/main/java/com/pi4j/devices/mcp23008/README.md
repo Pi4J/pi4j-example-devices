@@ -47,15 +47,11 @@ These example commands assume:
   | | LEDs
   |_____________________> Drive GPIO >___|
 
-<<<<<<< HEAD
-
-=======
 The script will use the Mcp23008AppArg to access methods in the 'Driver' code. If you do not
 POR the chip or execute the -do_reset command the configuration will be persisted in the MCP23008 IC.
 However, when the program end, all details within the Pi4J code are lost.  The next time you run this
 command you must include the parms used earlier to recreate their data within Pi4J. Example : -cI 7 arg 
-must be passed if you intend to use that input pin.
->>>>>>> db06be0 (mcp23008: add another example shell)
+must be passed if you intend to use that input pin during this invocation.
 
 - Using bus 0x01 and device address 0x27 
   ./runMcp23008Arg.sh -b 0x1 -a 0x27
@@ -87,32 +83,9 @@ must be passed if you intend to use that input pin.
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -do_reset  -reset_gpio 13
 
 
-<<<<<<< HEAD
-
-
-./runMcp23008Arg.sh  -b 0x1 -a 0x27 -do_reset  -reset_gpio 13 -intr_gpio 27 
-
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -cI 7 true
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -sIntr 7 ON_CHANGE
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -cO 1
-=======
 To fire the event monitor. 
 
-./runMcp23008Arg.sh -b 0x1 -a 0x27  -do_reset -reset_gpio 13 -intr_gpio 27 -cI 7 true -sIntr 7 ON_CHANGE -cO 1 dH 1 -r 7
-
-
-
-./runMcp23008Arg.sh  -b 0x1 -a 0x27 -do_reset  -reset_gpio 13 -intr_gpio 27 -dH 1 -dL 1
-
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -cO 1
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -cI 7 true
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -sIntr 7 ON_CHANGE
-
->>>>>>> db06be0 (mcp23008: add another example shell)
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 1
-./runMcp23008Arg.sh -b 0x1 -a 0x27 -dL 1
-
--b 0x1 -a 0x27 -do_reset  -reset_gpio 13 -intr_gpio 27 -cI 7 true  -sIntr 7 ON_CHANGE   -cO 1   -dH 1
+./runMcp23008Arg.sh -b 0x1 -a 0x27  -do_reset -reset_gpio 13 -intr_gpio 27 -cI 7 true -sIntr 7 ON_CHANGE -cO 1 -dH 1 -r 7
 
 
 
