@@ -165,11 +165,6 @@ public class Mcp23008AppArg {
             }
         }
 
-        // create an I2C to the <MCP23008.
-        I2C mcpDev = createI2cDevice(pi4j, busNum, address);
-        // Create the Mcp23008Driver passing the MCP23008 I2C device
-        Mcp23008Driver mcpDriver = new Mcp23008Driver(mcpDev);
-
 
         var resetConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("reset_gpio")
@@ -188,8 +183,6 @@ public class Mcp23008AppArg {
             .pull(PullResistance.PULL_DOWN);
         interruptPinGpio = pi4j.create(inputConfig1);
 
-        // The MCP23008 Interrupt pin is connected to GPIO intr_gpio
-        interruptPinGpio.addListener(new GpioListener(mcpDriver, console));
 
 
         // reset the MCP23008 device. This will set all the MCP23008 registers to
@@ -198,6 +191,15 @@ public class Mcp23008AppArg {
         if (doReset) {
             resetChip(resetPinGpio);
         }
+
+        // create an I2C to the <MCP23008.
+        I2C mcpDev = createI2cDevice(pi4j, busNum, address);
+        // Create the Mcp23008Driver passing the MCP23008 I2C device
+        Mcp23008Driver mcpDriver = new Mcp23008Driver(mcpDev);
+
+        // The MCP23008 Interrupt pin is connected to GPIO intr_gpio
+        interruptPinGpio.addListener(new GpioListener(mcpDriver, console));
+
 
         if (createInPin) {
             mcpDriver.setIoDirection(theInPin, ConfigurableIoExpander.Direction.INPUT);
@@ -213,33 +215,27 @@ public class Mcp23008AppArg {
         }
 
         if (drivePinH) {
+            mcpDriver.getInterruptCapture(); // Clear out any interrupt indications
             // Drive pin 0 high
             drivePin(mcpDriver, theDrivePinH, drivePinHigh);
+            waitMS(1000);    // allow event monitor thread to execute and println
         }
 
         if (drivePinL) {
+            mcpDriver.getInterruptCapture(); // Clear out any interrupt indications
             // Drive pin 0 high
             drivePin(mcpDriver, theDrivePinL, drivePinHigh);
+            waitMS(1000);   // allow event monitor thread to execute and println
         }
 
         if (readPin) {
             console.println("Expect 1 Read Pin " + theRPin + "   value  " + readOnePin(mcpDriver, theRPin, console));
         }
+        waitMS(2000);  // allow time for println to complete
 
         // Shutdown Pi4J
         pi4j.shutdown();
     }
-
-
-
-    /*      pin0 output  +         LED
-            pin1 output            pin7
-            pin7 input   pullDown  pin1
-
-
-            GPIO27 has a listener    Wired to INT pin
-            Listener drive GPIO18 high, gpio connected to LED that will flash ON
-            */
 
 
 
@@ -256,7 +252,6 @@ public class Mcp23008AppArg {
     }
 
     private static void drivePin(Mcp23008Driver drvr, int pin, boolean drivePinHigh) {
-
         drvr.setOutputState(pin, drivePinHigh);
     }
 
