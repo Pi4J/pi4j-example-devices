@@ -14,6 +14,86 @@ MCP23008/MCP23S08 8-Bit I/O Expander with Serial I2C Interface
 
 Java classes to access the MCP23008 GPIO controller as an application.
 
+
+## Details using Mcp23008Arg.
+
+This program uses fixed configuration, demonstrates to configure and use the MCP23008.  There
+is explanation documentation in the source code.
+Supported functions.
+
+
+    1. ./mvnw clean package
+    2. cd target/distribution 
+    3. Execute command to run the example program
+
+These example commands assume:
+1. MCP23008 pin0 is connected to the + lead of an LED
+2. MCP23008 pin1 connected to pin7
+3. MCP23008 INT line is connected to GPIO27
+4. MCP23008 RESET pin connected to GPIO13
+
+
+
+- Pi BCM I2C bus 1 - ______________
+  _______________________               |
+  | | | |
+  | | | |
+  | | | |  
+  | | | |
+  | | |                       ____________________
+  | | |__________> RESET >   - MCP23008 0x27 -
+  | |                             ____________________
+  | |________________ < INT  <        | | | |
+  | | LEDs
+  |_____________________> Drive GPIO >___|
+
+The script will use the Mcp23008AppArg to access methods in the 'Driver' code. If you do not
+POR the chip or execute the -do_reset command the configuration will be persisted in the MCP23008 IC.
+However, when the program end, all details within the Pi4J code are lost.  The next time you run this
+command you must include the parms used earlier to recreate their data within Pi4J. Example : -cI 7 arg 
+must be passed if you intend to use that input pin during this invocation.
+
+- Using bus 0x01 and device address 0x27 
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27
+- Create pini as output
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -cO 1
+- Create pin7 as input wi*th pullup resis*tor
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -cI 7 true
+-  Create pin0 as output with pullup resistor
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -cO 0
+-  Create GPIO27 Interrupt connection
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -intr_gpio 27
+-  Create GPIO13 Reset line
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -reset_gpio 13
+-  Drive pin0 high
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 0
+-  Drive pin1 high
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 1
+-  Read  pin7
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -r 7
+-  Drive pin1 low
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dL 1
+-  Read  pin7
+   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -r 7
+- Enable interrupts for pin7, any change
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -sIntr 7 ON_CHANGE
+- Drive pin1 high  Force interrupt trigger
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 1
+- Drive pin1 high  Reset MCP23008
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -do_reset  -reset_gpio 13
+
+
+To fire the event monitor. 
+
+./runMcp23008Arg.sh -b 0x1 -a 0x27  -do_reset -reset_gpio 13 -intr_gpio 27 -cI 7 true -sIntr 7 ON_CHANGE -cO 1 -dH 1 -r 7
+
+
+
+
+## Details using Mcp23008App.
+
+This program uses fixed configuration, demonstrates to configure and use the MCP23008.  There
+is explanation documentation in the source code.
 Supported functions.
 
 
@@ -72,13 +152,14 @@ _______________________
   |_____________________> Drive GPIO >___|
 ```
 
-1. Drive MCP23008 pin0 Red Led hi low
-   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -d 0 -o ON -m   
-   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -d 0 -o OFF
+1. Execute the predefined pin and interrupt activity.  Console output and/or debugger usage
+   will assist in explaining the chip.
+   sudo ./runMcp23008.sh -b 0x1 -a 0x27 
+ 
+ 
+ 
+ 
 
-2. Read MCP23008 pin4
-   Read 4
-   sudo ./runMcp23008.sh -b 0x1 -a 0x27 -r 4 
    This will set pin4 high or low
    python3
    import RPi.GPIO as GPIO

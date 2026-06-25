@@ -100,12 +100,6 @@ public class Mcp23008App  {
         }
 
 
-        console.println("----------------------------------------------------------");
-        console.println("PI4J PROVIDERS");
-        console.println("----------------------------------------------------------");
-        console.println("----------------------------------------------------------");
-
-
         var resetConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("Reset_Pin")
             .name("Reset_Pin")
