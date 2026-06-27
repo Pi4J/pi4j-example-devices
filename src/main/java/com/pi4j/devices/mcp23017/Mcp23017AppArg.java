@@ -211,7 +211,7 @@ public class Mcp23017AppArg {
         // create an I2C to the <MCP23008.
         I2C mcpDev = createI2cDevice(pi4j, busNum, address);
         // Create the Mcp23008Driver passing the MCP23008 I2C device
-        Mcp23017Driver mcpDriver = new Mcp23017Driver(mcpDev);
+        Mcp23017Driver mcpDriver = new Mcp23017Driver(mcpDev, null);   // remove null parm when ctor in snapshot
 
         // The MCP23008 Interrupt pin is connected to GPIO intrA_gpio
         interruptAPinGpio.addListener(new GpioListener(mcpDriver, console, "A-side"));
