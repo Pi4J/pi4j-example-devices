@@ -1,6 +1,7 @@
 
 
 
+
 #
 #   * #%L
 #   * Copyright (C) 2012 - 2025 Pi4J
@@ -23,7 +24,7 @@
 # * **********************************************************************
 # * ORGANIZATION  :  Pi4J
 # * PROJECT       :  Pi4J :: EXTENSION
-# * FILENAME      :  runMcp23017.sh
+# * FILENAME      :  runMcp23017Arg.sh
 # *
 # * This file is part of the Pi4J project. More information about
 # * this project can be found here:  https://pi4j.com/
@@ -33,5 +34,5 @@
 #
 
 #!/usr/bin/env bash
- java  -classpath ./*:../classes  com.pi4j.devices.mcp23017.Mcp23017App  $@
+ java  -classpath ./*:../classes  com.pi4j.devices.mcp23017.Mcp23017AppArg  $@
 
