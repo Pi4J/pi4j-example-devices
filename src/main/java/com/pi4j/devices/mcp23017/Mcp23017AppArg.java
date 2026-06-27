@@ -32,20 +32,23 @@
  *
  */
 
-package com.pi4j.devices.mcp23008;
+package com.pi4j.devices.mcp23017;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.io.expander.ConfigurableIoExpander;
 import com.pi4j.drivers.io.expander.mcp23008.Mcp23008Driver;
+import com.pi4j.drivers.io.expander.mcp23017.Mcp23017Driver;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 
+import java.text.MessageFormat;
 
-public class Mcp23008AppArg {
 
-    private static final int DEFAULT_ADDRESS = 0x27;
+public class Mcp23017AppArg {
+
+    private static final int DEFAULT_ADDRESS = 0x24;
     private static final int DEFAULT_BUS = 0x1;
 
     /**
@@ -65,8 +68,9 @@ public class Mcp23008AppArg {
 
         int busNum = DEFAULT_BUS;
         int address = DEFAULT_ADDRESS;
-        int intr_gpio = 27;
-        int reset_gpio = 13;
+        int intrA_gpio = 5;
+        int intrB_gpio = 6;
+        int reset_gpio = 19;
         boolean drivePinHigh = false;
         boolean drivePinL = false;
         boolean drivePinH = false;
@@ -87,15 +91,17 @@ public class Mcp23008AppArg {
         boolean readPin = false;
 
         DigitalOutput resetPinGpio = null;
-        DigitalInput interruptPinGpio = null;
+        DigitalInput interruptAPinGpio = null;
+        DigitalInput interruptBPinGpio = null;
+
 
         Mcp23008Driver.InterruptMode iMode = null;
-        console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008AppArg");
+        console.title("<-- The Pi4J V2 Project Extension  -->", "Mcp23008App");
         String helpString = " parms: MCP23008   -b hex value bus -a hex value address  \n  " +
             "  -r read_pin pin#  -dH drive_pin_high pin#   -dL drive_pin_low pin#  -do_reset \n" +
             " -cI create input pin # pull true/false       -cO create output pin # \n" +
             " -sIntr setInterrupt pin#  mode (OFF, ON_0,  ON_1, ON_CHANGE) \n " +
-            "   -reset_gpio #    -intr_gpio #    ";
+            "   -reset_gpio #    -intrA_gpio #    -intrB_gpio #   ";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
             if (o.contentEquals("-b")) { // bus
@@ -145,11 +151,15 @@ public class Mcp23008AppArg {
                 a = args[i + 1];
                 iMode = Mcp23008Driver.InterruptMode.valueOf(a.toUpperCase());
                 i++;
-            }  else if (o.contentEquals("-intr_gpio")) {
+            }  else if (o.contentEquals("-intrA_gpio")) {
                 String a = args[i + 1];
-                intr_gpio = Integer.parseInt(a);
+                intrA_gpio = Integer.parseInt(a);
                 i++;
-            } else if (o.contentEquals("-reset_gpio")) {
+            }else if (o.contentEquals("-intrB_gpio")) {
+                String a = args[i + 1];
+                intrB_gpio = Integer.parseInt(a);
+                i++;
+            }  else if (o.contentEquals("-reset_gpio")) {
                 String a = args[i + 1];
                 reset_gpio = Integer.parseInt(a);
                 i++;
@@ -174,14 +184,20 @@ public class Mcp23008AppArg {
             .initial(DigitalState.HIGH);
         resetPinGpio = pi4j.create(resetConfig);
 
-            // MCP23008 pin 8, indicate interrupt from MCP23008
 
         var inputConfig1 = DigitalInput.newConfigBuilder(pi4j)
-            .id("Interrupt")
-            .name("Interrupt")
-            .bcm(intr_gpio)
+            .id("InterruptA")
+            .name("InterruptA")
+            .bcm(intrA_gpio)
             .pull(PullResistance.PULL_DOWN);
-        interruptPinGpio = pi4j.create(inputConfig1);
+        interruptAPinGpio = pi4j.create(inputConfig1);
+
+        var inputConfig2 = DigitalInput.newConfigBuilder(pi4j)
+            .id("InterruptB")
+            .name("InterruptB")
+            .bcm(intrB_gpio)
+            .pull(PullResistance.PULL_DOWN);
+        interruptBPinGpio = pi4j.create(inputConfig2);
 
 
 
@@ -195,11 +211,12 @@ public class Mcp23008AppArg {
         // create an I2C to the <MCP23008.
         I2C mcpDev = createI2cDevice(pi4j, busNum, address);
         // Create the Mcp23008Driver passing the MCP23008 I2C device
-        Mcp23008Driver mcpDriver = new Mcp23008Driver(mcpDev);
+        Mcp23017Driver mcpDriver = new Mcp23017Driver(mcpDev);
 
-        // The MCP23008 Interrupt pin is connected to GPIO intr_gpio
-        interruptPinGpio.addListener(new GpioListener(mcpDriver, console));
-        waitMS(1000);   // Allow time to create threads etc.
+        // The MCP23008 Interrupt pin is connected to GPIO intrA_gpio
+        interruptAPinGpio.addListener(new GpioListener(mcpDriver, console, "A-side"));
+
+        interruptBPinGpio.addListener(new GpioListener(mcpDriver, console, "B-side"));
 
         if (createInPin) {
             mcpDriver.setIoDirection(theInPin, ConfigurableIoExpander.Direction.INPUT);
@@ -257,7 +274,6 @@ public class Mcp23008AppArg {
     }
 
     private static int readOnePin(Mcp23008Driver drv, int pin, Console console) {
-
         boolean stateHigh = drv.getInputState(pin);
         return (stateHigh ? 1 : 0);
     }
@@ -283,22 +299,21 @@ public class Mcp23008AppArg {
 
         Console console;
         Mcp23008Driver mcpDrv;
-
-        public GpioListener(Mcp23008Driver drvr, Console consoleParm) {
+        String sideName;
+        public GpioListener(Mcp23008Driver drvr, Console consoleParm, String name) {
             console = consoleParm;
             mcpDrv = drvr;
+            sideName = name;
         }
 
         @Override
         public void onDigitalStateChange(DigitalStateChangeEvent event) {
             if (event.state() == DigitalState.LOW) {
-                console.println("onDigitalStateChange Pin went low");
+                console.println(MessageFormat.format("onDigitalStateChange {0} Pin went low", sideName) );
             } else if (event.state() == DigitalState.HIGH) {
-                console.println("onDigitalStateChange Pin went high");
-                waitMS(3000);
-            } else {
+                console.println(MessageFormat.format("onDigitalStateChange {0} Pin went high", sideName) );
+              } else {
                 System.out.println("Strange event state  " + event.state());
-                waitMS(3000);
             }
         }
     }

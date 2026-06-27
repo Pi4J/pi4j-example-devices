@@ -17,11 +17,11 @@ Java classes to access the MCP23008 GPIO controller as an application.
 
 ## Details using Mcp23008Arg.
 
-This program uses fixed configuration, demonstrates to configure and use the MCP23008.  There
+This program uses fixed configuration, demonstrates steps to configure and use the MCP23008.  There
 is explanation documentation in the source code.
 Supported functions.
 
-
+### Build
     1. ./mvnw clean package
     2. cd target/distribution 
     3. Execute command to run the example program
@@ -53,6 +53,8 @@ However, when the program end, all details within the Pi4J code are lost.  The n
 command you must include the parms used earlier to recreate their data within Pi4J. Example : -cI 7 arg 
 must be passed if you intend to use that input pin during this invocation.
 
+
+### Pertinent Arguments
 - Using bus 0x01 and device address 0x27 
   ./runMcp23008Arg.sh -b 0x1 -a 0x27
 - Create pini as output
@@ -82,6 +84,16 @@ must be passed if you intend to use that input pin during this invocation.
 - Drive pin1 high  Reset MCP23008
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -do_reset  -reset_gpio 13
 
+
+
+## Persistence
+To say it again, the MCP23008 chip persists state until reset of POR (PowerOnReset).   The Pi4J
+does not persist any state across invocations so the pin configuration must be included in
+subsequent usage.  
+To use pin1 to drive pin7 and read the state of pin7, the pin1 and pin7 configuration must be repeated.
+
+./runMcp23017Arg.sh -b 0x1 -a 0x27 -cI 7 true -cO 1 -dH 1 -r 7
+./runMcp23017Arg.sh -b 0x1 -a 0x27 -cI 7 true -cO 1 -dL 1 -r 7
 
 To fire the event monitor. 
 
