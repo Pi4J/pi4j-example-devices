@@ -42,6 +42,8 @@ import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 
+import java.util.Scanner;
+
 
 public class Mcp23008AppArg {
 
@@ -234,6 +236,10 @@ public class Mcp23008AppArg {
         }
         waitMS(2000);  // allow time for println to complete
 
+        if (setInterrupt) {
+            String enteredChar = waitForInput(console, "Awaiting DigitalStateChangeListener activity");
+        }
+
         // Shutdown Pi4J
         pi4j.shutdown();
     }
@@ -278,6 +284,17 @@ public class Mcp23008AppArg {
 
         }
     }
+
+
+
+    public static String waitForInput(Console console, String printDetail) {
+        Scanner scan = new Scanner(System.in);
+        console.println("\n" + printDetail + " \n Hit Enter key to continue");
+        String foo = scan.nextLine() ;
+        return (foo);
+    }
+
+
 
     public static class GpioListener implements DigitalStateChangeListener {
 
