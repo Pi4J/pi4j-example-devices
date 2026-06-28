@@ -112,4 +112,3 @@ To fire the event monitor.
 ./runMcp23017Arg.sh -b 0x1 -a 0x24  -reset_gpio 19 -cO 8 -dH 8
 
 
--do_reset

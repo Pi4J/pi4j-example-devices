@@ -44,6 +44,7 @@ import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 
 import java.text.MessageFormat;
+import java.util.Scanner;
 
 
 public class Mcp23017AppArg {
@@ -211,7 +212,7 @@ public class Mcp23017AppArg {
         // create an I2C to the <MCP23008.
         I2C mcpDev = createI2cDevice(pi4j, busNum, address);
         // Create the Mcp23008Driver passing the MCP23008 I2C device
-        Mcp23017Driver mcpDriver = new Mcp23017Driver(mcpDev, null);   // remove null parm when ctor in snapshot
+        Mcp23017Driver mcpDriver = new Mcp23017Driver(mcpDev, null);
 
         // The MCP23008 Interrupt pin is connected to GPIO intrA_gpio
         interruptAPinGpio.addListener(new GpioListener(mcpDriver, console, "A-side"));
@@ -250,6 +251,10 @@ public class Mcp23017AppArg {
             console.println("Expect 1 Read Pin " + theRPin + "   value  " + readOnePin(mcpDriver, theRPin, console));
         }
         waitMS(2000);  // allow time for println to complete
+
+        if (setInterrupt) {
+            String enteredChar = waitForInput(console, "Awaiting DigitalStateChangeListener activity");
+        }
 
         // Shutdown Pi4J
         pi4j.shutdown();
@@ -294,6 +299,15 @@ public class Mcp23017AppArg {
 
         }
     }
+
+
+    public static String waitForInput(Console console, String printDetail) {
+        Scanner scan = new Scanner(System.in);
+        console.println("\n" + printDetail + " \n Hit Enter key to continue");
+        String foo = scan.nextLine() ;
+        return (foo);
+    }
+
 
     public static class GpioListener implements DigitalStateChangeListener {
 
