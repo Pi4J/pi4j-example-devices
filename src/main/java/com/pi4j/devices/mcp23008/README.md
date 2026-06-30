@@ -55,19 +55,25 @@ must be passed if you intend to use that input pin during this invocation.
 
 
 ### Pertinent Arguments
+## Note
+``` If you wire the GPIOs as described using GPIO13 for reset and GPIO27 to  
+monitor Interrupts, those arguments are not required. If you use different GPIOs 
+then the arguments are required.
+```
+
 - Using bus 0x01 and device address 0x27 
   ./runMcp23008Arg.sh -b 0x1 -a 0x27
+- Create GPIO13 Reset line
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -reset_gpio 13
+- Reset MCP23008
+-  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -do_reset  -reset_gpio 13
 - Create pini as output
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -cO 1
 - Create pin7 as input wi*th pullup resis*tor
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -cI 7 true
--  Create pin0 as output with pullup resistor
+-  Create pin0 as output 
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -cO 0
--  Create GPIO27 Interrupt connection
-   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -intr_gpio 27
--  Create GPIO13 Reset line
-   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -reset_gpio 13
--  Drive pin0 high
+- Drive pin0 high   (LED on)
    ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 0
 -  Drive pin1 high
    ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 1
@@ -77,20 +83,19 @@ must be passed if you intend to use that input pin during this invocation.
    ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dL 1
 -  Read  pin7
    ./runMcp23008Arg.sh -b 0x1 -a 0x27 -r 7
+  Create GPIO27 Interrupt connection
+  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -intr_gpio 27
 - Enable interrupts for pin7, any change
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -sIntr 7 ON_CHANGE
 - Drive pin1 high  Force interrupt trigger
   ./runMcp23008Arg.sh -b 0x1 -a 0x27 -dH 1
-- Drive pin1 high  Reset MCP23008
-  ./runMcp23008Arg.sh -b 0x1 -a 0x27 -do_reset  -reset_gpio 13
 
 
 
 ## Persistence
 To say it again, the MCP23008 chip persists state until reset of POR (PowerOnReset).   The Pi4J
-does not persist any state across invocations so the pin configuration must be included in
+does not persist all state across invocations so the GPIO assignments must be repeated in
 subsequent usage.  
-To use pin1 to drive pin7 and read the state of pin7, the pin1 and pin7 configuration must be repeated.
 
 ./runMcp23017Arg.sh -b 0x1 -a 0x27 -cI 7 true -cO 1 -dH 1 -r 7
 ./runMcp23017Arg.sh -b 0x1 -a 0x27 -cI 7 true -cO 1 -dL 1 -r 7
@@ -114,13 +119,11 @@ Supported functions.
     3. Execute command to run the example program
 
 
-BCM gpio16 configured as output connected MCP23008 pin 4 
 
 BCM gpio13 configured as output connected MCP23008 (bar) RESET 
 
 BCM gpio27 configured as input connected MCP23008 INT 
 
-BCM gpio18 configured as output connected to LED
 
 LED (+) connected to pin0 
 
@@ -130,7 +133,6 @@ All address pins (A0 A1 A2) are strapped to 3.3v for the chips address 0x27
 MCP23008 pins are configured:
 pin0 output  + LED
 pin1 output  pin7
-pin3 input   gpio16
 pin7 input   pullDown
 
 
@@ -139,8 +141,6 @@ Write pin0   illuminate LED
 
 Write pin1       Read pin7
 
-
-gpio16 output, drive  see results pin3
 
 
 
@@ -152,16 +152,16 @@ _______________________
 ```
 - Pi BCM I2C bus 1 - ______________
   _______________________               |
-  | | | |
-  | | | |
-  | | | |  
-  | | | |
-  | | |                       ____________________
-  | | |__________> RESET >   - MCP23008 0x27 -
-  | |                             ____________________
-  | |________________ < INT  <        | | | |
-  | | LEDs
-  |_____________________> Drive GPIO >___|
+    | | |
+    | | |
+    | | |  
+    | | |
+    | |                       ____________________
+    | |__________> RESET >   - MCP23008 0x27 -
+    |                             ____________________
+    |________________ < INT  <        | | | |
+    
+
 ```
 
 1. Execute the predefined pin and interrupt activity.  Console output and/or debugger usage
@@ -171,6 +171,13 @@ _______________________
  
  
  
+
+
+
+
+
+
+# Testing 
 
    This will set pin4 high or low
    python3
