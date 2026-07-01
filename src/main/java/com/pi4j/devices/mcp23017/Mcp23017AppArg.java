@@ -329,6 +329,12 @@ public class Mcp23017AppArg {
               } else {
                 System.out.println("Strange event state  " + event.state());
             }
+            int reg = mcpDrv.getInterruptCapture();
+            for ( int c = 0; c < 8; c++ ) {
+                if  ( (reg & 1 << c) > 0 ){
+                    console.print("Interrupting pin" + c)  ;
+                }
+            }
         }
     }
 
