@@ -1,4 +1,4 @@
-Pi4J :: Java I/O Library for Raspberry Pi :: Device :: Mcp23017
+Pi4J :: Java I/O Library for Raspberry Pi :: Device :: Mcp23008
 ==========================================================================
 
 ### This repository is a first device specific support project for the MCP23017
@@ -7,102 +7,114 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device :: Mcp23017
 
 Project by Tom Aarts
 
-
-# This device example os being rewritten to simplify and use the associate Driver
-
 ==========================================================================
 
-https://ww1.microchip.com/downloads/en/devicedoc/20001952c.pdf
-MCP23017/MCP23S17
-16-Bit I/O Expander with Serial Interface
+# This device example os being rewritten to simplify and use the associate Driver
+MCP23017/MCP23S08 16-Bit I/O Expander with Serial I2C Interface
 
 Java classes to access the MCP23017 GPIO controller as an application.
 
-Supported functions.
 
-1. reset chip
-2. Configure any/all pins (all configurations options)
-3.   Example does not use the MCp23017 interrupt capability. This will be added later
+## Details using Mcp23017Arg.
 
-Program options
--r read this MCP23xxx pin
--d drive this MCP23xxx pin based on -o ON or OFF
+This program uses a fixed configuration, demonstrates steps to configure and use the MCP23017. 
 
+### Build
     1. ./mvnw clean package
-    2. cd target/distribution
-    3. Execute command to reset Mcp23017
-    5. Execute command to perform desired MCP23017 operation
+    2. cd target/distribution 
+    3. Execute command to run the example program
+
+These example commands assume:
+1. MCP23017 pin0 is connected to the + lead of an LED
+2. MCP23017 pin1 connected to pin7
+3. MCP23017 pin8 is connected to the + lead of an LED
+4. MCP23017 pin9 connected to pin15 MCP23017 
+5. MCP23017 INTA line is connected to GPIO5
+6. MCP23017 INTB line is connected to GPIO6
+7. 5MCP23017 RESET pin connected to GPIO19
 
 
-BCM gpio12 configured as output connected MCP23017 pin 4 spdip25
 
-BCM gpio18 configured as output connected MCP23017 pin 15 spdip8
+- Pi BCM I2C bus 1 - ______________
+  _______________________               |
+  | | | |
+  | | | |
+  | | | |  
+  | | | |
+  | | |                       ____________________
+  | | |__________> RESET >   - MCP23017 
+  | |                         ____________________
+  | |_________________ < INTA <        
+  | 
+  |___________________ < INTB < 
 
-BCM gpio5 configured as output connected MCP23017 (bar) RESET spdip18
+The script will use the Mcp23017AppArg to access methods in the 'Driver' code. If you do not
+POR the chip or execute the -do_reset command the configuration will be persisted in the MCP23017 IC.
+However, when the program end, all details within the Pi4J code are lost.  The next time you run this
+command you must include the parms used earlier to recreate GPIO assignments within Pi4J.   
+Example : -reset_gpio 19   must be passed if you intend to use the -do_reset argument.
 
-BCM gpio23 configured as input connected MCP23017 INTA spdip20
+### Pertinent Arguments
 
-BCM gpio21 configured as input connected MCP23017 INTB spdip19
-
-BCM gpio22 configured as output connected to LED
-
-Red LED (+) connected to pin0 spdip21
-Green LED (+) connected to pin9 spdip2
-Yellow LED (+) connected to pin14 spdip7
-
-All address pins (A0 A2) are strapped to ground, (A1) strapped to 3.3 V for the chip address 0x22
-
+## Note
 ``` 
-- Pi BCM I2C bus 1 -  _______________
-  _______________________                 |
-  | | || | |
-  | | || | |
-  | | || | |  
-  | | || | |
-  | | || |                      ____|________________
-  | | || |__________> RESET >   - MCP23017 0x22 -
-  | | ||_______________< INTA  <   _____________________
-  | | |________________ < INTB <      | | | | |
-  | |___________________> Drive GPIO > | | LEDs
-  |_____________________> Drive GPIO >___|
+If you wire the GPIOs as described using GPIO19 for reset and GPIO5 and GPIO6 to  
+monitor Interrupts, those arguments are not required. If you use different GPIOs 
+then the arguments are required.
 ```
+- Using bus 0x01 and device address 0x24
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24
+- Create pini as output
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cO 1
+- Create pin7 as input wi*th pullup resis*tor
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 7 true
+-  Create pin0 as output
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cO 0
+-  Create GPIO5 and GPIO6 as interrupt connections
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24 -intrA_gpio 5 -intrB_gpio 6
+-  Create GPIO19 Reset line
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24 -reset_gpio 19
+-  Do a reset then drive pin0 high
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24  -reset_gpio 19 -do_reset -cO 0 -dH 0
+-  Drive pin1 high
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cO 1 -dH 1
+-  Read  pin7
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 7 true -r 7
+-  Drive pin1 low
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cO 1 -dL 1
+-  Read  pin7
+   ./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 7 true -r 7
+- Enable interrupts for pin7, any change
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24 -sIntr 7 ON_CHANGE
+- Drive pin1 high  Force interrupt trigger
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24  -cO 1  -dH 1
+- Reset MCP23017
+  ./runMcp23017Arg.sh -b 0x1 -a 0x24 -do_reset  -reset_gpio 19
 
 
-1. Reset MCP23017
-   sudo ./runMcp23017.sh -b 0x01 -a 0x22 -r 4 
+## Persistence
+To say it again, the MCP23017 chip persists state until reset or POR (PowerOnReset).   The Pi4J
+does not persist any state across invocations so the GPIO configurations must be included in
+subsequent usage.  
 
-2. Drive pin0 hi low. Drives Red LED.
+### Pins in Bank A     0 - 7
+./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 7 true -cO 1 -dH 1 -r 7
+./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 7 true -cO 1 -dL 1 -r 7
+ 
+To fire the event monitor. 
 
-sudo ./runMcp23017.sh -b 0x01 -a 0x20 -d 0 -o ON 
-sudo ./runMcp23017.sh -b 0x01 -a 0x20 -d 0 -o OFF 
+./runMcp23017Arg.sh -b 0x1 -a 0x24  -do_reset -reset_gpio 19 -intrA_gpio 5 -intrB_gpio 6 -cI 7 true -sIntr 7 ON_CHANGE -cO 1 -dH 1 -r 7
 
-3. Drive pin14 hi low. Drives Yellow LED.
 
-sudo ./runMcp23017.sh -b 0x01 -a 0x22 -d 14 -o ON
-sudo ./runMcp23017.sh -b 0x01 -a 0x22 -d 14 -o OFF
+./runMcp23017Arg.sh -b 0x1 -a 0x24  -do_reset -reset_gpio 19 -intrA_gpio 5 -intrB_gpio 6 -cI 15 true -sIntr 15 ON_CHANGE -cO 9 -dH 9 -r 15
 
-4. Read pin4
-   sudo ./runMcp23017.sh -b 0x01 -a 0x22 -r 4   
 
-In separate terminal, alter pin4
-python3
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(12, GPIO.OUT)
-GPIO.output(12,GPIO.LOW)
-GPIO.output( 12 , GPIO.HIGH)
 
-6. Read pin 15
-   sudo ./runMcp23017.sh -b 0x01 -a 0x22 -r 15 
-   sudo ./runMcp23017.sh -b 0x01 -a 0x22 -r 15 -f 1
+### Pins in Bank B     8 - 15
+./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 15 true -cO 9 -dH 9 -r 15
+./runMcp23017Arg.sh -b 0x1 -a 0x24 -cI 15 true -cO 9 -dL 9 -r 15
 
-In separate terminal, alter pin15
-python3
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
-GPIO.output(18,GPIO.LOW)
-GPIO.output( 18 , GPIO.HIGH)
 
+./runMcp23017Arg.sh -b 0x1 -a 0x24  -reset_gpio 19 -cO 8 -dH 8
 
 

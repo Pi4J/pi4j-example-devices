@@ -9,7 +9,7 @@ Pi4J :: Java I/O Library for Raspberry Pi :: Device ::  DHT22
 Project by Tom Aarts
 ==========================================================================
 
-/**
+
 
 * If the commented use of the listener DataInGpioListener, this would
 * be a more normal implementation. However, the time to idle the gpio from output operation and
@@ -17,7 +17,7 @@ Project by Tom Aarts
 * and DHT22 signals are lost and the device attempt to send data fails.
 *
 * So, for the time being a simple polling implementation is used.
-  */
+ 
 
 https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf
 
