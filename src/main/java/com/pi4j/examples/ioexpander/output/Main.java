@@ -3,9 +3,7 @@ package com.pi4j.examples.ioexpander.output;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.io.expander.ConfigurableIoExpander;
-import com.pi4j.drivers.io.expander.OutputExpander;
 import com.pi4j.drivers.io.expander.mcp23017.Mcp23017Driver;
-import com.pi4j.drivers.io.expander.pcf8574.Pcf8574OutputDriver;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Delay;
 
