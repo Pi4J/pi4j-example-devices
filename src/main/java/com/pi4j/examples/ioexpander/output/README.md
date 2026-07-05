@@ -1,6 +1,6 @@
 # IO Expander Traffic Lights
 
-![Mini Breadboard with a PCF8574 and a mini LED traffic light](board.jpg)
+![Mini Breadboard with a MCP23017 and a mini LED traffic light](mcp23017_output.jpg)
 
 At some point, GPIO pins might become a tight resource -- or you might want to control 
 multiple IO pins at a longer distance -- without pulling a massive amount of wires.
@@ -90,17 +90,19 @@ public class Main {
 Next, we set up the IO expander from the drivers repository on bus1, address 20:
 
 ```
-        OutputExpander outputExpander = new Pcf8574OutputDriver(
-            pi4j.create(I2CConfig.newBuilder(pi4j).bus(1).device(0x20)));
+        ConfigurableIoExpander outputExpander = new Mcp23017Driver(
+            pi4j.create(I2CConfig.newBuilder(pi4j).bus(1).device(0x27)));
+
+        outputExpander.setIoDirections(0xffff, ConfigurableIoExpander.Direction.OUTPUT);
 ```
 
 Then we create a TrafficLight instance, connected to pins 0-2 of the expander:
 
 ```
         TrafficLight trafficLight = new TrafficLight(
-            /* red */ outputExpander.getOutput(0),
-            /* yellow */ outputExpander.getOutput(1),
-            /* green */ outputExpander.getOutput(2));
+            /* red */ outputExpander.getOutput(8),      // PB0
+            /* yellow */ outputExpander.getOutput(9),   // PB1
+            /* green */ outputExpander.getOutput(10));  // PB2
 ```
 
 Finally, we add a loop cycling through the valid states -- with some delay
@@ -136,7 +138,7 @@ If you enjoyed this example, consider trying the following:
   the opposite signal, like a set of real traffic signals would;
   this can be done with more IO Expanders or by utilizing more pins.
 
-- Use a MCP23017 to controll a mega-intersection with 5 traffic lights.
+- Use a bunch of PCF8574s to control a mega-intersection with several traffic lights.
 
 - Implement an error state that shows a yellow blinking signal
 
