@@ -1,6 +1,6 @@
 # IOExpander Joystick Input Example
 
-![Mini Breadboard with a MCP23017 and a Joystick](mcp23017_joystick.jpg)
+![Mini Breadboard with a PCF8574 and a Joystick](pcf8574_input.jpg)
 
 Wiring up IOExpander input is in principle similar to wiring up output, with the added complexity that
 we need to connect the interrupt pin in order to be notified about input changes: I2C is a host controlled
@@ -12,16 +12,17 @@ the IOExpander for updates all the time (the corresponding expander method is `p
 
 For the example hardware setup,
 
-- connect some buttons (right, left, down up) between Pins B4, B5, B6 and B7 and VCC., just like in the photo,
+- connect some buttons (right, left, down up) between Pins P0, P1, P2 and P3 and GND., just like in the photo,
   where we use a ready-made joystick for the setup; then
 - connect VCC, SDA, SCL, GND of the IO Expander to the corresponding pins 1, 3, 5 and 9 of your Raspberry PI again.
-- Also connect one of the "interrupt" pins on the MPC23017 to BCM 17 (pin 11) of your Raspberry PI.
-- Configure the address to 0x27 or adjust the code below accordingly.
+- Also connect one the "interrupt" pin of the MPC23017 to BCM 23 of your Raspberry PI. Make sure to pull it up by
+  connecting it to 3.3V via a 4.7 kOhm resistor.
+- Configure the address to 0x20 or adjust the code below accordingly.
 
 
 ## The Code
 
-First, we do the "usual" basic Rasperry PI setup, onbtaining the context:
+First, we do the "usual" basic Raspberry PI setup, obtaining the context:
 
 ```
 public class JoystickExample {
@@ -32,50 +33,34 @@ public class JoystickExample {
 We need to obtain an reference to the interrupt pin, so the Mcp23017 driver can listen on it, and forward
 interrupts to the client pin objects as needed.        
 ```
-        ListenableOnOffRead<?> interruptPin = context.create(DigitalInputConfig.newBuilder(context).bcm(17));
+        ListenableOnOffRead<?> interruptPin = context.create(DigitalInputConfig.newBuilder(context).bcm(23));
 ```
-Next, we create a MCP 23017 driver instance, configured to address 0x27 on bus 1 and the interrupt pin instance
+Next, we create a PCF 8574 driver instance, configured to input on address 0x20 on bus 1 and the interrupt pin instance
 created above.
 ```
-        Mcp23017Driver expander = new Mcp23017Driver(
-            context.create(I2CConfig.newBuilder(context).bus(1).device(0x27)), interruptPin);
+         InputExpander expander = Pcf8574Driver.createForInput(
+            context.create(I2CConfig.newBuilder(context).bus(1).device(0x20)),
+            interruptPin);
 ```
-Now we make sure that all pins on the expander are configured as input. 0xff here is just a short form of
-0b1111_1111_1111_1111, the bit mask for all pins. Technically, it would be sufficient to only set the pins
-we are using, but we don't use  any other outputs here. Don't forget to adjust the bitmasks as needed otherwise!
-```
-        expander.setIoDirections(0xffff, ConfigurableIoExpander.Direction.INPUT);
-```
-We configure the pins to pull up by default, i.e. if there is no connection, they will be
-"pulled" on.
-```
-        expander.setPullupResistorConfigurations(0xffff);
-```
-Finally, we invert the input, so we see pressed as "true" and released as "false", despite
-pulling up and switching against ground.
-```
-        expander.setInputPolarity(0xffff);
-```
+
 Now with all the configuration out of the way, we listen on the connected pins and print
-their name and value. The "B" pins B0-B7 map to software pin numbers 8-15 in the driver;
-basically counting the B pins starts where the A pins end.
+their name and value. 
 
 Note that we use the `addConsumer()` method to register a callback that will be
-called whenever the pin changes value. 
-
+called whenever the pin changes value.
 
 ```
-        expander.getInput(15).addConsumer((value) -> System.out.println("Up Key " + value));
-        expander.getInput(14).addConsumer((value) -> System.out.println("Down Key " + value));
-        expander.getInput(13).addConsumer((value) -> System.out.println("Left Key " + value));
-        expander.getInput(12).addConsumer((value) -> System.out.println("Right Key " + value));
+        expander.getInput(15).addConsumer((value) -> System.out.println("Up Key " + !value));
+        expander.getInput(14).addConsumer((value) -> System.out.println("Down Key " + !value));
+        expander.getInput(13).addConsumer((value) -> System.out.println("Left Key " + !value));
+        expander.getInput(12).addConsumer((value) -> System.out.println("Right Key " + !value));
 ```
 With all setup done, we loop forever, printing an "alive" statement every 10s.
 Note that this does not do any polling.
 ```
         while (true) {
             System.out.println("Waiting for input..." + System.currentTimeMillis());
-            Thread.sleep(10000);
+            Thread.sleep(10_000);
         }
     }
 }
