@@ -4,7 +4,7 @@ package com.pi4j.devices.mcp3008;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.io.ad.mcp300x.Mcp300xDriver;
+import com.pi4j.drivers.io.ad.mcp300x.Mcp3008Driver;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
@@ -86,13 +86,14 @@ public class MCP3008App {
             .mode(SpiMode.MODE_0)
             .build();
         Spi spi = pi4j.create(spiConfig);
-        Mcp300xDriver mcpDrv = new com.pi4j.drivers.io.ad.mcp300x.Mcp300xDriver(spi) ;
+        Mcp3008Driver mcpDrv = new com.pi4j.drivers.io.ad.mcp300x.Mcp3008Driver(spi) ;
 
         int val;
         if(doAll){
             for ( short c = 0; c < 8 ; c++){
                 val = mcpDrv.readChannel(c);
                 getConversionValue(c, val, vref, console);
+                Thread.sleep(150      );
             }
         }else {
             val = mcpDrv.readChannel(pinNumber);
