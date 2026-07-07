@@ -1,4 +1,4 @@
-package com.pi4j.examples.server;
+package com.pi4j.examples.sensor.homeassistant;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
@@ -114,7 +114,7 @@ public class SensorServer {
                     sb.append("      - name: \"").append(name).append("\"\n");
                     sb.append("        value_template: \"{{ value_json['").append(name).append("'] }}\"\n");
                     sb.append("        device_class: ").append(deviceClass).append("\n");
-                    sb.append("        unit_of_measurement: \"").append(getUnit(valueDescriptor.getKind())).append("\"\n");
+                    sb.append("        unit_of_measurement: \"").append(valueDescriptor.getKind().measurementUnit).append("\"\n");
                 }
             }
         }
@@ -135,25 +135,8 @@ public class SensorServer {
     static String getDeviceClass(SensorDescriptor.Kind kind) {
         return switch(kind) {
             case LIGHT, LIGHT_BLUE, LIGHT_RED, LIGHT_GREEN -> "illuminance";
-            case CO2, DISTANCE, HUMIDITY, PRESSURE, TEMPERATURE -> kind.name().toLowerCase(Locale.ROOT);
+            case CO2, DISTANCE, HUMIDITY, PRESSURE, TEMPERATURE -> kind.toString();
             default -> null;
-        };
-    }
-
-    static String getUnit(SensorDescriptor.Kind kind) {
-        return switch (kind) {
-            case ACCELERATION_X, ACCELERATION_Y, ACCELERATION_Z -> "m/s²";
-            case ANGULAR_VELOCITY_X, ANGULAR_VELOCITY_Y, ANGULAR_VELOCITY_Z -> "°/s";
-            case CO2 -> "ppm";
-            case CURRENT -> "A";
-            case DISTANCE -> "m";
-            case HUMIDITY -> "%";
-            case LIGHT, LIGHT_BLUE, LIGHT_RED, LIGHT_GREEN -> "lx";
-            case MAGNETIC_FIELD_X, MAGNETIC_FIELD_Y, MAGNETIC_FIELD_Z -> "G";
-            case PRESSURE -> "hPa";
-            case RESISTANCE -> "Ω";
-            case TEMPERATURE -> "°C";
-            case VOLTAGE -> "V";
         };
     }
 

@@ -25,7 +25,7 @@ public class Autodetect {
             System.out.println("No sensors found on I2C bus " + BUS);
         }
         for (Sensor sensor : sensorList) {
-            System.out.println("Sensor: " + sensor.getClass().getSimpleName());
+            System.out.println("Sensor: " + sensor.getDescriptor().getSensorName());
 
             List<SensorDescriptor.Value> valueDescriptors = sensor.getDescriptor().getValues();
 
@@ -33,7 +33,9 @@ public class Autodetect {
             sensor.readMeasurement(values);
 
             for (SensorDescriptor.Value valueDescriptor : valueDescriptors) {
-                System.out.println(" - " + valueDescriptor.getKind() + ": " + values[valueDescriptor.getIndex()]);
+                System.out.println(
+                    " - " + valueDescriptor.getKind() + ": " + values[valueDescriptor.getIndex()]
+                        + " " + valueDescriptor.getKind().measurementUnit);
             }
 
             // Shut the sensor down.
