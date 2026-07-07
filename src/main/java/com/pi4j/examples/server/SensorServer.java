@@ -145,12 +145,15 @@ public class SensorServer {
             case ACCELERATION_X, ACCELERATION_Y, ACCELERATION_Z -> "m/s²";
             case ANGULAR_VELOCITY_X, ANGULAR_VELOCITY_Y, ANGULAR_VELOCITY_Z -> "°/s";
             case CO2 -> "ppm";
+            case CURRENT -> "A";
             case DISTANCE -> "m";
             case HUMIDITY -> "%";
             case LIGHT, LIGHT_BLUE, LIGHT_RED, LIGHT_GREEN -> "lx";
             case MAGNETIC_FIELD_X, MAGNETIC_FIELD_Y, MAGNETIC_FIELD_Z -> "G";
             case PRESSURE -> "hPa";
+            case RESISTANCE -> "Ω";
             case TEMPERATURE -> "°C";
+            case VOLTAGE -> "V";
         };
     }
 
