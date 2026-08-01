@@ -7,7 +7,7 @@ https://www.nxp.com/docs/en/data-sheet/MPL3115A2.pdf
 Grnd--------------------P2---Gnd   
 3.3v--------------------P3---3v   
 GPIO26------------------P4---INT2 USE: for DRDY  
-GPIO15------------------P5---INT1 USE: for P/A & T interrupt
+GPIO15------------------P5---INT1 USE: for P/A & T interrupt  
 SCL---------------------P6---SCL    
 SDA---------------------P7---SDA
 
@@ -19,7 +19,7 @@ A future commit will incorporate 'target' interrupt support.
 3. sudo ./runMPL3115A2.sh
 
 The application demonstrates usage of public interfaces to the chip.    
-The app obtains pressure, altitide and temperature in the commons formats.  
+The app obtains pressure, altitude and temperature in the commons formats.  
 It then adjusts the altitude calculation to use the local pressure Pa value.
 
 Use of different bus or device address or GPIO, use the applicable values      
