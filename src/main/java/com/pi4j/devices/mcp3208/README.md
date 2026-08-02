@@ -100,3 +100,8 @@ V-OUT = VDD × Dn / 4096
     Pi Pin3             SDA
     Pi Grnd             A0
                        Vout       CHN7 MCP32008   
+
+// Check ADC input voltage chip chn 7
+sudo ./runMcp3208.sh -p 0x7  -vref 5.0
+
+

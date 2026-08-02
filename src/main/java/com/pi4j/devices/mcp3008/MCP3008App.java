@@ -118,10 +118,10 @@ public class MCP3008App {
         double rval = 0.0;
         if (vref > 0) {
             rval = ((val * vref) / 1024 );
-            console.println("Channel : " + channel  + " A/D read input voltage : " + rval + " \n");
+            console.println("\n      Channel : " + channel  + " A/D read input voltage : " + rval + " \n");
         }else{
             rval = val;
-            console.println("Channel : " + channel + " read : " + rval + " \n");
+            console.println("\n      Channel : " + channel + " read : " + rval + " \n");
         }
         return rval ;
     }
