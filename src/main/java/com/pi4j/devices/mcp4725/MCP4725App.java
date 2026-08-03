@@ -4,7 +4,7 @@ package com.pi4j.devices.mcp4725;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.io.ad.mcp472x.Mcp4725Driver;
+import com.pi4j.drivers.io.da.mcp472x.Mcp4725Driver;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 
@@ -111,13 +111,13 @@ public class MCP4725App {
         }
 
         Mcp4725Driver dacChip ;
-        I2C i2cDev = createI2cDevice(busNum, address, pi4j) ;
-        dacChip = new com.pi4j.drivers.io.ad.mcp472x.Mcp4725Driver( i2cDev, vref);
+        I2C genCallDevice = null ;
+        I2C i2cDev = createI2cDevice("MCP4725",  busNum, address, pi4j) ;
+        dacChip = new Mcp4725Driver( i2cDev, vref);
+
         if (doReset) {
-			I2C genCallDevice = createI2cDevice(busNum,0x00, pi4j);
+			genCallDevice = createI2cDevice("GenCallReset", busNum,0x00, pi4j);
             dacChip.resetChip(genCallDevice);
-            pi4j.shutdown(genCallDevice) ;
-            
         }
 
         if (setOutputEEPROM) {
@@ -149,19 +149,28 @@ public class MCP4725App {
         }
 
 
+        if (genCallDevice != null) {
+            genCallDevice.close();
+        }
+        if (i2cDev != null) {
+            i2cDev.close();
+        }
+
 
     }
 
-    static I2C createI2cDevice(int bus, int address, Context pi4j) {
+    static I2C createI2cDevice( String chipType, int bus, int address, Context pi4j) {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
         var i2cDeviceConfig = I2C.newConfigBuilder(pi4j)
             .bus(bus)
             .device(address)
-            .id("MCP4725_DAC  " + id + " " + name)
+            .id("" + chipType + id + " " + name)
             .name(name)
             .build();
-        return  pi4j.create(i2cDeviceConfig);
+
+        return pi4j.create(i2cDeviceConfig);
+
 
     }
 
