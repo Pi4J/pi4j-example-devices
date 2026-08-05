@@ -4,13 +4,15 @@ package com.pi4j.devices.mcp4725;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
+import com.pi4j.drivers.io.da.mcp472x.Mcp4725Driver;
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 
 
-public class MCP4725_App {
+public class MCP4725App {
 
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
+    static void main(String[] args) {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
 
         Context pi4j = Pi4J.newAutoContext();
 
@@ -19,31 +21,26 @@ public class MCP4725_App {
 
         final Console console = new Console();
         console.print("==============================================================");
-        console.print("startup  MCP4725_App ");
+        console.print("startup  MCP4725App ");
         console.print("==============================================================");
 
 
         int busNum = 1;
         int address = MCP4725_Declares._MCP4725_DEFAULT_ADDRESS;
-        boolean existingSet = false;
-        boolean doReset = false;
+         boolean doReset = false;
         int registerData = 0;
         boolean setOutputEEPROM = false;
         boolean setOutputFast = false;
-        boolean dumpChip = false;
         double vref = 0;
         float eepromVolt = 0;
         float fastVolt = 0;
 
-        String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address  -t trace   \n " +
-            "  -r  reset chip  -d dumpChipData  -rde 0x???? update DAC and EEPROM \n" +
+        String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address    \n " +
+            "  -r  reset chip   -rde 0x???? update DAC and EEPROM \n" +
             " -ev eeprom voltage  -fv fast voltage \n" +
-            " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " +
-            "    trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-            " or \"off\"  Default \"info\"";
+            " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " ;
 
-        String traceLevel = "info";
-        for (int i = 0; i < args.length; i++) {
+           for (int i = 0; i < args.length; i++) {
             String o = args[i];
             if (o.contentEquals("-b")) { // bus
                 String a = args[i + 1];
@@ -57,20 +54,8 @@ public class MCP4725_App {
                 String a = args[i + 1];
                 i++;
                 vref = Float.parseFloat(a);
-            } else if (o.contentEquals("-t")) {
-                String a = args[i + 1];
-                i++;
-                traceLevel = a;
-                if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
-                    console.println("Changing trace level to : " + traceLevel);
-                } else {
-                    console.println("Changing trace level invalid  : " + traceLevel);
-                    System.exit(40);
-                }
-            } else if (o.contentEquals("-r")) {
+            }  else if (o.contentEquals("-r")) {
                 doReset = true;
-            } else if (o.contentEquals("-d")) {
-                dumpChip = true;
             } else if (o.contentEquals("-rde")) {
                 String a = args[i + 1];
                 i++;
@@ -125,10 +110,14 @@ public class MCP4725_App {
 
         }
 
-        MCP4725 dacChip = null;
-        dacChip = new MCP4725(pi4j, busNum, address, registerData, traceLevel, vref);
+        Mcp4725Driver dacChip ;
+        I2C genCallDevice = null ;
+        I2C i2cDev = createI2cDevice("MCP4725",  busNum, address, pi4j) ;
+        dacChip = new Mcp4725Driver( i2cDev, vref);
+
         if (doReset) {
-            dacChip.resetChip();
+			genCallDevice = createI2cDevice("GenCallReset", busNum,0x00, pi4j);
+            dacChip.resetChip(genCallDevice);
         }
 
         if (setOutputEEPROM) {
@@ -160,9 +149,29 @@ public class MCP4725_App {
         }
 
 
-        if (dumpChip) {
-            dacChip.dumpChip();
+        if (genCallDevice != null) {
+            genCallDevice.close();
         }
+        if (i2cDev != null) {
+            i2cDev.close();
+        }
+
+
+    }
+
+    static I2C createI2cDevice( String chipType, int bus, int address, Context pi4j) {
+        String id = String.format("0X%02x: ", bus);
+        String name = String.format("0X%02x: ", address);
+        var i2cDeviceConfig = I2C.newConfigBuilder(pi4j)
+            .bus(bus)
+            .device(address)
+            .id("" + chipType + id + " " + name)
+            .name(name)
+            .build();
+
+        return pi4j.create(i2cDeviceConfig);
+
+
     }
 
 }
