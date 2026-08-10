@@ -28,17 +28,20 @@ public class MCP4922App {
         console.print("startup  MCP4922App ");
         console.print("==============================================================");
 
-        double vref = 0;
+        double vrefA = 0;
+        double vrefB = 0;
 
         short chipSelect = 0;
         SpiBus spiBus = SpiBus.BUS_0;
 
-        double vout = 0.0;
+        double voutA = 0.0;
+        double voutB = 0.0;
         int twelveBit = 0;
         boolean setTwelveBit = false;
-        boolean setVout = false;
+        boolean setVoutA = false;
+        boolean setVoutB = false;
         boolean buffered = false;
-        boolean ga2x = true;
+        boolean ga2x = false;
         boolean shdn = true;
         boolean AB = false;    // mcp4922 only
         int onlyOne = 0;   // numerous parms a mutually exclusive
@@ -46,17 +49,22 @@ public class MCP4922App {
 
         //   shdn   ab
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP4922App");
-        String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vref float reference voltage  \n" +
-            "-tb twelveBit  -vout float Vout  -shdn true active -AB A or B   -b true buffered  -ga true 1x gain(default) \n" +
-            " -tb and -vout mutually exclusive";
+        String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vrefA float reference voltage A \n" +
+            " -vrefB float reference voltage B    -voutA float VoutA    -voutB float VoutB  \n " +
+            "-tb twelveBit  -shdn true active -AB A or B   -b true buffered  -ga2x boolean gain true 2x (1x default) \n" +
+            " -tb and -voutA  -voutB  mutually exclusive";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if (o.contentEquals("-vref")) { // reference voltage
+            if (o.contentEquals("-vrefA")) { // reference voltage
                 String a = args[i + 1];
                 i++;
-                vref = Float.parseFloat(a);
+                vrefA = Float.parseFloat(a);
+            } else if (o.contentEquals("-vrefB")) { // reference voltage
+                String a = args[i + 1];
+                i++;
+                vrefB = Float.parseFloat(a);
             } else if (o.contentEquals("-c")) { // pin
                 String a = args[i + 1];
                 chipSelect = Short.parseShort(a.substring(2), 16);
@@ -70,12 +78,12 @@ public class MCP4922App {
                 i++;
                 setTwelveBit = true;
                 twelveBit = Integer.parseInt(a);
-                if (twelveBit > 4096) {
-                    console.println("-tb cannot exceed 4096");
+                if (twelveBit > 4095) {
+                    console.println("-tb cannot exceed 4095");
                     System.exit(40);
                 }
                 onlyOne ++;
-            } else if (o.contentEquals("-ga")) { // pin
+            } else if (o.contentEquals("-ga2x")) { // pin
                 String a = args[i + 1];
                 i++;
                 ga2x =    Boolean.parseBoolean(a);
@@ -98,11 +106,17 @@ public class MCP4922App {
                     console.println("  -AB invalid ");
                     System.exit(41);
                 }
-            } else if (o.contentEquals("-vout")) { // reference voltage
+            } else if (o.contentEquals("-voutA")) { // reference voltage
                 String a = args[i + 1];
                 i++;
-                setVout = true;
-                vout = Float.parseFloat(a);
+                setVoutA = true;
+                voutA = Float.parseFloat(a);
+                onlyOne ++;
+            } else if (o.contentEquals("-voutB")) { // reference voltage
+                String a = args[i + 1];
+                i++;
+                setVoutB = true;
+                voutB = Float.parseFloat(a);
                 onlyOne ++;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
@@ -120,14 +134,18 @@ public class MCP4922App {
             System.exit(44);
         }
 
-        if ((setVout) && (vref == 0.0) ) {
-            console.println("  -vref is zero  ");
+        if ((setVoutA) && (vrefA == 0.0) ) {
+            console.println("  -vrefA is zero  ");
             System.exit(45);
         }
-
-        if (setVout && setTwelveBit) {
-            console.println("  -vout and -tb both provided, illegal combination ");
+        if ((setVoutB) && (vrefB == 0.0) ) {
+            console.println("  -vrefB is zero  ");
             System.exit(46);
+        }
+
+        if ( (setVoutA || setVoutB) && setTwelveBit) {
+            console.println("  -voutA or -voutB, and -tb provided, illegal combination ");
+            System.exit(47);
         }
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
@@ -144,8 +162,10 @@ public class MCP4922App {
         //  A/B BUF GA SHDN D11 D10 D9 D8 D7 D6 D5 D4 D3 D2 D1 D0
         Mcp4922 mcpDrv = new Mcp4922(spi);
 
-        if (setVout) {
-            mcpDrv.writeTwelvePerVoltage(vout, vref, AB, buffered, ga2x, shdn);
+        if (setVoutA) {
+            mcpDrv.writeTwelvePerVoltage(voutA, vrefA, false, buffered, ga2x, shdn);
+        } else if (setVoutB) {
+            mcpDrv.writeTwelvePerVoltage(voutB, vrefB, true, buffered, ga2x, shdn);
         } else {
             mcpDrv.writeTwelve(twelveBit, AB, buffered, ga2x, shdn);
         }

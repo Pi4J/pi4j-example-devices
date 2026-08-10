@@ -32,13 +32,13 @@ public class MCP4921App {
         boolean setTwelveBit = false;
         boolean setVout = false;
         boolean buffered = false;
-        boolean ga2x = true;
+        boolean ga2x = false;
         boolean shdn = true;
         int onlyOne = 0;   // numerous parms a mutually exclusive
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP4921App");
         String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vref float reference voltage  \n " +
-            "-tb twelveBit  -vout float Vout  -shdn boolean true active  -b boolean buffered  -ga boolean gain 1x (default) \n" +
+            "-tb twelveBit  -vout float Vout  -shdn boolean true active  -b boolean buffered  -ga2x boolean gain true 2x (1x default) \n" +
             "-tb and -vout mutually exclusive";
 
         String traceLevel = "info";
@@ -61,12 +61,12 @@ public class MCP4921App {
                 i++;
                 setTwelveBit = true;
                 twelveBit = Integer.parseInt(a);
-                if (twelveBit > 4096) {
-                    console.println("-tb cannot exceed 4096");
+                if (twelveBit > 4095) {
+                    console.println("-tb cannot exceed 4095");
                     System.exit(40);
                 }
                 onlyOne ++;
-            } else if (o.contentEquals("-ga")) { // pin
+            } else if (o.contentEquals("-ga2x")) { // pin
                 String a = args[i + 1];
                 i++;
                 ga2x = Boolean.parseBoolean(a);
