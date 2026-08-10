@@ -30,16 +30,16 @@ public class MCP4921App {
         double vout = 0.0;
         int twelveBit = 0;
         boolean setTwelveBit = false;
-        boolean multiplierMode = false;
         boolean setVout = false;
         boolean buffered = false;
-        boolean ga2x = false;
+        boolean ga2x = true;
         boolean shdn = true;
+        int onlyOne = 0;   // numerous parms a mutually exclusive
 
-        //   shdn   ab
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP4921App");
-        String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vref float reference voltage  -tb twelveBit  " +
-            " -vout float Vout  -shdn boolean   -b boolean buffered  -ga boolean gain 2x";
+        String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vref float reference voltage  \n " +
+            "-tb twelveBit  -vout float Vout  -shdn boolean true active  -b boolean buffered  -ga boolean gain 1x (default) \n" +
+            "-tb and -vout mutually exclusive";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -61,10 +61,11 @@ public class MCP4921App {
                 i++;
                 setTwelveBit = true;
                 twelveBit = Integer.parseInt(a);
-                if (twelveBit > 0x4096) {
-                    console.println("-tb cannot exceed 0x4096");
+                if (twelveBit > 4096) {
+                    console.println("-tb cannot exceed 4096");
                     System.exit(40);
                 }
+                onlyOne ++;
             } else if (o.contentEquals("-ga")) { // pin
                 String a = args[i + 1];
                 i++;
@@ -82,6 +83,7 @@ public class MCP4921App {
                 i++;
                 setVout = true;
                 vout = Float.parseFloat(a);
+                onlyOne ++;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(41);
@@ -92,9 +94,14 @@ public class MCP4921App {
             }
         }
 
+        if (onlyOne > 1 ) {
+            console.println(" mutually exclusive parms used.");
+            console.println(helpString);
+            System.exit(43);
+        }
 
-        if ((setVout) || vref < vout) {
-            console.println("  -vref less than -vout  ");
+        if ((setVout) && (vref == 0.0) ) {
+            console.println("  -vref is zero  ");
             System.exit(43);
         }
 

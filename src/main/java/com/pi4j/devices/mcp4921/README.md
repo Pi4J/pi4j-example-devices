@@ -30,9 +30,9 @@ https://www.futurlec.com/SFMicrochip/MCP4921.shtml
 -s HEX value SPI bus #  
 -tb twelveBit value to write to chip
 -vout float Vout Used in conjunction with vref to calculate twelveBit value
--shdn boolean false enabled
+-shdn boolean true active
 -b boolean buffered operation
--ga boolean true gain 2x
+-ga boolean true gain 1x
 
 MCP4922 only
 -AB  A or B     Use VoutA or VoutB
@@ -41,7 +41,7 @@ MCP4922 only
 
 
 Validate Vout was correctly set
-./runMcp3008.sh -vref 3.3 -p 0x0PiN$
+./runMcp3008.sh -vref 3.3 -p 0x0(PiN)
 
 
 
@@ -54,20 +54,20 @@ sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -tb 4095
 
 
 Updates using voltage value     3.3 V
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false -vref 3.3 -vout 3.3
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 3.3
 
 
 Disable bit set    Expect no Vout
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 0.0
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false -vref 3.3 -vout 3.0
 
 Multiplier bit set   Check twelveBits written to the chip
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false -vref 3.3 -vout 3.3 
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 3.3 
 
 Buffered bit set   Check twelveBits written to the chip
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false -vref 3.3 -vout 3.3   -b true
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 3.3   -b true
 
-Gain 2x bit set  Check twelveBits written to the chip
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false -vref 3.3 -vout 3.3 -ga true
+Gain 1x bit set  Check twelveBits written to the chip
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 3.3 -ga true
 
 
 

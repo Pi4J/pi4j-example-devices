@@ -36,17 +36,19 @@ public class MCP4922App {
         double vout = 0.0;
         int twelveBit = 0;
         boolean setTwelveBit = false;
-        boolean multiplierMode = false;
         boolean setVout = false;
         boolean buffered = false;
         boolean ga2x = true;
         boolean shdn = true;
         boolean AB = false;    // mcp4922 only
+        int onlyOne = 0;   // numerous parms a mutually exclusive
+
 
         //   shdn   ab
         console.title("<-- The Pi4J V2 Project Extension  -->", "MCP4922App");
-        String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vref float reference voltage  -tb twelveBit  " +
-            " -vout float Vout  -shdn boolean -AB A or B   -b boolean buffered  -ga boolean gain 2x";
+        String helpString = " parms:  -c HEX value chip select     -s HEX value SPI bus #  -vref float reference voltage  \n" +
+            "-tb twelveBit  -vout float Vout  -shdn true active -AB A or B   -b true buffered  -ga true 1x gain(default) \n" +
+            " -tb and -vout mutually exclusive";
 
         String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
@@ -68,22 +70,23 @@ public class MCP4922App {
                 i++;
                 setTwelveBit = true;
                 twelveBit = Integer.parseInt(a);
-                if (twelveBit > 0x4096) {
-                    console.println("-tb cannot exceed 0x4096");
+                if (twelveBit > 4096) {
+                    console.println("-tb cannot exceed 4096");
                     System.exit(40);
                 }
+                onlyOne ++;
             } else if (o.contentEquals("-ga")) { // pin
                 String a = args[i + 1];
                 i++;
-                ga2x =   Boolean.parseBoolean(a);
+                ga2x =    Boolean.parseBoolean(a);
             } else if (o.contentEquals("-b")) { // pin
                 String a = args[i + 1];
                 i++;
-                buffered =  Boolean.parseBoolean(a);
+                buffered =   Boolean.parseBoolean(a);
             } else if (o.contentEquals("-shdn")) {
                 String a = args[i + 1];
                 i++;
-                shdn = Boolean.getBoolean(a);
+                shdn =  Boolean.parseBoolean(a);
             } else if (o.contentEquals("-AB")) {
                 String a = args[i + 1];
                 i++;
@@ -100,6 +103,7 @@ public class MCP4922App {
                 i++;
                 setVout = true;
                 vout = Float.parseFloat(a);
+                onlyOne ++;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(42);
@@ -110,15 +114,20 @@ public class MCP4922App {
             }
         }
 
-
-        if ((setVout) || vref < vout) {
-            console.println("  -vref less than -vout  ");
+        if (onlyOne > 1 ) {
+            console.println(" mutually exclusive parms used.");
+            console.println(helpString);
             System.exit(44);
+        }
+
+        if ((setVout) && (vref == 0.0) ) {
+            console.println("  -vref is zero  ");
+            System.exit(45);
         }
 
         if (setVout && setTwelveBit) {
             console.println("  -vout and -tb both provided, illegal combination ");
-            System.exit(45);
+            System.exit(46);
         }
 
         var spiConfig = Spi.newConfigBuilder(pi4j)

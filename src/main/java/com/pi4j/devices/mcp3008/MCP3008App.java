@@ -17,7 +17,7 @@ public class MCP3008App {
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "TRACE");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "NONE");
         var console = new Console();
         Context pi4j = Pi4J.newAutoContext();
         boolean doAll = true;
@@ -118,10 +118,10 @@ public class MCP3008App {
         double rval = 0.0;
         if (vref > 0) {
             rval = ((val * vref) / 1024 );
-            console.println("\n      Channel : " + channel  + " A/D read input voltage : " + rval + " \n");
+            console.println("      Channel : " + channel  + " voltage : " + rval );
         }else{
             rval = val;
-            console.println("\n      Channel : " + channel + " read : " + rval + " \n");
+            console.println("      Channel : " + channel + " read : " + rval );
         }
         return rval ;
     }
