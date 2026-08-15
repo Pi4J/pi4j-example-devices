@@ -34,11 +34,13 @@ public class MCP4725App {
         double vref = 0;
         float eepromVolt = 0;
         float fastVolt = 0;
+        int onlyOne = 0;   // numerous parms a mutually exclusive
 
         String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address    \n " +
             "  -r  reset chip   -rde 0x???? update DAC and EEPROM \n" +
             " -ev eeprom voltage  -fv fast voltage \n" +
-            " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " ;
+            " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " +
+            "-rde -ev -fv -rdf mutually exclusive" ;
 
            for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -54,6 +56,7 @@ public class MCP4725App {
                 String a = args[i + 1];
                 i++;
                 vref = Float.parseFloat(a);
+                onlyOne ++;
             }  else if (o.contentEquals("-r")) {
                 doReset = true;
             } else if (o.contentEquals("-rde")) {
@@ -65,6 +68,7 @@ public class MCP4725App {
                     console.println("-rde cannot exceed 0x0fff");
                     System.exit(36);
                 }
+                onlyOne ++;
             } else if (o.contentEquals("-rdf")) {
                 String a = args[i + 1];
                 i++;
@@ -74,6 +78,7 @@ public class MCP4725App {
                     console.println("-rdf cannot exceed 0x0fff");
                     System.exit(37);
                 }
+                onlyOne ++;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
@@ -81,10 +86,12 @@ public class MCP4725App {
                 String a = args[i + 1];
                 i++;
                 eepromVolt = Float.parseFloat(a);
+                onlyOne ++;
             } else if (o.contentEquals("-ev")) { // fast volts
                 String a = args[i + 1];
                 i++;
                 fastVolt = Float.parseFloat(a);
+                onlyOne ++;
             } else {
                 console.println("  !!! Invalid Parm " + args);
                 console.println(helpString);
@@ -92,6 +99,11 @@ public class MCP4725App {
             }
         }
 
+        if (onlyOne > 1 ) {
+            console.println(" mutually exclusive parms used.");
+            console.println(helpString);
+            System.exit(43);
+        }
 
         if (vref == 0) {
             console.println("-vref is zero");

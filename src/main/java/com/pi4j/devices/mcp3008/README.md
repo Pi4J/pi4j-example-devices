@@ -13,8 +13,8 @@ https://datasheetspdf.com/pdf-file/439989/MicrochipTechnology/MCP3008/1
 Default assumption
 Chip connected to SPI0 CE0
 
-                 5V  ---------  ch0             Vdd  ------------  5V
-                3.3v ---------  ch1             Vref ------------  5V
+                 5V  ---------  ch0             Vdd  ------------  3.3V
+                3.3v ---------  ch1             Vref ------------  3.3V
                                 ch2             Agnd ------------  Gnd
                                 ch3             Clk  ------------  GPIO11 SCLK
                                 ch4             Dout ------------  GPIO9  MISO
@@ -29,7 +29,7 @@ Chip connected to SPI0 CE0
 -vref option: if > 0, the will display calculated Channel input voltage.
 
 To monitor all pins 0 Vref of 5.0 volts
-sudo ./runMcp3008.sh -vref 5.0
+sudo ./runMcp3008.sh -vref 3.3
 
 To monitor only pin 0
 sudo ./runMcp3008.sh -p 0x0
@@ -40,7 +40,7 @@ sudo ./runMcp3008.sh -p 0x0  -vref 3.3
 chip select 0
 ./runMcp3008.sh -p 0x0 -t trace -vref 3.3 -c 0x00
 
-_Use SPI 1_
+_Use SPI 1_    If configured
 sudo ./runMcp3008.sh -p 0x0 -s 0x01
 
 Use ChipSelect 1
