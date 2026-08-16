@@ -37,7 +37,7 @@ https://ww1.microchip.com/downloads/en/DeviceDoc/22250A.pdf
 -voutA float Vout Used in conjunction with vrefA to calculate twelveBit value    Note 1.
 -voutB float Vout Used in conjunction with vrefB to calculate twelveBit value    Note 1.
 -shdn boolean true active
--b boolean buffered operation
+-b boolean true buffered operation
 -ga2x boolean true gain 2x
 -AB  A or B     Use VoutA or VoutB   Note 1.
 
@@ -77,19 +77,39 @@ Updates using voltage value     3.3 V  using VoutB
 sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefB 3.3 -voutB 3.3 -AB B
 
 Disable bit set    Expect no VoutA
-sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn false -vrefA 3.3 -voutA 2.0  -AB A
+sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn false -AB A
 
 Disable bit set    Expect no VoutB
-sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn false -vrefB 3.3 -voutB 2.0   -AB B
+sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn false -AB B
 
 Buffered bit set   Check twelveBits written to the chip
 sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefA 3.3 -voutA 3.3   -AB A  -b true
 
-Gain 2x bit set  Check twelveBits written to the chip  vout 2.0
+Gain 2x bit set  Check twelveBits written to the chip  vout 1.0
 sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefA 3.3 -voutA 1.0 -ga2x true -AB A
 
 
-                                                                                                    
+voutA 1.2v
+./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefA 3.3 -tb 1500 -AB A
+
+voutA 2.4v
+./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefA 3.3 -tb 1500 -AB A -ga2x true
 
 
 
+voutB 1.2v
+./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefA 3.3 -tb 1500 -AB B
+
+voutB 2.4v
+./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefA 3.3 -tb 1500 -AB B -ga2x true
+
+
+Gain 2x bit set  Check twelveBits written to the chip  vout 1.0
+sudo ./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefB 3.3 -voutB 1.0 -ga2x true -AB B
+
+
+voutBA 1.2v
+./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefB 3.3 -tb 1500 -AB B
+
+voutB 2.4v
+./runMcp4922.sh -s 0x00 -c 0x01 -shdn true -vrefB 3.3 -tb 1500 -AB B -ga2x true

@@ -8,7 +8,7 @@ package com.pi4j.devices.mcp4922;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.io.da.mcp492x.Mcp4922;
+import com.pi4j.drivers.io.da.mcp49xx.Mcp49x2Driver;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiMode;
@@ -43,7 +43,7 @@ public class MCP4922App {
         boolean buffered = false;
         boolean ga2x = false;
         boolean shdn = true;
-        boolean AB = false;    // mcp4922 only
+        int AB = 0;        // mcp4922 only
         int onlyOne = 0;   // numerous parms a mutually exclusive
 
 
@@ -99,9 +99,9 @@ public class MCP4922App {
                 String a = args[i + 1];
                 i++;
                 if (a.equalsIgnoreCase("A")) {
-                    AB = false;
+                    AB = 0;
                 } else if (a.equalsIgnoreCase("B")) {
-                    AB = true;
+                    AB = 1;
                 } else {
                     console.println("  -AB invalid ");
                     System.exit(41);
@@ -160,14 +160,20 @@ public class MCP4922App {
 
         //                  12 data bits
         //  A/B BUF GA SHDN D11 D10 D9 D8 D7 D6 D5 D4 D3 D2 D1 D0
-        Mcp4922 mcpDrv = new Mcp4922(spi);
+        Mcp49x2Driver mcpDrv = new Mcp49x2Driver(spi,vrefA, vrefB );
+
+        mcpDrv.setBuffered(AB, buffered);
+        mcpDrv.set2xGain(AB,ga2x);
+        if (!shdn) {
+            mcpDrv.shutdown(AB);
+        }
 
         if (setVoutA) {
-            mcpDrv.writeTwelvePerVoltage(voutA, vrefA, false, buffered, ga2x, shdn);
+            mcpDrv.setVoltage(AB, voutA);
         } else if (setVoutB) {
-            mcpDrv.writeTwelvePerVoltage(voutB, vrefB, true, buffered, ga2x, shdn);
+            mcpDrv.setVoltage(AB, voutB);
         } else {
-            mcpDrv.writeTwelve(twelveBit, AB, buffered, ga2x, shdn);
+            mcpDrv.setDigitalValue(AB, twelveBit);
         }
 
 

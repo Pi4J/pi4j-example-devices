@@ -2,7 +2,7 @@ package com.pi4j.devices.mcp4921;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.io.da.mcp492x.Mcp4921;
+import com.pi4j.drivers.io.da.mcp49xx.Mcp49x1Driver;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
 import com.pi4j.io.spi.SpiMode;
@@ -122,13 +122,18 @@ public class MCP4921App {
 
         //                  12 data bits
         //  A/B BUF GA SHDN D11 D10 D9 D8 D7 D6 D5 D4 D3 D2 D1 D0
-        Mcp4921 mcpDrv = new Mcp4921(spi);
+        Mcp49x1Driver mcpDrv = new Mcp49x1Driver(spi, 12, vref);
 
 
+        mcpDrv.setBuffered(buffered);
+        mcpDrv.set2xGain(ga2x);
+        if (!shdn) { // todo    should i flip the logic
+            mcpDrv.shutdown(0);
+        }
         if (setVout) {
-            mcpDrv.writeTwelvePerVoltage(vout, vref, buffered, ga2x, shdn);
+            mcpDrv.setVoltage(0, vout) ;
         } else {
-            mcpDrv.writeTwelve(twelveBit, buffered, ga2x, shdn);
+            mcpDrv.setDigitalValue(0, twelveBit);
         }
 
 
