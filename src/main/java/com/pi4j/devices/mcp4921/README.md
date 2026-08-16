@@ -31,7 +31,7 @@ https://www.futurlec.com/SFMicrochip/MCP4921.shtml
 -tb twelveBit value to write to chip
 -vout float Vout Used in conjunction with vref to calculate twelveBit value
 -shdn boolean true active
--b boolean buffered operation
+-b boolean true buffered operation
 -ga2x boolean true gain 2x
 
 MCP4922 only
@@ -58,17 +58,21 @@ sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 1.3
 
 
 Disable bit set    Expect no Vout
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false -vref 3.3 -vout 3.0
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn false 
 
 
 Buffered bit set   Check twelveBits written to the chip
 sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 3.3   -b true
 
 Gain 2x bit set  Check twelveBits written to the chip   outv = 2.0
-sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 1.0 -vout 3.3 -ga2x true
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -vout 2.0 -ga2x true
 
 
+Gain 2x bit set  Check twelveBits written to the chip   outv = 2.4
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -tb 1500 -ga2x true
 
+Gain 2x bit clear  Check twelveBits written to the chip   outv = 1.2
+sudo ./runMcp4921.sh -s 0x00 -c 0x01 -shdn true -vref 3.3 -tb 1500 -ga2x false
 
 
 
