@@ -74,7 +74,7 @@ public class MCP4725App {
                 setOutputFast = true;
                 registerData = Integer.parseInt(a);
                 if (registerData < 0 || registerData > 4095) {
-                    console.println("-rdf cannot exceed 4095");
+                    console.println("-rdf must be in range 0..4095");
                     System.exit(37);
                 }
                 onlyOne ++;
@@ -104,19 +104,19 @@ public class MCP4725App {
             System.exit(43);
         }
 
-        if (vref == 0) {
-            console.println("-vref is zero");
+        if ( (vref == 0) || (vref < 0) ){
+            console.println("-vref is zero or less than zero");
             System.exit(50);
 
         }
-        if (eepromVolt > vref) {
-            console.println("-ev greater than -vref");
+        if ( (eepromVolt > vref)  || (eepromVolt < 0) ) {
+            console.println("-ev greater than -vref, or less than zero");
             System.exit(51);
 
         }
 
-        if (fastVolt > vref) {
-            console.println("-ef greater than -vref");
+        if ( (fastVolt > vref) || (fastVolt < 0) ) {
+            console.println("-ef greater than -vref, or less than zero");
             System.exit(51);
 
         }
@@ -133,7 +133,11 @@ public class MCP4725App {
 
         if (setOutputEEPROM) {
             dacChip.setEepromEnabled(true);
-            dacChip.setDigitalValue(registerData);
+            try {
+                dacChip.setDigitalValue(registerData);
+            } catch (Exception e) {
+                console.println("Error occurred setting DAC output via register value failed. \n Exception "  + e.getMessage());
+            }
             dacChip.setEepromEnabled(false);
         }
         if (setOutputFast) {
@@ -142,7 +146,11 @@ public class MCP4725App {
 
         if (eepromVolt > 0) {
             dacChip.setEepromEnabled(true);
-            dacChip.setVoltage(0, eepromVolt);
+            try {
+                dacChip.setVoltage(0, eepromVolt);
+            } catch (Exception e) {
+                console.println("Error occurred setting DAC output via target voltage failed. \n Exception "  + e.getMessage());
+            }
             dacChip.setEepromEnabled(false);
         }
 
