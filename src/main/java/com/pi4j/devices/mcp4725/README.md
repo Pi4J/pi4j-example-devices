@@ -54,7 +54,7 @@ sudo ./runMcp4725.sh -b 0x01 -a 0x62 -ev 3.1 -r -vref 3.3
 
 
 
-Test program.  Loop indefinitely execute the shell command
+Test program.  Loop indefinitely executing the shell command
 
 ./runLoop.sh  program.sh args ......
 
