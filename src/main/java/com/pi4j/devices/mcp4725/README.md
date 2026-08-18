@@ -44,7 +44,7 @@ Updates using voltage value
 To Update DAC Fast, set to 1.8v of reference voltage     
 sudo ./runMcp4725.sh -b 0x01 -a 0x62 -fv 1.8 -vref 3.3
 
-To Update DAC/eeprom Fast, set to 3.3v
+To Update DAC and EEPROM, set to 3.3v
 sudo ./runMcp4725.sh -b 0x01 -a 0x62 -ev 3.3 -vref 3.3
 
 To Update DAC Fast, reset chip,  set to 3.1     
