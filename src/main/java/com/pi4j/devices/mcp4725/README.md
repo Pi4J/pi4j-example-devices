@@ -30,21 +30,21 @@ https://datasheetspdf.com/pdf-file/634126/MicrochipTechnology/MCP4725/1
 Updates using raw binary value
 To Update DAC and EEPROM, set to 50 % of reference voltage Vin of 3.3 volts
 
-sudo ./runMcp4725.sh -b 0x01 -a 0x62 -rde 0x7ff -vref 3.3
+sudo ./runMcp4725.sh -b 0x01 -a 0x62 -rde 2047 -vref 3.3
 
 To Update DAC Fast, set to 50 % of reference voltage     
-sudo ./runMcp4725.sh -b 0x01 -a 0x62 -rdf 0x7fe -vref 3.3
+sudo ./runMcp4725.sh -b 0x01 -a 0x62 -rdf 2047 -vref 3.3
 
 
 To Update DAC Fast, set to 100 % of reference voltage   
-sudo ./runMcp4725.sh -b 0x01 -a 0x62 -rdf 0x0fff -r -vref 3.3
+sudo ./runMcp4725.sh -b 0x01 -a 0x62 -rdf 4095 -r -vref 3.3
 
 Updates using voltage value
 
 To Update DAC Fast, set to 1.8v of reference voltage     
 sudo ./runMcp4725.sh -b 0x01 -a 0x62 -fv 1.8 -vref 3.3
 
-To Update DAC Fast, set to 3.3v
+To Update DAC and EEPROM, set to 3.3v
 sudo ./runMcp4725.sh -b 0x01 -a 0x62 -ev 3.3 -vref 3.3
 
 To Update DAC Fast, reset chip,  set to 3.1     
@@ -54,7 +54,7 @@ sudo ./runMcp4725.sh -b 0x01 -a 0x62 -ev 3.1 -r -vref 3.3
 
 
 
-Test program.  Loop indefinitely executinf the shell command
+Test program.  Loop indefinitely executing the shell command
 
 ./runLoop.sh  program.sh args ......
 

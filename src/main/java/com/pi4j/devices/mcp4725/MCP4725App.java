@@ -37,9 +37,9 @@ public class MCP4725App {
         int onlyOne = 0;   // numerous parms a mutually exclusive
 
         String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address    \n " +
-            "  -r  reset chip   -rde 0x???? update DAC and EEPROM \n" +
+            "  -r  reset chip   -rde  update DAC and EEPROM \n" +
             " -ev eeprom voltage  -fv fast voltage \n" +
-            " -rdf 0x????update DAC fast   -vref decimal reference voltage\n " +
+            " -rdf DAC value update fast   -vref decimal reference voltage\n " +
             "-rde -ev -fv -rdf mutually exclusive" ;
 
            for (int i = 0; i < args.length; i++) {
@@ -56,16 +56,15 @@ public class MCP4725App {
                 String a = args[i + 1];
                 i++;
                 vref = Float.parseFloat(a);
-                onlyOne ++;
             }  else if (o.contentEquals("-r")) {
                 doReset = true;
             } else if (o.contentEquals("-rde")) {
                 String a = args[i + 1];
                 i++;
-                registerData = (Integer.parseInt(a.substring(2), 16));
+                registerData = Integer.parseInt(a);
                 setOutputEEPROM = true;
-                if (registerData > 0x0fff) {
-                    console.println("-rde cannot exceed 0x0fff");
+                if (registerData < 0 || registerData > 4095) {
+                    console.println("-rde must be in range 0..4095");
                     System.exit(36);
                 }
                 onlyOne ++;
@@ -73,21 +72,21 @@ public class MCP4725App {
                 String a = args[i + 1];
                 i++;
                 setOutputFast = true;
-                registerData = (Integer.parseInt(a.substring(2), 16));
-                if (registerData > 0x0fff) {
-                    console.println("-rdf cannot exceed 0x0fff");
+                registerData = Integer.parseInt(a);
+                if (registerData < 0 || registerData > 4095) {
+                    console.println("-rdf cannot exceed 4095");
                     System.exit(37);
                 }
                 onlyOne ++;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
-            } else if (o.contentEquals("-fv")) {  // eeprom volts
+            } else if (o.contentEquals("-ev")) {  // eeprom volts
                 String a = args[i + 1];
                 i++;
                 eepromVolt = Float.parseFloat(a);
                 onlyOne ++;
-            } else if (o.contentEquals("-ev")) { // fast volts
+            } else if (o.contentEquals("-fv")) { // fast volts
                 String a = args[i + 1];
                 i++;
                 fastVolt = Float.parseFloat(a);
@@ -133,31 +132,23 @@ public class MCP4725App {
         }
 
         if (setOutputEEPROM) {
-            boolean worked = dacChip.setOutputEEPROM(registerData);
-            if (!worked) {
-                console.println("setOutputEEPROM failed");
-            }
+            dacChip.setEepromEnabled(true);
+            dacChip.setDigitalValue(registerData);
+            dacChip.setEepromEnabled(false);
         }
         if (setOutputFast) {
-            boolean worked = dacChip.setOutputFast(registerData);
-            if (!worked) {
-                console.println("setOutputFast failed");
-            }
+            dacChip.setDigitalValue(registerData);
         }
 
         if (eepromVolt > 0) {
-            boolean worked = dacChip.setOutputVoltEEPROM(eepromVolt);
-            if (!worked) {
-                console.println("setOutputVoltEEPROM failed");
-            }
+            dacChip.setEepromEnabled(true);
+            dacChip.setVoltage(0, eepromVolt);
+            dacChip.setEepromEnabled(false);
         }
 
 
         if (fastVolt > 0) {
-            boolean worked = dacChip.setOutputVoltFast(fastVolt);
-            if (!worked) {
-                console.println("setOutputVoltFast failed");
-            }
+            dacChip.setVoltage(fastVolt);
         }
 
 
