@@ -63,10 +63,9 @@ public class MCP4725App {
                 i++;
                 registerData = Integer.parseInt(a);
                 setOutputEEPROM = true;
-if (registerData < 0 || registerData > 4095) {
-    console.println("-rde must be in range 0..4095");
-    System.exit(36);
-}
+                if (registerData < 0 || registerData > 4095) {
+                    console.println("-rde must be in range 0..4095");
+                    System.exit(36);
                 }
                 onlyOne ++;
             } else if (o.contentEquals("-rdf")) {
@@ -74,7 +73,7 @@ if (registerData < 0 || registerData > 4095) {
                 i++;
                 setOutputFast = true;
                 registerData = Integer.parseInt(a);
-                if (registerData > 4095) {
+                if (registerData < 0 || registerData > 4095) {
                     console.println("-rdf cannot exceed 4095");
                     System.exit(37);
                 }
