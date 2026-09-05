@@ -5,35 +5,45 @@ package com.pi4j.devices.mcp4728;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.io.da.mcp472x.Mcp4728Driver;
-import com.pi4j.io.gpio.digital.DigitalInput;
-import com.pi4j.io.gpio.digital.DigitalInputConfigBuilder;
-import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CImplementation;
 import com.pi4j.util.Console;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *   Support MCP4728 DAC.
  *<p>
- *   Support the single channel functions of the chip. Example: you cannot set
+ *   Support the single channel at a time functions of the chip. Example: you cannot set
  *   all four channels vref bit in a single call. Rather this would require
  *   four separate calls to the driver code.
  *</p>
  *   <p>
- *  *The MCP4728 ships with device address 0x60. To set other address the DAC config registers
- *  * must be updated. The update process requires the LDAC pin be toggled at a specific point
- *  * in the I2C command as it is clocked into the chip. This GPIO control within the I2C
- *  * traffic is not possible with Pi4j.  To accomplish this would require ordering the chip with
- *  * the address programmed, or use of an MCU.
- *  * </p>
- *  * @see <a href="https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22187E.pdf">MCP4728</a>
- *  *
+ *  The MCP4728 ships with device address 0x60. To set other address the DAC config registers
+ *   must be updated. The update process requires the LDAC pin be toggled at a specific point
+ *   in the I2C command as it is clocked into the chip. This GPIO control within the I2C
+ *   traffic is not possible with Pi4j.  To accomplish this would require ordering the chip with
+ *   the address programmed, or use of an MCU.
+ *   </p>
+ *   @see <a href="https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22187E.pdf">MCP4728</a>
+ *
+ *
+ * The MCP4728 chip contains an EEPROM.  When Powered-on or RESET, the EEPROM contents are used to update
+ * the DAC volatile registers, restoring the configured output voltages.  The program arguments that result
+ * in the EEPROM being updated that code examples include the  statement  dacChip.setEepromEnabled(true);.
+ * After this method all subsequent methods will ensure the EEPROM  is updated.  To stop this behavior the
+ *  examples call dacChip.setEepromEnabled(false);
+ *
+ *  The example uses the letters A B C D to specify the channel. This conforms to the chips Datasheet documentation.
+ *  Within the driver method signatures and code the channel is specified with an int.
  *
  */
 public class MCP4728App {
 
     static void main(String[] args) {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "NONE");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
+        Logger logger = LoggerFactory.getLogger(MCP4728App.class);
+        logger.trace(">>> Enter: init");
 
         Context pi4j = Pi4J.newAutoContext();
 
@@ -44,31 +54,30 @@ public class MCP4728App {
 
 
 
-        int dataPinNum = -1;
         int busNum = 1;
         int address = MCP4728_Declares._MCP4728_DEFAULT_ADDRESS;
         int channel = 0;
         boolean doReset = false;
         int registerData = 0;
-        boolean setOutputEEPROM = false;
-        boolean setOutputFast = false;
-        double vref = 0;
-        float eepromVolt = 0;
-        float fastVolt = 0;
+         double vref = 0;
+        float volts = 0;
         int onlyOne = 0;   // numerous parms a mutually exclusive
         int gainBit = 0;
         int vrefBit = 1;
         boolean setVrefBit = false;
         boolean setGainBit = false;
-        boolean updateEEPROM = false;
+        boolean setOutputDigital = false;
+        boolean setOutputVotage = false;
+        boolean persistValues = false;
 
-        String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address  -d  RDY GPIO number  \n " +
-            "  -r  reset chip  -ue update EEPROM -rde  update DAC and EEPROM \n" +
-            " -ev eeprom voltage  -fv fast voltage \n" +
-            " -rdf DAC value update fast   -vdd decimal reference voltage\n " +
-            " -ch channel A B C D  -sv vref 0 or 1  -sg gain 0 or 1" +
-            "-rde -ev -fv -rdf -sv -sg mutually exclusive " ;
 
+
+        String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address   \n " +
+            "  -r  reset chip    -ch channel A B C D    -d  digital value (0 ... 4095) \n" +
+            "  -v  voltage  (0 ... vdd)   -pu  persist values true/false  -vdd decimal reference voltage \n" +
+            " -sv vrefBit 0 or 1    -sg gainBit 0 or 1 \n" +
+            "-d -v -sv -sg mutually exclusive  \n" ;
+        ;
            for (int i = 0; i < args.length; i++) {
             String o = args[i];
             if (o.contentEquals("-b")) { // bus
@@ -79,17 +88,13 @@ public class MCP4728App {
                 String a = args[i + 1];
                 i++;
                 address = Integer.parseInt(a.substring(2), 16);
-            } else if (o.contentEquals("-d")) {
-                String a = args[i + 1];
-                dataPinNum = Integer.parseInt(a);
-                i++;
             }  else if (o.contentEquals("-sv")) {
                 String a = args[i + 1];
                 vrefBit  = Integer.parseInt(a);
                 setVrefBit = true;
-                if ( (vrefBit  <0) || (vrefBit > 1) ){
-                    console.println("-vref must be in range 0..1");
-                    System.exit(54);
+                if ( (gainBit  <0) || (gainBit > 1) ){
+                    console.println("vrefBit must be in range 0..1");
+                    System.exit(55);
                 }
                 i++;
                 onlyOne ++;
@@ -98,7 +103,7 @@ public class MCP4728App {
                 gainBit  = Integer.parseInt(a);
                 setGainBit = true;
                 if ( (gainBit  <0) || (gainBit > 1) ){
-                    console.println("-vref must be in range 0..1");
+                    console.println("gainBit must be in range 0..1");
                     System.exit(55);
                 }
                 i++;
@@ -124,53 +129,36 @@ public class MCP4728App {
                 vref = Float.parseFloat(a);
             }  else if (o.contentEquals("-r")) {
                 doReset = true;
-            } else if (o.contentEquals("-ue")) {
-                 updateEEPROM = true;
-            } else if (o.contentEquals("-rde")) {
+            }else if (o.contentEquals("-pv")) {
+                String a = args[i + 1];
+                persistValues = Boolean.parseBoolean(a);
+                i++;
+             } else if (o.contentEquals("-d")) {
                 String a = args[i + 1];
                 i++;
                 registerData = Integer.parseInt(a);
-                setOutputEEPROM = true;
+                setOutputDigital = true;
                 if (registerData < 0 || registerData > 4095) {
                     console.println("-rde must be in range 0..4095");
                     System.exit(36);
                 }
                 onlyOne ++;
-            } else if (o.contentEquals("-rdf")) {
-                String a = args[i + 1];
-                i++;
-                setOutputFast = true;
-                registerData = Integer.parseInt(a);
-                if (registerData < 0 || registerData > 4095) {
-                    console.println("-rdf must be in range 0..4095");
-                    System.exit(37);
-                }
-                onlyOne ++;
-            } else if (o.contentEquals("-h")) {
+            }  else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
-            } else if (o.contentEquals("-ev")) {  // eeprom volts
+            } else if (o.contentEquals("-v")) {  // eeprom volts
                 String a = args[i + 1];
                 i++;
-                eepromVolt = Float.parseFloat(a);
-                onlyOne ++;
-            } else if (o.contentEquals("-fv")) { // fast volts
-                String a = args[i + 1];
-                i++;
-                fastVolt = Float.parseFloat(a);
+                setOutputVotage = true;
+                volts = Float.parseFloat(a);
                 onlyOne ++;
             } else {
-                console.println("  !!! Invalid Parm " + args);
+                console.println("  !!! Invalid Parm " + o);
                 console.println(helpString);
                 System.exit(42);
             }
         }
 
-       if ( dataPinNum == -1 ){
-           console.println(" Parameter -d, gpio BCM must be set.");
-           console.println(helpString);
-           System.exit(54);
-       }
         if (onlyOne > 1 ) {
             console.println(" mutually exclusive parms used.");
             console.println(helpString);
@@ -182,13 +170,13 @@ public class MCP4728App {
             System.exit(50);
 
         }
-        if ( (eepromVolt > vref)  || (eepromVolt < 0) ) {
-            console.println("-ev greater than -vdd, or less than zero");
+        if ( (volts > vref)  || (volts < 0) ) {
+            console.println("-v greater than -vdd, or less than zero");
             System.exit(51);
 
         }
 
-        if ( (fastVolt > vref) || (fastVolt < 0) ) {
+        if ( (volts > vref) || (volts < 0) ) {
             console.println("-ef greater than -vdd, or less than zero");
             System.exit(52);
 
@@ -196,11 +184,10 @@ public class MCP4728App {
 
         Mcp4728Driver dacChip ;
         I2C genCallDevice = null ;
-        DigitalInput readyPin = createInputGPIO(dataPinNum, pi4j);
-        
+
 
         I2C i2cDev = createI2cDevice("MCP4728",  busNum, address, I2CImplementation.DIRECT, pi4j) ;
-        dacChip = new Mcp4728Driver( i2cDev, readyPin, vref);
+        dacChip = new Mcp4728Driver( i2cDev,  vref);
 
 
         if (doReset) {
@@ -208,7 +195,9 @@ public class MCP4728App {
             dacChip.resetChip(genCallDevice);
         }
 
-        console.println(dacChip.materializeDacDescription());
+        logger.info("\nBefore state : \n" + dacChip);
+
+        dacChip.setEepromEnabled(persistValues);
 
         if (setGainBit) {
             dacChip.setGain(channel,gainBit);
@@ -218,37 +207,17 @@ public class MCP4728App {
             dacChip.setVref(channel,vrefBit);
         }
 
-        if (setOutputEEPROM) {
-            try {
-                dacChip.setDigitalValueDACEEPROM(channel, registerData);
-            } catch (Exception e) {
-                console.println("Error occurred setting DAC output via register value failed. \n Exception "  + e.getMessage());
-            }
-        }
-        if (setOutputFast) {
-            dacChip.setDigitalValueDAC(channel, registerData);
+        if (setOutputDigital) {
+            dacChip.setDigitalValue(channel, registerData);
         }
 
-        if (eepromVolt > 0) {
-            try {
-                dacChip.setVoltage(channel, eepromVolt);
-            } catch (Exception e) {
-                console.println("Error occurred setting DAC output via target voltage failed. \n Exception "  + e.getMessage());
-            }
+        if (setOutputVotage) {
+            dacChip.setVoltage(channel, volts);
         }
 
 
-        if (fastVolt > 0) {
-            dacChip.materializeDacRegs() ;
-            dacChip.setVoltage(channel, fastVolt);
-            dacChip.materializeDacRegs() ;
-        }
 
-        if (updateEEPROM) {
-            dacChip.syncDACToEEPROM();
-        }
-
-        console.println(dacChip.materializeDacDescription());
+        logger.info("\nCompletion state : \n" + dacChip);
 
 
         if (genCallDevice != null) {
@@ -262,20 +231,6 @@ public class MCP4728App {
     }
 
 
-    /**
-     *
-     * @param pinNumber GPIO number
-     * @param pi4j      Context
-     * @return
-     */
-    static DigitalInput createInputGPIO(int pinNumber,  Context pi4j){
-        DigitalInputConfigBuilder inputConfig1 = DigitalInput.newConfigBuilder(pi4j)
-            .id("Data_In_" + pinNumber)
-            .name("Data_In_" + pinNumber)
-            .bcm(pinNumber)
-            .pull(PullResistance.PULL_UP);
-        return pi4j.create(inputConfig1);
-    }
 
     /**
      *
@@ -283,7 +238,7 @@ public class MCP4728App {
      * @param bus       INT
      * @param address   INT
      * @param pi4j      Context
-     * @return
+     * @return I2C device
      */
     static I2C createI2cDevice( String chipType, int bus, int address, I2CImplementation impType, Context pi4j) {
         String id = String.format("0X%02x: ", bus);
