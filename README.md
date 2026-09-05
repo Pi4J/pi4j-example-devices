@@ -44,6 +44,7 @@ The following table the currently supported devices within this project:
 | A/D         | SPI        |         | [MCP3008 A/D 10bit converter](src/main/java/com/pi4j/devices/mcp3008/README.md)    
 | A/D         | SPI        |         | [MCP3208 A/D 12bit converter](src/main/java/com/pi4j/devices/mcp3208/README.md)    
 | D/A         | I2C        |         | [MCP4725  12 bit DAC](src/main/java/com/pi4j/devices/mcp4725/README.md)      
+| D/A         | I2C        |         | [MCP4728  12 bit DAC 4-ch](src/main/java/com/pi4j/devices/mcp4728/README.md)      
 | D/A         | SPI        |         | [MCP4921  12 bit DAC](src/main/java/com/pi4j/devices/mcp4921/README.md)      
 | D/A         | SPI        |         | [MCP4922  12 bit DAC](src/main/java/com/pi4j/devices/mcp4922/README.md)      
 | HAT         |            |         | [Raspberry SenseHat](src/main/java/com/pi4j/examples/hat/raspberry/sensehat/)
