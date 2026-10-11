@@ -64,6 +64,8 @@ The following table the currently supported devices within this project:
 | Sensor      | 1-Wire     | (1)     | [DHT22 Temp/Humidity sensor](src/main/java/com/pi4j/devices/dht22/README.md)                                                                  
 | Sensor      |            |         | [HC-SR04 Ultrasonic Sensor](src/main/java/com/pi4j/devices/hcsr04/README.md)                                                                  
 | Sensor      | I2C        | (1)     | [MPL3115A2 Temp/Pressure/Altitude device](src/main/java/com/pi4j/devices/mpl3115a2/README.md)                                                 
+| Servo       | PWM        |         | [SG90 180 degree servo motor device](src/main/java/com/pi4j/devices/sg90/README.md)                                                 
+| Servo       | PWM        |         | [FS90R 360 degree continuous servo motor device](src/main/java/com/pi4j/devices/fs90r/README.md)                                                 
 
 
 ### Notes:
