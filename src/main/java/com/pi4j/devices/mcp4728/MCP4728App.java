@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class MCP4728App {
 
     static void main(String[] args) {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "OFF");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "iNFO");
         Logger logger = LoggerFactory.getLogger(MCP4728App.class);
         logger.trace(">>> Enter: init");
 

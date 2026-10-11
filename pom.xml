@@ -23,7 +23,7 @@
         <java.version>25</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
@@ -95,27 +95,27 @@
             <artifactId>pi4j-plugin-gpiod</artifactId>
             <version>${pi4j.version}</version>
         </dependency-->
-       <!--dependency>
-           <groupId>com.pi4j</groupId>
-           <artifactId>pi4j-plugin-linuxfs</artifactId>
-           <version>${pi4j.version}</version>
-       </dependency-->
+        <!--dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-linuxfs</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency-->
         <dependency>
-               <groupId>net.java.dev.jna</groupId>
-               <artifactId>jna</artifactId>
-               <version>5.12.1</version>
-           </dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.12.1</version>
+        </dependency>
         <dependency>
-           <groupId>org.slf4j</groupId>
-           <artifactId>slf4j-api</artifactId>
-           <version>${slf4j.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.slf4j</groupId>
-           <artifactId>slf4j-simple</artifactId>
-           <version>${slf4j.version}</version>
-       </dependency>
-          <!-- include Pi4J Core -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- include Pi4J Core -->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-core</artifactId>
@@ -201,19 +201,19 @@
             </plugin-->
 
             <!-- INCLUDE SOURCE JAR -->
-             <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                 <version>${maven-source-plugin.version}</version>
-                 <executions>
-                     <execution>
-                         <id>attach-sources</id>
-                         <goals>
-                             <goal>jar</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-             </plugin>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- INCLUDE JAVADOC JAR -->
             <!--plugin>
@@ -293,7 +293,7 @@
                         <argument>--module-path</argument>
                         <argument>${project.build.directory}/distribution</argument>
                         <argument>--module</argument>
-                      <!-- <argument>com.pi4j.devices.tca9548/com.pi4j.devices.tca9548.SampleTca9548App</argument>  -->
+                        <!-- <argument>com.pi4j.devices.tca9548/com.pi4j.devices.tca9548.SampleTca9548App</argument>  -->
                         <argument>com.pi4j.devices.mcp23008/com.pi4j.devices.mcp23008.Mcp23008App</argument>
                     </arguments>
                 </configuration>
@@ -384,7 +384,7 @@
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${maven-antrun-plugin.version}</version>
-                 <executions>
+                <executions>
                     <execution>
                         <id>copySH</id>
                         <phase>install</phase>
