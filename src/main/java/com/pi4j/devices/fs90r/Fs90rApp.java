@@ -7,7 +7,7 @@
 package com.pi4j.devices.fs90r;
 
 
-import com.pi4j.drivers.motor.fs90r.Fs90RDriver;
+import com.pi4j.drivers.motor.fs90r.Fs90rDriver;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmConfigBuilder;
 import com.pi4j.boardinfo.util.PwmChipUtil;
@@ -41,7 +41,7 @@ import com.pi4j.util.Delay;
        private static double degree = 90.0;
         private static Integer channel = DEFAULT_CHANNEL_NUMBER ;
         private static Console console ;
-        private static Fs90RDriver fs90R ;
+        private static Fs90rDriver fs90R ;
         private static final Delay delay = new Delay();
         private static java .util.Scanner scanner;
         private static double lowPulse = 1000.0;
@@ -146,7 +146,7 @@ import com.pi4j.util.Delay;
             }
             Pwm pwm = createPwm(SERVO_NUMBER, channel, pi4j);
 
-            fs90R = new Fs90RDriver(pwm, lowPulse, highPulse);
+            fs90R = new Fs90rDriver(pwm, lowPulse, highPulse);
 
             // if user did not provide a -cw -ccw or -d   default sets stop
             fs90R.setServoRotation(degree);
