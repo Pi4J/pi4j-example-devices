@@ -9,7 +9,7 @@ package com.pi4j.devices.sg90;
 import com.pi4j.Pi4J;
 import com.pi4j.boardinfo.util.PwmChipUtil;
 import com.pi4j.context.Context;
-import com.pi4j.drivers.motor.sg90.SG90Driver;
+import com.pi4j.drivers.motor.sg90.Sg90Driver;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmConfig;
 import com.pi4j.io.pwm.PwmConfigBuilder;
@@ -35,7 +35,7 @@ class Sg90App {
 
     private static Integer channel = DEFAULT_CHANNEL_NUMBER;
     private static Console console;
-    private static SG90Driver sg90;
+    private static Sg90Driver sg90;
     private static final Delay delay = new Delay();
     private static java.util.Scanner scanner;
     private static double lowPulse = LOW_PULSSE;
@@ -99,7 +99,7 @@ class Sg90App {
 
         Pwm pwm = createPwm(SERVO_NUMBER, channel, pi4j);
 
-        sg90 = new SG90Driver(pwm, lowPulse, highPulse);
+        sg90 = new Sg90Driver(pwm, lowPulse, highPulse);
 
         waitChange(10L);
 
