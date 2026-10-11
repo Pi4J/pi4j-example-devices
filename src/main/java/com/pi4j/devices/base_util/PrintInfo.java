@@ -4,7 +4,6 @@ package com.pi4j.devices.base_util;
 
 
 import com.pi4j.context.Context;
-import com.pi4j.provider.Providers;
 import com.pi4j.registry.Registry;
 import com.pi4j.util.Console;
 
@@ -27,40 +26,16 @@ public class PrintInfo {
 
 
     /**
-     * Pi4J Providers
-     * <p>Providers are intended to represent I/O implementations and provide access to the I/O interfaces available on
-     * the system. Providers 'provide' concrete runtime implementations of I/O interfaces such as:
-     * <ul>
-     * <li>DigitalInput</li>
-     * <li>DigitalOutput</li>
-     * <li>AnalogInput</li>
-     * <li>AnalogOutput</li>
-     * <li>PWM</li>
-     * <li>I2C</li>
-     * <li>SPI</li>
-     * <li>SERIAL</li>
-     * </ul>
-     * <p>Each platform will have a default set of providers assigned to it to serve as the default providers that
-     * will be used on a given platform's hardware I/O.  However, you are not limited to the providers that a
-     * platform provides, you can instantiate I/O interfaces using any provider that has been registered on the
-     * Pi4J system.  A good example of this is the 'AnalogInput' and 'AnalogOutput' I/O interfaces. The
-     * 'RaspberryPi' does not inherently support analog I/O hardware, but with an attached ADC (Analog to Digital
-     * Converter) or DAC (Digital to Analog converter) chip attached to a data bus (I2C/SPI) you may wish to use
-     * Pi4J to read/write to these analog hardware interfaces.</p>
-     * <p>Providers allow for a completely flexible and extensible infrastructure enabling third-parties to build and
-     * extend the capabilities of Pi4J by writing your/their own Provider implementation libraries.</p>
+     * This method used to print Pi4J providers, which are no longer supported
+     * starting from V5.0.
      *
      * @param console {@link Console}
      * @param pi4j    {@link Context}
+     * @deprecated
      */
+    @Deprecated(since = "5.0")
     public static void printProviders(Console console, Context pi4j) {
-        Providers providers = pi4j.providers();
-
-        // Let's print out to the console the detected and loaded
-        // providers that Pi4J detected when it was initialized.
-        console.box("Pi4J PROVIDERS");
-        console.println();
-        providers.describe().print(System.out);
+        console.println("(Pi4J Providers are no longer used since Pi4J 5.0)");
         console.println();
     }
 
