@@ -19,7 +19,6 @@ import java.util.TreeMap;
  * It's able to aggregates sensor readings and display them on the given display.
  */
 public class SensorDisplay {
-    private static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("0.0");
     private static final int CONSOLE_WIDTH = 32;
     private static final int DEFAULT_I2C_BUS = 1;
 
@@ -103,7 +102,7 @@ public class SensorDisplay {
      * Formats a sensor reading to a given number of columns.
      */
     public static String formatReading(SensorDescriptor.Kind kind, double value, int columns) {
-        String renderedValue = DECIMAL_FORMAT.format(value);
+        String renderedValue = String.valueOf(Math.round(value));
         String renderedLabel = Character.toUpperCase(kind.toString().charAt(0)) + kind.toString().substring(1);
 
         int available = columns - renderedValue.length() - 6;
