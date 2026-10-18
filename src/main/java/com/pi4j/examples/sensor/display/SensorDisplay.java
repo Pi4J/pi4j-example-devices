@@ -1,5 +1,6 @@
 package com.pi4j.examples.sensor.display;
 
+import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.sensor.Sensor;
@@ -19,15 +20,25 @@ import java.util.TreeMap;
  */
 public class SensorDisplay {
     private static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("0.0");
+    private static final int CONSOLE_WIDTH = 32;
+    private static final int DEFAULT_I2C_BUS = 1;
 
     private final CharacterDisplay display;
     private final List<Sensor> sensorList;
 
+    /**
+     * Creates a SensorDisplay for the given sensor list and the given display. If display is null, we'll
+     * render to the console.
+     */
     public SensorDisplay(List<Sensor> sensorList, CharacterDisplay display) {
         this.display = display;
         this.sensorList = sensorList;
     }
 
+    /**
+     * Creates a SensorDisplay for the I2C sensors detected on the given bus and the given display.
+     * If display is null, we'll render to the console.
+     */
     public SensorDisplay(Context context, int bus, CharacterDisplay display) {
         this(SensorDetector.detectI2cSensors(context, bus), display);
     }
@@ -58,14 +69,22 @@ public class SensorDisplay {
      */
     public void displayMeasurements(Map<SensorDescriptor.Kind, Map<Sensor, Double>> measurements) {
         int row = 0;
+        int displayWidth = display == null ? CONSOLE_WIDTH : display.getWidth();
         for (Map.Entry<SensorDescriptor.Kind, Map<Sensor, Double>> entry: measurements.entrySet()) {
             double average = entry.getValue().values().stream()
                 .mapToDouble(Number::doubleValue)
                 .average()
                 .getAsDouble();
 
-            String formatted = formatReading(entry.getKey(), average, display.getWidth());
-            display.writeAt(0, row++, formatted);
+            String formatted = formatReading(entry.getKey(), average, displayWidth);
+            if (display == null) {
+                System.out.println(formatted);
+            } else {
+                display.writeAt(0, row++, formatted);
+                }
+        }
+        if (display == null) {
+            System.out.println();
         }
     }
 
@@ -92,6 +111,17 @@ public class SensorDisplay {
             renderedLabel = renderedLabel.substring(0, available - 1) + ".";
         }
         return String.format("%-" + (available + 1) + "s %s %-3s", (renderedLabel + ":"), renderedValue, kind.measurementUnit);
+    }
+
+    /** Simple main to test aggregation and rendering using the console */
+    public static void main(String[] args) throws InterruptedException {
+        Context pi4j = Pi4J.newAutoContext();
+        SensorDisplay sensorDisplay = new SensorDisplay(pi4j, DEFAULT_I2C_BUS, null);
+
+        while (true) {
+            sensorDisplay.readAndDisplayMeasurements();
+            Thread.sleep(5_000);
+        }
     }
 
  }

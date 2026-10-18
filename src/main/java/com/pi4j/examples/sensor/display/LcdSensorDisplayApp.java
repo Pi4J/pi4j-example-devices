@@ -23,7 +23,7 @@ public class LcdSensorDisplayApp {
 
         while (true) {
             sensorDisplay.readAndDisplayMeasurements();
-            Thread.sleep(4_000);
+            Thread.sleep(5_000);
         }
     }
 }
