@@ -7,8 +7,6 @@ import com.pi4j.drivers.sensor.Sensor;
 import com.pi4j.drivers.sensor.SensorDescriptor;
 import com.pi4j.drivers.sensor.SensorDetector;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
