@@ -3,6 +3,7 @@ package com.pi4j.devices.bmp280;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.devices.commandhandler.DeviceCommandHandler;
+import com.pi4j.devices.commandhandler.IntegerParameter;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
 import com.pi4j.io.i2c.I2C;
 
@@ -34,13 +35,13 @@ public class BMP280I2cExample {
         commandHandler.setting(
             "a",
             "Set the BMx280 I2C Device Address",
-            new DeviceCommandHandler.IntegerParameter(0, 127),
+            new IntegerParameter(0, 127),
             Bmx280Driver.ADDRESS_BMP_280);
 
         commandHandler.setting(
             "b",
             "Set the BMx280 I2C Bus",
-            new DeviceCommandHandler.IntegerParameter(0, 127),
+            new IntegerParameter(0, 127),
             DEFAULT_BUS);
 
         commandHandler.defaultAction("r", "Read measurements (default)", device -> {
