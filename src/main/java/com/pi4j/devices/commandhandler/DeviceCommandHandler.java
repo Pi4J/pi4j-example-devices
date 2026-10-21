@@ -10,21 +10,27 @@ import java.util.function.Function;
 
 /**
  * Utility that is able to configure a device from command line parameters and can perform operations on the device.
+ * <p>
+ * Generally, the device will be (re)constructed when any action is triggered and the settings have changed.
  */
-public class DeviceCommandHandler<DT> {
+public class DeviceCommandHandler<T> {
     private final Map<String, Object> settings = new TreeMap<>();
     private final Map<String, Command<?>> commands = new LinkedHashMap<>();
-    private final Function<Map<String, Object>, DT> deviceFactory;
-    private DT device;
+    private final Function<Map<String, Object>, T> deviceFactory;
+    private T device;
     private Command<?> currentCommand;
     private String defaultAction;
+    private boolean consumeStdin;
+    private boolean exit;
 
-    public DeviceCommandHandler(Function<Map<String, Object>, DT> deviceFactory) {
+    public DeviceCommandHandler(Function<Map<String, Object>, T> deviceFactory) {
         this.deviceFactory = deviceFactory;
-        utility("h", "Display this help text", null, (_) -> printHelp(System.out));
+        utility("h", "Display this help text", () -> printHelp(System.out));
+        utility("-", "Read commands from stdin",  () -> consumeStdin = true);
+        utility("x", "Exit", () -> exit = true);
     }
 
-    private <PT> DeviceCommandHandler<DT> register(CommandType type, String label, String description, ParameterSpecification<PT> paramSpec, BiConsumer<DT, PT> action) {
+    private <P> DeviceCommandHandler<T> register(CommandType type, String label, String description, ParameterSpecification<P> paramSpec, BiConsumer<T, P> action) {
         label = label.toLowerCase(Locale.ROOT);
         if (commands.containsKey(label)) {
             throw new IllegalStateException("Label '" + label + "' already registered.");
@@ -39,24 +45,35 @@ public class DeviceCommandHandler<DT> {
         return this;
     }
 
-    public <PT> DeviceCommandHandler<DT> utility(String label, String description, ParameterSpecification<PT> paramSpec, Consumer<PT> action) {
-        return register(CommandType.UTILITY, label, description, paramSpec, (_, pt) -> action.accept(pt));
+    /** Adds a utility action that is not related to the device */
+    public <P> DeviceCommandHandler<T> utility(String label, String description, Runnable action) {
+        return register(CommandType.UTILITY, label, description, null, (_, pt) -> action.run());
     }
 
-    public <PT> DeviceCommandHandler<DT> parameterizedAction(String label, String description, ParameterSpecification<PT> paramSpec, BiConsumer<DT, PT> action) {
+
+    /** Add a parameterized device action command */
+    public <P> DeviceCommandHandler<T> parameterizedAction(String label, String description, ParameterSpecification<P> paramSpec, BiConsumer<T, P> action) {
         return register(CommandType.ACTION, label, description, paramSpec, action);
     }
 
-    public DeviceCommandHandler<DT> action(String label, String description, Consumer<DT> action) {
+    /** Add a parameterized utility action */
+    public <P> DeviceCommandHandler<T> parameterizedUtility(String label, String description, ParameterSpecification<P> paramSpec, Consumer<P> action) {
+        return register(CommandType.UTILITY, label, description, paramSpec, (_, pt) -> action.accept(pt));
+    }
+
+    /** Add a parameterless device action command. */
+    public DeviceCommandHandler<T> action(String label, String description, Consumer<T> action) {
         return register(CommandType.ACTION, label, description, null, (device, _) -> action.accept(device));
     }
 
-
-    public DeviceCommandHandler<DT> defaultAction(String label, String description, Consumer<DT> action) {
-        return register(CommandType.DEFAULT, label, description, null, (device, _) -> action.accept(device));
+    /** Set the action that will be executed when no action is specified */
+    public DeviceCommandHandler<T> setDefault(String label) {
+        this.defaultAction = label;
+        return this;
     }
 
-    public <PT> DeviceCommandHandler<DT> setting(String label, String description, ParameterSpecification<PT> paramSpec, PT defaultValue) {
+    /** Add a setting used for constructing the device. */
+    public <P> DeviceCommandHandler<T> setting(String label, String description, ParameterSpecification<P> paramSpec, P defaultValue) {
         settings.put(label, defaultValue);
         return register(CommandType.SETTING, label, description, paramSpec, (_, value) -> {
             Object oldValue = settings.get(label);
@@ -78,7 +95,7 @@ public class DeviceCommandHandler<DT> {
     }
 
     void printHelp(PrintStream out) {
-        out.println("Available parameters:");
+        out.println("Available commands:");
         out.println();
         for (Map.Entry<String, Command<?>> entry: commands.entrySet()) {
             Command<?> command = entry.getValue();
@@ -88,23 +105,24 @@ public class DeviceCommandHandler<DT> {
     }
 
     public void process(String[] args) {
-        try {
-            for (String arg : args) {
-                processImpl(arg);
+        for (String arg : args) {
+            processImpl(arg);
+        }
+        if (defaultAction != null) {
+            processImpl(defaultAction);
+        }
+        if (consumeStdin) {
+            Scanner scanner = new Scanner(System.in);
+            while (!exit && scanner.hasNext()) {
+                processImpl(scanner.next());
             }
-            if (defaultAction != null) {
-                processImpl(defaultAction);
-            }
-        } catch (RuntimeException e) {
-            System.err.println("Command processing error: " + e.getMessage());
-            printHelp(System.err);
         }
     }
 
     void processImpl(String s) {
         s = s.trim();
         if (currentCommand == null) {
-            if (s.startsWith("-")) {
+            if (s.startsWith("-") && s.length() > 1) {
                 s = s.substring(1);
             }
             currentCommand = commands.get(s.toLowerCase(Locale.ROOT));
@@ -117,19 +135,24 @@ public class DeviceCommandHandler<DT> {
                 return;
             }
         }
-        currentCommand.process(s);
+        try {
+            currentCommand.process(s);
+        } catch (RuntimeException e) {
+            System.err.println("Error processing command '" + currentCommand.label + "': " + e.getMessage());
+            printHelp(System.err);
+        }
         currentCommand = null;
     }
 
 
-    class Command<PT> {
+    class Command<P> {
         private final CommandType type;
         private final String label;
         private final String description;
-        private final ParameterSpecification<PT> parameterSpecification;
-        private final BiConsumer<DT, PT> action;
+        private final ParameterSpecification<P> parameterSpecification;
+        private final BiConsumer<T, P> action;
 
-        Command(CommandType type, String label, String description, ParameterSpecification<PT> parameterSpecification, BiConsumer<DT, PT> action) {
+        Command(CommandType type, String label, String description, ParameterSpecification<P> parameterSpecification, BiConsumer<T, P> action) {
             this.type = type;
             this.label = label;
             this.description = description;
@@ -138,8 +161,7 @@ public class DeviceCommandHandler<DT> {
         }
 
         public String toString() {
-            StringBuilder sb = new StringBuilder("-");
-            sb.append(label);
+            StringBuilder sb = new StringBuilder(label);
             if (parameterSpecification != null) {
                 sb.append(" ").append(parameterSpecification);
                 if (type == CommandType.SETTING) {
@@ -151,7 +173,7 @@ public class DeviceCommandHandler<DT> {
         }
 
         void process(String s) {
-            PT parameter = parameterSpecification == null ? null : parameterSpecification.process(s);
+            P parameter = parameterSpecification == null ? null : parameterSpecification.process(s);
             if ((type == CommandType.ACTION || type == CommandType.DEFAULT) && device == null) {
                 device = deviceFactory.apply(settings);
             }

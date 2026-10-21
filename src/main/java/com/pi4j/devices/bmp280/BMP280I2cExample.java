@@ -44,7 +44,7 @@ public class BMP280I2cExample {
             new IntegerParameter(0, 127),
             DEFAULT_BUS);
 
-        commandHandler.defaultAction("r", "Read measurements (default)", device -> {
+        commandHandler.action("r", "Read measurements (default)", device -> {
             Bmx280Driver.Measurement measurement = device.readMeasurement();
 
             System.out.println("Temperature °C: " + FORMAT.format(measurement.getTemperature()) );
@@ -55,6 +55,7 @@ public class BMP280I2cExample {
             System.out.println("Humidity: " + FORMAT.format(measurement.getHumidity()) + " %");
         });
 
+        commandHandler.setDefault("r");
         commandHandler.process(args);
 
         // Shutdown Pi4J
