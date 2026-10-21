@@ -12,6 +12,8 @@ import java.util.function.Function;
  * Utility that is able to configure a device from command line parameters and can perform operations on the device.
  * <p>
  * Generally, the device will be (re)constructed when any action is triggered and the settings have changed.
+ * <p>
+ * @param <T> The device type handled by this class.
  */
 public class DeviceCommandHandler<T> {
     private final Map<String, Object> settings = new TreeMap<>();
