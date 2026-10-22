@@ -23,12 +23,12 @@ public class Bricks {
     private final Graphics graphics;
     private final GameController controller;
     private final Delay delay = new Delay();
-    private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> keys = new HashMap<>();
+    private final Map<ListenableOnOffRead, Consumer<Boolean>> keys = new HashMap<>();
 
     private final int scale;
     private final int x0;
     private final int y0;
-    private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> activeKeys = new HashMap<>();
+    private final Map<ListenableOnOffRead, Consumer<Boolean>> activeKeys = new HashMap<>();
 
     private float ballX;
     private int ballY;
@@ -65,7 +65,7 @@ public class Bricks {
 
     private void assignKeys(Consumer<Boolean> consumer, GameController.Key... keys) {
         for (GameController.Key key : keys) {
-            ListenableOnOffRead<?> lor = controller.getKey(key);
+            ListenableOnOffRead lor = controller.getKey(key);
             if (lor != null) {
                 this.activeKeys.put(lor, lor.addConsumer(consumer));
             }
@@ -162,7 +162,7 @@ public class Bricks {
 
 
     private void releaseKeys() {
-        for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : activeKeys.entrySet()) {
+        for (Map.Entry<ListenableOnOffRead, Consumer<Boolean>> entry : activeKeys.entrySet()) {
             entry.getKey().removeConsumer(entry.getValue());
         }
         activeKeys.clear();

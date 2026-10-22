@@ -14,7 +14,7 @@ public class JoystickExample {
         Context context = Pi4J.newAutoContext();
 
         // The interrupt pin is connected to BCM 23
-        ListenableOnOffRead<?> interruptPin = context.create(DigitalInputConfig.newBuilder(context).bcm(23));
+        ListenableOnOffRead interruptPin = context.create(DigitalInputConfig.newBuilder(context).bcm(23));
 
         // The driver uses the interrupt pin to internally poll the chip and update all the pins
         InputExpander expander = Pcf8574Driver.createForInput(

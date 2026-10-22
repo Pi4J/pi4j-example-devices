@@ -32,7 +32,7 @@ public class Snake {
     private final int y0;
     private final int scale;
     private final Random random = new Random();
-    private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> keys = new HashMap<>();
+    private final Map<ListenableOnOffRead, Consumer<Boolean>> keys = new HashMap<>();
 
     private int fadeOut = 0;
     private int dx;
@@ -126,7 +126,7 @@ public class Snake {
         }
         graphics.setColor(Argb32.BLACK);
         graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
-        for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
+        for (Map.Entry<ListenableOnOffRead, Consumer<Boolean>> entry : keys.entrySet()) {
             entry.getKey().removeConsumer(entry.getValue());
         }
     }
