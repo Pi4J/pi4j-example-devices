@@ -1,4 +1,4 @@
-package com.pi4j.devices.commandhandler;
+package com.pi4j.examples.utils.commandhandler;
 
 public class IntegerParameter extends ParameterSpecification<Integer> {
     private final int min;
@@ -11,7 +11,7 @@ public class IntegerParameter extends ParameterSpecification<Integer> {
 
     @Override
     Integer process(String text) {
-        int parsed = Integer.parseInt(text);
+        int parsed = Integer.decode(text);
         if (parsed < min || parsed > max) {
             throw new IllegalArgumentException("Value " + text);
         }
@@ -19,6 +19,6 @@ public class IntegerParameter extends ParameterSpecification<Integer> {
     }
 
     public String toString() {
-        return "[" + min + ".." + max + "]";
+        return "[" + min + ".." + max + "] / [0x" + Integer.toHexString(min) + "..0x" + Integer.toHexString(max) + "]";
     }
 }

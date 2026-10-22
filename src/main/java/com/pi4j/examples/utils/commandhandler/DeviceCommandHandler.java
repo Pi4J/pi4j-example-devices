@@ -1,4 +1,4 @@
-package com.pi4j.devices.commandhandler;
+package com.pi4j.examples.utils.commandhandler;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class DeviceCommandHandler<T> {
     }
 
     /** Add a setting used for constructing the device. */
-    public <P> DeviceCommandHandler<T> setting(String label, String description, ParameterSpecification<P> paramSpec, P defaultValue) {
+    public <P> DeviceCommandHandler<T> configuration(String label, String description, ParameterSpecification<P> paramSpec, P defaultValue) {
         settings.put(label, defaultValue);
         return register(CommandType.SETTING, label, description, paramSpec, (_, value) -> {
             Object oldValue = settings.get(label);
@@ -167,7 +167,13 @@ public class DeviceCommandHandler<T> {
             if (parameterSpecification != null) {
                 sb.append(" ").append(parameterSpecification);
                 if (type == CommandType.SETTING) {
-                    sb.append(" (").append(settings.get(label)).append(')');
+                    sb.append(" (");
+                    Object value = settings.get(label);
+                    sb.append(value);
+                    if (value instanceof Integer) {
+                        sb.append(" / 0x").append(Integer.toHexString((Integer) value));
+                    }
+                    sb.append(')');
                 }
             }
             sb.append(": ").append(description);
