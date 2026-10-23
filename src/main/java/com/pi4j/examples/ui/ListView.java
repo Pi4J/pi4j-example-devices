@@ -22,7 +22,7 @@ public class ListView {
     private final boolean useMarker;
     private final List<Item> items = new ArrayList<>();
 
-    private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> activeKeys = new HashMap<>();
+    private final Map<ListenableOnOffRead, Consumer<Boolean>> activeKeys = new HashMap<>();
 
     private boolean scroll;
     private float x0;
@@ -100,7 +100,7 @@ public class ListView {
 
     private boolean anyPressed(GameController.Key... keys) {
         for (GameController.Key key : keys) {
-            OnOffRead<?> onOff = controller.getKey(key);
+            OnOffRead onOff = controller.getKey(key);
             if (onOff != null) {
                 if (onOff.isOn()) {
                     triggeredKey = key;
